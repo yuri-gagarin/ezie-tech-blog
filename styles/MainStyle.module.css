@@ -1,0 +1,5 @@
+.mainGrid {
+  border: 10px solid red !important;
+  min-height: 100vh;
+  padding: 0 !important;
+}
