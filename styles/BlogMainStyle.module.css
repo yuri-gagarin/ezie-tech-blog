@@ -1,5 +1,5 @@
-.blogWrapper {
-  width: 100%;
-  height: 90vh;
-  border: 5px solid green;
+.blogPageRow {
+  border: 10px solid yellow;
+  height: calc(100vh - 50px);
+  overflow: hidden;
 }
