@@ -1,14 +1,12 @@
-import { MainComponent } from '../components/Main';
-import { NavMenu } from "../components/NavMenu";
 import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
+import Layout from '../components/layout/Layout';
 
 function MyApp({ Component, pageProps, children }) {
   return (
-    <MainComponent>
-      <NavMenu />
+    <Layout>
       <Component {...pageProps } />
-    </MainComponent>
+    </Layout>
   );
 };
 

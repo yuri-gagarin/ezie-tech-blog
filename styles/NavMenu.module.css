@@ -1,9 +1,9 @@
 .menuRow {
-  border: 10px solid blue;
   padding: 0 !important;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 50px;
+  height: 40px;
+  background-color: #a333c8;
 }

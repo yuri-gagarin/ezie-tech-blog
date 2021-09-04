@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Input, Menu, MenuItemProps } from 'semantic-ui-react';
 //
 import { useRouter } from "next/router";
-import navMenuStyle from "../styles/NavMenu.module.css";
+import navMenuStyle from "../../styles/NavMenu.module.css";
 
 type NavValues = "home" | "news" | "blog" | "about";
 type NavbarState = {
@@ -28,25 +28,28 @@ export const NavMenu: React.FC<{}> = (): JSX.Element => {
 
   return (
     <Grid.Row className={ navMenuStyle.menuRow }>
-      <Menu pointing fluid fixed="top">
+      <Menu pointing fluid inverted fixed="top" className={ navMenuStyle.mainNav }>
         <Menu.Item
           name='home'
           active={ navState.activeItem === "home" }
           onClick={ handleNavClick }
+          color="purple"
         />
         <Menu.Item
           name='blog'
           active={ navState.activeItem === "blog" }
           onClick={ handleNavClick }
+          color="purple"
         />
         <Menu.Item
           name='news'
           active={ navState.activeItem === "news" }
           onClick={ handleNavClick }
+          color="purple"
         />
         <Menu.Menu position='right'>
-          <Menu.Item>
-            <Input icon='search' placeholder='Search...' />
+          <Menu.Item color="purple">
+            <Input inverted icon='search' placeholder='Search...' />
           </Menu.Item>
         </Menu.Menu>
       </Menu>
