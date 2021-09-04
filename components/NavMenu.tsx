@@ -19,6 +19,13 @@ export const NavMenu: React.FC<{}> = (): JSX.Element => {
     setNavState({ activeItem: menuPath });
   };
 
+  React.useEffect(() => {
+    if (router.route === "/" && navState.activeItem !== "home") setNavState({ activeItem: "home" });
+    if (router.route === "/blog" && navState.activeItem !== "blog") setNavState({ activeItem: "blog" });
+    if (router.route === "/news" && navState.activeItem !== "news") setNavState({ activeItem: "news" });
+    if (router.route === "/about" && navState.activeItem !== "about") setNavState({ activeItem: "about" });
+  }, [ router.route ]);
+
   return (
     <Grid.Row className={ navMenuStyle.menuRow }>
       <Menu pointing fluid fixed="top">

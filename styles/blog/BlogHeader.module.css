@@ -1,0 +1,19 @@
+.headerRow {
+  height: 100px;
+}
+
+.headerSegment, .descSegment {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: 'Times New Roman', Times, serif;
+}
+.headerSegment {
+  font-size: 25px !important;
+}
+.descSegment {
+  font-size: 15px !important;
+  font-style: italic;
+}

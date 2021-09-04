@@ -1,5 +1,5 @@
 .blogPageRow {
-  border: 10px solid yellow;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 150px);
   overflow: hidden;
+  border-top: 2px solid grey;
 }
