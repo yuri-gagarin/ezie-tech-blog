@@ -4,6 +4,7 @@ import Head from "next/head";
 import { HomeLanding } from '../components/home/HomeLanding';
 import { HomeAbout } from '../components/home/HomeAbout';
 import { HomeTech } from '../components/home/HomeTech';
+import { HomeProjects } from "../components/home/HomeProjects";
 
 export default function Home() {
   return ( 
@@ -15,6 +16,7 @@ export default function Home() {
       <HomeLanding />
       <HomeAbout />
       <HomeTech />
+      <HomeProjects />
     </React.Fragment>
   );
 };

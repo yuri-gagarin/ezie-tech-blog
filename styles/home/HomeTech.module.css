@@ -39,3 +39,31 @@
   width: 100px;
   height: 100px;
 }
+
+.techAdditionalDescDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: white;
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 2px;
+}
+.techAdditionalDescDivContent {
+  display: flex;
+  width: 50%;
+  padding: 0.5em 1em;
+}
+.techBlogBtn {
+  display: flex;
+  justify-content: center;
+  font-size: 1.2em;
+  margin-top: 1em;
+}
+
+@media only screen and (max-width: 550px) {
+  .techAdditionalDescDivContent {
+    width: 100%;
+  }
+} 

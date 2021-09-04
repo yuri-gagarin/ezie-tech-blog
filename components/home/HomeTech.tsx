@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Grid } from 'semantic-ui-react';
+import { Button, Grid } from 'semantic-ui-react';
+//
+import { useRouter } from 'next/router';
 // styles //
 import homeTechStyle from "../../styles/home/HomeTech.module.css";
 
@@ -7,6 +9,13 @@ interface IHomeTechProps {
 }
 
 export const HomeTech: React.FunctionComponent<IHomeTechProps> = (props): JSX.Element => {
+
+  const router = useRouter();
+
+  const handleGoToBlog = (): void => {
+    router.push("/blog");
+  };
+
   return (
     <Grid.Row className={ homeTechStyle.homeTechRow }> 
       <div className={ homeTechStyle.techTitleDiv }>
@@ -57,6 +66,15 @@ export const HomeTech: React.FunctionComponent<IHomeTechProps> = (props): JSX.El
           <img src="/logos/tech_logos/postgres.svg" />
         </div>
       </div>
+      <div className={ homeTechStyle.techAdditionalDescDiv }>
+        <div className={ homeTechStyle.techAdditionalDescDivContent }>
+          The sheer amount of frameworks, options, languages, libraries can be overwhelming sometimes. It is often very hard to decide
+          what and where to use. Read more about it in our blog below.
+        </div>
+        <div className={ homeTechStyle.techBlogBtn }>
+          <Button color="purple" content="Blog" onClick={ handleGoToBlog } />
+        </div>  
+      </div>  
     </Grid.Row>
   );
 };
