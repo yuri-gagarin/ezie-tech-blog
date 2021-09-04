@@ -1,0 +1,41 @@
+.homeTechRow {
+  background: white;
+  border-top: 10px solid white;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+.techTitleDiv, .techDescDiv {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+.techTitleDiv {
+  background-color: purple;
+  font-size: 2em;
+  color: white;
+  padding: 0.5em 1em;
+  font-family: 'Monoton', cursive;
+}
+.techDescDiv {
+  color: black;
+  font-size: 1.1em;
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 2px;
+  margin-top: 1em;
+}
+
+.techLogoDiv {
+  display: flex;
+  justify-content: center;
+  border: 3px solid white;
+  width: 100%;
+  margin-top: 1em;
+}
+.logoImg {
+  width: 110px;
+  height: 110px;
+}
+.logoImg > img {
+  width: 100px;
+  height: 100px;
+}
