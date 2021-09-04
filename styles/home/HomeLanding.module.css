@@ -59,11 +59,13 @@
 
 .rowRight {
   width: 67%;
+  
   background: #AA076B;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to left, #61045F, #AA076B);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to left, #61045F, #AA076B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: url("/backgrounds/header_bg1.jpg");
   position: relative;
-  animation: gradient 15s linear infinite;
+  animation: gradient 20s linear infinite;
 }
 .rightDescription {
   position: absolute;
@@ -102,13 +104,13 @@
 
 @keyframes gradient {
   0% {
-      background-position: 0% 50%;
+      background-position: 0% 10%;
   }
   50% {
-      background-position: 100% 50%;
+      background-position: 10% 5%;
   }
   100% {
-      background-position: 0% 50%;
+      background-position: 0% 10%;
   }
 }
 
