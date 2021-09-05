@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { NavMenu } from '../navs/NavMenu';
 import { Grid } from "semantic-ui-react";
+// components which are to be always displayed //
+import { NavMenu } from '../navs/NavMenu';
+import Footer from '../footer/Footer';
 // styles //
 import layoutStyles from "../../styles/layout/LayoutStyle.module.css";
 
@@ -12,6 +14,7 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({ children }): JSX.Elemen
     <Grid className={ layoutStyles.layoutWrapper }>
       <NavMenu />
       { children }
+      <Footer />
     </Grid>
   )
 };
