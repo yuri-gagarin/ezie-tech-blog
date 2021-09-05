@@ -8,7 +8,7 @@ export const BlogHeader: React.FC<{}> = (): JSX.Element => {
   return (
     <Grid.Row className={ blogHeaderStyle.headerRow }>
       <div className={ blogHeaderStyle.headerSegment }>
-        Everything and anything 'DEV' related
+        <span>Everything and anything</span><span>DEV</span><span>related</span>
       </div>
       <div className={ blogHeaderStyle.descSegment}>
         Or how we stopped worrying and learned to love NodeJS and React

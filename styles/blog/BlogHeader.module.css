@@ -1,19 +1,37 @@
 .headerRow {
-  height: 100px;
+  height: 200px;
+  flex-direction: column !important;
+  justify-content: center !important;
+  background: #8E2DE2;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 .headerSegment, .descSegment {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  flex-grow: 0;
   font-family: 'Times New Roman', Times, serif;
 }
 .headerSegment {
-  font-size: 25px !important;
+  font-size: 3em;
+  padding: 15px 5px;
+}
+.headerSegment > span {
+  font-family: 'Audiowide', cursive;
+  color: white;
+}
+.headerSegment > span:nth-child(2) {
+  font-family: 'Monoton', cursive;
+  color: #c02183;
+  margin: 0 5px;
 }
 .descSegment {
-  font-size: 15px !important;
+  font-size: 17px !important;
   font-style: italic;
+  color: #c2bf06;
+  padding: 10px 5px;
 }
