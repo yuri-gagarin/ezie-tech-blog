@@ -14,7 +14,6 @@ export const BlogView: React.FC<{}> = (): JSX.Element => {
   const handleBlogPostSelect = ():void => {
 
   };
-
   return (
     width > 1200 ?
       <Grid.Column largeScreen={4} tablet={8} mobile={16} className={ blogViewStyle.gridColumn }>
@@ -23,7 +22,7 @@ export const BlogView: React.FC<{}> = (): JSX.Element => {
         </div>
         <Card.Group className={ blogViewStyle.cardGroup } centered >
           <Card fluid className={ blogViewStyle.sideCard } onClick={ handleBlogPostSelect }>
-            <Image src="/images/blog1.jpg" size="small" />
+            <Image src="/images/blog1.jpg" size="small" alt="image" />
             <Card.Content>
               <Card.Header>Title here</Card.Header>
               <Card.Meta>Posted at: 2021</Card.Meta>
@@ -31,7 +30,7 @@ export const BlogView: React.FC<{}> = (): JSX.Element => {
             </Card.Content>
           </Card>
           <Card fluid className={ blogViewStyle.sideCard }>
-            <Image src="/images/blog1.jpg" size="small"  />
+            <Image src="/images/blog1.jpg" size="small" alt="image"  />
             <Card.Content>
               <Card.Header>Title here</Card.Header>
               <Card.Meta>Posted at: 2021</Card.Meta>
@@ -39,7 +38,7 @@ export const BlogView: React.FC<{}> = (): JSX.Element => {
             </Card.Content>
           </Card>
           <Card fluid className={ blogViewStyle.sideCard }>
-            <Image src="/images/blog1.jpg" size="small"  />
+            <Image src="/images/blog1.jpg" size="small" alt="image"  />
             <Card.Content>
               <Card.Header>Title here</Card.Header>
               <Card.Meta>Posted at: 2021</Card.Meta>
@@ -47,7 +46,7 @@ export const BlogView: React.FC<{}> = (): JSX.Element => {
             </Card.Content>
           </Card>
           <Card fluid className={ blogViewStyle.sideCard }>
-            <Image src="/images/blog1.jpg" size="small"  />
+            <Image src="/images/blog1.jpg" size="small" alt="image" />
             <Card.Content>
               <Card.Header>Title here</Card.Header>
               <Card.Meta>Posted at: 2021</Card.Meta>

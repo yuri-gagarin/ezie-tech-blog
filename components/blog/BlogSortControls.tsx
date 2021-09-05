@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Dropdown, DropdownItemProps, Icon, Menu } from "semantic-ui-react";
 // 
+import axiosInstance from "../axios/axiosInstance";
+import { AxiosRequestConfig } from "axios";
 import styles from "../../styles/blog/BlogSortControls.module.css";
 
 interface IBlogSortControlsProps {
@@ -18,6 +20,11 @@ export const BlogSortControls: React.FunctionComponent<IBlogSortControlsProps> =
   const handlePostSortClick = (_, data: DropdownItemProps): void => {
     const value = data.value as DropDownValue;
     setLocalState({ dropdownValue: value });
+    const req: AxiosRequestConfig = {
+      method: "GET",
+      url: "/api/test"
+    }
+    axiosInstance(req).then(res => console.log(res)).catch(err => console.log(err));
   };
   
   return (
