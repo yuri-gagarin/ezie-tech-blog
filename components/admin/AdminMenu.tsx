@@ -9,7 +9,7 @@ interface IAdminMenuProps {
 export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.Element => {
   return (
     <Grid.Row className={ adminMenuStyles.adminMenuRow } >
-      <Menu fluid>
+      <Menu fluid fixed="top" className={ adminMenuStyles.fixedAdminMenu }>
         <Dropdown text='File' className={ adminMenuStyles.adminMenuFile }>
           <Dropdown.Menu>
             <Dropdown.Item text='New' />

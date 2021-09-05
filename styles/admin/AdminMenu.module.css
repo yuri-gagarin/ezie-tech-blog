@@ -1,7 +1,10 @@
 .adminMenuRow {
   border: 5px solid red !important;
   padding: 0 !important;
-  height: 50px;
+  height: 40px;
+}
+.fixedAdminMenu {
+  margin-top: 41px !important;
 }
 .adminMenuFile {
   margin-left: 5px;

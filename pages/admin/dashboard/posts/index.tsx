@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Grid } from "semantic-ui-react";
 // additonal components //
-import { AdminMenu } from '../../../../components/admin/AdminMenu';
+import { AdminLayout } from '../../../../components/admin/AdminLayout';
 // styles //
 import adminPostsIndexStyle from "../../../../styles/admin/AdminPostsIndex.module.css";
 
@@ -13,13 +13,10 @@ interface IAdminPostsIndexProps {
 
 const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props): JSX.Element => {
   return (
-    <React.Fragment>
-      <Grid.Row className={ adminPostsIndexStyle.menuRow }>
-        <AdminMenu />
-      </Grid.Row>
+    <AdminLayout>
       <Grid.Row className={ adminPostsIndexStyle.postsRow }> 
       </Grid.Row>
-    </React.Fragment>
+    </AdminLayout>     
   );
 };
 
