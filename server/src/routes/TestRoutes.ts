@@ -1,17 +1,16 @@
 import { Router } from "express";
+import type { IGenericController } from "../_types/abstracts/DefaultController";
 
 export default class TestRoutes {
   private router: Router;
-  private controller: any;
-  constructor(router: Router, controller: any) {
+  private controller: IGenericController;
+  constructor(router: Router, controller: IGenericController) {
     this.router = router;
-    this.controller = new controller();
+    this.controller = controller;
     this.initialize();
   }
 
   private initialize(): void {
-    console.log(13)
-    console.log(this.controller.test)
-    this.router.route("/api/test").get(this.controller.test);
+    this.router.route("/api/test").get(this.controller.index);
   }
 }

@@ -1,14 +1,17 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
+import { IGenericController } from "../_types/abstracts/DefaultController";
 
 export default class TestController {
 
-  test(req: Request, res: Response) {
+  index(req: Request, res: Response<any>): Promise<Response<any, Record<string, any>>> {
     console.log(req);
-    return res.status(200).json({
-      responseMsg: "All ok",
-      data: {
-        message: "test ok"
-      }
+    return Promise.resolve().then(() => {
+      return res.status(200).json({
+        responseMsg: "All ok",
+        data: {
+          message: "test ok"
+        }
+      });
     });
   }
 };
