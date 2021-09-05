@@ -1,8 +1,8 @@
 import express, { Router } from "express";
-import type { Request, Response } from "express";
-import { parse } from "url";
-import { createServer, Server as HTTPServer } from "http";
 import next from "next";
+import type { Request, Response } from "express";
+// database and routes //
+import mongoSetup from "./database/mongoSetup";
 import combineRoutes from "./routes/CombineRoutes";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -18,6 +18,7 @@ combineRoutes(router);
 (async () => {
   try {
     await app.prepare();
+    await mongoSetup();
     const server = express();
     server.use(router);
     server.all("*", (req: Request, res: Response) => {

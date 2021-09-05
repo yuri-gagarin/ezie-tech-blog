@@ -1,7 +1,7 @@
 import BlogPost from "../models/BlogPost";
 import type { Request, Response } from "express";
 import type { IGenericController } from "../_types/abstracts/DefaultController";
-import type { BlogPostClientData, IndexBlogPostRes, OneBlogPostRes, CreateBlogPostRes, EditBlogPostRes } from "../_types/blog_posts/blogPostTypes";
+import type { BlogPostClientData, IndexBlogPostRes, OneBlogPostRes, CreateBlogPostRes, EditBlogPostRes, DeleteBlogPostRes } from "../_types/blog_posts/blogPostTypes";
 
 export default class BlogPostsController implements IGenericController {
   index(req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> {
@@ -54,7 +54,6 @@ export default class BlogPostsController implements IGenericController {
     })
   }
   edit(req: Request, res: Response<EditBlogPostRes>): Promise<Response<EditBlogPostRes>> {
-
     const blogPostData = req.body.blogPostData as BlogPostClientData;
     const { title, author, content, keywords = [], live } = blogPostData;
     // tihs will need to be validated later //
@@ -71,6 +70,18 @@ export default class BlogPostsController implements IGenericController {
     .catch((error) => {
       return this.generalErrorResponse(res, { status: 500, error });
     })
+  }
+  delete(req: Request, res: Response): Promise<Response<DeleteBlogPostRes>> {
+    const { blog_post_id } = req.params;
+    if (!blog_post_id) return this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve blog post to delete") });
+
+    return BlogPost.findOneAndDelete({ _id: blog_post_id }).exec()
+      .then((deletedBlogPost) => {
+        return res.status(200).json({
+          responseMsg: "Blog post deleted", deletedBlogPost
+        });
+      })
+      .catch((error) => this.generalErrorResponse(res, { error }) );
   }
 
 
