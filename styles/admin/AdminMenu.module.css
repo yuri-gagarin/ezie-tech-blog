@@ -1,0 +1,11 @@
+.adminMenuRow {
+  border: 5px solid red !important;
+  padding: 0 !important;
+  height: 50px;
+}
+.adminMenuFile {
+  margin-left: 5px;
+  border: 1px solid purple;
+  border-radius: 3px;
+  padding: 7px 5px 0 7px;
+}

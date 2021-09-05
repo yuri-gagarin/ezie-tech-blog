@@ -1,0 +1,17 @@
+.adminLoginWrapper {
+  width: 100%;
+  height: calc(100vh - 100px);
+  border: 10px solid green;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.adminLoginForm {  
+  height: 50%;
+  width: 50%;
+  padding-top: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  border: 5px solid purple !important;
+  border-radius: 5px;
+}
