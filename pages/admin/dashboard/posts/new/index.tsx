@@ -3,6 +3,8 @@ import { Grid } from "semantic-ui-react";
 // additional components //
 import { AdminLayout } from '../../../../../components/admin/AdminLayout';
 import { PostForm } from "../../../../../components/admin/forms/PostForm";
+import { AdminPostNav } from '../../../../../components/admin/posts/AdminPostNav';
+import { AdminPostPreview } from '../../../../../components/admin/posts/AdminPostPreview';
 // types //
 // styles //
 import adminNewPostsStyle from "../../../../../styles/admin/AdminNewPost.module.css";
@@ -21,6 +23,7 @@ type PostFormState = {
 
 const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.Element => {
   const [ postFormState, setPostFormState ] = React.useState<PostFormState>({ postTitle: "", postAuthor: "", postCategories: "", postContent: "" });
+  const [ postCategoriesArr, setPostCategoriesArr ] = React.useState<string[]>([]);
 
   const updateTitle = (postTitle: string): void => {
     setPostFormState({ ...postFormState, postTitle });
@@ -35,10 +38,17 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     setPostFormState({ ...postFormState, postContent });
   };
 
+  React.useEffect(() => {
+    setPostCategoriesArr(postFormState.postCategories.split(","));
+  }, [ postFormState.postCategories ]);
+
   return (
     <AdminLayout>
+      <Grid.Row className={ adminNewPostsStyle.navRow }>
+        <AdminPostNav />
+      </Grid.Row>
       <Grid.Row className={ adminNewPostsStyle.previewRow }>
-        <Grid.Column width={ 8 }>
+        <Grid.Column width={ 8 } style={{ height: "100%" }}>
           <PostForm 
             updateTitle={ updateTitle }
             updateAuthor={ updateAuthor }
@@ -46,8 +56,11 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
             updateContent={ updateContent }
           />
         </Grid.Column>
-        <Grid.Column width={ 8 }>
-
+        <Grid.Column width={ 8 } style={{ height: "100%" }}>
+          <AdminPostPreview 
+            postCategoriesArr={ postCategoriesArr } 
+            { ...postFormState }
+          />
         </Grid.Column>
       </Grid.Row>
     </AdminLayout>

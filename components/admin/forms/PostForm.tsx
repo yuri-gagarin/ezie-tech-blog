@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Form } from 'semantic-ui-react';
+// styles //
+import styles from "../../../styles/admin/AdminPostForm.module.css";
 
 interface IPostFormProps {
   updateTitle: (title: string) => void;
@@ -39,7 +41,7 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
       </Form.Field>
       <Form.Field>
         <label>Content:</label>
-        <Form.TextArea onChange={ handleTextAreaChange } />
+        <Form.TextArea className={ styles.postTextArea } onChange={ handleTextAreaChange } />
       </Form.Field>
     </Form>
   );

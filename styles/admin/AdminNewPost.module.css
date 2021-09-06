@@ -1,5 +1,10 @@
+.navRow {
+  padding: 0 !important;
+  height: 40px;
+  align-items: center !important;
+}
 .previewRow {
   width: 100%;
-  height: 100%;
-  border: 15px solid red;
+  height: calc(100% - 80px);
+  overflow: hidden;
 }
