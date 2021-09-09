@@ -1,9 +1,9 @@
 import BlogPost from "../models/BlogPost";
 import type { Request, Response } from "express";
-import type { IGenericController } from "../_types/abstracts/DefaultController";
+import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import type { BlogPostClientData, IndexBlogPostRes, OneBlogPostRes, CreateBlogPostRes, EditBlogPostRes, DeleteBlogPostRes } from "../_types/blog_posts/blogPostTypes";
 
-export default class BlogPostsController implements IGenericController {
+export default class BlogPostsController implements ICRUDController {
   index(req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> {
     return BlogPost.find({}).exec()
       .then((blogPosts) => {

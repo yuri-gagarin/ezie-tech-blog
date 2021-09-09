@@ -4,6 +4,8 @@ import type { Request, Response } from "express";
 // database and routes //
 import mongoSetup from "./database/mongoSetup";
 import combineRoutes from "./routes/CombineRoutes";
+// passport and auth //
+import PassportController from "./controllers/PassportController";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -14,6 +16,9 @@ const port = process.env.PORT || 3000;
 const router = Router({});
 combineRoutes(router);
 
+// 
+export const PassportContInstance = new PassportController().initialize();
+
 /* to rewrite as a class */
 (async () => {
   try {
@@ -21,6 +26,7 @@ combineRoutes(router);
     await mongoSetup();
     const server = express();
     server.use(router);
+    server.use(PassportContInstance.initialize());
     server.all("*", (req: Request, res: Response) => {
       return handle(req, res);
     });

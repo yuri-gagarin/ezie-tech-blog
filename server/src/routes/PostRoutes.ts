@@ -1,9 +1,9 @@
 import type { Router  } from "express";
-import type { IGenericController } from "../_types/abstracts/DefaultController";
-import { RoutesController } from "../_types/abstracts/RoutesTypes";
+import type { ICRUDController } from "../_types/abstracts/DefaultController";
+import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
 
-export default class PostRoutes extends RoutesController {
-  constructor(router: Router, controller: IGenericController) {
+export default class PostRoutes extends CRUDRoutesController {
+  constructor(router: Router, controller: ICRUDController) {
     super(router, controller);
     this.initialize();
   }

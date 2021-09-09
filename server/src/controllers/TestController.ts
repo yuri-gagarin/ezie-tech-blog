@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import { IGenericController } from "../_types/abstracts/DefaultController";
 
 export default class TestController {
 
