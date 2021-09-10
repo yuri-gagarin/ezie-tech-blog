@@ -25,7 +25,7 @@ export abstract class CRUDRoutesController {
     if (middleWare) {
       this.router
         .route(route)
-        .get([ ...middleWare, this.controller.getOne ]);
+        .get([ ...middleWare ], this.controller.getOne);
     } else {
       this.router
         .route(route)

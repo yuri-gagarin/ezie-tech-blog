@@ -21,7 +21,7 @@ export default class AuthRoutes {
   private loginRoute() {
     this.router
       .route("/api/login")
-      .post([ PassportContInstance.authenticate("login"), this.controller.login ]);
+      .post([ PassportContInstance.authenticate("login", { session: false }), this.controller.login ]);
   }
   private logoutRoute() {
     this.router

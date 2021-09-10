@@ -13,8 +13,8 @@ export interface IGenericAuthController {
   logout: (req: Request, res: Response) => Promise<Response>;
 };
 
-export abstract class  BasicController {
-  
+export abstract class BasicController {
+
   protected generalErrorResponse(res: Response, { status, responseMsg, error }: { status?: number, responseMsg?: string, error?: any }): Promise<Response> {
     const _status = status ? status : 500;
     const _responseMsg = responseMsg ? responseMsg : "An error occured";

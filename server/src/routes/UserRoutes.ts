@@ -2,18 +2,18 @@ import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
 
-export default class PostRoutes extends CRUDRoutesController {
+export default class UserRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
     super(router, controller);
     this.initialize();
   }
 
   protected initialize() {
-    this.index("/api/posts");
-    this.getOne("/api/posts/:post_id");
-    this.create("/api/posts");
-    this.edit("/api/posts/:post_id");
-    this.delete("/api/posts/:post_id");
+    this.index("/api/users");
+    this.getOne("/api/users/:user_id");
+    this.create("/api/users");
+    this.edit("/api/users/:user_id");
+    this.delete("/api/users/:user_id");
   }
 
   protected index(route: string): void {
