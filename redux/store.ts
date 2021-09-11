@@ -1,6 +1,7 @@
 import { createStore, AnyAction, Store, combineReducers, compose } from 'redux';
 import { createWrapper, Context, HYDRATE } from 'next-redux-wrapper';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import combinedReducer from './reducers/combinedReducer';
 import type { IGeneralState } from "./_types/generalTypes";
 // helpers //
 import { generateEmptyPostState, generateEmptyUserState } from "./_helpers/mockData";
@@ -23,7 +24,7 @@ const rootReducer = (state: State = initialState, action: AnyAction) => {
     case 'TICK':
       return {...state, tick: action.payload};
     default:
-      return state;
+      return { ...combinedReducer(initialState, action) }
   }
 };
 

@@ -1,9 +1,13 @@
 import type { BlogPostData } from "../../server/src/_types/blog_posts/blogPostTypes";
+import type { BlogPostAction } from "./blog_posts/actionTypes";
+import type { UserAction } from "./users/actionTypes";
 
 export interface IGeneralState  {
   usersState: IUserState;
   blogPostsState: IBlogPostState;
 }
+
+export type IGeneralAppAction = BlogPostAction | UserAction;
 
 export interface IUserState {
   status: number;
