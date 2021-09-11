@@ -1,17 +1,24 @@
 import { createStore, AnyAction, Store, combineReducers, compose } from 'redux';
 import { createWrapper, Context, HYDRATE } from 'next-redux-wrapper';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import type { IGeneralState } from "./_types/generalTypes";
+// helpers //
+import { generateEmptyPostState, generateEmptyUserState } from "./_helpers/mockData";
 
 
-export interface State {
+export interface State extends IGeneralState {
   test: string;
 }
 
-// create your reducer
-const rootReducer = (state: State = { test: 'init' }, action: AnyAction) => {
+const initialState: State = {
+  test: "init",
+  userState: generateEmptyUserState(),
+  blogPostState: generateEmptyPostState()
+};
+
+const rootReducer = (state: State = initialState, action: AnyAction) => {
   switch (action.type) {
     case HYDRATE:
-      // Attention! This will overwrite client state! Real apps should use proper reconciliation.
       return {...state, ...action.payload};
     case 'TICK':
       return {...state, tick: action.payload};

@@ -10,18 +10,14 @@ import { wrapper } from "../redux/store";
 
 class WrappedApp extends App<AppInitialProps> {
   public static getInitialProps = wrapper.getInitialAppProps(store => async ({Component, ctx}) => {
-    console.log(13);
-    console.log(store);
     return {
       pageProps: {
-        // Call page-level getInitialProps
-        // DON'T FORGET TO PROVIDE STORE TO PAGE
         ...(Component.getInitialProps ? await Component.getInitialProps({...ctx, store}) : {}),
-        // Some custom thing for all pages
         pathname: ctx.pathname,
       },
-  };
-});
+    };
+  });
+  
   public render () {
     const { Component, pageProps } = this.props;
     return (
