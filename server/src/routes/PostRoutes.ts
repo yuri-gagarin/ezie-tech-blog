@@ -1,6 +1,7 @@
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
+import { PassportContInstance } from "../server";
 
 export default class PostRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -23,12 +24,12 @@ export default class PostRoutes extends CRUDRoutesController {
     super.getOne(route);
   }
   protected create(route: string): void {
-    super.create(route);
+    super.create(route, [ PassportContInstance.authenticate("authStrategy")]);
   }
   protected edit(route: string): void {
-    super.edit(route);
+    super.edit(route, [ PassportContInstance.authenticate("authStrategy")]);
   } 
   protected delete(route: string): void {
-    super.delete(route);
+    super.delete(route, [ PassportContInstance.authenticate("authStrategy")]);
   }
 };
