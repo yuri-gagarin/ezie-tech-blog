@@ -12,8 +12,8 @@ export interface State extends IGeneralState {
 
 const initialState: State = {
   test: "init",
-  userState: generateEmptyUserState(),
-  blogPostState: generateEmptyPostState()
+  usersState: generateEmptyUserState(),
+  blogPostsState: generateEmptyPostState()
 };
 
 const rootReducer = (state: State = initialState, action: AnyAction) => {

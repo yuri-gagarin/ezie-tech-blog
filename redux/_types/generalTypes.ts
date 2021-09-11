@@ -1,15 +1,17 @@
 import type { BlogPostData } from "../../server/src/_types/blog_posts/blogPostTypes";
 
 export interface IGeneralState  {
-  userState: IUserState;
-  blogPostState: IBlogPostState;
+  usersState: IUserState;
+  blogPostsState: IBlogPostState;
 }
 
 export interface IUserState {
   status: number;
   responseMsg: string;
   loading: boolean;
-  user: UserData | AdminData;
+  currentLoggedInUser: UserData | AdminData;
+  currentSelectedUser: UserData | AdminData;
+  usersArr: UserData[] | AdminData[];
   error: any | null;
   errorMessages: string[] | null;
 }

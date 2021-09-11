@@ -26,9 +26,13 @@ export const generateEmptyUserState = (): IUserState => {
     status: 200,
     responseMsg: "",
     loading: false,
-    user: {
+    currentSelectedUser: {
       _id: "", firstName: "", lastName: "", email: "", confirmed: false, editedAt: "", createdAt: ""
     },
+    currentLoggedInUser: {
+      _id: "", firstName: "", lastName: "", email: "", confirmed: false, editedAt: "", createdAt: ""
+    },
+    usersArr: [],
     error: null,
     errorMessages: null
   }; 
