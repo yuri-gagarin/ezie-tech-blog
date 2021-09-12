@@ -7,6 +7,7 @@ import { HomeTech } from '../components/home/HomeTech';
 import { HomeProjects } from "../components/home/HomeProjects";
 
 export default function Home() {
+
   return ( 
     <React.Fragment>
       <Head>

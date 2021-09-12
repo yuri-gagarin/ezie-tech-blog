@@ -28,9 +28,9 @@ export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>): 
   try {
     const res: AxiosResponse<GetBlogPostsRes> = await axios(reqOpts);
     const { status } = res;
-    const { responseMsg, posts } = res.data;
-    return fetchBlogPosts({ status, responseMsg, blogPosts: posts });
+    const { responseMsg, blogPosts } = res.data;
+    return dispatch(fetchBlogPosts({ status, responseMsg, blogPosts }));
   } catch (error) {
-
+    console.log(error);
   }
 };

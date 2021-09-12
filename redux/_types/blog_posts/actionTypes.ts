@@ -82,7 +82,7 @@ export type ClearBlogPost = {
 
 export type GetBlogPostsRes = {
   responseMsg: string;
-  posts: BlogPostData[];
+  blogPosts: BlogPostData[];
 }
 
 

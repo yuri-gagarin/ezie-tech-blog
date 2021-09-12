@@ -1,5 +1,13 @@
-import type { BlogPostData } from "../../../server/src/_types/blog_posts/blogPostTypes";
-
+export type BlogPostData = {
+  _id: string;
+  title: string;
+  author: string;
+  content: string;
+  keywords: string[];
+  live: boolean;
+  editedAt: Date | string;
+  createdAt: Date | string;
+};
 export interface IBlogPostState {
   status: number;
   responseMsg: string;
