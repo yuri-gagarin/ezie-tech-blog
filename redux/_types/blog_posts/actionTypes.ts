@@ -4,7 +4,6 @@ import { BlogPostData } from "../../../server/src/_types/blog_posts/blogPostType
 export type BlogPostAPIRequest = {
   readonly type: "BlogPostsAPIRequest";
   readonly payload: {
-    status: number;
     responseMsg: string;
     loading: boolean;
   };
@@ -80,6 +79,11 @@ export type ClearBlogPost = {
     blogPost: BlogPostData;
   };
 };
+
+export type GetBlogPostsRes = {
+  responseMsg: string;
+  posts: BlogPostData[];
+}
 
 
 

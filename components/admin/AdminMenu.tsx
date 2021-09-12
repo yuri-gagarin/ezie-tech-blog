@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Dropdown, Grid, Menu } from "semantic-ui-react";
 import { useRouter } from 'next/router';
+import { useSelector } from "react-redux";
 // styles //
 import adminMenuStyles from "../../styles/admin/AdminMenu.module.css";
+import { IGeneralState } from '../../redux/_types/generalTypes';
 
 interface IAdminMenuProps {
 }
@@ -10,10 +12,14 @@ interface IAdminMenuProps {
 export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.Element => {
 
   const router = useRouter();
+  const { usersState, blogPostsState } = useSelector((state: IGeneralState) => state);
 
   const handleGoToNewPost = (): void => {
     router.push("/admin/dashboard/posts/new");
   };
+
+  React.useEffect(() => {
+  }, []);
 
   return (
     <Grid.Row className={ adminMenuStyles.adminMenuRow } >

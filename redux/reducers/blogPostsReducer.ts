@@ -9,7 +9,6 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
     case "BlogPostsAPIRequest": {
       return {
         ...state,
-        status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
         error: null,

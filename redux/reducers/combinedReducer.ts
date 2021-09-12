@@ -1,17 +1,9 @@
 import { AnyAction, combineReducers } from "redux";
-import type { IGeneralState } from "../_types/generalTypes";
+import type { IGeneralAppAction, IGeneralState } from "../_types/generalTypes";
 import blogPostsReducer from "./blogPostsReducer";
 import usersReducer from "./usersReducer";
 
-/*
-export default function combinedReducer(): IGeneralState {
-  return combineReducers<IGeneralState>({
-    usersState: usersReducer,
-    blogPostsState: blogPostsReducer
-  })
-}
-*/
-export default combineReducers<IGeneralState, AnyAction>({
+export default combineReducers<IGeneralState, IGeneralAppAction>({
   usersState: usersReducer,
   blogPostsState: blogPostsReducer
 });
