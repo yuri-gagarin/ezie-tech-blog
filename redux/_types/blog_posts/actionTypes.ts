@@ -87,4 +87,4 @@ export type GetBlogPostsRes = {
 
 
 
-export type BlogPostAction = BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | SetBlogPostError;
+export type BlogPostAction = BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | SetBlogPost | SetBlogPostError;

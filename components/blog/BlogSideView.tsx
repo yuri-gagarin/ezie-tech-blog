@@ -1,5 +1,9 @@
 import React from "react";
 import { Button, Card, Grid, Image } from "semantic-ui-react";
+import { useRouter } from "next/router";
+// redux //
+import { useDispatch, useSelector } from "react-redux";
+import { handleSetCurrentBlogPost } from "../../redux/actions/blogPostActions";
 // additional components //
 import { BlogSortControls } from "./BlogSortControls";
 // styles //
@@ -8,18 +12,23 @@ import type { BlogPostData } from "../../redux/_types/blog_posts/dataTypes";
 // helpers //
 import { useWindowSize } from "../_helpers/monitorWindowSize";
 import { trimStringToSpecificLength, formatTimeString } from "../_helpers/displayHelpers";
+import { IGeneralState } from "../../redux/_types/generalTypes";
 
 interface IBlogViewProps {
   blogPosts: BlogPostData[];
 }
 
 export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts }): JSX.Element => {
-
   const { width } = useWindowSize();
+  const dispatch = useDispatch();
+  const { push, pathname } = useRouter();
+  const blogPostState = useSelector((state: IGeneralState) => state.blogPostsState);
 
-  const handleBlogPostSelect = ():void => {
-
+  const handleBlogPostSelect = (blogPostId: string): void => {
+    const blogPost: BlogPostData = handleSetCurrentBlogPost(dispatch, blogPostId, blogPostState);
+    push(`${pathname}/${blogPost.title}`);
   };
+
   return (
     width > 1200 ?
       <Grid.Column largeScreen={4} tablet={8} mobile={16} className={ blogViewStyle.gridColumn }>
@@ -30,7 +39,7 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts }): JSX.Eleme
           {
             blogPosts.map((blogPost) => {
               return (
-                <Card key={ blogPost._id } fluid className={ blogViewStyle.sideCard } onClick={ handleBlogPostSelect }>
+                <Card key={ blogPost._id } fluid className={ blogViewStyle.sideCard } onClick={ () => handleBlogPostSelect(blogPost._id) }>
                   <Image src="/images/blog1.jpg" size="small" alt="image" />
                   <Card.Content>
                     <Card.Header>{ blogPost.title }</Card.Header>
@@ -38,7 +47,7 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts }): JSX.Eleme
                     <Card.Description>{ trimStringToSpecificLength(blogPost.content, 50 )}</Card.Description>
                   </Card.Content>
                   <Card.Content>
-                    <Button color="blue" content="Read" />
+                    <Button onClick={ () => handleBlogPostSelect(blogPost._id) } color="blue" content="Read" />
                   </Card.Content>
                 </Card>
               )

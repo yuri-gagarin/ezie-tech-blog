@@ -15,6 +15,14 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
         errorMessages: null
       };
     }
+    case "SetBlogPost": {
+      return {
+        ...state,
+        currentBlogPost: action.payload.blogPost,
+        error: null,
+        errorMessages: null
+      };
+    };
     case "GetBlogPosts": {
       return {
         ...state,
