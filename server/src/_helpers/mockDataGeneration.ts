@@ -3,7 +3,7 @@ import BlogPost from "../models/BlogPost";
 
 export const generateMockBlogPosts = async () => {
   console.log("Generating mock Blog Posts");
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 5; i++) {
     const ranNum: number = Math.round(Math.random() * 20);
     try {
       await BlogPost.create({ 

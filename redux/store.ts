@@ -23,4 +23,4 @@ const rootReducer = (state: IGeneralState= initialState, action: AnyAction & IGe
 };
 
 const makeStore = (context: Context) => createStore<IGeneralState, AnyAction, any, any>(rootReducer, composeWithDevTools());
-export const wrapper = createWrapper<Store<IGeneralState>>(makeStore, { debug: true });
+export const wrapper = createWrapper<Store<IGeneralState>>(makeStore, { debug: false });

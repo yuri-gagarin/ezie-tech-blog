@@ -5,20 +5,47 @@ import { BlogMainView } from "../../components/blog/BlogMainView";
 import { BlogHeader } from "../../components/blog/BlogHeader";
 import { BlogSideView } from "../../components/blog/BlogSideView";
 // redux actions //
+import { wrapper } from "../../redux/store";
 import { handleFetchBlogPosts } from "../../redux/actions/blogPostActions";
 // styles //
 import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
 // types //
 import type { IGeneralState } from "../../redux/_types/generalTypes";
+import type { BlogPostData } from "../../redux/_types/blog_posts/dataTypes";
 
-const BlogPage: React.FC<{}> = (): JSX.Element => {
+export const getServerSideProps = wrapper.getServerSideProps((store) => async() => {
+  /*
+  const conf: AxiosRequestConfig = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    url: `${process.env.NEXT_PUBLIC_SERVER_BASE_URL}/api/posts`
+  }
+  const res = await axios(conf);
+  const { responseMsg, blogPosts }= res.data as { responseMsg: string; blogPosts: BlogPostData[] };
+  */
+ const dispatch = store.dispatch;
+ await handleFetchBlogPosts(dispatch)
+  return {
+    props: { } 
+  };
+});
+interface IServerSideProps {
+  blogPosts: BlogPostData[];
+}
+interface IBlogPageProps extends IServerSideProps {
+
+}
+const BlogPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
 
   const dispatch = useDispatch();
   const { blogPosts } = useSelector((state: IGeneralState) => state.blogPostsState)
-
+  /*
   React.useEffect(() => {
     if (dispatch) handleFetchBlogPosts(dispatch);
   }, [ dispatch ]);
+  */
 
   return (
     <React.Fragment>

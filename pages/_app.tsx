@@ -1,6 +1,5 @@
 import React from "react";
 import App, { AppInitialProps, AppContext } from "next/app";
-import { useDispatch, Provider } from "react-redux";
 import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
 import Layout from '../components/layout/Layout';

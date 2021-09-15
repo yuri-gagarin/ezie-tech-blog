@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Grid, Image } from "semantic-ui-react";
+import { Button, Card, Grid, Image } from "semantic-ui-react";
 // additional components //
 import { BlogSortControls } from "./BlogSortControls";
 // styles //
@@ -36,6 +36,9 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts }): JSX.Eleme
                     <Card.Header>{ blogPost.title }</Card.Header>
                     <Card.Meta>{ formatTimeString((blogPost.createdAt as string), { yearMonth: true }) }</Card.Meta>
                     <Card.Description>{ trimStringToSpecificLength(blogPost.content, 50 )}</Card.Description>
+                  </Card.Content>
+                  <Card.Content>
+                    <Button color="blue" content="Read" />
                   </Card.Content>
                 </Card>
               )
