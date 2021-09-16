@@ -16,7 +16,7 @@ const fetchBlogPosts = (data: { status: number; responseMsg: string; blogPosts: 
     payload: { ...data, loading: false }
   } ;
 };
-const setBlogPost = (data: { blogPost: BlogPostData}): SetBlogPost => {
+const setBlogPost = (data: { blogPost: BlogPostData; currentBlogPostState: IBlogPostState }): SetBlogPost => {
   return {
     type: "SetBlogPost",
     payload: { ...data }
@@ -28,7 +28,7 @@ const setBlogPost = (data: { blogPost: BlogPostData}): SetBlogPost => {
 // non API related exports //
 export const handleSetCurrentBlogPost = (dispatch: Dispatch<BlogPostAction>, blogPostId: string, currentBlogPostState: IBlogPostState): BlogPostData => {
   const blogPost = currentBlogPostState.blogPosts.filter((blogPostData) => blogPostData._id === blogPostId)[0];
-  dispatch(setBlogPost({ blogPost }));
+  dispatch(setBlogPost({ blogPost, currentBlogPostState }));
   return blogPost;
 };
 export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>): Promise<GetAllBlogPosts> => {

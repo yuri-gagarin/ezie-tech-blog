@@ -1,4 +1,4 @@
-import { BlogPostData } from "./dataTypes";
+import { BlogPostData, IBlogPostState } from "./dataTypes";
 
 // api related actions //
 export type BlogPostAPIRequest = {
@@ -71,6 +71,7 @@ export type SetBlogPost = {
   readonly type: "SetBlogPost";
   readonly payload: {
     blogPost: BlogPostData;
+    currentBlogPostState: IBlogPostState;
   };
 };
 export type ClearBlogPost = {

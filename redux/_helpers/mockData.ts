@@ -2,7 +2,7 @@ import type { IBlogPostState, IUserState } from "../_types/generalTypes";
 
 export const generateEmptyPostState = (): IBlogPostState => {
   return {
-    status: 200,
+    status: null,
     responseMsg: "",
     loading: false,
     currentBlogPost: {

@@ -18,6 +18,7 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
     case "SetBlogPost": {
       return {
         ...state,
+        ...action.payload.currentBlogPostState,
         currentBlogPost: action.payload.blogPost,
         error: null,
         errorMessages: null

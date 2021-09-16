@@ -10,7 +10,7 @@ export interface IGeneralState  {
 export type IGeneralAppAction = BlogPostAction | UserAction;
 
 export interface IUserState {
-  status: number;
+  status: number | null;
   responseMsg: string;
   loading: boolean;
   currentLoggedInUser: UserData | AdminData;
@@ -20,7 +20,7 @@ export interface IUserState {
   errorMessages: string[] | null;
 }
 export interface IBlogPostState {
-  status: number;
+  status: number | null;
   responseMsg: string;
   loading: boolean;
   blogPosts: BlogPostData[];

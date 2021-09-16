@@ -5,14 +5,12 @@ import 'semantic-ui-css/semantic.min.css';
 import Layout from '../components/layout/Layout';
 import { wrapper } from "../redux/store";
 
-
-
 class WrappedApp extends App<AppInitialProps> {
   public static getInitialProps = wrapper.getInitialAppProps(store => async ({Component, ctx}) => {
     return {
       pageProps: {
         ...(Component.getInitialProps ? await Component.getInitialProps({...ctx, store}) : {}),
-        pathname: ctx.pathname,
+        pathname: ctx.pathname
       },
     };
   });
