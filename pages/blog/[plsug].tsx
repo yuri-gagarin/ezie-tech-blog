@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { Button } from "semantic-ui-react"; 
+import Head from "next/head";
+import { useRouter } from "next/router";
 // redux //
 import { useSelector } from "react-redux";
 import ReactMarkdown from 'react-markdown/react-markdown.min';
@@ -17,10 +20,16 @@ interface IPostPageProps {
 
 const BlogPostPage: React.FunctionComponent<IPostPageProps> = ({ }): JSX.Element => {
   const { currentBlogPost } = useSelector((state: IGeneralState) => state.blogPostsState);
+  const router = useRouter();
+
   return (
+    <>
+    <Head>
+      <title>{ currentBlogPost.title }</title>
+    </Head>
     <div className={ styles.blogPostPageWrapper }>
       <div className={ styles.blogPostPageTitle }>
-        <div className={ styles.blogPostTitleContent }>Blog Post Title here</div>
+        <div className={ styles.blogPostTitleContent }>{ currentBlogPost.title }</div>
       </div>
       <div className={ styles.blogPostPageMeta }>
         <div className={ styles.blogPostAuthorAndTimeStamps }>
@@ -31,9 +40,9 @@ const BlogPostPage: React.FunctionComponent<IPostPageProps> = ({ }): JSX.Element
             <span>Posted:</span><span>{ formatTimeString(currentBlogPost.createdAt as string, { yearOnly: true }) }</span>
           </div>
         </div>
-        <div className={ styles.blogPostCategoriesDiv }>
+        <div className={ styles.blogPostKeywordsDiv }>
           {
-            currentBlogPost.keywords.map((keyword) => <span key={ keyword } className={  styles.blogPostCategoriesSpan } >{ keyword }</span>)
+            currentBlogPost.keywords.map((keyword) => <span key={ keyword } className={  styles.blogPostKeywordsSpan } >{ keyword }</span>)
           }
         </div>
       </div>
@@ -60,7 +69,16 @@ const BlogPostPage: React.FunctionComponent<IPostPageProps> = ({ }): JSX.Element
             }}
           />
       </div>
+      <div className={ styles.blogPostControlsDiv }>
+        <Button.Group>
+          <Button basic content="Back" color="violet" onClick={ () => router.back() } />
+          <Button basic content="Contact Author" color="green" />
+          <Button basic content="Contact Us" color="purple" />
+
+        </Button.Group>
+      </div>
     </div>
+    </>
   );
 };
 

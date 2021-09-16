@@ -6,6 +6,7 @@ export interface IBlogPost extends Document  {
   title: string;
   author: string;
   content: string;
+  category: "informational" | "beginner" | "intermediate" | "advanced";
   keywords: string[];
   slug: string;
   live: boolean;
@@ -32,6 +33,7 @@ const blogPostSchema = new Schema<IBlogPost>({
   },
   author: { type: String, required: true },
   content: { type: String, required: true },
+  category: { type: String, required: true, default: "informational" },
   keywords: { type: [ String ], required: false, default: [] },
   slug: { type: String },
   live: { type: Boolean, required: true, default: false },

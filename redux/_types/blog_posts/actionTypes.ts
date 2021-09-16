@@ -1,4 +1,4 @@
-import { BlogPostData } from "../../../server/src/_types/blog_posts/blogPostTypes";
+import { BlogPostData } from "./dataTypes";
 
 // api related actions //
 export type BlogPostAPIRequest = {

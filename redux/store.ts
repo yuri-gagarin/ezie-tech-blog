@@ -1,5 +1,4 @@
 import { createStore, AnyAction, Store } from 'redux';
-import { useDispatch } from "react-redux";
 import { createWrapper, Context, HYDRATE } from 'next-redux-wrapper';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import combinedReducer from './reducers/combinedReducer';

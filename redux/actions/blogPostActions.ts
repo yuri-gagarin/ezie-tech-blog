@@ -1,9 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import type { AxiosRequestConfig } from "axios";
 import type { Dispatch } from "redux";
-import type { BlogPostData } from "../../server/src/_types/blog_posts/blogPostTypes";
 import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, GetBlogPostsRes, SetBlogPost } from "../_types/blog_posts/actionTypes";
-import type { IBlogPostState } from "../_types/blog_posts/dataTypes";
+import type { IBlogPostState, BlogPostData } from "../_types/blog_posts/dataTypes";
 
 const blogPostAPIRequest = (): BlogPostAPIRequest => {
   return {

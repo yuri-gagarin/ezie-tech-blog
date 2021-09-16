@@ -3,6 +3,8 @@ export type BlogPostData = {
   title: string;
   author: string;
   content: string;
+  category: "informational" | "beginner" | "intermediate" | "expert" | "";
+  slug: string;
   keywords: string[];
   live: boolean;
   editedAt: Date | string;

@@ -1,18 +1,26 @@
 .gridColumn {
+  position: relative;
   height: 100%;
   border: 3px solid #8E2DE2;
   border-radius: 5px;
   padding: 0 !important;
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 .sortControlsWrapper {
   display: flex;
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 50px;
+  height: 100%;
   padding: 0px 5px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+.cardGroupWrapper {
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 .cardGroup {
   padding-top: 5px;

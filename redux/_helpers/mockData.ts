@@ -12,6 +12,8 @@ export const generateEmptyPostState = (): IBlogPostState => {
       content: "",
       live: false,
       keywords: [],
+      category: "",
+      slug: "",
       editedAt: "",
       createdAt: "",
     },

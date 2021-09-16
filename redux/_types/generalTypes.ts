@@ -1,4 +1,4 @@
-import type { BlogPostData } from "../../server/src/_types/blog_posts/blogPostTypes";
+import type { BlogPostData } from "./blog_posts/dataTypes";
 import type { BlogPostAction } from "./blog_posts/actionTypes";
 import type { UserAction } from "./users/actionTypes";
 

@@ -1,8 +1,5 @@
 import React from "react";
 import { Button, Card, Grid, Image } from "semantic-ui-react";
-// axios //
-import axiosInstance from "../axios/axiosInstance";
-import type { AxiosRequestConfig} from "axios";
 // styles //
 import blogEntryStyle from "../../styles/blog/BlogMainView.module.css";
 // types //
@@ -13,18 +10,11 @@ import { setDefaultBlogPosts, formatTimeString, trimStringToSpecificLength } fro
 
 interface IBlogMainViewProps {
   blogPosts: BlogPostData[];
+  navigateToBlogPost(blogPostId: string): void;
 }
-export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts }): JSX.Element => {
+export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, navigateToBlogPost }): JSX.Element => {
   const [ defaultBlogPostData, setDefaultBlogPostData ] = React.useState<BlogPostData[]>(setDefaultBlogPosts(blogPosts));
   const { width } = useWindowSize();
-
-  const handleBtnClick = (): void => {
-    const opts: AxiosRequestConfig = {
-      url: "/api/test",
-      method: "GET"
-    }
-    axiosInstance(opts).then(res => console.log(res)).catch(err => console.log(err));
-  };
 
   React.useEffect(() => {
     if (blogPosts.length > 0) setDefaultBlogPostData(setDefaultBlogPosts(blogPosts));
@@ -41,7 +31,7 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts }): JSX.E
             <Card.Description>{ trimStringToSpecificLength(defaultBlogPostData[0].content, 400) }</Card.Description>
           </Card.Content>
           <Card.Content>
-              <Button onClick={ handleBtnClick } content="Read..." />
+              <Button onClick={ () => navigateToBlogPost(defaultBlogPostData[0]._id) } content="Read..." />
             </Card.Content>
         </Card>
       </Card.Group>
