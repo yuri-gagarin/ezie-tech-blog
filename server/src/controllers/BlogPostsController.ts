@@ -1,39 +1,47 @@
-import BlogPost from "../models/BlogPost";
+import BlogPost, { IBlogPost } from "../models/BlogPost";
 import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { BlogPostClientData, IndexBlogPostRes, OneBlogPostRes, CreateBlogPostRes, EditBlogPostRes, DeleteBlogPostRes } from "../_types/blog_posts/blogPostTypes";
+import type { BlogPostClientData, IndexBlogPostRes, OneBlogPostRes, CreateBlogPostRes, EditBlogPostRes, DeleteBlogPostRes, FetchBlogPostsOpts } from "../_types/blog_posts/blogPostTypes";
 
 export default class BlogPostsController implements ICRUDController {
-  index(req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> {
-    return BlogPost.find({}).exec()
-      .then((blogPosts) => {
+  index = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
+    const { limit = 10, category, createdAt = "asc" } = req.query as FetchBlogPostsOpts;
+    let blogPosts: IBlogPost[];
+    console.log(10);
+    console.log(category);
+    if (category) {
+      try {
+        blogPosts = await BlogPost.find({ category }).limit(limit).sort({ createdAt }).exec();
         return res.status(200).json({
-          responseMsg: "Fetched",
-          blogPosts: blogPosts
+          responseMsg: `Fetched all posts with category ${category.toUpperCase()}.`, blogPosts
         });
-      })
-      .catch((error) => {
-        return res.status(500).json({
-          responseMsg: "Error",
-          error: error
+      } catch (error) {
+        return await this.generalErrorResponse(res, { error });
+      }
+    } else {
+      try {
+        blogPosts = await BlogPost.find({}).limit(limit).sort({ createdAt }).exec();
+        return res.status(200).json({
+          responseMsg: `Fetched all posts`, blogPosts
         });
-      });
-  }
-  getOne(req: Request, res: Response<OneBlogPostRes>): Promise<Response<OneBlogPostRes>> {
-    const { blog_post_id } = req.params;
-
-    if (!blog_post_id) {
-      return this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve post") });
+      } catch (error) {
+        return await this.generalErrorResponse(res, { error });
+      }
     }
-    return BlogPost.findOne({ _id: blog_post_id }).exec()
-      .then((blogPost) => {
-        return res.status(200).json({
-          responseMsg: "Fetched post", blogPost
-        });
-      })
-      .catch((error) => {
-        return this.generalErrorResponse(res, { status: 500, error });
-      });
+  }
+  getOne = async (req: Request, res: Response<OneBlogPostRes>): Promise<Response<OneBlogPostRes>> => {
+    const { blog_post_id } = req.params;
+    let blogPost: IBlogPost;
+  
+    if (!blog_post_id) {
+      return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve post") });
+    }
+    blogPost = await BlogPost.findOne({ _id: blog_post_id }).exec()
+    if (blogPost) {
+      return res.status(200).json({ responseMsg: "Fetched blog post", blogPost });
+    } else {
+      return await this.generalErrorResponse(res, { status: 404, error: new Error("Could not find post") });
+    }
   }
   create(req: Request, res: Response<CreateBlogPostRes>): Promise<Response<CreateBlogPostRes>> {
     const blogPostData = req.body.blogPostData as BlogPostClientData;

@@ -40,6 +40,8 @@ export const setDefaultBlogPosts = (blogPostData: BlogPostData[]): BlogPostData[
         title: "A default title",
         author: "Author",
         content: "Blog post content will go here",
+        category: "beginner",
+        slug: "slug",
         keywords: [ "default" ],
         live: true,
         createdAt: new Date(Date.now()).toISOString(),
@@ -50,3 +52,8 @@ export const setDefaultBlogPosts = (blogPostData: BlogPostData[]): BlogPostData[
   }
   return defaultPostData;
 };
+
+export const capitalizeString = (stringToCapitalize: string): string => {
+  return stringToCapitalize.slice(0, 1).toUpperCase() + stringToCapitalize.slice(1);
+};
+

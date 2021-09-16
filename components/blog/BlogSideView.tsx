@@ -4,7 +4,8 @@ import { Button, Card, Grid, Image } from "semantic-ui-react";
 import { BlogSortControls } from "./BlogSortControls";
 // styles //
 import blogViewStyle from "../../styles/blog/BlogSideView.module.css";
-import type { BlogPostData } from "../../redux/_types/blog_posts/dataTypes";
+// types //
+import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
 // helpers //
 import { useWindowSize } from "../_helpers/monitorWindowSize";
 import { trimStringToSpecificLength, formatTimeString } from "../_helpers/displayHelpers";
@@ -12,16 +13,17 @@ import { trimStringToSpecificLength, formatTimeString } from "../_helpers/displa
 interface IBlogViewProps {
   blogPosts: BlogPostData[];
   navigateToBlogPost(blogPostId: string): void;
+  handleBlogPostSort({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any>;
 }
 
-export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBlogPost }): JSX.Element => {
+export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBlogPost, handleBlogPostSort }): JSX.Element => {
   const { width } = useWindowSize();
 
   return (
     width > 1200 ?
       <Grid.Column largeScreen={4} tablet={8} mobile={16} className={ blogViewStyle.gridColumn }>
         <div className={ blogViewStyle.sortControlsWrapper }>
-          <BlogSortControls />
+          <BlogSortControls handleBlogPostSort={ handleBlogPostSort } />
           <div className={ blogViewStyle.cardGroupWrapper }>
             <Card.Group className={ blogViewStyle.cardGroup } centered >
             {

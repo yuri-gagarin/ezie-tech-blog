@@ -1,41 +1,48 @@
 import * as React from 'react';
-import { Dropdown, DropdownItem, DropdownItemProps, Icon, Menu } from "semantic-ui-react";
+import { Dropdown, DropdownItemProps, Icon, Menu } from "semantic-ui-react";
 // 
-import axiosInstance from "../axios/axiosInstance";
-import { AxiosRequestConfig } from "axios";
+//import axiosInstance from "../axios/axiosInstance";
+//import { AxiosRequestConfig } from "axios";
+import type { SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
 import styles from "../../styles/blog/BlogSortControls.module.css";
 
 interface IBlogSortControlsProps {
-
+  handleBlogPostSort({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any>;
 }
 
 type DropDownValue = "New" | "Old" | "Most Read";
-type CategoriesValue = "All" | "Informational" | "Begginner" | "Intermediate" | "Expert";
+type CategoriesValue = "All" | "Informational" | "Begginner" | "Intermediate" | "Advanced";
 type LocalState = {
   dropdownValue: DropDownValue;
   categoriesValue: CategoriesValue;
 }
 
-export const BlogSortControls: React.FunctionComponent<IBlogSortControlsProps> = (props): JSX.Element => {
+export const BlogSortControls: React.FunctionComponent<IBlogSortControlsProps> = ({ handleBlogPostSort }): JSX.Element => {
   const [ localState, setLocalState ] = React.useState<LocalState>({ dropdownValue: "New", categoriesValue: "All" });
 
   const handlePostSortClick = async (_, data: DropdownItemProps): Promise<void> => {
     const value = data.value as DropDownValue;
-    setLocalState({ ...localState, dropdownValue: value });
-    const req: AxiosRequestConfig = {
-      method: "GET",
-      url: "/api/test"
-    }
     try {
-      await axiosInstance(req)
-    } catch (err) {
-      console.log(err);
+      if (value === "New" || value === "Old") {
+        const date = value === "New" ? "desc" : "asc";
+        await handleBlogPostSort({ date });
+      } else {
+        await handleBlogPostSort({ popularity: value.toLocaleLowerCase() });
+      }
+      return setLocalState({ ...localState, dropdownValue: value });
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const handlePostCategorySortClick = async (_, data: DropdownItemProps): Promise<void> => {
-    const value = data.value as CategoriesValue;
-    setLocalState({ ...localState, categoriesValue: value });
+    const categoryVal = data.value as CategoriesValue;
+    try {
+      await handleBlogPostSort({ category: categoryVal.toLowerCase() as SearchCategories });
+      setLocalState({ ...localState, categoriesValue: categoryVal });
+    } catch (error) {
+      console.log(error);
+    }
   };
   
   return (
@@ -67,7 +74,7 @@ export const BlogSortControls: React.FunctionComponent<IBlogSortControlsProps> =
             <Dropdown.Item value="Intermediate" onClick={ handlePostCategorySortClick }>
               Intermediate Posts
             </Dropdown.Item>
-            <Dropdown.Item value="Expert" onClick={ handlePostCategorySortClick }>
+            <Dropdown.Item value="Advanced" onClick={ handlePostCategorySortClick }>
               Expert Posts
             </Dropdown.Item>
           </Dropdown.Menu>

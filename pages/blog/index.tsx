@@ -15,7 +15,7 @@ import { BlogSideView } from "../../components/blog/BlogSideView";
 import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
 // types //
 import type { IGeneralState } from "../../redux/_types/generalTypes";
-import type { BlogPostData } from "../../redux/_types/blog_posts/dataTypes";
+import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
 
 /*
 export const getServerSideProps = wrapper.getServerSideProps((store) => async() => {
@@ -44,6 +44,9 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
     const currentPost: BlogPostData = handleSetCurrentBlogPost(dispatch, blogPostId, blogPostState);
     router.push(`/blog/${currentPost.slug}`);
   };
+  const handleBlogPostSort = async ({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any> => {
+    if (category) return handleFetchBlogPosts(dispatch, { category })
+  };
 
   React.useEffect(() => {
     handleFetchBlogPosts(dispatch);
@@ -59,6 +62,7 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
         <BlogSideView 
           blogPosts={ blogPosts } 
           navigateToBlogPost={ navigateToBlogPost }
+          handleBlogPostSort={ handleBlogPostSort }
         />
         <BlogMainView 
           blogPosts={ blogPosts.length > 3 ? blogPosts.slice(0, 4) : blogPosts }

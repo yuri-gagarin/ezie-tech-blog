@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import type { AxiosRequestConfig } from "axios";
 import type { Dispatch } from "redux";
-import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, GetBlogPostsRes, SetBlogPost } from "../_types/blog_posts/actionTypes";
+import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, GetBlogPostsRes, SetBlogPost, FetchBlogPostsOpts } from "../_types/blog_posts/actionTypes";
 import type { IBlogPostState, BlogPostData } from "../_types/blog_posts/dataTypes";
 
 const blogPostAPIRequest = (): BlogPostAPIRequest => {
@@ -31,10 +31,12 @@ export const handleSetCurrentBlogPost = (dispatch: Dispatch<BlogPostAction>, blo
   dispatch(setBlogPost({ blogPost, currentBlogPostState }));
   return blogPost;
 };
-export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>): Promise<GetAllBlogPosts> => {
+export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts): Promise<GetAllBlogPosts> => {
+  const fetchParams = opts ? { ...opts } : { none: "none selected" };
   const reqOpts: AxiosRequestConfig = {
     method: "GET",
-    url: "/api/posts"
+    url: "/api/posts",
+    params: fetchParams
   };
 
   dispatch(blogPostAPIRequest());

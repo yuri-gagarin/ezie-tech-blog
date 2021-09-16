@@ -3,7 +3,7 @@ export type BlogPostData = {
   title: string;
   author: string;
   content: string;
-  category: "informational" | "beginner" | "intermediate" | "expert" | "";
+  category: "informational" | "beginner" | "intermediate" | "advanced" | "";
   slug: string;
   keywords: string[];
   live: boolean;
@@ -19,3 +19,4 @@ export interface IBlogPostState {
   error: any;
   errorMessages: string[] | null;
 }
+export type SearchCategories = "all" | "informational" | "beginner" | "intermediate" | "advanced";

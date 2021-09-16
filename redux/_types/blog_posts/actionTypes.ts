@@ -85,6 +85,11 @@ export type GetBlogPostsRes = {
   responseMsg: string;
   blogPosts: BlogPostData[];
 }
+export type FetchBlogPostsOpts = {
+  category?: "all" | "informational" | "beginner" | "intermediate" | "advanced";
+  createdAt?: "desc" | "asc";
+  limit?: number;
+};
 
 
 

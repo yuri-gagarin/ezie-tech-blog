@@ -46,3 +46,8 @@ export type DeleteBlogPostRes = {
   deletedBlogPost?: IBlogPost;
   error?: any;
 };
+export type FetchBlogPostsOpts = {
+  category?: "informational" | "beginner" | "intermediate" | "advanced";
+  createdAt?: "desc" | "asc";
+  limit?: number;
+}
