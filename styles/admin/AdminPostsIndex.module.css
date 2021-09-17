@@ -1,9 +1,8 @@
-.menuRow {
-  width: 100%;;
-  border: 3px solid blue;
-  padding: 0 !important;
+.headerTitle {
+  width: 100%;
 }
-.postsRow {
-  border: 5px solid green;
-  height: calc(100vh - 100px);
+.contentRow {
+  min-height: calc(100vh - 100px);
+  border: 1px solid purple;
+  border-radius: 5px;
 }

@@ -1,0 +1,32 @@
+.modalWrapper {
+  min-height: 90vh !important;
+  border: 10px solid red !important;
+  position: relative !important;  
+}
+
+.authorDiv, .categoryDiv, .keywordsDiv {
+  height: auto;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.25em;
+  padding: 0.5em 1em;
+  margin-bottom: 0.5em;
+  border: 1px solid green;
+}
+.authorDiv > span, .categoryDiv > span {
+  font-weight: bold;
+  font-size: 1em;
+}
+.keywordsDiv {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  height: auto;
+  display: flex;
+}
+.keywordsDiv > span {
+  padding: 0.5em;
+  border: 1px solid blue;
+  border-radius: 5px;
+  margin-left: 5px;
+  font-size: 1em;
+}

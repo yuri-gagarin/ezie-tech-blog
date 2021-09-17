@@ -3,12 +3,14 @@ import { Dropdown, Grid, Menu } from "semantic-ui-react";
 // next imports //
 import { useRouter } from 'next/router';
 // redux //
-//import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 // types //
-//import { IGeneralState } from '../../redux/_types/generalTypes';
+import { IGeneralState } from '../../redux/_types/generalTypes';
 import { MenuItemProps } from "semantic-ui-react";
 // styles //
 import adminMenuStyles from "../../styles/admin/AdminMenu.module.css";
+// helpers //
+import { checkEmptyObjVals } from "../_helpers/displayHelpers";
 
 // internal custom types //
 type MenuItemVal = "posts" | "projects" | "news" | "users" | "";
@@ -21,27 +23,31 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
   // next hooks //
   const router = useRouter();
   // redux hooks //
+  const { currentBlogPost } = useSelector((state: IGeneralState) => state.blogPostsState);
 
   const handleGoToNewPost = (): void => {
     router.push("/admin/dashboard/posts/new");
   };
-
   const handleMenuItemClick = (_, data: MenuItemProps ) => {
     const name = data.name as MenuItemVal;
     switch(name) {
       case "posts": {
+        router.push("/admin/dashboard/posts");
         setActiveMenuItem("posts");
         break
       }
       case "projects": {
+        router.push("/admin/dashboard/projects");
         setActiveMenuItem("projects");
         break;
       }
       case "news": {
+        router.push("/admin/dashboard/news");
         setActiveMenuItem("news");
         break;
       }
       case "users": {
+        router.push("/admin/dashboard/users");
         setActiveMenuItem("users");
         break;
       } 
@@ -86,7 +92,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
             <Dropdown.Item icon='trash' text='Move to trash' />
             <Dropdown.Divider />
             <Dropdown.Item text='Download As...' />
-            <Dropdown.Item text='Publish To Web' />
+            <Dropdown.Item text='Publish To Web' disabled={ checkEmptyObjVals(currentBlogPost) } />
           </Dropdown.Menu>
         </Dropdown>
         <Menu.Menu>

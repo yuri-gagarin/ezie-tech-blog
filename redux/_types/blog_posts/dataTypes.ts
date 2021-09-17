@@ -7,8 +7,8 @@ export type BlogPostData = {
   slug: string;
   keywords: string[];
   live: boolean;
-  editedAt: Date | string;
-  createdAt: Date | string;
+  editedAt: string;
+  createdAt: string;
 };
 export type BlogPostFormData = {
   _id?: string;
