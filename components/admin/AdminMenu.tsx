@@ -1,25 +1,67 @@
 import * as React from 'react';
 import { Dropdown, Grid, Menu } from "semantic-ui-react";
+// next imports //
 import { useRouter } from 'next/router';
-import { useSelector } from "react-redux";
+// redux //
+//import { useSelector } from "react-redux";
+// types //
+//import { IGeneralState } from '../../redux/_types/generalTypes';
+import { MenuItemProps } from "semantic-ui-react";
 // styles //
 import adminMenuStyles from "../../styles/admin/AdminMenu.module.css";
-import { IGeneralState } from '../../redux/_types/generalTypes';
 
+// internal custom types //
+type MenuItemVal = "posts" | "projects" | "news" | "users" | "";
 interface IAdminMenuProps {
+
 }
-
 export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.Element => {
-
+  // local component hooks //
+  const [ activeMenuItem, setActiveMenuItem ] = React.useState<MenuItemVal>("");
+  // next hooks //
   const router = useRouter();
-  const { usersState, blogPostsState } = useSelector((state: IGeneralState) => state);
+  // redux hooks //
 
   const handleGoToNewPost = (): void => {
     router.push("/admin/dashboard/posts/new");
   };
 
+  const handleMenuItemClick = (_, data: MenuItemProps ) => {
+    const name = data.name as MenuItemVal;
+    switch(name) {
+      case "posts": {
+        setActiveMenuItem("posts");
+        break
+      }
+      case "projects": {
+        setActiveMenuItem("projects");
+        break;
+      }
+      case "news": {
+        setActiveMenuItem("news");
+        break;
+      }
+      case "users": {
+        setActiveMenuItem("users");
+        break;
+      } 
+      default: setActiveMenuItem("");
+    }
+  };
+
   React.useEffect(() => {
-  }, []);
+    if (router.pathname.includes("/dashboard/posts")) {
+      setActiveMenuItem("posts");
+    } else if (router.pathname.includes("/dashboard/projects")) {
+      setActiveMenuItem("projects");
+    } else if (router.pathname.includes("/dashboard/news")) {
+      setActiveMenuItem("news");
+    } else if(router.pathname.includes("/dashboard/users")) {
+      setActiveMenuItem("users");
+    } else {
+      setActiveMenuItem("");
+    }
+  }, [ router.pathname ]);
 
   return (
     <Grid.Row className={ adminMenuStyles.adminMenuRow } >
@@ -48,8 +90,23 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
           </Dropdown.Menu>
         </Dropdown>
         <Menu.Menu>
-          <Menu.Item as="a">
-            Posts
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="posts" active={ activeMenuItem === "posts" }>
+            View Posts
+          </Menu.Item>
+        </Menu.Menu>
+        <Menu.Menu>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="projects" active={ activeMenuItem === "projects" }>
+            View Projects
+          </Menu.Item>
+        </Menu.Menu>
+        <Menu.Menu>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="news" active={ activeMenuItem === "news" }>
+            View News
+          </Menu.Item>
+        </Menu.Menu>
+        <Menu.Menu>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="users" active={ activeMenuItem === "users" }>
+            View Users
           </Menu.Item>
         </Menu.Menu>
       </Menu>

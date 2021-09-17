@@ -19,8 +19,6 @@ import { blogPostValidator } from '../../../../../components/_helpers/validators
 interface IAdminNewViewProps {
 
 }
-
-
 type PostFormState = {
   postTitle: string;
   postAuthor: string;
@@ -47,7 +45,8 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     // show an error div //
     if (valid) {
       try {
-        return await handleSaveNewBlogPost(dispatch, { title, author, category, keywords, content}, blogPostsState);
+        await handleSaveNewBlogPost(dispatch, { title, author, category, keywords, content}, blogPostsState);
+        router.push("/admin/dashboard/posts");
       } catch (err) {
         console.log(err)
       }

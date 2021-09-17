@@ -72,7 +72,7 @@ export const handleSaveNewBlogPost =  async (dispatch: Dispatch<BlogPostAction>,
     return dispatch(createBlogPost({ status, responseMsg, createdBlogPost, updatedBlogPosts }))
   } catch (error) {
     // TODO //
-    console.log(error);
+    throw error;
   }
 };
 
