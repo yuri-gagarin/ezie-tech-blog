@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import { handleFetchBlogPosts, handleSetCurrentBlogPost } from "../../../../redux/actions/blogPostActions";
+import { handleClearCurrentBlogPost, handleFetchBlogPosts, handleSetCurrentBlogPost } from "../../../../redux/actions/blogPostActions";
 // additonal components //
 import { AdminLayout } from '../../../../components/admin/AdminLayout';
 import { BlogViewModal } from "../../../../components/admin/modals/BlogViewModal";
@@ -37,6 +37,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
       handleSetCurrentBlogPost(dispatch, blogPostId, blogPostsState);
       setViewModalState({ ...viewModalState, modalOpen: true});
     } else { 
+      handleClearCurrentBlogPost(dispatch);
       setViewModalState({ ...setViewModalState, modalOpen: false });
     }
   };

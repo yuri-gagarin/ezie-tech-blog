@@ -14,7 +14,7 @@ const initialState: IGeneralState = {
 
 const isClient = typeof window !== 'undefined';
 
-const rootReducer = (state: IGeneralState= initialState, action: AnyAction | IGeneralAppAction): IGeneralState => {
+const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IGeneralAppAction): IGeneralState => {
   switch (action.type) {
     case HYDRATE:
       //let nextState: IGeneralState;
@@ -33,7 +33,7 @@ const rootReducer = (state: IGeneralState= initialState, action: AnyAction | IGe
       //console.log(action.payload)
       return { ...state, ...action.payload };
     default:
-      return combinedReducer(initialState, action);
+      return combinedReducer(state, action);
   }
 };
 
@@ -41,4 +41,4 @@ if (isClient) console.log("client request");
 
 const makeStore = (context: Context) => createStore<IGeneralState, AnyAction, any, any>(rootReducer, composeWithDevTools());
 
-export const wrapper = createWrapper<Store<IGeneralState>>(makeStore, { debug: false });
+export const wrapper = createWrapper<Store<IGeneralState>>(makeStore, { debug: true });

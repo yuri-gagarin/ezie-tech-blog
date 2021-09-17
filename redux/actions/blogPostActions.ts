@@ -1,8 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import type { AxiosRequestConfig } from "axios";
 import type { Dispatch } from "redux";
-import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost } from "../_types/blog_posts/actionTypes";
+import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost, ClearBlogPost } from "../_types/blog_posts/actionTypes";
 import type { IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts } from "../_types/blog_posts/dataTypes";
+// helpers //
+import { generateEmptyBlogPost } from "../_helpers/mockData";
 
 const blogPostAPIRequest = (): BlogPostAPIRequest => {
   return {
@@ -28,6 +30,12 @@ const setBlogPost = (data: { blogPost: BlogPostData; currentBlogPostState: IBlog
     payload: { ...data }
   };
 };
+const clearBlogPost = (data: { blogPost: BlogPostData }): ClearBlogPost => {
+  return {
+    type: "ClearBlogPost",
+    payload: { ...data }
+  };
+};
 
 
 
@@ -37,6 +45,10 @@ export const handleSetCurrentBlogPost = (dispatch: Dispatch<BlogPostAction>, blo
   dispatch(setBlogPost({ blogPost, currentBlogPostState }));
   return blogPost;
 };
+export const handleClearCurrentBlogPost = (dispatch: Dispatch<BlogPostAction>): void => {
+  const blogPost: BlogPostData = generateEmptyBlogPost();
+  dispatch(clearBlogPost({ blogPost }));
+}
 
 export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts): Promise<GetAllBlogPosts> => {
   const fetchParams = opts ? { ...opts } : { none: "none selected" };

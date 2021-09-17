@@ -1,4 +1,20 @@
+import type { BlogPostData } from "../_types/blog_posts/dataTypes";
 import type { IBlogPostState, IUserState } from "../_types/generalTypes";
+
+export const generateEmptyBlogPost = (): BlogPostData => {
+  return {
+    _id: "",
+    title: "",
+    author: "",
+    category: "",
+    keywords: [],
+    content: "",
+    live: false,
+    slug: "",
+    createdAt: "",
+    editedAt: ""
+  };
+};
 
 export const generateEmptyPostState = (): IBlogPostState => {
   return {

@@ -81,4 +81,4 @@ export type ClearBlogPost = {
   };
 };
 
-export type BlogPostAction = (BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | SetBlogPost | SetBlogPostError);
+export type BlogPostAction = (BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | SetBlogPost | ClearBlogPost | SetBlogPostError);

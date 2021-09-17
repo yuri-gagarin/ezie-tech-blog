@@ -16,9 +16,20 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
       };
     }
     case "SetBlogPost": {
+      console.log(state)
       return {
         ...state,
         ...action.payload.currentBlogPostState,
+        currentBlogPost: action.payload.blogPost,
+        error: null,
+        errorMessages: null
+      };
+    };
+    case "ClearBlogPost": {
+      console.log("ran clear")
+      console.log(state)
+      return {
+        ...state,
         currentBlogPost: action.payload.blogPost,
         error: null,
         errorMessages: null
