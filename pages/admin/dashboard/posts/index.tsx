@@ -26,6 +26,8 @@ interface IAdminPostsIndexProps {
 const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props): JSX.Element => {
   // local component state //
   const [ viewModalState, setViewModalState ] = React.useState<{ modalOpen: boolean }>({ modalOpen: false });
+  // next hooks //
+  const router = useRouter();
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<BlogPostAction>>();
   const { blogPostsState } = useSelector((state: IGeneralState) => state);
@@ -41,6 +43,10 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
       setViewModalState({ ...setViewModalState, modalOpen: false });
     }
   };
+  const goToBlogPostEdit = (): void => {
+    setViewModalState({ ...setViewModalState, modalOpen: false });
+    router.push("/admin/dashboard/posts/new");
+  }
 
   // lifecycle hooks //
   React.useEffect(() => {
@@ -53,6 +59,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
         modalOpen={ viewModalState.modalOpen } 
         blogPostData={ currentBlogPost } 
         closeModal={ toggleBlogPostModal }
+        goToBlogPostEdit={ goToBlogPostEdit }
       />
       <Grid.Row className={ styles.headerRow }> 
         <Segment placeholder textAlign="center"  className={ styles.headerTitle }>

@@ -9,15 +9,16 @@ interface IBlogViewModalProps {
   modalOpen: boolean;
   blogPostData: BlogPostData;
   closeModal(): void;
+  goToBlogPostEdit(): void;
 }
 
-export const BlogViewModal: React.FunctionComponent<IBlogViewModalProps> = ({ modalOpen, blogPostData, closeModal }): JSX.Element => {
+export const BlogViewModal: React.FunctionComponent<IBlogViewModalProps> = ({ modalOpen, blogPostData, closeModal, goToBlogPostEdit }): JSX.Element => {
   return (
     <Modal size="fullscreen" open={ modalOpen } className={ styles.modalWrapper }>
       <Modal.Content>
         <Button.Group>
-          <Button content="Close" color="orange" onClick={ closeModal }/>
-          <Button content="Edit" color="purple" />
+          <Button content="Close" color="orange" onClick={ closeModal } />
+          <Button content="Edit" color="purple" onClick={ goToBlogPostEdit } />
         </Button.Group>
         <Button.Group>
           <Button content="Publish" color="green" />

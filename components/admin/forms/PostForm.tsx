@@ -4,6 +4,8 @@ import { Dropdown, Form } from 'semantic-ui-react';
 import type { DropdownItemProps, DropdownProps } from "semantic-ui-react"
 // styles //
 import styles from "../../../styles/admin/AdminPostForm.module.css";
+// types //
+import type { PostFormState } from '../../../pages/admin/dashboard/posts/new';
 
 interface IPostFormProps {
   updateTitle: (title: string) => void;
@@ -11,6 +13,7 @@ interface IPostFormProps {
   updateCategory: (category: string) => void;
   updateKeywords: (keywords: string) => void;
   updateContent: (content: string) => void;
+  postFormState: PostFormState
 }
 
 const dropdownVals: DropdownItemProps[] = [
@@ -20,8 +23,9 @@ const dropdownVals: DropdownItemProps[] = [
   { key: 4, text: "Advanced", value: "advanced" }
 ];
 
-export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle, updateAuthor, updateCategory, updateKeywords, updateContent }): JSX.Element => {
+export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle, updateAuthor, updateCategory, updateKeywords, updateContent, postFormState }): JSX.Element => {
   
+  // action handlers //
   const handlePostTitleChange = (e:  React.FormEvent<HTMLInputElement>): void => {
     updateTitle(e.currentTarget.value);
   };
@@ -43,23 +47,23 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
     <Form>
       <Form.Field>
         <label>Title:</label>
-        <input placeholder="title here..." onChange={ handlePostTitleChange } />
+        <input value={ postFormState.postTitle } placeholder="title here..." onChange={ handlePostTitleChange } />
       </Form.Field>
       <Form.Field>
         <label>Author</label>
-        <input placeholder="value..." onChange={ handleAuthorChange } />
+        <input value={ postFormState.postAuthor } placeholder="value..." onChange={ handleAuthorChange } />
       </Form.Field>
       <Form.Field>
         <label>Keywords</label>
-        <input placeholder="comma separated keywords" onChange={ handleKeywordsChange } />
+        <input value={ postFormState.postKeywords} placeholder="comma separated keywords" onChange={ handleKeywordsChange } />
       </Form.Field>
       <Form.Field>
         <label>Category</label>
-        <Dropdown clearable options={dropdownVals } selection  placeholder="select category" onChange={ handleCategoryChange }/>
+        <Dropdown defaultValue={ postFormState.postCategory ? postFormState.postCategory : null } clearable options={dropdownVals } selection  placeholder="select category" onChange={ handleCategoryChange }/>
       </Form.Field>
       <Form.Field>
         <label>Content:</label>
-        <Form.TextArea className={ styles.postTextArea } onChange={ handleTextAreaChange } />
+        <Form.TextArea value={ postFormState.postContent } className={ styles.postTextArea } onChange={ handleTextAreaChange } />
       </Form.Field>
     </Form>
   );

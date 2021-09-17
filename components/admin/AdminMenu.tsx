@@ -3,10 +3,12 @@ import { Dropdown, Grid, Menu } from "semantic-ui-react";
 // next imports //
 import { useRouter } from 'next/router';
 // redux //
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import type { Dispatch } from "redux";
+import { handleClearCurrentBlogPost } from "../../redux/actions/blogPostActions";
 // types //
-import { IGeneralState } from '../../redux/_types/generalTypes';
-import { MenuItemProps } from "semantic-ui-react";
+import type { IGeneralState , IGeneralAppAction} from '../../redux/_types/generalTypes';
+import type { MenuItemProps } from "semantic-ui-react";
 // styles //
 import adminMenuStyles from "../../styles/admin/AdminMenu.module.css";
 // helpers //
@@ -23,9 +25,13 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
   // next hooks //
   const router = useRouter();
   // redux hooks //
+  const dispatch = useDispatch<Dispatch<IGeneralAppAction>>();
   const { currentBlogPost } = useSelector((state: IGeneralState) => state.blogPostsState);
 
+  // action handlers //
   const handleGoToNewPost = (): void => {
+    // clear current blog post if any //
+    if (!checkEmptyObjVals(currentBlogPost)) handleClearCurrentBlogPost(dispatch);
     router.push("/admin/dashboard/posts/new");
   };
   const handleMenuItemClick = (_, data: MenuItemProps ) => {
@@ -55,6 +61,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
     }
   };
 
+  // lifecycle hooks //
   React.useEffect(() => {
     if (router.pathname.includes("/dashboard/posts")) {
       setActiveMenuItem("posts");

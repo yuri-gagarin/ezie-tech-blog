@@ -14,12 +14,14 @@ import { AdminPostPreview } from '../../../../../components/admin/posts/AdminPos
 import type { IGeneralState } from '../../../../../redux/_types/generalTypes';
 // styles //
 import adminNewPostsStyle from "../../../../../styles/admin/AdminNewPost.module.css";
+// helpers //
 import { blogPostValidator } from '../../../../../components/_helpers/validators';
+import { checkEmptyObjVals } from "../../../../../components/_helpers/displayHelpers";
 
 interface IAdminNewViewProps {
 
 }
-type PostFormState = {
+export type PostFormState = {
   postTitle: string;
   postAuthor: string;
   postKeywords: string;
@@ -28,11 +30,15 @@ type PostFormState = {
 }
 
 const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.Element => {
+  // local component hooks and state //
   const [ postFormState, setPostFormState ] = React.useState<PostFormState>({ postTitle: "", postAuthor: "", postKeywords: "", postCategory: "", postContent: "" });
+  // next hooks //
   const router = useRouter();
+  // redux hooks and state  //
   const dispatch = useDispatch();
   const { blogPostsState } = useSelector((state: IGeneralState) => state);
-  // actions //
+  
+  // action handlers //
   const cancelNewPost = (): void => {
     router.push("/admin/dashboard/posts");
   };
@@ -70,6 +76,13 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     setPostFormState({ ...postFormState, postContent });
   };
 
+  // lifecycle hooks //
+  React.useEffect(() => {
+    // set local state so the form is filled out with current blog post values //
+    const { title, author, content, category, keywords } = blogPostsState.currentBlogPost;
+    setPostFormState({ postTitle: title, postAuthor: author, postContent: content, postCategory: category, postKeywords: keywords.join(",") });
+  }, [ blogPostsState.currentBlogPost ]);
+
   return (
     <AdminLayout>
       <Grid.Row className={ adminNewPostsStyle.navRow }>
@@ -86,6 +99,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
             updateKeywords={ updateKeywords }
             updateCategory={ updateCategory }
             updateContent={ updateContent }
+            postFormState={ postFormState }
           />
         </Grid.Column>
         <Grid.Column width={ 8 } style={{ height: "100%" }}>
