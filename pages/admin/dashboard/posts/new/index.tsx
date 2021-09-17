@@ -16,7 +16,6 @@ import type { IGeneralState } from '../../../../../redux/_types/generalTypes';
 import adminNewPostsStyle from "../../../../../styles/admin/AdminNewPost.module.css";
 // helpers //
 import { blogPostValidator } from '../../../../../components/_helpers/validators';
-import { checkEmptyObjVals } from "../../../../../components/_helpers/displayHelpers";
 
 interface IAdminNewViewProps {
 

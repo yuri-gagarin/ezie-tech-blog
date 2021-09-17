@@ -7,3 +7,7 @@
   height: 40px;
   background-color: #a333c8;
 }
+
+.navMenuItem::after, .navMenuItem::before {
+  display: none;
+}

@@ -83,7 +83,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
           <Dropdown.Menu>
             <Dropdown.Item>
               <Dropdown text='New' pointing="left">
-                <Dropdown.Menu style={{ left: "140px" }}>
+                <Dropdown.Menu style={{ left: "140px", transform: "translateY(-12px)"}}>
                   <Dropdown.Item onClick={ handleGoToNewPost } >Blog Post</Dropdown.Item >
                   <Dropdown.Item>Project</Dropdown.Item>
                   <Dropdown.Item>News Post</Dropdown.Item>

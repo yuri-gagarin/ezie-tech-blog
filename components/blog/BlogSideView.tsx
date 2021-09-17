@@ -8,7 +8,7 @@ import blogViewStyle from "../../styles/blog/BlogSideView.module.css";
 import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
 // helpers //
 import { useWindowSize } from "../_helpers/monitorWindowSize";
-import { trimStringToSpecificLength, formatTimeString } from "../_helpers/displayHelpers";
+import { trimStringToSpecificLength, formatTimeString, capitalizeString } from "../_helpers/displayHelpers";
 
 interface IBlogViewProps {
   blogPosts: BlogPostData[];
@@ -36,8 +36,9 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBl
                       <Card.Meta>{ formatTimeString((blogPost.createdAt as string), { yearMonth: true }) }</Card.Meta>
                       <Card.Description>{ trimStringToSpecificLength(blogPost.content, 50 )}</Card.Description>
                     </Card.Content>
+                    <Card.Content>{ capitalizeString(blogPost.category) }</Card.Content>
                     <Card.Content>
-                      <Button onClick={ () => navigateToBlogPost(blogPost._id) } color="blue" content="Read" />
+                      <Button onClick={ () => navigateToBlogPost(blogPost._id) } color="pink" content="Read" />
                     </Card.Content>
                   </Card>
                 )

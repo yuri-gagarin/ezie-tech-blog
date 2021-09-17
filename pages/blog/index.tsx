@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid } from "semantic-ui-react";
+import { Grid, Header, Segment } from "semantic-ui-react";
 // next //
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -11,6 +11,7 @@ import { handleSetCurrentBlogPost, handleFetchBlogPosts } from "../../redux/acti
 import { BlogMainView } from "../../components/blog/BlogMainView";
 import { BlogHeader } from "../../components/blog/BlogHeader";
 import { BlogSideView } from "../../components/blog/BlogSideView";
+import { BlogBottomView } from "../../components/blog/BlogBottomView";
 // styles //
 import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
 // types //
@@ -33,13 +34,14 @@ interface IBlogPageProps extends IServerSideProps {
 
 }
 const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
-
+  // next hooks //
   const router = useRouter();
+  // redux hooks and state //
   const dispatch = useDispatch();
   const blogPostState = useSelector((state: IGeneralState) => state.blogPostsState)
   const { blogPosts } = blogPostState;
-  // action handlers //
 
+  // action handlers //
   const navigateToBlogPost = (blogPostId: string): void => {
     const currentPost: BlogPostData = handleSetCurrentBlogPost(dispatch, blogPostId, blogPostState);
     router.push(`/blog/${currentPost.slug}`);
@@ -47,7 +49,7 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
   const handleBlogPostSort = async ({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any> => {
     if (category) return handleFetchBlogPosts(dispatch, { category })
   };
-
+  // lifecycle hooks //
   React.useEffect(() => {
     handleFetchBlogPosts(dispatch);
   }, [ dispatch ]);
@@ -58,16 +60,22 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
         <title>Ezie Blog - Dont Panic!</title>
       </Head>
       <BlogHeader />
-      <Grid.Row className={ blogMainStyle.blogPageRow }>
+      <Grid.Row className={ blogMainStyle.blogPageRow } centered>
         <BlogSideView 
           blogPosts={ blogPosts } 
           navigateToBlogPost={ navigateToBlogPost }
           handleBlogPostSort={ handleBlogPostSort }
         />
         <BlogMainView 
-          blogPosts={ blogPosts.length > 3 ? blogPosts.slice(0, 4) : blogPosts }
+          blogPosts={ blogPosts }
           navigateToBlogPost={ navigateToBlogPost }
         />
+      </Grid.Row>
+      <Grid.Row className={ blogMainStyle.blogBottomRow} centered>
+        <Grid.Column largeScreen={12} tablet={14} mobile={16}>
+          <Segment textAlign="center" className={ blogMainStyle.bottomRowTitle }>Read More</Segment>
+          <BlogBottomView blogPosts={ blogPosts } />
+        </Grid.Column>
       </Grid.Row>
     </React.Fragment>
   );

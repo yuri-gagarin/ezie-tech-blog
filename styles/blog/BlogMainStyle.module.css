@@ -1,5 +1,13 @@
 .blogPageRow {
-  height: calc(100vh - 150px);
+  min-height: calc(100vh - 150px);
   overflow: hidden;
   border-top: 2px solid grey;
+}
+.blogBottomRow {
+  display: flex;
+}
+
+.bottomRowTitle {
+  font-family: "Wallpoet", "Times New Roman", Times, Serif;
+  font-size: 2em !important;
 }
