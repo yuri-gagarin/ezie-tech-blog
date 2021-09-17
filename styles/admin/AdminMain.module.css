@@ -7,3 +7,12 @@
   height: 100%;
   border: 5px solid green;
 }
+.leftColumn {
+  height: 100%;
+  padding-top: 10px;
+  overflow-y: scroll;
+}
+.rightColumn {
+  height: 100%;
+  overflow: hidden;
+}

@@ -7,11 +7,9 @@ export default class BlogPostsController implements ICRUDController {
   index = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
     const { limit = 10, category, createdAt = "asc" } = req.query as FetchBlogPostsOpts;
     let blogPosts: IBlogPost[];
-    console.log(10);
-    console.log(category);
     if (category) {
       try {
-        blogPosts = await BlogPost.find({ category }).limit(limit).sort({ createdAt }).exec();
+        blogPosts = await BlogPost.find(( category === "all" ? {} : { category })).limit(limit).sort({ createdAt }).exec();
         return res.status(200).json({
           responseMsg: `Fetched all posts with category ${category.toUpperCase()}.`, blogPosts
         });

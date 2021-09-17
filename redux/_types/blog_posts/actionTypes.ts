@@ -81,16 +81,4 @@ export type ClearBlogPost = {
   };
 };
 
-export type GetBlogPostsRes = {
-  responseMsg: string;
-  blogPosts: BlogPostData[];
-}
-export type FetchBlogPostsOpts = {
-  category?: "all" | "informational" | "beginner" | "intermediate" | "advanced";
-  createdAt?: "desc" | "asc";
-  limit?: number;
-};
-
-
-
-export type BlogPostAction = BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | SetBlogPost | SetBlogPostError;
+export type BlogPostAction = (BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | SetBlogPost | SetBlogPostError);

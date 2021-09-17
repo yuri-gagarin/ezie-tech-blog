@@ -17,7 +17,7 @@
   font-weight: bold;
 }
 
-.previewTitle, .previewAuthor, .previewCategories {
+.previewTitle, .previewAuthor, .previewCategory, .previewKeywords {
   width: 100%;
   min-height: 50px;
   border-bottom: 1px solid rgb(95, 95, 224);
@@ -25,18 +25,18 @@
   align-items: center;
   padding: 5px;
 }
-.previewCategories {
+.previewKeywords {
   display: flex;
   flex-wrap: wrap;
 }
-.previewTitle > span:nth-child(1), .previewAuthor > span:nth-child(1), .previewCategories > span:nth-child(1) {
+.previewTitle > span:nth-child(1), .previewAuthor > span:nth-child(1), .previewCategory > span:nth-child(1), .previewKeywords > span:nth-child(1) {
   display: flex;
   padding: 5px 10px;
   border: 2px solid rgb(53, 98, 196);
   border-radius: 2px;
   font-weight: bold;
 }
-.previewTitle > span:nth-child(2), .previewAuthor > span:nth-child(2) {
+.previewTitle > span:nth-child(2), .previewAuthor > span:nth-child(2), .previewCategory > span:nth-child(2) {
   border: 1px solid rgb(67, 156, 67);
   border-radius: 3px;
   margin-left: 5px;
@@ -48,7 +48,7 @@
 .previewTitle {
   border-radius: 3px 3px 0 0;
 }
-.previewCat {
+.previewKeywordSpan {
   border: 1px solid rgb(59, 112, 38);
   border-radius: 3px;
   margin-left: 5px;

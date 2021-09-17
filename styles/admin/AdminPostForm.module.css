@@ -1,9 +1,8 @@
 .postTextArea {
-  height: 400px;
   border: 2px solid green;
   border-radius: 4px;
 }
 .postTextArea > textarea {
-  height: 100% !important;
+  min-height: 400px !important;
   resize: none !important;
 }

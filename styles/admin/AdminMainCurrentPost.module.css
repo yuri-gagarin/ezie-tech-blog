@@ -1,0 +1,6 @@
+.adminMainCurrentPostWrapper {
+  border: 2px solid red;
+  margin-top: 10px;
+  height: 100%;
+  overflow-y: scroll;
+}

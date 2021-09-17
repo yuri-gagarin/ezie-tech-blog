@@ -5,16 +5,24 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 // styles //
 import styles from "../../../styles/admin/AdminPostPreview.module.css";
+// helpers //
+import { capitalizeString } from "../../_helpers/displayHelpers";
 
 interface IPostPreviewProps {
   postTitle: string;
   postAuthor: string;
-  postCategories: string;
+  postKeywords: string;
+  postCategory: string;
   postContent: string;
-  postCategoriesArr: string[];
 }
 
-export const AdminPostPreview: React.FunctionComponent<IPostPreviewProps> = ({ postTitle, postAuthor, postCategories, postContent, postCategoriesArr }): JSX.Element => {
+export const AdminPostPreview: React.FunctionComponent<IPostPreviewProps> = ({ postTitle, postAuthor, postKeywords, postCategory, postContent }): JSX.Element => {
+  const [ postKeywordsArr, setPostKeywordsArr ] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    if (postKeywords) setPostKeywordsArr(postKeywords.split(","));
+  }, [ postKeywords ]);
+
   return (
     <div className={ styles.adminPostPreviewWrapper }>
       <div className={ styles.adminPostPreviewHeader }>Formatted Post Preview</div>
@@ -24,12 +32,15 @@ export const AdminPostPreview: React.FunctionComponent<IPostPreviewProps> = ({ p
       <div className={ styles.previewAuthor }>
         <span>Author:</span>{ postAuthor ? <span>{ postAuthor }</span> : null }
       </div>  
-      <div className={ styles.previewCategories }>
-        <span>Categories:</span>
+      <div className={ styles.previewCategory }>
+        <span>Category:</span>{ postCategory ? <span>{ capitalizeString(postCategory) }</span> : null }
+      </div>  
+      <div className={ styles.previewKeywords }>
+        <span>Keywords:</span>
         {
-          postCategoriesArr.length > 0 && postCategories[0]
+          postKeywordsArr.length > 0 && postKeywordsArr[0]
           ?
-          postCategoriesArr.map((cat, i) => <span key={`${cat}_${i}`} className={ styles.previewCat}>{ cat }</span>)
+          postKeywordsArr.map((cat, i) => <span key={`${cat}_${i}`} className={ styles.previewKeywordSpan }>{ cat }</span>)
           :
           null
         }

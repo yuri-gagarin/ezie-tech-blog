@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import type { AxiosRequestConfig } from "axios";
 import type { Dispatch } from "redux";
-import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, GetBlogPostsRes, SetBlogPost, FetchBlogPostsOpts } from "../_types/blog_posts/actionTypes";
-import type { IBlogPostState, BlogPostData } from "../_types/blog_posts/dataTypes";
+import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost } from "../_types/blog_posts/actionTypes";
+import type { IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts } from "../_types/blog_posts/dataTypes";
 
 const blogPostAPIRequest = (): BlogPostAPIRequest => {
   return {
@@ -14,7 +14,13 @@ const fetchBlogPosts = (data: { status: number; responseMsg: string; blogPosts: 
   return {
     type: "GetBlogPosts",
     payload: { ...data, loading: false }
-  } ;
+  };
+};
+const createBlogPost = (data: { status: number; responseMsg: string; createdBlogPost: BlogPostData; updatedBlogPosts: BlogPostData[] }): CreateBlogPost => {
+  return {
+    type: "CreateBlogPost",
+    payload: { ...data, loading: false }
+  };
 };
 const setBlogPost = (data: { blogPost: BlogPostData; currentBlogPostState: IBlogPostState }): SetBlogPost => {
   return {
@@ -31,6 +37,7 @@ export const handleSetCurrentBlogPost = (dispatch: Dispatch<BlogPostAction>, blo
   dispatch(setBlogPost({ blogPost, currentBlogPostState }));
   return blogPost;
 };
+
 export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts): Promise<GetAllBlogPosts> => {
   const fetchParams = opts ? { ...opts } : { none: "none selected" };
   const reqOpts: AxiosRequestConfig = {
@@ -41,7 +48,7 @@ export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, o
 
   dispatch(blogPostAPIRequest());
   try {
-    const res: AxiosResponse<GetBlogPostsRes> = await axios(reqOpts);
+    const res: AxiosResponse<IndexBlogPostRes> = await axios(reqOpts);
     const { status } = res;
     const { responseMsg, blogPosts } = res.data;
     return dispatch(fetchBlogPosts({ status, responseMsg, blogPosts }));
@@ -49,3 +56,23 @@ export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, o
     console.log(error);
   }
 };
+export const handleSaveNewBlogPost =  async (dispatch: Dispatch<BlogPostAction>, blogPostFormData: BlogPostFormData, currentBlogPostState: IBlogPostState): Promise<CreateBlogPost> => {
+  const { title, author, category, keywords } = blogPostFormData;
+  const reqOpts: AxiosRequestConfig = {
+    method: "POST",
+    url: "/api/posts",
+    data: { title, author, category, keywords }
+  };
+  //dispatch(blogPostAPIRequest());
+  try {
+    const res: AxiosResponse<CreateBlogPostRes> = await axios(reqOpts);
+    const { status, data } = res;
+    const { responseMsg, createdBlogPost } = data;
+    const updatedBlogPosts = [ createdBlogPost, ...currentBlogPostState.blogPosts ];
+    return dispatch(createBlogPost({ status, responseMsg, createdBlogPost, updatedBlogPosts }))
+  } catch (error) {
+    // TODO //
+    console.log(error);
+  }
+};
+

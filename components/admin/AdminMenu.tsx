@@ -26,7 +26,17 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
       <Menu fluid fixed="top" className={ adminMenuStyles.fixedAdminMenu }>
         <Dropdown text='File' className={ adminMenuStyles.adminMenuFile }>
           <Dropdown.Menu>
-            <Dropdown.Item text='New' onClick={ handleGoToNewPost } />
+            <Dropdown.Item>
+              <Dropdown text='New' pointing="left">
+                <Dropdown.Menu style={{ left: "140px" }}>
+                  <Dropdown.Item onClick={ handleGoToNewPost } >Blog Post</Dropdown.Item >
+                  <Dropdown.Item>Project</Dropdown.Item>
+                  <Dropdown.Item>News Post</Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item>User</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Dropdown.Item>
             <Dropdown.Item text='Open...' description='ctrl + o' />
             <Dropdown.Item text='Save...' description='ctrl + s' />
             <Dropdown.Item text='Rename' description='ctrl + r' />
