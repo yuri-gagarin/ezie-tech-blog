@@ -11,7 +11,7 @@ interface ILayoutProps {
 
 const Layout: React.FunctionComponent<ILayoutProps> = ({ children }): JSX.Element => {
   return (
-    <Grid className={ layoutStyles.layoutWrapper }>
+    <Grid relaxed className={ layoutStyles.layoutWrapper }>
       <NavMenu />
       { children }
       <Footer />

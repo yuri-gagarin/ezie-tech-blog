@@ -11,3 +11,9 @@
   font-family: "Wallpoet", "Times New Roman", Times, Serif;
   font-size: 2em !important;
 }
+
+@media screen and (max-width: 1000px) {
+  .blogPageRow {
+    height: calc(100vh - 150px);
+  }
+}

@@ -17,7 +17,7 @@ export const HomeAbout: React.FunctionComponent<IHomeAboutProps> = (props): JSX.
           <div className={ homeAboutStyles.descriptionContent }>
             A small constantly changing team of individuals looking to learn, teach, create and develop. 
             We work with various current technologies depending on the scope and demand of the project.
-            Also theres a cat but he's not too friendly.
+            Also theres a cat but he&apos;s not too friendly.
           </div>
         </div>
       </div>

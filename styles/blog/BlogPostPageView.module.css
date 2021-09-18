@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 10px solid red;
 }
 
 .blogPostPageTitle {
@@ -64,6 +65,9 @@
 }
 
 .blogPostKeywordsDiv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   border-radius: 3px;
   padding: 15px 10px;
 }
@@ -79,3 +83,16 @@
   margin-top: 10px;
   margin-bottom: 10px;
 } 
+
+@media only screen and (max-width: 768px) {
+  .blogPostPageTitle {
+    width: 100%;
+  }
+  .blogPostTitleContent {
+    text-align: center;
+    line-height: 1em;
+  }
+  .blogPostPageMainContent {
+    padding: 1em 0.25em;
+  }
+}

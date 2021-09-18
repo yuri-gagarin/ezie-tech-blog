@@ -15,11 +15,11 @@ export const BlogBottomView: React.FunctionComponent<IBlogBottomViewProps> = ({ 
   return (
     blogPosts.length > 3 
     ?
-    <Card.Group centered itemsPerRow={3}>
+    <Card.Group centered itemsPerRow={3} stackable>
     {
       blogPosts.slice(1, 4).map((postData) => {
         return (
-          <Card className={ styles.blogBottomCard } key={ postData._id }>
+          <Card className={ styles.blogBottomCard } key={ postData._id } fluid>
             <Image src="/images/blog1.jpg" alt="image" />
             <Card.Content>
               <Card.Header>{ postData.title }</Card.Header>

@@ -52,9 +52,10 @@ export const handleClearCurrentBlogPost = (dispatch: Dispatch<BlogPostAction>): 
 
 export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts): Promise<GetAllBlogPosts> => {
   const fetchParams = opts ? { ...opts } : { none: "none selected" };
+  const baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL ? process.env.NEXT_PUBLIC_SERVER_BASE_URL : "";
   const reqOpts: AxiosRequestConfig = {
     method: "GET",
-    url: "/api/posts",
+    url: `${baseURL}/api/posts`,
     params: fetchParams
   };
 

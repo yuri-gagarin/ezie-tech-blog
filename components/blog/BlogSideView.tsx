@@ -20,8 +20,7 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBl
   const { width } = useWindowSize();
 
   return (
-    width > 1200 ?
-      <Grid.Column largeScreen={4} tablet={8} mobile={16} className={ blogViewStyle.gridColumn }>
+    <Grid.Column computer={4} tablet={ 8 } mobile={ 16 } className={ blogViewStyle.gridColumn }>
         <div className={ blogViewStyle.sortControlsWrapper }>
           <BlogSortControls handleBlogPostSort={ handleBlogPostSort } />
           <div className={ blogViewStyle.cardGroupWrapper }>
@@ -47,8 +46,6 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBl
             </Card.Group>
           </div>
         </div>
-      </Grid.Column>
-    :
-    <></>
+    </Grid.Column>
   );
 };

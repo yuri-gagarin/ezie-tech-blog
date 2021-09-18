@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "ts-node --project tsconfig.server.json server/src/server.ts",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node server/build/server.js",
     "lint": "next lint",
-    "seed": "ts-node --project tsconfig.server.json ./server/src/_helpers/seedDB.ts"
+    "seed": "ts-node --project tsconfig.server.json ./server/src/_helpers/seedDB.ts",
+    "build:server": "tsc --project tsconfig.server.json"
   },
   "dependencies": {
     "axios": "^0.21.3",

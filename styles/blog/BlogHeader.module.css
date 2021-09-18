@@ -30,8 +30,20 @@
   margin: 0 5px;
 }
 .descSegment {
-  font-size: 17px !important;
+  font-size: 1.5em !important;
   font-style: italic;
   color: #c2bf06;
+  text-align: center;
   padding: 10px 5px;
+}
+
+@media only screen and (max-width: 768px) {
+  .headerSegment {
+    font-size: 1.5em;
+    line-height: 1em;
+    padding: 15px 10px;
+  }
+  .descSegment {
+    padding: 10px 15px;
+  }
 }

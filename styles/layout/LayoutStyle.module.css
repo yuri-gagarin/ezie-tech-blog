@@ -1,5 +1,4 @@
 .layoutWrapper {
-  height: 100vh;
-  margin: 0 !important;
-  display: block !important;
+  display: flex !important;
+  flex-direction: column !important;
 }

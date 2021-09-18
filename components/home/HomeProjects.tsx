@@ -21,7 +21,7 @@ export const HomeProjects: React.FunctionComponent<IProjectsHomeProps> = (props)
         </div>
         <div className={ projectsHomeStyles.projectsRight }>
           <div className={ projectsHomeStyles.projectsRightTitle }>
-            <p>What we're working on</p>
+            <p>What we&apos;re working on</p>
           </div>
           <div className={ projectsHomeStyles.projectsMoreBtn }>
             <Button color="purple" content={"See More"} />
