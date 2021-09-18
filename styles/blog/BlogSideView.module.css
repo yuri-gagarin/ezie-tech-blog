@@ -1,6 +1,6 @@
 .gridColumn {
   position: relative;
-  height: calc(100vh - 150px);
+  height: 100%;
   border: 3px solid #8E2DE2;
   border-radius: 5px;
   padding: 0 !important;

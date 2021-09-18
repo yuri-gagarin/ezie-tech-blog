@@ -4,7 +4,7 @@ import { Grid, Header, Segment } from "semantic-ui-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 // redux and actions //
-//import { wrapper } from "../../redux/store";
+import { wrapper } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { handleSetCurrentBlogPost, handleFetchBlogPosts } from "../../redux/actions/blogPostActions";
 // additional components //
@@ -18,6 +18,7 @@ import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
 import type { IGeneralState } from "../../redux/_types/generalTypes";
 import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
 
+// TODO edit for a sercer side call later //
 /*
 export const getServerSideProps = wrapper.getServerSideProps((store) => async() => {
  const dispatch = store.dispatch;
@@ -27,6 +28,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async() 
   };
 });
 */
+
+
 interface IServerSideProps {
   blogPosts: BlogPostData[];
 }
@@ -49,7 +52,7 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
   const handleBlogPostSort = async ({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any> => {
     if (category) return handleFetchBlogPosts(dispatch, { category })
   };
-  // lifecycle hooks //
+  
   React.useEffect(() => {
     handleFetchBlogPosts(dispatch);
   }, [ dispatch ]);

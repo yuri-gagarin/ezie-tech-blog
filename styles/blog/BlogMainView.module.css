@@ -3,10 +3,14 @@
   padding: 0 !important;
 }
 .cardGroup {
-  margin: 0 !important;
+  height: 100%;
+  margin: 0 0 0 5px !important;
   border-top: 3px solid #8E2DE2;
   border-right: 3px solid #8E2DE2;
   border-bottom: 3px solid #8E2DE2;
   border-radius: 0 5px 5px 0;
-  margin-left: 5px !important;
+}
+
+.mainCard {
+  height: 95% !important;
 }

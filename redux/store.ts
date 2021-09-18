@@ -41,4 +41,4 @@ if (isClient) console.log("client request");
 
 const makeStore = (context: Context) => createStore<IGeneralState, AnyAction, any, any>(rootReducer, composeWithDevTools());
 
-export const wrapper = createWrapper<Store<IGeneralState>>(makeStore, { debug: true });
+export const wrapper = createWrapper<Store<IGeneralState>>(makeStore, { debug: false });
