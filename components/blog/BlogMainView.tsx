@@ -35,13 +35,14 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, navigate
             <Image src="/images/blog1.jpg" size="large" alt="image" />
             <Card.Content>
               <Card.Header>{ blogPosts[0].title }</Card.Header>
-              <Card.Meta>
-                <Label color="teal" content={ `Posted at: ` } icon="clock" />
+              <Card.Description>
+                <Label color="purple" content={`Author: ${ blogPosts[0].author }`} icon="user" />
+              </Card.Description>
+              <Card.Meta style={{ marginTop: "5px" }}>
+                <Label color="teal" content={ ` Posted at: ` } icon="clock" />
                 <span className={ styles.dateSpan }>{formatTimeString(blogPosts[0].createdAt, { yearMonth: true })}</span>
+                <Label content={ ` ${capitalizeString(blogPosts[0].category)}` } icon="tag" />
               </Card.Meta>
-              <Card.Header>
-                <Label content={ `Category: ${capitalizeString(blogPosts[0].category)}` } icon="tag" />
-              </Card.Header>
               <Card.Description>{ trimStringToSpecificLength(blogPosts[0].content, 400) }</Card.Description>
             </Card.Content>
             <Card.Content>

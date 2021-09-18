@@ -41,7 +41,7 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBl
                       </Item.Extra>
                       <Item.Extra>
                       </Item.Extra>
-                      <Button onClick={ () => navigateToBlogPost(blogPost._id) } color="pink" content="Read" />
+                      <Button basic onClick={ () => navigateToBlogPost(blogPost._id) } color="pink" content="Read" />
                     </Item.Content>
                   </Item>
                 )

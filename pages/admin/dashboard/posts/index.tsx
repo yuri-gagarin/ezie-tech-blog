@@ -66,35 +66,38 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
           <h3>All Blog Posts - Published and In Progress</h3>
         </Segment>
       </Grid.Row>
-      <Grid.Row  className={ styles.contentRow }>
-        <Card.Group itemsPerRow="4">
-         {
-           blogPosts.map((blogPostData) => {
-             return (
-              <Card key={ blogPostData._id } fluid>
-                <Card.Content>
-                  <Card.Header>{ blogPostData.title }</Card.Header>
-                  <Card.Meta>Created at: { formatTimeString(blogPostData.createdAt, { yearMonth: true }) }</Card.Meta>
-                  <Card.Description>
-                    <div dangerouslySetInnerHTML={{ __html: trimStringToSpecificLength(blogPostData.content, 200) }} />
-                  </Card.Description>
-                </Card.Content>
-                <Card.Content>
-                  <Card.Description>
-                    Category: { capitalizeString(blogPostData.category) }
-                  </Card.Description>
-                </Card.Content>
-                <Card.Content>
-                  <Card.Meta>
-                    Published: { blogPostData.live ? "Yes" : "No" }
-                  </Card.Meta>
-                  <Button color="green" content="View" onClick={ () => toggleBlogPostModal(blogPostData._id) } />
-                </Card.Content>
-              </Card>
-             )
-           })
-         }
-        </Card.Group>
+      <Grid.Row className={ styles.contentRow } centered>
+        <Grid.Column largeScreen={15} mobile={16}>
+          <Card.Group itemsPerRow="4">
+          {
+            blogPosts.map((blogPostData) => {
+              return (
+                <Card key={ blogPostData._id } fluid>
+                  <Card.Content>
+                    <Card.Header>{ blogPostData.title }</Card.Header>
+                    <Card.Meta>Created at: { formatTimeString(blogPostData.createdAt, { yearMonth: true }) }</Card.Meta>
+                    <Card.Description>
+                      <div dangerouslySetInnerHTML={{ __html: trimStringToSpecificLength(blogPostData.content, 200) }} />
+                    </Card.Description>
+                  </Card.Content>
+                  <Card.Content>
+                    <Card.Description>
+                      Category: { capitalizeString(blogPostData.category) }
+                    </Card.Description>
+                  </Card.Content>
+                  <Card.Content>
+                    <Card.Meta>
+                      Published: { blogPostData.live ? "Yes" : "No" }
+                    </Card.Meta>
+                    <Button color="green" content="View" onClick={ () => toggleBlogPostModal(blogPostData._id) } />
+                  </Card.Content>
+                </Card>
+              )
+            })
+          }
+          </Card.Group>
+        </Grid.Column>
+        
       </Grid.Row>
     </AdminLayout>     
   );

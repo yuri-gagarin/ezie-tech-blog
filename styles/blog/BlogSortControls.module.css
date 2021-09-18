@@ -10,6 +10,8 @@
   color: #e03997;
   margin-left: 5px;
 }
-.timeSortMenu {
+.timeSortMenu, .categorySortMenu {
   width: 150px;
+  left: 50% !important;
+  transform: translateX(-50%);
 }

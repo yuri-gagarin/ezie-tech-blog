@@ -1,0 +1,14 @@
+.dateSpan {
+  margin-left: -28px;
+}
+.authorSpan {
+  margin-top: 5px !important;
+  padding-right: 0.5em !important;
+  font-family: "Wallpoet", 'Courier New', Courier, monospace;
+  font-size: 1.25em;
+}
+.categoryLabel {
+  margin-top: 5px !important;
+  margin-left: -1px  !important;
+  font-family: "Righteous", 'Courier New', Courier, monospace;
+}

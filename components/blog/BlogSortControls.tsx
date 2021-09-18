@@ -58,7 +58,7 @@ export const BlogSortControls: React.FunctionComponent<IBlogSortControlsProps> =
         </Dropdown.Menu>
       </Dropdown>
       <Dropdown pointing text={`Category: ${localState.categoriesValue}`} className={ styles.dropdownMenu }>
-        <Dropdown.Menu >
+        <Dropdown.Menu className= { styles.categorySortMenu } >
           <Dropdown.Item value="All" onClick={ handlePostCategorySortClick }>
             All Posts
           </Dropdown.Item>
