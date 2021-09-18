@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Card, Grid, Image } from "semantic-ui-react";
+import { Button, Card, Grid, Image, Label } from "semantic-ui-react";
 // additional components //
 import { GeneralLoadingSegement } from "../loaders/GeneralLoadingSegment";
 // styles //
-import blogEntryStyle from "../../styles/blog/BlogMainView.module.css";
+import styles from "../../styles/blog/BlogMainView.module.css";
 // types //
 import type { BlogPostData } from "../../redux/_types/blog_posts/dataTypes";
 // helpers //
@@ -29,14 +29,19 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, navigate
     return (
       blogPosts.length > 0 
       ?
-      <Grid.Column className={ blogEntryStyle.blogEntryColumn } computer={ 10 } tablet= { 8 } mobile= { 16 }>
-        <Card.Group className={ blogEntryStyle.cardGroup }>
-          <Card className={ blogEntryStyle.mainCard } fluid={ width > 600 ? true : false }>
+      <Grid.Column className={ styles.blogEntryColumn } computer={ 10 } tablet= { 8 } mobile= { 16 }>
+        <Card.Group className={ styles.cardGroup }>
+          <Card className={ styles.mainCard } fluid={ width > 600 ? true : false }>
             <Image src="/images/blog1.jpg" size="large" alt="image" />
             <Card.Content>
               <Card.Header>{ blogPosts[0].title }</Card.Header>
-              <Card.Meta>Posted at: { formatTimeString(blogPosts[0].createdAt as string, { yearMonth: true })}</Card.Meta>
-              <Card.Header>{ capitalizeString(blogPosts[0].category) }</Card.Header>
+              <Card.Meta>
+                <Label color="teal" content={ `Posted at: ` } icon="clock" />
+                <span className={ styles.dateSpan }>{formatTimeString(blogPosts[0].createdAt, { yearMonth: true })}</span>
+              </Card.Meta>
+              <Card.Header>
+                <Label content={ `Category: ${capitalizeString(blogPosts[0].category)}` } icon="tag" />
+              </Card.Header>
               <Card.Description>{ trimStringToSpecificLength(blogPosts[0].content, 400) }</Card.Description>
             </Card.Content>
             <Card.Content>

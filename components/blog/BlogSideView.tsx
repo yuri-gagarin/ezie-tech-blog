@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Card, Grid, Image } from "semantic-ui-react";
+import { Button, Grid, Item, Image, Label } from "semantic-ui-react";
 // additional components //
 import { BlogSortControls } from "./BlogSortControls";
 // styles //
-import blogViewStyle from "../../styles/blog/BlogSideView.module.css";
+import styles from "../../styles/blog/BlogSideView.module.css";
 // types //
 import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
 // helpers //
@@ -20,30 +20,34 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBl
   const { width } = useWindowSize();
 
   return (
-    <Grid.Column computer={4} tablet={ 8 } mobile={ 16 } className={ blogViewStyle.gridColumn }>
-        <div className={ blogViewStyle.sortControlsWrapper }>
+    <Grid.Column computer={ 5 } tablet={ 8 } mobile={ 16 } className={ styles.gridColumn }>
+        <div className={ styles.sortControlsWrapper }>
           <BlogSortControls handleBlogPostSort={ handleBlogPostSort } />
-          <div className={ blogViewStyle.cardGroupWrapper }>
-            <Card.Group className={ blogViewStyle.cardGroup } centered >
+          <div className={ styles.cardGroupWrapper }>
+            <Item.Group className={ styles.cardGroup } divided>
             {
               blogPosts.map((blogPost) => {
                 return (
-                  <Card key={ blogPost._id } fluid className={ blogViewStyle.sideCard } onClick={ () => navigateToBlogPost(blogPost._id) }>
-                    <Image src="/images/blog1.jpg" size="small" alt="image" />
-                    <Card.Content>
-                      <Card.Header>{ blogPost.title }</Card.Header>
-                      <Card.Meta>{ formatTimeString((blogPost.createdAt as string), { yearMonth: true }) }</Card.Meta>
-                      <Card.Description>{ trimStringToSpecificLength(blogPost.content, 50 )}</Card.Description>
-                    </Card.Content>
-                    <Card.Content>{ capitalizeString(blogPost.category) }</Card.Content>
-                    <Card.Content>
+                  <Item key={ blogPost._id } fluid className={ styles.sideItem } onClick={ () => navigateToBlogPost(blogPost._id) }>
+                    <Image src="/images/blog1.jpg" size="small" alt="image" rounded />
+                    <Item.Content>
+                      <Item.Header>{ blogPost.title }</Item.Header>
+                      <Item.Meta>{ formatTimeString((blogPost.createdAt as string), { yearMonth: true }) }</Item.Meta>
+                      <Item.Description>{ trimStringToSpecificLength(blogPost.content, 50 )}</Item.Description>
+                      <Item.Extra>
+                        <Label icon="tag" content={ capitalizeString(blogPost.category) } />
+                        <Label icon="user" color="purple" content={ `Author: ${blogPost.author}` } />   
+
+                      </Item.Extra>
+                      <Item.Extra>
+                      </Item.Extra>
                       <Button onClick={ () => navigateToBlogPost(blogPost._id) } color="pink" content="Read" />
-                    </Card.Content>
-                  </Card>
+                    </Item.Content>
+                  </Item>
                 )
               })
             }
-            </Card.Group>
+            </Item.Group>
           </div>
         </div>
     </Grid.Column>

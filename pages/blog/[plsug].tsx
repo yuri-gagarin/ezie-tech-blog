@@ -1,16 +1,19 @@
 import * as React from 'react';
-import { Button } from "semantic-ui-react"; 
-import Head from "next/head";
-import { useRouter } from "next/router";
-// redux //
-import { useSelector } from "react-redux";
+import { Button, Icon, Label } from "semantic-ui-react"; 
+// markdown display - needed to properly format //
 import ReactMarkdown from 'react-markdown/react-markdown.min';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+// next imports //
+import Head from "next/head";
+import { useRouter } from "next/router";
+// redux  imports //
+import { useSelector } from "react-redux";
 // styles //
 import styles from "../../styles/blog/BlogPostPageView.module.css";
 // types //
 import type { IGeneralState } from "../../redux/_types/generalTypes";
+import type  { SemanticCOLORS } from 'semantic-ui-react/dist/commonjs/generic';
 //import type { BlogPostData } from '../../redux/_types/blog_posts/dataTypes';
 // helpers //
 import { formatTimeString } from "../../components/_helpers/displayHelpers";
@@ -22,6 +25,10 @@ const BlogPostPage: React.FunctionComponent<IPostPageProps> = ({ }): JSX.Element
   const { currentBlogPost } = useSelector((state: IGeneralState) => state.blogPostsState);
   const router = useRouter();
 
+  const pickLabelColor = (index: number): SemanticCOLORS => {
+    const colors: SemanticCOLORS[] = [ "purple", "pink" ];
+    return index % 2 === 0 ? colors[0] : colors[1];
+  }
   return (
     <>
     <Head>
@@ -34,15 +41,15 @@ const BlogPostPage: React.FunctionComponent<IPostPageProps> = ({ }): JSX.Element
       <div className={ styles.blogPostPageMeta }>
         <div className={ styles.blogPostAuthorAndTimeStamps }>
           <div className={ styles.blogPostAuthorDiv }>
-            <span>Author:</span><span>{ currentBlogPost.author }</span>
+            <Label color="teal" content="Author: " icon="user" /><span>{ currentBlogPost.author }</span>
           </div>
           <div className={ styles.blogPostTimeStampsDiv }>
-            <span>Posted:</span><span>{ formatTimeString(currentBlogPost.createdAt as string, { yearOnly: true }) }</span>
+            <Label color="grey" content="Posted at:" icon="calendar" /><span>{ formatTimeString(currentBlogPost.createdAt, { yearOnly: true }) }</span>
           </div>
         </div>
         <div className={ styles.blogPostKeywordsDiv }>
           {
-            currentBlogPost.keywords.map((keyword) => <span key={ keyword } className={  styles.blogPostKeywordsSpan } >{ keyword }</span>)
+            currentBlogPost.keywords.map((keyword, i) => <Label tag color={pickLabelColor(i)} key={ keyword } content={ keyword } /> )
           }
         </div>
       </div>

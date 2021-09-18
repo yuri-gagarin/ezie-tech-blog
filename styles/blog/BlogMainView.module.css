@@ -14,3 +14,7 @@
 .mainCard {
   height: 95% !important;
 }
+
+.dateSpan {
+  margin-left: 5px;
+}

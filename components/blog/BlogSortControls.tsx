@@ -47,38 +47,36 @@ export const BlogSortControls: React.FunctionComponent<IBlogSortControlsProps> =
   
   return (
     <Menu fluid> 
-        <Dropdown pointing text={`Sort by: ${localState.dropdownValue}`} className={ styles.dropdownMenu }>
-          <Dropdown.Menu >
-            <Dropdown.Item value="New" onClick={ handlePostSortClick }>
-              <Icon name="clock" />
-              New
-            </Dropdown.Item>
-            <Dropdown.Item value="Old" onClick={ handlePostSortClick }>
-              <Icon name="clock" />
-              Old
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        <Dropdown pointing text={`View ${localState.categoriesValue}`} className={ styles.dropdownMenu }>
-          <Dropdown.Menu >
-            <Dropdown.Item value="All" onClick={ handlePostCategorySortClick }>
-              All Posts
-            </Dropdown.Item>
-            <Dropdown.Item value="Informational" onClick={ handlePostCategorySortClick }>
-              Informational Posts
-            </Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item value="Beginner" onClick={ handlePostCategorySortClick }>
-              Beginner Posts
-            </Dropdown.Item> 
-            <Dropdown.Item value="Intermediate" onClick={ handlePostCategorySortClick }>
-              Intermediate Posts
-            </Dropdown.Item>
-            <Dropdown.Item value="Advanced" onClick={ handlePostCategorySortClick }>
-              Expert Posts
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+      <Dropdown icon="clock" pointing text={`Sort by: ${localState.dropdownValue}`} className={ styles.dropdownMenu }>
+        <Dropdown.Menu className={ styles.timeSortMenu }>
+          <Dropdown.Item value="New" onClick={ handlePostSortClick }>
+            Newest first..
+          </Dropdown.Item>
+          <Dropdown.Item value="Old" onClick={ handlePostSortClick }>
+            Oldest first...
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      <Dropdown pointing text={`Category: ${localState.categoriesValue}`} className={ styles.dropdownMenu }>
+        <Dropdown.Menu >
+          <Dropdown.Item value="All" onClick={ handlePostCategorySortClick }>
+            All Posts
+          </Dropdown.Item>
+          <Dropdown.Item value="Informational" onClick={ handlePostCategorySortClick }>
+            Informational Posts
+          </Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Item value="Beginner" onClick={ handlePostCategorySortClick }>
+            Beginner Posts
+          </Dropdown.Item> 
+          <Dropdown.Item value="Intermediate" onClick={ handlePostCategorySortClick }>
+            Intermediate Posts
+          </Dropdown.Item>
+          <Dropdown.Item value="Advanced" onClick={ handlePostCategorySortClick }>
+            Expert Posts
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
     </Menu>
   );
 };

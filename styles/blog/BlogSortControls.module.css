@@ -1,7 +1,15 @@
 .dropdownMenu {
+  width: 50% !important;
   border: 1px solid grey !important; 
   border-radius: 3px;
   padding: 5px 5px 0px 5px !important;
-  width: 50% !important;
   text-align: center !important;
+}
+
+.dropdownMenu > i {
+  color: #e03997;
+  margin-left: 5px;
+}
+.timeSortMenu {
+  width: 150px;
 }
