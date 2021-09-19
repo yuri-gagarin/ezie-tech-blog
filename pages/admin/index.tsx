@@ -26,7 +26,9 @@ const Admin: React.FunctionComponent<IAdminLoginProps> = (props): JSX.Element =>
           <label>Password</label>
           <input type="password" placeholder='Password' />
         </Form.Field>
-        <Button color="green">Login</Button>
+        <div className={ styles.loginDiv }>
+          <Button size="small" color="green">Login</Button>
+        </div>
       </Form>
      
     </Grid.Row>

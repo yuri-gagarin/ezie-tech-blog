@@ -53,6 +53,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
     try {
       const { _id: postId } = currentBlogPost;
       await handleDeleteBlogPost(dispatch, postId, blogPostsState);
+      router.push("/admin/dashboard/posts");
     } catch (error) {
       console.log(error);
     }
@@ -79,11 +80,11 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
       </Grid.Row>
       <Grid.Row className={ styles.contentRow } centered>
         <Grid.Column largeScreen={15} mobile={16} >
-          <Card.Group itemsPerRow="4">
+          <Card.Group itemsPerRow="4" stackable>
           {
             blogPosts.map((blogPostData) => {
               return (
-                <Card key={ blogPostData._id } fluid>
+                <Card key={ blogPostData._id }>
                   <Card.Content>
                     <Card.Header>{ blogPostData.title }</Card.Header>
                     <Card.Meta>Created at: { formatTimeString(blogPostData.createdAt, { yearMonth: true }) }</Card.Meta>

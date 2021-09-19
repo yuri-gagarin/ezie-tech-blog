@@ -78,9 +78,11 @@ export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, o
 };
 export const handleSaveNewBlogPost = async (dispatch: Dispatch<BlogPostAction>, blogPostFormData: BlogPostFormData, currentBlogPostState: IBlogPostState): Promise<CreateBlogPost> => {
   const { title, author, category, keywords } = blogPostFormData;
+  const token: string | null = localStorage.getItem("jwtToken");
   const reqOpts: AxiosRequestConfig = {
     method: "POST",
     url: "/api/posts",
+    headers: { "Authorization": token ? token : "" }, 
     data: { title, author, category, keywords }
   };
 
@@ -98,8 +100,10 @@ export const handleSaveNewBlogPost = async (dispatch: Dispatch<BlogPostAction>, 
 };
 export const handleDeleteBlogPost = async (dispatch: Dispatch<BlogPostAction>, blogPostId: string, currentBlogPostState: IBlogPostState): Promise<DeleteBlogPost> => {
   const { blogPosts } = currentBlogPostState;
+  const token: string | null = localStorage.getItem("jwtToken");
   const reqOpts: AxiosRequestConfig = {
     method: "DELETE",
+    headers: { "Authorization": token ? token : "" }, 
     url: "/api/posts/" + blogPostId 
   };
 
