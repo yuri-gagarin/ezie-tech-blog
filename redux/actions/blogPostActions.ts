@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import type { AxiosRequestConfig } from "axios";
 import type { Dispatch } from "redux";
-import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost, ClearBlogPost } from "../_types/blog_posts/actionTypes";
-import type { IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts } from "../_types/blog_posts/dataTypes";
+import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost, ClearBlogPost, DeleteBlogPost } from "../_types/blog_posts/actionTypes";
+import type { IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts, DeleteBlogPostRes } from "../_types/blog_posts/dataTypes";
 // helpers //
 import { generateEmptyBlogPost } from "../_helpers/mockData";
 
@@ -21,6 +21,12 @@ const fetchBlogPosts = (data: { status: number; responseMsg: string; blogPosts: 
 const createBlogPost = (data: { status: number; responseMsg: string; createdBlogPost: BlogPostData; updatedBlogPosts: BlogPostData[] }): CreateBlogPost => {
   return {
     type: "CreateBlogPost",
+    payload: { ...data, loading: false }
+  };
+};
+const deleteBlogPost = (data: { status: number; responseMsg: string; updatedCurrentBlogPost: BlogPostData; updatedBlogPosts: BlogPostData[] }): DeleteBlogPost => {
+  return {
+    type: "DeleteBlogPost",
     payload: { ...data, loading: false }
   };
 };
@@ -66,17 +72,19 @@ export const handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, o
     const { responseMsg, blogPosts } = res.data;
     return dispatch(fetchBlogPosts({ status, responseMsg, blogPosts }));
   } catch (error) {
-    console.log(error);
+    // TODO //
+    throw error;
   }
 };
-export const handleSaveNewBlogPost =  async (dispatch: Dispatch<BlogPostAction>, blogPostFormData: BlogPostFormData, currentBlogPostState: IBlogPostState): Promise<CreateBlogPost> => {
+export const handleSaveNewBlogPost = async (dispatch: Dispatch<BlogPostAction>, blogPostFormData: BlogPostFormData, currentBlogPostState: IBlogPostState): Promise<CreateBlogPost> => {
   const { title, author, category, keywords } = blogPostFormData;
   const reqOpts: AxiosRequestConfig = {
     method: "POST",
     url: "/api/posts",
     data: { title, author, category, keywords }
   };
-  //dispatch(blogPostAPIRequest());
+
+  dispatch(blogPostAPIRequest());
   try {
     const res: AxiosResponse<CreateBlogPostRes> = await axios(reqOpts);
     const { status, data } = res;
@@ -88,4 +96,23 @@ export const handleSaveNewBlogPost =  async (dispatch: Dispatch<BlogPostAction>,
     throw error;
   }
 };
+export const handleDeleteBlogPost = async (dispatch: Dispatch<BlogPostAction>, blogPostId: string, currentBlogPostState: IBlogPostState): Promise<DeleteBlogPost> => {
+  const { blogPosts } = currentBlogPostState;
+  const reqOpts: AxiosRequestConfig = {
+    method: "DELETE",
+    url: "/api/posts/" + blogPostId 
+  };
+
+  try {
+    const res: AxiosResponse<DeleteBlogPostRes> = await axios(reqOpts);
+    const { status, data } = res;
+    const { responseMsg, deletedBlogPost } = data;
+    const updatedBlogPosts: BlogPostData[] = blogPosts.filter((blogPost) => blogPost._id !== deletedBlogPost._id);
+    const updatedCurrentBlogPost: BlogPostData = generateEmptyBlogPost();
+    return dispatch(deleteBlogPost({ status, responseMsg, updatedCurrentBlogPost, updatedBlogPosts })); 
+  } catch (error) {
+    // TODO //
+    throw error;
+  }
+}
 

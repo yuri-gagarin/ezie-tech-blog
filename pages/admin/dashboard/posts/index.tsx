@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import { handleClearCurrentBlogPost, handleFetchBlogPosts, handleSetCurrentBlogPost } from "../../../../redux/actions/blogPostActions";
+import { handleClearCurrentBlogPost, handleFetchBlogPosts, handleSetCurrentBlogPost, handleDeleteBlogPost } from "../../../../redux/actions/blogPostActions";
 // additonal components //
 import { AdminLayout } from '../../../../components/admin/AdminLayout';
 import { BlogViewModal } from "../../../../components/admin/modals/BlogViewModal";
@@ -46,7 +46,17 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
   const goToBlogPostEdit = (): void => {
     setViewModalState({ ...setViewModalState, modalOpen: false });
     router.push("/admin/dashboard/posts/new");
-  }
+  };
+  const triggerBlogPostDelete = async (): Promise<void> => {
+    // TODO //
+    // ideally a popup confirm modal should appear //
+    try {
+      const { _id: postId } = currentBlogPost;
+      await handleDeleteBlogPost(dispatch, postId, blogPostsState);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // lifecycle hooks //
   React.useEffect(() => {
@@ -60,6 +70,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
         blogPostData={ currentBlogPost } 
         closeModal={ toggleBlogPostModal }
         goToBlogPostEdit={ goToBlogPostEdit }
+        triggerBlogPostDelete={ triggerBlogPostDelete }
       />
       <Grid.Row className={ styles.headerRow }> 
         <Segment placeholder textAlign="center"  className={ styles.headerTitle }>

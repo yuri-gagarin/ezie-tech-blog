@@ -19,7 +19,7 @@ interface IAdminDashProps {
 // Alex to add protected pages here //
 // soon .. //
 export const getServerSideProps: GetServerSideProps =  async (): Promise<GetServerSidePropsResult<any>> => {
-  const auth: boolean = false;
+  const auth: boolean = true;
   if (auth) {
     return {
       props: { }

@@ -10,9 +10,10 @@ interface IBlogViewModalProps {
   blogPostData: BlogPostData;
   closeModal(): void;
   goToBlogPostEdit(): void;
+  triggerBlogPostDelete(): void;
 }
 
-export const BlogViewModal: React.FunctionComponent<IBlogViewModalProps> = ({ modalOpen, blogPostData, closeModal, goToBlogPostEdit }): JSX.Element => {
+export const BlogViewModal: React.FunctionComponent<IBlogViewModalProps> = ({ modalOpen, blogPostData, closeModal, goToBlogPostEdit, triggerBlogPostDelete }): JSX.Element => {
   return (
     <Modal size="fullscreen" open={ modalOpen } className={ styles.modalWrapper }>
       <Modal.Content>
@@ -22,6 +23,9 @@ export const BlogViewModal: React.FunctionComponent<IBlogViewModalProps> = ({ mo
         </Button.Group>
         <Button.Group>
           <Button content="Publish" color="green" />
+        </Button.Group>
+        <Button.Group>
+          <Button content="Delete" color="red" onClick={ triggerBlogPostDelete } />
         </Button.Group>
       </Modal.Content>
       <Modal.Header>{ blogPostData.title }</Modal.Header>
