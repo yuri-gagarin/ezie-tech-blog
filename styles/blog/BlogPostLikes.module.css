@@ -1,0 +1,13 @@
+.blogLikeIcon {
+  font-size: 1.25em !important;
+  cursor: pointer;
+}
+
+.blogPostLabel > span:nth-child(1), .blogPostLabel > span:nth-child(3) {
+  font-weight: bold;
+}
+.blogPostLabel > span:nth-child(2) {
+  display: inline-flex;
+  align-items: center;
+  transform: translateY(2px);
+}

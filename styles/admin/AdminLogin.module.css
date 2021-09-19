@@ -1,17 +1,19 @@
 .adminLoginWrapper {
+  display: flex;
+  flex-direction: column !important;
   width: 100%;
-  height: calc(100vh - 100px);
-  border: 10px solid green;
+  height: calc(100vh - 50px);
   align-items: center !important;
   justify-content: center !important;
 }
 
 .adminLoginForm {  
   height: 50%;
-  width: 50%;
-  padding-top: 1em;
-  padding-left: 0.5em;
-  padding-right: 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2em;
   border: 5px solid purple !important;
   border-radius: 5px;
 }

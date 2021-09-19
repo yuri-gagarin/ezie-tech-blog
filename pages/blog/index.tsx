@@ -12,6 +12,7 @@ import { BlogMainView } from "../../components/blog/BlogMainView";
 import { BlogHeader } from "../../components/blog/BlogHeader";
 import { BlogSideView } from "../../components/blog/BlogSideView";
 import { BlogBottomView } from "../../components/blog/BlogBottomView";
+import { GeneralNotImlementedModal } from "../../components/modals/GenNotImplementedModal";
 // styles //
 import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
 // types //
@@ -37,6 +38,8 @@ interface IBlogPageProps extends IServerSideProps {
 
 }
 const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
+  // local state and hooks //
+  const [ genNotImpModalState, setGenNotImpModalState ] = React.useState<boolean>(false);
   // next hooks //
   const router = useRouter();
   // redux hooks and state //
@@ -52,6 +55,13 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
   const handleBlogPostSort = async ({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any> => {
     if (category) return handleFetchBlogPosts(dispatch, { category })
   };
+  const handleBlogPostLike = async (blogPostId: string) => {
+    // NOT IMPLEMENTED YET //
+    setGenNotImpModalState(true);
+  };
+  const dismissNotImpModal = (): void => {
+    setGenNotImpModalState(false);
+  }
   
   React.useEffect(() => {
     handleFetchBlogPosts(dispatch);
@@ -59,6 +69,7 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
 
   return (
     <React.Fragment>
+      <GeneralNotImlementedModal modalOpen={ genNotImpModalState } dismissNotImpModal={ dismissNotImpModal } />
       <Head>
         <title>Ezie Blog - Dont Panic!</title>
       </Head>
@@ -68,10 +79,12 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
           blogPosts={ blogPosts } 
           navigateToBlogPost={ navigateToBlogPost }
           handleBlogPostSort={ handleBlogPostSort }
+          handleBlogPostLike={ handleBlogPostLike }
         />
         <BlogMainView 
           blogPosts={ blogPosts }
           navigateToBlogPost={ navigateToBlogPost }
+          handleBlogPostLike={ handleBlogPostLike }
         />
       </Grid.Row>
       <Grid.Row className={ blogMainStyle.blogBottomRow} centered>

@@ -1,4 +1,6 @@
 import * as React from 'react';
+// next imports //
+import type { GetServerSideProps, GetServerSidePropsResult } from "next";
 // redux //
 import { useSelector, useDispatch } from "react-redux";
 import { handleFetchBlogPosts } from "../../../redux/actions/blogPostActions";
@@ -12,6 +14,29 @@ import type { Dispatch } from "redux";
 interface IAdminDashProps {
 
 }
+
+// TODO //
+// Alex to add protected pages here //
+// soon .. //
+export const getServerSideProps: GetServerSideProps =  async (): Promise<GetServerSidePropsResult<any>> => {
+  const auth: boolean = false;
+  if (auth) {
+    return {
+      props: { }
+    };
+  } else {
+    return {
+      redirect: {
+        destination: "/admin",
+        permanent: false
+      },
+      props: {
+        errorMessages: [ "Not Logged in "] 
+      }
+    };
+  }
+};
+
 
 const AdminDash: React.FunctionComponent<IAdminDashProps> = (props): JSX.Element => {
   // redux hooks and state //

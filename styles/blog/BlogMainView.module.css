@@ -5,9 +5,8 @@
 .cardGroup {
   height: 100%;
   margin: 0 0 0 5px !important;
-  border-top: 3px solid #8E2DE2;
-  border-right: 3px solid #8E2DE2;
-  border-bottom: 3px solid #8E2DE2;
+  -webkit-box-shadow: 1px -1px 1px 1px #a357e6; 
+  box-shadow: 1px -1px 1px 1px #a357e6;
   border-radius: 0 5px 5px 0;
 }
 

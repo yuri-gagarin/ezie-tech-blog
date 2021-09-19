@@ -40,6 +40,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
       case "dashboard": {
         router.push("/admin/dashboard");
         setActiveMenuItem("dashboard");
+        break;
       }
       case "posts": {
         router.push("/admin/dashboard/posts");
@@ -82,7 +83,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
 
   return (
     <Grid.Row className={ adminMenuStyles.adminMenuRow } >
-      <Menu fluid fixed="top" className={ adminMenuStyles.fixedAdminMenu }>
+      <Menu pointing color="violet" fluid fixed="top" className={ adminMenuStyles.fixedAdminMenu }>
         <Dropdown text='File' className={ adminMenuStyles.adminMenuFile }>
           <Dropdown.Menu>
             <Dropdown.Item>
