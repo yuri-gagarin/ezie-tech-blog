@@ -51,7 +51,7 @@ export class AuthActions {
   }
 
   public static handleLogout = async (dispatch: Dispatch<AuthAction>) => {
-
+    
   }
 };
 

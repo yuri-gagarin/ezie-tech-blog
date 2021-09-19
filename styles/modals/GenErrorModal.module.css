@@ -1,0 +1,31 @@
+.errorSegment {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 10%;
+  left: 40%;
+  height: 200px;
+  min-width: 200px;
+  background-color: rgb(255, 255, 255);
+  z-index: 9999;
+  border: 6px solid red;
+  border-radius: 10px;
+}
+.errorHeader {
+  display: flex;
+  justify-content: center;
+  font-size: 2em;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 1em 0.5em;
+  color: red;
+}
+.errorMessagesWrapper {
+  display: flex;
+  flex: 1;
+}
+.errorMessagesWrapper > ul {
+  padding-right: 1em;
+  color: red;
+}
