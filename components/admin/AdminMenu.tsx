@@ -15,7 +15,7 @@ import adminMenuStyles from "../../styles/admin/AdminMenu.module.css";
 import { checkEmptyObjVals } from "../_helpers/displayHelpers";
 
 // internal custom types //
-type MenuItemVal = "posts" | "projects" | "news" | "users" | "";
+type MenuItemVal = "dashboard" | "posts" | "projects" | "news" | "users" | "";
 interface IAdminMenuProps {
 
 }
@@ -37,6 +37,10 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
   const handleMenuItemClick = (_, data: MenuItemProps ) => {
     const name = data.name as MenuItemVal;
     switch(name) {
+      case "dashboard": {
+        router.push("/admin/dashboard");
+        setActiveMenuItem("dashboard");
+      }
       case "posts": {
         router.push("/admin/dashboard/posts");
         setActiveMenuItem("posts");
@@ -72,7 +76,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
     } else if(router.pathname.includes("/dashboard/users")) {
       setActiveMenuItem("users");
     } else {
-      setActiveMenuItem("");
+      setActiveMenuItem("dashboard");
     }
   }, [ router.pathname ]);
 
@@ -103,6 +107,11 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
           </Dropdown.Menu>
         </Dropdown>
         <Menu.Menu>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="dashboard" active={ activeMenuItem === "dashboard" }>
+            Dashboard
+          </Menu.Item>
+        </Menu.Menu>
+        <Menu.Menu>
           <Menu.Item as="a" onClick={ handleMenuItemClick } name="posts" active={ activeMenuItem === "posts" }>
             View Posts
           </Menu.Item>
@@ -120,6 +129,11 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
         <Menu.Menu>
           <Menu.Item as="a" onClick={ handleMenuItemClick } name="users" active={ activeMenuItem === "users" }>
             View Users
+          </Menu.Item>
+        </Menu.Menu>
+        <Menu.Menu position="right">
+          <Menu.Item>
+            Logout
           </Menu.Item>
         </Menu.Menu>
       </Menu>

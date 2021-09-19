@@ -1,11 +1,10 @@
 .adminMainRow {
-  height: calc(100vh - 130px);
-  padding: 0 !important;
+  height: calc(100vh - 100px);
+  padding-bottom: 0 !important;
 }
 
 .leftColumn, .rightColumn {
   height: 100%;
-  border: 5px solid green;
 }
 .leftColumn {
   height: 100%;

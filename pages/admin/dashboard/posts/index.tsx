@@ -67,7 +67,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
         </Segment>
       </Grid.Row>
       <Grid.Row className={ styles.contentRow } centered>
-        <Grid.Column largeScreen={15} mobile={16}>
+        <Grid.Column largeScreen={15} mobile={16} >
           <Card.Group itemsPerRow="4">
           {
             blogPosts.map((blogPostData) => {

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button, Grid, Header, Segment } from "semantic-ui-react";
+import { Button, Card, Grid, Header, Segment } from "semantic-ui-react";
 // additoinal components //
-import { AdminMainCurrentPost } from './AdminMainCurrentPost';
+import { AdminMainCurrentDash } from './AdminMainCurrentDash';
 // styles //
 import adminMainStyles from "../../styles/admin/AdminMain.module.css";
 // types //
@@ -19,33 +19,59 @@ export const AdminMain: React.FunctionComponent<IAdminMainProps> = ({ generalSta
   return (
     <Grid.Row className={ adminMainStyles.adminMainRow }> 
       <Grid.Column className={ adminMainStyles.leftColumn } width={5}>
-        <Segment textAlign="center">
-          <Header>Total Blog Posts</Header>
-          <div>{blogPostsState.blogPosts.length}</div>
-        </Segment>
-        <Segment textAlign="center">
-          <Header>Total Blog Posts Comments</Header>
-          <div>{blogPostsState.blogPosts.length}</div>
-        </Segment>
-        <Segment textAlign="center">
-          <Header>Total Active Users</Header>
-          <div>{usersState.usersArr.length}</div>
-        </Segment>
-        <Segment textAlign="center">
-          <Header>Total Active Projects</Header>
-          <div>{usersState.usersArr.length}</div>
-        </Segment>
-        <Segment textAlign="center">
-          <Header>Total Closed Projects</Header>
-          <div>{usersState.usersArr.length}</div>
-        </Segment>
-        <Segment textAlign="center">
-          <Header>Analytics</Header>
-          <Button content="Go to Analytics" color="blue" />
-        </Segment>
+        <Card.Group>
+          <Card fluid color="blue">
+            <Card.Content textAlign="center">
+              <Card.Header>Total Blog Posts</Card.Header>
+            </Card.Content>
+            <Card.Content textAlign="center">
+              {blogPostsState.blogPosts.length}
+            </Card.Content>
+          </Card>
+          <Card fluid color="purple">
+            <Card.Content textAlign="center">
+              <Card.Header>Total Blog Post Comments</Card.Header>
+            </Card.Content>
+            <Card.Content textAlign="center">
+              {blogPostsState.blogPosts.length}
+            </Card.Content>
+          </Card>
+          <Card fluid color="green">
+            <Card.Content textAlign="center">
+              <Card.Header>Total Users</Card.Header>
+            </Card.Content>
+            <Card.Content textAlign="center">
+              {blogPostsState.blogPosts.length}
+            </Card.Content>
+          </Card>
+          <Card fluid color="violet">
+            <Card.Content textAlign="center">
+              <Card.Header>Total Active Projects</Card.Header>
+            </Card.Content>
+            <Card.Content textAlign="center">
+              {blogPostsState.blogPosts.length}
+            </Card.Content>
+          </Card>
+          <Card fluid color="teal">
+            <Card.Content textAlign="center">
+              <Card.Header>Total Closed Projects</Card.Header>
+            </Card.Content>
+            <Card.Content textAlign="center">
+              {blogPostsState.blogPosts.length}
+            </Card.Content>
+          </Card>
+          <Card fluid color="teal">
+            <Card.Content textAlign="center">
+              <Card.Header>Statistics</Card.Header>
+            </Card.Content>
+            <Card.Content textAlign="center">
+              <Button content={"Co To Stats"} />
+            </Card.Content>
+          </Card>
+        </Card.Group>
       </Grid.Column>
       <Grid.Column className={ adminMainStyles.rightColumn } width={11}>
-          <AdminMainCurrentPost />
+          <AdminMainCurrentDash currentPostData={ blogPostsState.blogPosts[0] } />
       </Grid.Column>
     </Grid.Row>
   );
