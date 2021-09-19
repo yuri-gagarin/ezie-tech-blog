@@ -21,3 +21,17 @@
 .loginDiv {
   margin-top: 1em;
 }
+.passwordField {
+  position: relative;
+}
+.passwordField > div:nth-child(2) > input {
+  width: 100% !important;
+  padding-left: 38px !important;
+}
+.passwordField > span {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 97px;
+  cursor: pointer;
+}

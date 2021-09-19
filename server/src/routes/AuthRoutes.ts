@@ -1,7 +1,8 @@
 import type { Router } from "express";
 import type AuthController from "../controllers/AuthController";
+import { passportLoginMiddleware } from "../controllers/_helpers/authHelpers";
 // passport instance //
-import { PassportContInstance } from "../server";
+//import { PassportContInstance } from "../server";
 
 export default class AuthRoutes {
   private router: Router;
@@ -21,7 +22,7 @@ export default class AuthRoutes {
   private loginRoute() {
     this.router
       .route("/api/login")
-      .post([ PassportContInstance.authenticate("login", { session: false }), this.controller.login ]);
+      .post([ passportLoginMiddleware, this.controller.login ]);
   }
   private logoutRoute() {
     this.router

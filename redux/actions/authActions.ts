@@ -3,7 +3,7 @@ import axios from "axios";
 import type { Dispatch } from "redux"
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 // actions types //
-import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, AuthLoginFailure, AuthAction } from "../_types/auth/actionTypes";
+import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, AuthLoginFailure, AuthAction, AuthErrorDismiss } from "../_types/auth/actionTypes";
 // data types //
 import type { AdminData } from "../_types/generalTypes";
 import type { UserData } from "../_types/users/dataTypes";
@@ -30,20 +30,21 @@ const authLoginFailure = (data: { status: number; responseMsg: string; error: an
   };
 };
 
-
 // exported handlers //
 export class AuthActions {
-  public static handleLogin = async (dispatch: Dispatch<AuthAction>): Promise<AuthLoginSuccess | AuthLoginFailure> => {
+  public static handleLogin = async (dispatch: Dispatch<AuthAction>, { email, password }: { email: string; password: string; }): Promise<AuthLoginSuccess | AuthLoginFailure> => {
+    console.log("called login")
     const axiosOpts: AxiosRequestConfig = {
       method: "POST",
-      url: "/api/login"
+      url: "/api/login",
+      data: { email, password }
     };
     dispatch(authAPIRequest())
     try {
       const response: AxiosResponse<LoginRes> = await axios(axiosOpts);
       const { status, data } = response;
-      const { responseMsg, token: authToken, userData } = data;
-      return dispatch(authLoginSuccess({ status, responseMsg, authToken, currentUser: userData }));
+      const { responseMsg, jwtToken, userData } = data;
+      return dispatch(authLoginSuccess({ status, responseMsg, authToken: jwtToken.token, currentUser: userData }));
     } catch (err) {
       const { status, responseMsg, error, errorMessages } = processAxiosError(err);
       return dispatch(authLoginFailure({ status, responseMsg, error, errorMessages }));
@@ -52,6 +53,10 @@ export class AuthActions {
 
   public static handleLogout = async (dispatch: Dispatch<AuthAction>) => {
     
+  }
+
+  public static dismissLoginError = (dispatch: Dispatch<AuthAction>): AuthErrorDismiss => {
+    return dispatch({ type: "AuthErrorDismiss", payload: { error: null, errorMessages: null }});
   }
 };
 

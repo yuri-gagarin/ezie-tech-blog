@@ -84,7 +84,7 @@ export default class PassportController {
               return done(null, false, { message: "Wrong password" });
             }
           } else {
-            return done(null, false, { message: "Not found" });
+            return done(new Error("User not found"), false, { message: "Not found" });
           }
         }
       } catch (error) {

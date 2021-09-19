@@ -4,7 +4,10 @@ import type { UserData } from "../users/dataTypes";
 export type LoginRes = {
   readonly responseMsg: string;
   readonly userData: AdminData | UserData;
-  readonly token: string;
+  readonly jwtToken: {
+    token: string;
+    expires: string;
+  };
   readonly error?: any;
   readonly errorMessages?: string[];
 };

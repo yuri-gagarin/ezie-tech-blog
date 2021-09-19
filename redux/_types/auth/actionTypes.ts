@@ -46,6 +46,13 @@ export type AuthLogoutSuccess = {
   };
 };
 
-export type AuthAction = AuthAPIRequest | AuthLoginSuccess | AuthLoginFailure | AuthLogoutSuccess;
+export type AuthErrorDismiss = {
+  readonly type: "AuthErrorDismiss";
+  readonly payload: {
+    error: null, errorMessages: null
+  };
+};
+
+export type AuthAction = AuthAPIRequest | AuthLoginSuccess | AuthLoginFailure | AuthLogoutSuccess | AuthErrorDismiss;
 
 
