@@ -1,5 +1,5 @@
 import type { BlogPostData } from "../_types/blog_posts/dataTypes";
-import type { IBlogPostState, IUserState } from "../_types/generalTypes";
+import type { IAuthState, IBlogPostState, IUserState } from "../_types/generalTypes";
 
 export const generateEmptyBlogPost = (): BlogPostData => {
   return {
@@ -41,7 +41,7 @@ export const generateEmptyPostState = (): IBlogPostState => {
 
 export const generateEmptyUserState = (): IUserState => {
   return {
-    status: 200,
+    status: null,
     responseMsg: "",
     loading: false,
     currentSelectedUser: {
@@ -54,4 +54,17 @@ export const generateEmptyUserState = (): IUserState => {
     error: null,
     errorMessages: null
   }; 
+};
+
+export const generateEmptyAuthState = (): IAuthState => {
+  return {
+    status: null,
+    responseMsg: "",
+    loading: false,
+    loggedIn: false,
+    authToken: "",
+    currentUser: null,
+    error: null,
+    errorMessages: null
+  };
 };

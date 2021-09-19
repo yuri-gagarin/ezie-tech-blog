@@ -1,3 +1,4 @@
+import type { AxiosError } from "axios";
 type AnyObj = {
   [key: string]: any;
 }
@@ -18,5 +19,20 @@ export const checkEmptyObjVals = (obj: AnyObj): boolean => {
     return true;
   } else {
     return true;
+  }
+};
+
+export const processAxiosError = (error: any): { status: number; responseMsg: string; error: Error; errorMessages: string[] } => {
+  if (error && error.response) {
+    const { response } = error as AxiosError<{ responseMsg: string; error: Error, errorMessages: string[] }>;
+    const { status, data } = response;
+    return { status, ...data };
+  } else {
+    return {
+      status: 500,
+      responseMsg: "Error",
+      error: new Error("Error! Weird!"),
+      errorMessages: [ "An error occured, we are working on it" ]
+    };
   }
 };
