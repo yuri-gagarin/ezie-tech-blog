@@ -1,5 +1,17 @@
 import type { IAdmin } from "../../models/Admin";
 
+export type ResAdminData = {
+  _id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  confirmed?: boolean;
+  role?: "admin" | "owner";
+  editedAt?: Date;
+  createdAt?: Date;
+};
+
 export type AdminsIndexRes = {
   responseMsg: string;
   admins: IAdmin[];

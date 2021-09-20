@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from "../../components/axios/axiosInstance";
 // types //
-import type { Dispatch } from "redux"
+import type { Dispatch } from "redux";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 // actions types //
 import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, AuthLoginFailure, AuthAction, AuthErrorDismiss } from "../_types/auth/actionTypes";
@@ -32,8 +32,7 @@ const authLoginFailure = (data: { status: number; responseMsg: string; error: an
 
 // exported handlers //
 export class AuthActions {
-  public static handleLogin = async (dispatch: Dispatch<AuthAction>, { email, password }: { email: string; password: string; }): Promise<AuthLoginSuccess | AuthLoginFailure> => {
-    console.log("called login")
+  public static handleLogin = async (dispatch: Dispatch<AuthAction>, { email, password }: { email: string; password: string; }): Promise<AuthLoginSuccess> => {
     const axiosOpts: AxiosRequestConfig = {
       method: "POST",
       url: "/api/login",
@@ -45,14 +44,18 @@ export class AuthActions {
       const { status, data } = response;
       const { responseMsg, jwtToken, userData } = data;
       return dispatch(authLoginSuccess({ status, responseMsg, authToken: jwtToken.token, currentUser: userData }));
-    } catch (err) {
-      const { status, responseMsg, error, errorMessages } = processAxiosError(err);
-      return dispatch(authLoginFailure({ status, responseMsg, error, errorMessages }));
+    } catch (error) {
+      throw error;
     }
   }
 
   public static handleLogout = async (dispatch: Dispatch<AuthAction>) => {
     
+  }
+
+  public static handleLoginError = (dispatch: Dispatch<AuthAction>, err: any): AuthLoginFailure => {
+    const { status, responseMsg, error, errorMessages } = processAxiosError(err);
+    return dispatch(authLoginFailure({ status, responseMsg, error, errorMessages }));
   }
 
   public static dismissLoginError = (dispatch: Dispatch<AuthAction>): AuthErrorDismiss => {

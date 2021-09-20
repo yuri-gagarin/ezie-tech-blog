@@ -1,5 +1,15 @@
 import type { IUser } from "../../models/User";
 
+export type ResUserData = {
+  _id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  confirmed?: boolean;
+  editedAt?: Date;
+  createdAt?: Date;
+};
 export type UsersIndexRes = {
   responseMsg: string;
   users: IUser[];

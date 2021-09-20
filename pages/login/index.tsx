@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Button, Form, Icon, Input, Label, Popup } from "semantic-ui-react";
 // next imports //
-import { GetStaticProps, GetStaticPropsResult } from "next";
+import type { GetStaticProps, GetStaticPropsResult } from "next";
+import { useRouter } from "next/router";
 // redux and actions //
+import type { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthActions } from "../../redux/actions/authActions";
 // additional components //
@@ -10,7 +12,6 @@ import { GenErrorModal } from "../../components/modals/GenErrorModal";
 // style //
 import styles from "../../styles/login/LoginPage.module.css";
 // types //
-import type { Dispatch } from "redux";
 import type { InputOnChangeData } from "semantic-ui-react";
 import type { IAuthState, IGeneralState } from "../../redux/_types/generalTypes";
 import type { AuthAction } from '../../redux/_types/auth/actionTypes';
@@ -31,6 +32,8 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
   const [ loginFormState, setLoginFormState ] = React.useState<{ email: string; password: string; }>({ email: "", password: "" });
   const [ errorCompOpen, setErrorCompOpen ] = React.useState<boolean>(false);
   const [ showPassword, setShowPassword ] = React.useState<boolean>(false);
+  // next hooks //
+  const router = useRouter();
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<AuthAction>>();
   const { error, errorMessages } = useSelector((state: IGeneralState) => state.authState);
@@ -53,7 +56,12 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
   const handleLogin = async (): Promise<any> => {
     const { email, password } = loginFormState;
     if (!email || !password) return;
-    await AuthActions.handleLogin(dispatch, { email, password });
+    try {
+      await AuthActions.handleLogin(dispatch, { email, password });
+      router.push("/admin/dashboard");
+    } catch (error) {
+      AuthActions.handleLoginError(dispatch, error)
+    }
   };
   // end action handlers //
  
