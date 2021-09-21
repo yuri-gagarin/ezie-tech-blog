@@ -19,16 +19,17 @@ import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
 import type { IGeneralState } from "../../redux/_types/generalTypes";
 import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
 
-// TODO edit for a sercer side call later //
-/*
-export const getServerSideProps = wrapper.getServerSideProps((store) => async() => {
- const dispatch = store.dispatch;
- await handleFetchBlogPosts(dispatch)
+
+export const getServerSideProps = wrapper.getServerSideProps((store) => async(context) => {
+  console.log(24)
+  console.log(context.req.cookies)
+  const dispatch = store.dispatch;
+  await handleFetchBlogPosts(dispatch)
   return {
     props: { } 
   };
 });
-*/
+
 
 
 interface IServerSideProps {
@@ -63,9 +64,11 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
     setGenNotImpModalState(false);
   }
   
+  /*
   React.useEffect(() => {
     handleFetchBlogPosts(dispatch);
   }, [ dispatch ]);
+  */
 
   return (
     <React.Fragment>

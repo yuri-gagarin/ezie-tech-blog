@@ -1,6 +1,7 @@
-import { createStore, AnyAction, Store } from 'redux';
+import { createStore, AnyAction, Store, applyMiddleware } from 'redux';
 import { createWrapper, Context, HYDRATE } from 'next-redux-wrapper';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import { nextReduxCookieMiddleware, wrapMakeStore } from "next-redux-cookie-wrapper";
 import combinedReducer from './reducers/combinedReducer';
 import type { IGeneralAppAction, IGeneralState } from "./_types/generalTypes";
 // helpers //
@@ -13,7 +14,7 @@ const initialState: IGeneralState = {
   blogPostsState: generateEmptyPostState()
 };
 
-const isClient = typeof window !== 'undefined';
+//const isClient = typeof window !== 'undefined';
 
 const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IGeneralAppAction): IGeneralState => {
   switch (action.type) {
@@ -32,16 +33,21 @@ const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IG
       //if (action.payload.usersState && checkEmptyObjVals(action.payload.usersState)) delete action.payload.usersStatePostsState;
       //if (action.payload.blogPostsState && checkEmptyObjVals(action.payload.blogPostsState)) delete action.payload.blogPostsState;
       //console.log(action.payload)
-      console.log(action.payload.authState)
-      console.log(state.authState)
       return { ...state, ...action.payload };
     default:
       return combinedReducer(state, action);
   }
 };
 
-if (isClient) console.log("client request");
+//if (isClient) console.log("client request");
 
-const makeStore = (context: Context) => createStore<IGeneralState, AnyAction, any, any>(rootReducer, composeWithDevTools());
+const makeStore = wrapMakeStore<Store<IGeneralState>>(() => 
+  createStore<IGeneralState, AnyAction, any, any>(
+    rootReducer, 
+    composeWithDevTools(applyMiddleware(
+      nextReduxCookieMiddleware({ subtrees: ["authState"] })
+    ))
+  )
+);
 
 export const wrapper = createWrapper<Store<IGeneralState>>(makeStore, { debug: false });

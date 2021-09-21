@@ -44,7 +44,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element => {
     else if (router.route === "/news" && navState.activeItem !== "news") setNavState({ activeItem: "news", showSearchBar: false });
     else if (router.route === "/about" && navState.activeItem !== "about") setNavState({ activeItem: "about", showSearchBar: false });
     //else setNavState({ activeItem: "home", showSearchBar: false });
-  }, [ router.route ]);
+  }, [ router.route, navState.activeItem ]);
 
   return (
     <Grid.Row className={ navMenuStyle.menuRow }>
@@ -80,13 +80,13 @@ export const NavMenu: React.FC<{}> = (): JSX.Element => {
             :
             null
           }
-          <Menu.Item icon="login">
+          <Menu.Item>
             { 
               loggedIn && currentUser 
               ?
-              <Button inverted color="purple" content="Logout"  onClick={ handleGoToLogin }/>
+              <Button inverted color="purple" content="Logout" />
               :
-              <Button inverted color="purple" content="Login" />
+              <Button inverted color="purple" content="Login" onClick={ handleGoToLogin } />
             }
           </Menu.Item>
         </Menu.Menu>

@@ -28,7 +28,7 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBl
             {
               blogPosts.map((blogPost) => {
                 return (
-                  <Item key={ blogPost._id } fluid className={ styles.sideItem }>
+                  <Item key={ blogPost._id } fluid={"true"} className={ styles.sideItem }>
                     <Image src="/images/blog1.jpg" size="small" alt="image" rounded />
                     <Item.Content>
                       <Item.Header>{ blogPost.title }</Item.Header>
