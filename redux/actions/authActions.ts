@@ -3,11 +3,11 @@ import axios from "../../components/axios/axiosInstance";
 import type { Dispatch } from "redux";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 // actions types //
-import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, AuthLoginFailure, AuthAction, AuthErrorDismiss } from "../_types/auth/actionTypes";
+import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss } from "../_types/auth/actionTypes";
 // data types //
 import type { AdminData } from "../_types/generalTypes";
 import type { UserData } from "../_types/users/dataTypes";
-import type { LoginRes, LogoutRes } from "../_types/auth/dataTypes";
+import type { LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
 // helpers //
 import { processAxiosError } from '../_helpers/dataHelpers';
 
@@ -28,10 +28,16 @@ const authLogoutSuccess = (data: { status: number; responseMsg: string; currentU
     type: "AuthLogoutSuccess",
     payload: { ...data, loading: false, loggedIn: false, authToken: "" }
   };
-}
-const authLoginFailure = (data: { status: number; responseMsg: string; error: any; errorMessages: string[] }): AuthLoginFailure => {
+};
+const authRegisterSuccess = (data: { status: number; responseMsg: string; currentUser: UserData; authToken: string }): AuthRegisterSuccess => {
   return {
-    type: "AuthLoginFailure",
+    type: "AuthRegisterSuccess",
+    payload: { ...data, loading: false, loggedIn: true }
+  };
+};
+const authFailure = (data: { status: number; responseMsg: string; error: any; errorMessages: string[] }): AuthFailure => {
+  return {
+    type: "AuthFailure",
     payload: { ...data, loading: false, loggedIn: false,  authToken: "", currentUser: null }
   };
 };
@@ -70,12 +76,28 @@ export class AuthActions {
     }
   };
 
-  public static handleLoginError = (dispatch: Dispatch<AuthAction>, err: any): AuthLoginFailure => {
+  public static handleRegistration = async (dispatch: Dispatch<AuthAction>, data: { email: string; password: string; confirmPassword: string; }): Promise<any> => {
+    const axiosOpts: AxiosRequestConfig = {
+      method: "POST",
+      url: "/api/register",
+      data: { ...data }
+    };
+    dispatch(authAPIRequest());
+    try {
+      const { status, data }: AxiosResponse<RegisterRes> = await axios(axiosOpts);
+      const { responseMsg, userData, jwtToken } = data;
+      return dispatch(authRegisterSuccess({ status, responseMsg, currentUser: userData, authToken: jwtToken.token }));
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  public static handleAuthError = (dispatch: Dispatch<AuthAction>, err: any): AuthFailure => {
     const { status, responseMsg, error, errorMessages } = processAxiosError(err);
-    return dispatch(authLoginFailure({ status, responseMsg, error, errorMessages }));
+    return dispatch(authFailure({ status, responseMsg, error, errorMessages }));
   }
 
-  public static dismissLoginError = (dispatch: Dispatch<AuthAction>): AuthErrorDismiss => {
+  public static dismissAuthError = (dispatch: Dispatch<AuthAction>): AuthErrorDismiss => {
     return dispatch({ type: "AuthErrorDismiss", payload: { error: null, errorMessages: null }});
   }
 };

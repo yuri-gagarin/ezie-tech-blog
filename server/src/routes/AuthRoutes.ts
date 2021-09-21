@@ -16,6 +16,7 @@ export default class AuthRoutes {
 
   private initialize(){
     this.loginRoute();
+    this.registerRoute();
     this.logoutRoute();
   }
 
@@ -23,6 +24,11 @@ export default class AuthRoutes {
     this.router
       .route("/api/login")
       .post([ passportLoginMiddleware, this.controller.login ]);
+  }
+  private registerRoute() {
+    this.router 
+      .route("/api/register")
+      .post(this.controller.register);
   }
   private logoutRoute() {
     this.router

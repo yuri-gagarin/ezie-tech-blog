@@ -17,7 +17,6 @@ export default function authReducer(state: IAuthState = initialState, action: Au
     }
     case "AuthLoginSuccess": {
       return {
-        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
@@ -28,22 +27,20 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         errorMessages: null
       };
     }
-    case "AuthLoginFailure": {
+    case "AuthRegisterSuccess": {
       return {
-        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
+        loggedIn: action.payload.loggedIn,
         currentUser: action.payload.currentUser,
         authToken: action.payload.authToken,
-        loggedIn: action.payload.loggedIn,
-        error: action.payload.error,
-        errorMessages: action.payload.errorMessages
-      };
+        error: null,
+        errorMessages: null
+      }
     }
     case "AuthLogoutSuccess": {
       return {
-        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
@@ -52,6 +49,18 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         loggedIn: false,
         error: null,
         errorMessages: null
+      };
+    }
+    case "AuthFailure": {
+      return {
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        currentUser: action.payload.currentUser,
+        authToken: action.payload.authToken,
+        loggedIn: false,
+        error: action.payload.error,
+        errorMessages: action.payload.errorMessages
       };
     }
     default: return state;

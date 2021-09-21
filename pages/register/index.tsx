@@ -94,19 +94,23 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
       return;
     }
     // handle registration //
+    try {
+      await AuthActions.handleRegistration(dispatch, { email, password, confirmPassword });
+    } catch (error) {
+      return AuthActions.handleAuthError(dispatch, error);
+    }
   };
   // end action handlers //
  
   // lifecycle hooks //
-  /*
   React.useEffect(() => {
-    if (error || errorCompOpen) setErrorCompOpen(true);
-  }, [ error, errorMessages ])
-  */
+    if (error || errorMessages) setRegisterFormState((s) => ({ ...s, errorFormOpen: true }));
+  }, [ error, errorMessages ]);
+  
   return (
     <div className={ styles.registerWrapper }>
       <GenErrorModal 
-        animation='drop' 
+        animation={"slide down"} 
         duration={ 500 } 
         open={ registerFormState.errorFormOpen } 
         handleErrorModalClose={ handleErrorModalClose } 

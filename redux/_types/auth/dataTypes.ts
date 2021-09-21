@@ -12,6 +12,15 @@ export type LoginRes = {
   readonly errorMessages?: string[];
 };
 
+export type RegisterRes = {
+  readonly responseMsg: string;
+  readonly userData: UserData;
+  readonly jwtToken: {
+    token: string;
+    expires: string;
+  };
+};
+
 export type LogoutRes = {
   readonly responseMsg: string;
 };

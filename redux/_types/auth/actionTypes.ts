@@ -20,17 +20,15 @@ export type AuthLoginSuccess = {
   };
 };
 
-export type AuthLoginFailure = {
-  readonly type: "AuthLoginFailure";
+export type AuthRegisterSuccess = {
+  readonly type: "AuthRegisterSuccess";
   readonly payload: {
     status: number;
     responseMsg: string;
     loading: boolean;
     loggedIn: boolean;
     authToken: string;
-    currentUser: null;
-    error: any;
-    errorMessages: string[];
+    currentUser: UserData;
   };
 };
 
@@ -46,6 +44,21 @@ export type AuthLogoutSuccess = {
   };
 };
 
+export type AuthFailure = {
+  readonly type: "AuthFailure";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    loggedIn: boolean;
+    authToken: string;
+    currentUser: null;
+    error: any;
+    errorMessages: string[];
+  };
+};
+
+
 export type AuthErrorDismiss = {
   readonly type: "AuthErrorDismiss";
   readonly payload: {
@@ -53,6 +66,10 @@ export type AuthErrorDismiss = {
   };
 };
 
-export type AuthAction = AuthAPIRequest | AuthLoginSuccess | AuthLoginFailure | AuthLogoutSuccess | AuthErrorDismiss;
+export type AuthAction = (
+    AuthAPIRequest | AuthLoginSuccess | AuthLogoutSuccess | 
+    AuthRegisterSuccess | AuthFailure | AuthErrorDismiss
+);
+
 
 
