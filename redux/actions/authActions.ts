@@ -23,6 +23,12 @@ const authLoginSuccess = (data: { status: number; responseMsg: string; authToken
     payload: { ...data, loading: false, loggedIn: true  }
   };
 };
+const authLogoutSuccess = (data: { status: number; responseMsg: string; currentUser: null }): AuthLogoutSuccess => {
+  return {
+    type: "AuthLogoutSuccess",
+    payload: { ...data, loading: false, loggedIn: false, authToken: "" }
+  };
+}
 const authLoginFailure = (data: { status: number; responseMsg: string; error: any; errorMessages: string[] }): AuthLoginFailure => {
   return {
     type: "AuthLoginFailure",
@@ -49,9 +55,20 @@ export class AuthActions {
     }
   }
 
-  public static handleLogout = async (dispatch: Dispatch<AuthAction>) => {
-    
-  }
+  public static handleLogout = async (dispatch: Dispatch<AuthAction>): Promise<any> => {
+    const axiosOpts: AxiosRequestConfig = {
+      method: "DELETE",
+      url: "/api/logout"
+    };
+    dispatch(authAPIRequest());
+    try {
+      const response: AxiosResponse<LogoutRes> = await axios(axiosOpts);
+      const { status, data } = response;
+      return;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   public static handleLoginError = (dispatch: Dispatch<AuthAction>, err: any): AuthLoginFailure => {
     const { status, responseMsg, error, errorMessages } = processAxiosError(err);

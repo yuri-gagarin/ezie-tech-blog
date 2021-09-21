@@ -19,14 +19,14 @@ interface IBlogMainViewProps {
 export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, navigateToBlogPost, handleBlogPostLike }): JSX.Element | null => {
   // local state and hooks //
   // custom hooks //
-  const { width } = useWindowSize();
+  const { width, height } = useWindowSize();
   // lifecycle hooks //
   /*
   React.useEffect(() => {
     if (blogPosts.length > 0) setDefaultBlogPostData(setDefaultBlogPosts(blogPosts));
   }, [ blogPosts ]);
   */
-
+  
   if (width > 767) {
     return (
       blogPosts.length > 0 
@@ -34,7 +34,7 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, navigate
       <Grid.Column className={ styles.blogEntryColumn } computer={ 10 } tablet= { 8 } mobile= { 16 }>
         <Card.Group className={ styles.cardGroup }>
           <Card className={ styles.mainCard } fluid={ width > 600 ? true : false }>
-            <Image src="/images/blog1.jpg" size="large" alt="image" />
+            <Image src="/images/blog1.jpg" size={ height > 768 ? "large" : "small"} alt="image" />
             <Card.Content>
               <Card.Header>
                 { blogPosts[0].title }

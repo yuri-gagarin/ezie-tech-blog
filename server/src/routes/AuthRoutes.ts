@@ -27,6 +27,6 @@ export default class AuthRoutes {
   private logoutRoute() {
     this.router
       .route("/api/logout")
-      .post([ this.controller.logout ]);
+      .delete([ this.controller.logout ]);
   }
 };

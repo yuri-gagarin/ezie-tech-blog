@@ -4,10 +4,11 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import combinedReducer from './reducers/combinedReducer';
 import type { IGeneralAppAction, IGeneralState } from "./_types/generalTypes";
 // helpers //
-import { generateEmptyPostState, generateEmptyUserState } from "./_helpers/mockData";
+import { generateEmptyAuthState, generateEmptyPostState, generateEmptyUserState } from "./_helpers/mockData";
 import { checkEmptyObjVals } from './_helpers/dataHelpers';
 
 const initialState: IGeneralState = {
+  authState: generateEmptyAuthState(),
   usersState: generateEmptyUserState(),
   blogPostsState: generateEmptyPostState()
 };
@@ -31,6 +32,8 @@ const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IG
       //if (action.payload.usersState && checkEmptyObjVals(action.payload.usersState)) delete action.payload.usersStatePostsState;
       //if (action.payload.blogPostsState && checkEmptyObjVals(action.payload.blogPostsState)) delete action.payload.blogPostsState;
       //console.log(action.payload)
+      console.log(action.payload.authState)
+      console.log(state.authState)
       return { ...state, ...action.payload };
     default:
       return combinedReducer(state, action);
