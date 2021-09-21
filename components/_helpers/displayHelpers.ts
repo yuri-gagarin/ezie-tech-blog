@@ -56,6 +56,16 @@ export const setDefaultBlogPosts = (blogPostData: BlogPostData[]): BlogPostData[
 export const capitalizeString = (stringToCapitalize: string): string => {
   return stringToCapitalize.slice(0, 1).toUpperCase() + stringToCapitalize.slice(1);
 };
+
+export const isDefined = (data: string | number): boolean => {
+  if (typeof data === "string") {
+    return data.length > 0 ? true : false;
+  } else if (typeof data === "number") {
+    return true;
+  } else {
+    return false;
+  }
+};
 // helper to check if object values are empty/default state //
 // note that in cases where key: [] or key: {} it will still be treated as empty //
 type AnyObj = {

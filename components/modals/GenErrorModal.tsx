@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Segment, TransitionablePortal } from "semantic-ui-react";
+import { TransitionablePortal } from "semantic-ui-react";
 // types //
 import type { SemanticTRANSITIONS } from "semantic-ui-react";
 // styles //
@@ -12,17 +12,29 @@ interface IGenErrorModalProps {
   header?: string;
   errorMessages?: string[];
   handleErrorModalClose(): void;
+  position?: "fixed-top" | "fixed-bottom";
 }
 
-export const GenErrorModal: React.FunctionComponent<IGenErrorModalProps> = ({ open, animation = "fly down", duration = 1500, header, errorMessages, handleErrorModalClose }): JSX.Element => {
+export const GenErrorModal: React.FunctionComponent<IGenErrorModalProps> = ({ open, animation = "fly down", duration = 1500, header, errorMessages, handleErrorModalClose, position }): JSX.Element => {
+  const [ postStyle, setPostStyle ] = React.useState<string>("");
 
+  React.useEffect(() => {
+    if (position) {
+      if (position === "fixed-top") {
+        setPostStyle(styles.fixedTop);
+      }
+      if (position === "fixed-bottom") {
+        setPostStyle(styles.fixedBottom);
+      }
+    }
+  }, [ position ]);
   return (
     <TransitionablePortal 
       open={ open }
       transition={{ animation, duration }}
       onClose={ handleErrorModalClose }
     >
-      <div className={ styles.errorSegment }>
+      <div className={( position ? postStyle : styles.errorSegment)}>
         <div className={ styles.errorHeader }>{ header ? header : "An Error Occured" }</div>
         <div className={ styles.errorMessagesWrapper }>
           <ul className={ styles.errorMessagesList }>

@@ -84,7 +84,13 @@ export const NavMenu: React.FC<{}> = (): JSX.Element => {
             { 
               loggedIn && currentUser 
               ?
-              <Button inverted color="purple" content="Logout" />
+              (
+                router.pathname.includes("/admin") 
+                ?
+                null
+                :
+                <Button inverted color="purple" content="Logout" onClick={ handleLogout } />
+              )
               :
               <Button inverted color="purple" content="Login" onClick={ handleGoToLogin } />
             }

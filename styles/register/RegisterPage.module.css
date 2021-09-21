@@ -1,0 +1,42 @@
+.registerWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 50px);
+}
+
+.registerFormHeader {
+  padding: 2em;
+}
+.registerFormContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid purple;
+  border-radius: 5px;
+  padding: 2em 5em;
+}
+
+.registerDiv {
+  margin-top: 1em;
+}
+.passwordField, .passwordConfField {
+  position: relative;
+}
+.passwordField > div:nth-child(2) > input, .passwordConfField > div:nth-child(2) > input {
+  width: 100% !important;
+  padding-left: 38px !important;
+}
+.passwordField > span, .passwordConfField > span {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 97px;
+  cursor: pointer;
+}
+
+.passwordConfField { 
+  display: flex;
+  align-items: center;
+}
