@@ -55,6 +55,7 @@ export type EditBlogPostRes = {
   responseMsg: string;
   editedBlogPost: BlogPostData;
   error?: any;
+  errorMessages: string[];
 };
 export type DeleteBlogPostRes = {
   responseMsg: string;

@@ -59,7 +59,6 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
     }
     case "CreateBlogPost": {
       return {
-        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
@@ -71,7 +70,6 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
     }
     case "EditBlogPost": {
       return {
-        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
@@ -83,7 +81,17 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
     }
     case "DeleteBlogPost": {
       return {
-        ...state,
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        currentBlogPost: action.payload.updatedCurrentBlogPost,
+        blogPosts: action.payload.updatedBlogPosts,
+        error: null,
+        errorMessages: null
+      };
+    }
+    case "ToggleBlogPostLike": {
+      return {
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
@@ -97,4 +105,4 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
       return state;
     }
   }
-}
+};

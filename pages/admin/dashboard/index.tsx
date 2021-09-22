@@ -2,7 +2,7 @@ import * as React from 'react';
 // next imports //
 // redux //
 import { useSelector, useDispatch } from "react-redux";
-import { handleFetchBlogPosts } from "../../../redux/actions/blogPostActions";
+import { BlogPostActions } from "../../../redux/actions/blogPostActions";
 // additional components //
 import { AdminLayout } from '../../../components/admin/AdminLayout';
 import { AdminMain } from '../../../components/admin/AdminMain';
@@ -52,7 +52,7 @@ const AdminDash: React.FunctionComponent<IAdminDashProps> = (props): JSX.Element
 
   React.useEffect(() => {
     async function getAllData() {
-      await handleFetchBlogPosts(dispatch);
+      await BlogPostActions.handleFetchBlogPosts(dispatch);
     }
     getAllData();
   }, [ dispatch ]);

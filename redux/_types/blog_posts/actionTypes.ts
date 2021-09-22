@@ -56,6 +56,16 @@ export type DeleteBlogPost = {
     updatedBlogPosts: BlogPostData[];
   };
 };
+export type ToggleBlogPostLike = {
+  readonly type: "ToggleBlogPostLike";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    updatedCurrentBlogPost: BlogPostData;
+    updatedBlogPosts: BlogPostData[];
+  };
+};
 export type SetBlogPostError = {
   readonly type: "SetBlogPostError";
   readonly payload: {
@@ -81,4 +91,4 @@ export type ClearBlogPost = {
   };
 };
 
-export type BlogPostAction = (BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | SetBlogPost | ClearBlogPost | SetBlogPostError);
+export type BlogPostAction = (BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | ToggleBlogPostLike | SetBlogPost | ClearBlogPost | SetBlogPostError);

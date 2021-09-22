@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 // redux and actions //
 import { wrapper } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { handleSetCurrentBlogPost, handleFetchBlogPosts } from "../../redux/actions/blogPostActions";
+import { BlogPostActions } from "../../redux/actions/blogPostActions";
 // additional components //
 import { BlogMainView } from "../../components/blog/BlogMainView";
 import { BlogHeader } from "../../components/blog/BlogHeader";
@@ -21,10 +21,8 @@ import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_pos
 
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async(context) => {
-  console.log(24)
-  console.log(context.req.cookies)
   const dispatch = store.dispatch;
-  await handleFetchBlogPosts(dispatch)
+  await BlogPostActions.handleFetchBlogPosts(dispatch)
   return {
     props: { } 
   };
@@ -50,11 +48,11 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
 
   // action handlers //
   const navigateToBlogPost = (blogPostId: string): void => {
-    const currentPost: BlogPostData = handleSetCurrentBlogPost(dispatch, blogPostId, blogPostState);
+    const currentPost: BlogPostData = BlogPostActions.handleSetCurrentBlogPost(dispatch, blogPostId, blogPostState);
     router.push(`/blog/${currentPost.slug}`);
   };
   const handleBlogPostSort = async ({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any> => {
-    if (category) return handleFetchBlogPosts(dispatch, { category })
+    if (category) return BlogPostActions.handleFetchBlogPosts(dispatch, { category })
   };
   const handleBlogPostLike = async (blogPostId: string) => {
     // NOT IMPLEMENTED YET //

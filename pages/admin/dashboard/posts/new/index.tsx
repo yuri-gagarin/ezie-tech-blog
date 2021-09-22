@@ -4,7 +4,7 @@ import { Grid } from "semantic-ui-react";
 import { useRouter } from "next/router";
 // redux and actions //
 import { useDispatch, useSelector } from 'react-redux';
-import { handleSaveNewBlogPost } from "../../../../../redux/actions/blogPostActions";
+import { BlogPostActions } from "../../../../../redux/actions/blogPostActions";
 // additional components //
 import { AdminLayout } from '../../../../../components/admin/AdminLayout';
 import { PostForm } from "../../../../../components/admin/forms/PostForm";
@@ -50,7 +50,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     // show an error div //
     if (valid) {
       try {
-        await handleSaveNewBlogPost(dispatch, { title, author, category, keywords, content}, blogPostsState);
+        await BlogPostActions.handleSaveNewBlogPost(dispatch, { title, author, category, keywords, content}, blogPostsState);
         router.push("/admin/dashboard/posts");
       } catch (err) {
         console.log(err)

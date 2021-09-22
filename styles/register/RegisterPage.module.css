@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 50px);
+  height: calc(100vh);
 }
 
 .registerFormHeader {

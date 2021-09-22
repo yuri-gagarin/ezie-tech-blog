@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import { handleClearCurrentBlogPost, handleFetchBlogPosts, handleSetCurrentBlogPost, handleDeleteBlogPost } from "../../../../redux/actions/blogPostActions";
+import { BlogPostActions } from "../../../../redux/actions/blogPostActions";
 // additonal components //
 import { AdminLayout } from '../../../../components/admin/AdminLayout';
 import { BlogViewModal } from "../../../../components/admin/modals/BlogViewModal";
@@ -36,10 +36,10 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
   // action handlers //
   const toggleBlogPostModal = (blogPostId?: string): void => {
     if (blogPostId && !viewModalState.modalOpen) {
-      handleSetCurrentBlogPost(dispatch, blogPostId, blogPostsState);
+      BlogPostActions.handleSetCurrentBlogPost(dispatch, blogPostId, blogPostsState);
       setViewModalState({ ...viewModalState, modalOpen: true});
     } else { 
-      handleClearCurrentBlogPost(dispatch);
+      BlogPostActions.handleClearCurrentBlogPost(dispatch);
       setViewModalState({ ...setViewModalState, modalOpen: false });
     }
   };
@@ -52,7 +52,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
     // ideally a popup confirm modal should appear //
     try {
       const { _id: postId } = currentBlogPost;
-      await handleDeleteBlogPost(dispatch, postId, blogPostsState);
+      await BlogPostActions.handleDeleteBlogPost(dispatch, postId, blogPostsState);
       router.push("/admin/dashboard/posts");
     } catch (error) {
       console.log(error);
@@ -61,7 +61,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
 
   // lifecycle hooks //
   React.useEffect(() => {
-    handleFetchBlogPosts(dispatch);
+    BlogPostActions.handleFetchBlogPosts(dispatch);
   }, [ dispatch ]);
 
   return (
