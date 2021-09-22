@@ -1,18 +1,25 @@
 import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
-import type { StrategyOptions } from "passport-jwt";
 import jsonwebtoken from "jsonwebtoken";
-// 
+// modals //
 import Admin from "../models/Admin";
 import User from "../models/User";
+// types //
+import type { StrategyOptions } from "passport-jwt";
 import type { IUser } from "../models/User";
 import type { IAdmin } from "../models/Admin";
+
+export enum StrategyNames {
+  AuthStrategy = "AuthStrategy",
+  AdminAuthStrategy = "AdminAuthStrategy",
+  LoginAuthStrategy = "LoginAuthStrategy"
+};
 
 export const issueJWT = (user: IUser): { token: string; expires: string } => {
   const { _id } = user;
   const secretKey = process.env.JWT_SECRET;
-  const expiresIn = "1d";
+  const expiresIn = "12hr";
   const payload = {
     sub: _id,
     iat: Date.now()
@@ -32,12 +39,12 @@ export default class PassportController {
     secretOrKey: process.env.JWT_SECRET
   }
 
-  constructor({ }) {
+  constructor() {
     this.passport = passport;
   }
 
   public initialize() {
-    this.passport.use("authStrategy", new JWTStrategy(this.opts, async (jwtPayload, done) => {
+    this.passport.use(StrategyNames.AuthStrategy, new JWTStrategy(this.opts, async (jwtPayload, done) => {
       try {
         const admin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
         if (admin) {
@@ -54,7 +61,7 @@ export default class PassportController {
         return done(err);
       }
     }));
-    this.passport.use("adminAuthStrategy", new JWTStrategy(this.opts, async (jwtPayload, done) => {
+    this.passport.use(StrategyNames.AdminAuthStrategy, new JWTStrategy(this.opts, async (jwtPayload, done) => {
       try { 
         const admin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
         if (admin) return done(null, admin);
@@ -64,7 +71,7 @@ export default class PassportController {
       }
     }));
 
-    this.passport.use("login", new LocalStrategy({ usernameField: "email", passwordField: "password"}, async (email, pass, done) => {
+    this.passport.use(StrategyNames.LoginAuthStrategy, new LocalStrategy({ usernameField: "email", passwordField: "password"}, async (email, pass, done) => {
       try {
         const admin = await Admin.findOne({ email }).exec();
         if (admin) {

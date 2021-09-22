@@ -1,5 +1,6 @@
 import Admin from "../../models/Admin";
 import { PassportContInstance } from "../../server";
+import { StrategyNames } from "../PassportController"; 
 // types //
 import type { Request, Response, NextFunction } from "express";
 import type { IAdmin } from "../../models/Admin";
@@ -7,7 +8,7 @@ import type { IUser } from "../../models/User";
 import type { ErrorResponse } from "../../_types/auth/authTypes";
 
 export const passportLoginMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  PassportContInstance.authenticate("login", { session: false }, (err, user: IAdmin | IUser | null, info) => {
+  PassportContInstance.authenticate(StrategyNames.LoginAuthStrategy, { session: false }, (err, user: IAdmin | IUser | null, info) => {
     if(err || !user) {
       return res.status(400).json({
         responseMsg: "Invalid login",

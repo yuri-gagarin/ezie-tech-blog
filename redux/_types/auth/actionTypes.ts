@@ -15,6 +15,7 @@ export type AuthLoginSuccess = {
     responseMsg: string;
     loading: boolean;
     loggedIn: boolean;
+    isAdmin: boolean;
     authToken: string;
     currentUser: AdminData | UserData;
   };
@@ -27,6 +28,7 @@ export type AuthRegisterSuccess = {
     responseMsg: string;
     loading: boolean;
     loggedIn: boolean;
+    isAdmin: boolean;
     authToken: string;
     currentUser: UserData;
   };

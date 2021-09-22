@@ -17,7 +17,7 @@ const authAPIRequest = (): AuthAPIRequest => {
     payload: { loading: true }
   };
 };
-const authLoginSuccess = (data: { status: number; responseMsg: string; authToken: string; currentUser: UserData | AdminData }): AuthLoginSuccess => {
+const authLoginSuccess = (data: { status: number; responseMsg: string; authToken: string; isAdmin: boolean; currentUser: UserData | AdminData }): AuthLoginSuccess => {
   return {
     type: "AuthLoginSuccess",
     payload: { ...data, loading: false, loggedIn: true  }
@@ -29,7 +29,7 @@ const authLogoutSuccess = (data: { status: number; responseMsg: string; currentU
     payload: { ...data, loading: false, loggedIn: false, authToken: "" }
   };
 };
-const authRegisterSuccess = (data: { status: number; responseMsg: string; currentUser: UserData; authToken: string }): AuthRegisterSuccess => {
+const authRegisterSuccess = (data: { status: number; responseMsg: string; currentUser: UserData; authToken: string; isAdmin: boolean }): AuthRegisterSuccess => {
   return {
     type: "AuthRegisterSuccess",
     payload: { ...data, loading: false, loggedIn: true }
@@ -54,8 +54,8 @@ export class AuthActions {
     try {
       const response: AxiosResponse<LoginRes> = await axios(axiosOpts);
       const { status, data } = response;
-      const { responseMsg, jwtToken, userData } = data;
-      return dispatch(authLoginSuccess({ status, responseMsg, authToken: jwtToken.token, currentUser: userData }));
+      const { responseMsg, jwtToken, userData, isAdmin } = data;
+      return dispatch(authLoginSuccess({ status, responseMsg, isAdmin, authToken: jwtToken.token, currentUser: userData }));
     } catch (error) {
       throw error;
     }
@@ -85,8 +85,8 @@ export class AuthActions {
     dispatch(authAPIRequest());
     try {
       const { status, data }: AxiosResponse<RegisterRes> = await axios(axiosOpts);
-      const { responseMsg, userData, jwtToken } = data;
-      return dispatch(authRegisterSuccess({ status, responseMsg, currentUser: userData, authToken: jwtToken.token }));
+      const { responseMsg, userData, jwtToken, isAdmin } = data;
+      return dispatch(authRegisterSuccess({ status, responseMsg, isAdmin, currentUser: userData, authToken: jwtToken.token }));
     } catch (error) {
       throw error;
     }

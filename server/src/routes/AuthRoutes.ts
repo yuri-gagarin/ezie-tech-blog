@@ -1,8 +1,10 @@
+
+import { passportLoginMiddleware } from "../controllers/_helpers/authHelpers";
+import { PassportContInstance } from "../server";
+import { StrategyNames } from "../controllers/PassportController";
+// types //
 import type { Router } from "express";
 import type AuthController from "../controllers/AuthController";
-import { passportLoginMiddleware } from "../controllers/_helpers/authHelpers";
-// passport instance //
-//import { PassportContInstance } from "../server";
 
 export default class AuthRoutes {
   private router: Router;
@@ -33,6 +35,6 @@ export default class AuthRoutes {
   private logoutRoute() {
     this.router
       .route("/api/logout")
-      .delete([ this.controller.logout ]);
+      .delete([ PassportContInstance.authenticate(StrategyNames.AuthStrategy), this.controller.logout ]);
   }
 };

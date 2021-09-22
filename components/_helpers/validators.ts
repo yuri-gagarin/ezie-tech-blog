@@ -56,5 +56,26 @@ export const registerFormValidator = (data: { email?: string; password?: string;
   return res;
 };
 
+export const loginFormValidator = (data: { email?: string; password?; emailError?: string; passwordError?: string; }): ValidationResponse => {
+  const {  email, password, emailError, passwordError } = data;
+  const res: ValidationResponse =  { valid: true, errorMessages: [] };
+
+  if (emailError || passwordError) {
+    res.valid = false;
+    if (emailError) res.errorMessages.push(emailError);
+    if (passwordError) res.errorMessages.push(passwordError);
+    return res;
+  }  
+  if (!email) {
+    res.valid = false;
+    res.errorMessages.push("Email is required to register");
+  }
+  if (!password) {
+    res.valid = false;
+    res.errorMessages.push("Password is required to register");
+  }
+  return res;
+};
+
 
 

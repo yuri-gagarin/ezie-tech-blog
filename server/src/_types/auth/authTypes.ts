@@ -9,6 +9,7 @@ export type RegisterReqBody = {
 export type LoginResponse = {
   readonly responseMsg: string;
   readonly success: boolean;
+  readonly isAdmin: boolean;
   readonly userData: ResUserData | ResAdminData;
   readonly jwtToken: { token: string; expires: string };
 };
@@ -17,6 +18,7 @@ export type LoginResponse = {
 export type RegisterResponse = {
   readonly responseMsg: string;
   readonly userData: ResUserData;
+  readonly isAdmin: boolean;
   readonly jwtToken: {
     token: string;
     expires: string;

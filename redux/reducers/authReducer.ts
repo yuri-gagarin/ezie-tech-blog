@@ -23,6 +23,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         loggedIn: action.payload.loggedIn,
         currentUser: action.payload.currentUser,
         authToken: action.payload.authToken,
+        isAdmin: action.payload.isAdmin,
         error: null,
         errorMessages: null
       };
@@ -35,6 +36,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         loggedIn: action.payload.loggedIn,
         currentUser: action.payload.currentUser,
         authToken: action.payload.authToken,
+        isAdmin: action.payload.isAdmin,
         error: null,
         errorMessages: null
       }
@@ -46,6 +48,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         responseMsg: action.payload.responseMsg,
         currentUser: action.payload.currentUser,
         authToken: action.payload.authToken,
+        isAdmin: false,
         loggedIn: false,
         error: null,
         errorMessages: null
@@ -58,7 +61,15 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         responseMsg: action.payload.responseMsg,
         currentUser: action.payload.currentUser,
         authToken: action.payload.authToken,
+        isAdmin: false,
         loggedIn: false,
+        error: action.payload.error,
+        errorMessages: action.payload.errorMessages
+      };
+    }
+    case "AuthErrorDismiss": {
+      return {
+        ...state,
         error: action.payload.error,
         errorMessages: action.payload.errorMessages
       };

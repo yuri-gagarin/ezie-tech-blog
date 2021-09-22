@@ -3,6 +3,7 @@ import User from "../models/User";
 import { issueJWT } from "./PassportController";
 // types 
 import type { Request, Response, CookieOptions } from "express";
+import type { IAdmin } from "../models/Admin";
 import type { IUser } from "../models/User";
 import type { RegisterReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
 // helpers //
@@ -14,16 +15,16 @@ enum LoginCookies {
 
 export default class AuthController {
   login = async (req: Request, res: Response<LoginResponse | ErrorResponse>): Promise<Response> => {
-    const user = req.user as IUser;
+    const user = req.user as (IUser | IAdmin);
     // 
-    if (!user) {
-      return await this.sendErrorRes(res)
-    }
+    if (!user) return await this.sendErrorRes(res);
+    // 
     const { token, expires } = issueJWT(user);
     const { _id, email, firstName, lastName } = user;
+    const isAdmin: boolean = (("role" in user) && (user.role === "admin" || user.role === "owner")) ? true : false;
     //
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
-    const cookieOpts: CookieOptions = { maxAge: 3600000, httpOnly: true, domain, signed: true };
+    const cookieOpts: CookieOptions = { maxAge: 3600 * 1000 * 12, httpOnly: true, domain, signed: true };
     //
     return (
       res
@@ -32,6 +33,7 @@ export default class AuthController {
         .json({
           responseMsg: "Logged in",
           success: true,
+          isAdmin,
           userData: { _id, email, firstName, lastName  },
           jwtToken: {
             token, expires
@@ -59,10 +61,11 @@ export default class AuthController {
       return (
         res
         .status(200)
-        .cookie(LoginCookies.JWTToken, token)
+        .cookie(LoginCookies.JWTToken, token, cookieOpts)
         .json({
           responseMsg: "Registration success",
           userData: { _id: userData._id, email: userData.email, },
+          isAdmin: false,
           jwtToken: {
             token, expires
           }

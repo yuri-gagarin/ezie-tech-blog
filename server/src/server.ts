@@ -12,7 +12,7 @@ import combineRoutes from "./routes/CombineRoutes";
 import PassportController from "./controllers/PassportController";
 import { NextServer } from "next/dist/server/next";
 
-export const PassportContInstance = new PassportController({}).initialize();
+export const PassportContInstance = new PassportController().initialize();
 
 /*
 const dev = process.env.NODE_ENV !== "production";

@@ -1,12 +1,14 @@
 import { createStore, AnyAction, Store, applyMiddleware } from 'redux';
-import { createWrapper, Context, HYDRATE } from 'next-redux-wrapper';
+import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { nextReduxCookieMiddleware, wrapMakeStore } from "next-redux-cookie-wrapper";
+// combined reducer //
 import combinedReducer from './reducers/combinedReducer';
+// types //
 import type { IGeneralAppAction, IGeneralState } from "./_types/generalTypes";
 // helpers //
 import { generateEmptyAuthState, generateEmptyPostState, generateEmptyUserState } from "./_helpers/mockData";
-import { checkEmptyObjVals } from './_helpers/dataHelpers';
+//import { checkEmptyObjVals } from './_helpers/dataHelpers';
 
 const initialState: IGeneralState = {
   authState: generateEmptyAuthState(),
@@ -45,7 +47,7 @@ const makeStore = wrapMakeStore<Store<IGeneralState>>(() =>
   createStore<IGeneralState, AnyAction, any, any>(
     rootReducer, 
     composeWithDevTools(applyMiddleware(
-      nextReduxCookieMiddleware({ subtrees: ["authState"] })
+      nextReduxCookieMiddleware({ subtrees: ["authState"], expires: new Date(Date.now() + 3600 * 100) })
     ))
   )
 );

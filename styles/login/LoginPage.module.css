@@ -35,3 +35,14 @@
   left: 97px;
   cursor: pointer;
 }
+
+.loginDivBottom {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 1.5em;
+}
+.loginDivBottomTitle {
+  font-size: 1em;
+  margin-bottom: 0.5em;
+}

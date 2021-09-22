@@ -3,12 +3,17 @@ import { Button, Grid, Input, Menu, MenuItemProps } from 'semantic-ui-react';
 // next imports //
 import { useRouter } from "next/router";
 // redux imports //
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { AuthActions } from "../../redux/actions/authActions";
+// additonal components //
 // types //
-import { IAuthState, IGeneralState } from "../../redux/_types/generalTypes";
+import type { Dispatch } from "redux";
+import type { AuthAction } from "../../redux/_types/auth/actionTypes";
+import type { IAuthState, IGeneralState } from "../../redux/_types/generalTypes";
 // styles //
 import navMenuStyle from "../../styles/NavMenu.module.css";
 import { checkEmptyObjVals } from '../_helpers/displayHelpers';
+import { GenErrorModal } from '../modals/GenErrorModal';
 
 type NavValues = "home" | "news" | "blog" | "about";
 type NavbarState = {
@@ -16,14 +21,17 @@ type NavbarState = {
   showSearchBar: boolean;
 };
 
-export const NavMenu: React.FC<{}> = (): JSX.Element => {
+//  MENU should not be show on login, register and any admin pages //
+export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
   // local component state and hooks //
   const [ navState, setNavState ] = React.useState<NavbarState>({ activeItem: "home", showSearchBar: false });
+  const [ showMenu, setShowMenu ] = React.useState<boolean>(true);
   // next hooks //
   const router = useRouter();
   // redux hooks and state //
+  const dispatch = useDispatch<Dispatch<AuthAction>>()
   const { authState } = useSelector((state: IGeneralState) => state);
-  const { loggedIn, currentUser } = authState;
+  const { loggedIn, currentUser, error, errorMessages } = authState;
 
   // action handlers //
   const handleNavClick = (_, data: MenuItemProps): void => {
@@ -34,9 +42,18 @@ export const NavMenu: React.FC<{}> = (): JSX.Element => {
   const handleGoToLogin = (): void => {
     router.push("/login");
   };
-  const handleLogout = (): void => {
+  const handleLogout = async (): Promise<any> => {
+    try {
+      await AuthActions.handleLogout(dispatch);
+      router.push("/login");
+    } catch (error) {
+      AuthActions.handleAuthError(dispatch, error);
+    }
+  };
+  const handleErrorModalClose = (): void => {
+    AuthActions.dismissAuthError(dispatch);
+  };
 
-  }
   // lifecycle hooks //
   React.useEffect(() => {
     if (router.route === "/" && navState.activeItem !== "home") setNavState({ activeItem: "home", showSearchBar: false });
@@ -46,8 +63,25 @@ export const NavMenu: React.FC<{}> = (): JSX.Element => {
     //else setNavState({ activeItem: "home", showSearchBar: false });
   }, [ router.route, navState.activeItem ]);
 
+  React.useEffect(() => {
+    if (router.route.includes("admin") || router.route.includes("login") || router.route.includes("register")) {
+      setShowMenu(false);
+    } else {
+      setShowMenu(true);
+    }
+  }, [ router.route ]);
+
   return (
+    showMenu 
+    ?
     <Grid.Row className={ navMenuStyle.menuRow }>
+      <GenErrorModal 
+        open={ error ? true : false }
+        handleErrorModalClose={ handleErrorModalClose }
+        header={ "Logout Error" }
+        errorMessages={ errorMessages }
+        position={ "fixed-top" }
+      />
       <Menu pointing fluid inverted fixed="top" className={ navMenuStyle.mainNav }>
         <Menu.Item
           className={ navMenuStyle.navMenuItem }
@@ -98,5 +132,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element => {
         </Menu.Menu>
       </Menu>
     </Grid.Row>
+    :
+    null
   );
 };
