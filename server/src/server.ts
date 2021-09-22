@@ -91,6 +91,7 @@ class Server {
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: true }));
     this.server.use(cookieParser(process.env.COOKIE_SECRET));
+    this.server.use(PassportContInstance.initialize());
   }
   private configureRouter(): void {
     this.router = Router();

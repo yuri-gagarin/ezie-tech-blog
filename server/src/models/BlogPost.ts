@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import type { Document } from "mongoose";
+import type { Document, ObjectId } from "mongoose";
 import type { NextFunction } from "express";
 
 export type LikeData = {
@@ -13,7 +13,7 @@ export interface IBlogPost extends Document  {
   keywords: string[];
   slug: string;
   live: boolean;
-  likes: LikeData[];
+  likes: mongoose.Types.ObjectId[];
   numOflikes: number;
   editedAt: Date;
   createdAt: Date;
@@ -40,13 +40,7 @@ const blogPostSchema = new Schema<IBlogPost>({
   content: { type: String, required: true },
   category: { type: String, required: true, default: "informational" },
   keywords: { type: [ String ], required: false, default: [] },
-  likes: { 
-    type: [{ 
-      userId: String
-     }], 
-    required: false, 
-    default: [] 
-  },
+  likes: [ Schema.Types.ObjectId ],
   numOflikes: { type: Number, required: false, default: 0 },
   slug: { type: String },
   live: { type: Boolean, required: true, default: false },

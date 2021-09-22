@@ -33,13 +33,13 @@ export default class BlogPostsController extends BasicController implements ICRU
     }
   }
   getOne = async (req: Request, res: Response<OneBlogPostRes>): Promise<Response<OneBlogPostRes>> => {
-    const { blog_post_id } = req.params;
+    const { post_id } = req.params;
     let blogPost: IBlogPost;
   
-    if (!blog_post_id) {
+    if (!post_id) {
       return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve post") });
     }
-    blogPost = await BlogPost.findOne({ _id: blog_post_id }).exec()
+    blogPost = await BlogPost.findOne({ _id: post_id }).exec()
     if (blogPost) {
       return res.status(200).json({ responseMsg: "Fetched blog post", blogPost });
     } else {
@@ -83,10 +83,10 @@ export default class BlogPostsController extends BasicController implements ICRU
     })
   }
   delete(req: Request, res: Response): Promise<Response<DeleteBlogPostRes>> {
-    const { blog_post_id } = req.params;
-    if (!blog_post_id) return this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve blog post to delete") });
+    const { post_id } = req.params;
+    if (!post_id) return this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve blog post to delete") });
 
-    return BlogPost.findOneAndDelete({ _id: blog_post_id }).exec()
+    return BlogPost.findOneAndDelete({ _id: post_id }).exec()
       .then((deletedBlogPost) => {
         return res.status(200).json({
           responseMsg: "Blog post deleted", deletedBlogPost
@@ -95,26 +95,26 @@ export default class BlogPostsController extends BasicController implements ICRU
       .catch((error) => this.generalErrorResponse(res, { error }) );
   }
 
-  likeBlost = async (req: Request, res: Response<LikeBlogPostRes | BlogPostErrRes>): Promise<Response<LikeBlogPostRes | BlogPostErrRes>> => {
-    const { blog_post_id } = req.params;
-    const { _id: userId } = req.user as IUser | IAdmin;
+  toggleLikeBlogPost = async (req: Request, res: Response<LikeBlogPostRes | BlogPostErrRes>): Promise<Response<LikeBlogPostRes | BlogPostErrRes>> => {
+    const { post_id } = req.params;
+    const user = req.user as IUser | IAdmin;
     let editedBlogPost: IBlogPost;
     // validate correct data first //
-    if (!blog_post_id) return await this.userInputErrorResponse(res, [ "Could not resolve blog post id" ]);
-    if (!userId) return await this.generalErrorResponse(res, { status: 401, errorMessages: [ "Could not resolve user" ] });
+    if (!post_id) return await this.userInputErrorResponse(res, [ "Could not resolve blog post id" ]);
+    if (!user) return await this.generalErrorResponse(res, { status: 401, errorMessages: [ "Could not resolve user" ] });
 
     try {
-      const blogPost = await BlogPost.findById({ _id: blog_post_id }).exec()
+      const { _id: userId } = user;
+      const blogPost = await BlogPost.findById({ _id: post_id }).exec()
       if (!blogPost) return await this.notFoundErrorResponse(res, [ "Blog Post data was not found" ]);
-      if (blogPost.likes.includes({ userId })) {
-        blogPost.likes = blogPost.likes.filter((likeData) => likeData.userId.equals(userId));
-        editedBlogPost = await blogPost.save();
+      // resolve the line/unlike action //
+      if (blogPost.likes.includes(userId)) {
+        editedBlogPost = await BlogPost.findOneAndUpdate({ _id: post_id }, { $pull: { likes: userId }, $inc: { numOflikes: -1 } }, { new: true } ).exec();
         return res.status(200).json({
           responseMsg: "Unliked a blog post", editedBlogPost
         });
       } else {
-        blogPost.likes.push({ userId })
-        editedBlogPost = await blogPost.save();
+        editedBlogPost =await BlogPost.findOneAndUpdate({ _id: post_id }, { $push: { likes: userId }, $inc: { numOflikes: 1 } }, { new: true } ).exec();
         return res.status(200).json({
           responseMsg: "Liked a blog post", editedBlogPost
         });

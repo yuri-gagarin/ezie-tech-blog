@@ -6,6 +6,7 @@ export interface ICRUDController {
   create?: (req: Request, res: Response) => Promise<Response>;
   edit?: (req: Request, res: Response) => Promise<Response>;
   delete?: (req: Request, res: Response) => Promise<Response>;
+  [propName: string]: any;
 };
 
 export interface IGenericAuthController {

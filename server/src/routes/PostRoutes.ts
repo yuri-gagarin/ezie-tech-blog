@@ -1,7 +1,9 @@
+import { PassportContInstance } from "../server";
+import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
+import { StrategyNames } from "../controllers/PassportController";
+// types //
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
-import { PassportContInstance } from "../server";
 
 export default class PostRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -13,6 +15,7 @@ export default class PostRoutes extends CRUDRoutesController {
     this.index("/api/posts");
     this.getOne("/api/posts/:post_id");
     this.create("/api/posts");
+    this.toggleLike("/api/posts/toggle_like/:post_id");
     this.edit("/api/posts/:post_id");
     this.delete("/api/posts/:post_id");
   }
@@ -24,12 +27,27 @@ export default class PostRoutes extends CRUDRoutesController {
     super.getOne(route);
   }
   protected create(route: string): void {
-    super.create(route, [ PassportContInstance.authenticate("authStrategy")]);
+    super.create(route, [ 
+      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false })
+    ]);
   }
   protected edit(route: string): void {
-    super.edit(route, [ PassportContInstance.authenticate("authStrategy")]);
+    super.edit(route, [ 
+      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false })
+    ]);
   } 
   protected delete(route: string): void {
-    super.delete(route, [ PassportContInstance.authenticate("authStrategy")]);
+    super.delete(route, [ 
+      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false })
+    ]);
+  }
+
+  protected toggleLike(route: string): void {
+    this.router
+      .route(route)
+      .patch(
+        [ PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }) ],
+        this.controller.toggleLikeBlogPost
+      );
   }
 };
