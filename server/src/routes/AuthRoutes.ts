@@ -20,6 +20,7 @@ export default class AuthRoutes {
     this.loginRoute();
     this.registerRoute();
     this.logoutRoute();
+    this.verifyAdminRoute();
   }
 
   private loginRoute() {
@@ -36,5 +37,14 @@ export default class AuthRoutes {
     this.router
       .route("/api/logout")
       .delete( this.controller.logout );
+  }
+
+  private verifyAdminRoute() {
+    this.router
+      .route("/api/verify_admin")
+      .get([ 
+        PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }) ,
+        this.controller.verifyAdmin 
+      ]);
   }
 };

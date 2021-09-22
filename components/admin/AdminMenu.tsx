@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from "react-redux";
 import type { Dispatch } from "redux";
 import { handleClearCurrentBlogPost } from "../../redux/actions/blogPostActions";
+import { AuthActions } from "../../redux/actions/authActions";
 // types //
 import type { IGeneralState , IGeneralAppAction} from '../../redux/_types/generalTypes';
 import type { MenuItemProps } from "semantic-ui-react";
@@ -63,6 +64,15 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
         break;
       } 
       default: setActiveMenuItem("");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AuthActions.handleLogout(dispatch);
+      router.push("/");
+    } catch (err) {
+      AuthActions.handleAuthError(dispatch, err);
     }
   };
 
@@ -133,7 +143,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu position="right">
-          <Menu.Item>
+          <Menu.Item onClick={ handleLogout }>
             Logout
           </Menu.Item>
         </Menu.Menu>
