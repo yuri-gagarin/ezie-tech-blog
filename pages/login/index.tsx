@@ -130,7 +130,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
           <Button fluid color="green" onClick={ handleLogin }>Login</Button>
         </div>
         <div className={ styles.loginDivBottom }>
-          <div className={ styles.loginDivBottomTitle }>Don&apos;t have an account?</div>
+          <h4>Don&apos;t have an account?</h4>
           <Link href={"/register"} ><a>Register</a></Link>
         </div>
       </div>

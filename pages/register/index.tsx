@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Form, Icon, Input, Label, Popup } from "semantic-ui-react";
 // next imports //
+import Link from "next/link";
 import type { GetStaticProps, GetStaticPropsResult } from "next";
 import { useRouter } from "next/router";
 // redux and actions //
@@ -51,7 +52,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
   const router = useRouter();
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<AuthAction>>();
-  const { error, errorMessages } = useSelector((state: IGeneralState) => state.authState);
+  const { error, errorMessages, loggedIn, isAdmin } = useSelector((state: IGeneralState) => state.authState);
   // action handlers //
   const handleEmaiInputChange = (_, data: InputOnChangeData): void => {
     if (!data.value) {
@@ -76,14 +77,15 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
   };
 
   const handleErrorModalClose = (): void => {
-    setRegisterFormState({ ...registerFormState, errorFormOpen: false, errorMessages: [] });
+    if (error || errorMessages) AuthActions.dismissAuthError(dispatch);
+    setRegisterFormState({ ...registerFormState, errorFormOpen: false, errorMessages: null });
   };
   const handlePasswordHideClick = (): void => {
     setShowPassword(!showPassword);
   };
   const handlePasswordConfirmHideClick = (): void => {
     setShowPasswordConfirm(!showPasswordConfirm);
-  }
+  };
 
   const handleRegister = async (): Promise<any> => {
     // check for empty fields or mismatched password //
@@ -96,6 +98,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
     // handle registration //
     try {
       await AuthActions.handleRegistration(dispatch, { email, password, confirmPassword });
+      router.push("/");
     } catch (error) {
       return AuthActions.handleAuthError(dispatch, error);
     }
@@ -147,7 +150,11 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
           </Form.Field>
         </Form>
         <div className={ styles.registerDiv }>
-          <Button size="small" color="green" onClick={ handleRegister }>Register</Button>
+          <Button fluid color="green" onClick={ handleRegister }>Register</Button>
+        </div>
+        <div className={ styles.registerDivBottom }>
+          <h4>Have an account?</h4>
+          <Link href="/login"><a>Login</a></Link>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import User from "../models/User";
+import Admin from "../models/Admin";
 //
 import { issueJWT } from "./PassportController";
 // types 
@@ -51,7 +52,10 @@ export default class AuthController {
     
     const { valid, errorMessages } = validateRegistrationData({ email, password, confirmPassword });
     if (!valid) return await this.sendErrorRes(res, { status: 400, error: new Error("User Input Error"), errorMessages });
-
+    // validate unique email next //
+    const { exists, message } = await this.validateUniqueEmail(email);
+    if (exists) return await this.sendErrorRes(res, { status: 400, error: new Error("User Input Error"), errorMessages: [ message ] });
+    // assuming all is well ... //
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
     const cookieOpts: CookieOptions = { maxAge: 3600000, httpOnly: true, domain, signed: true };
 
@@ -85,5 +89,18 @@ export default class AuthController {
 
     return res.status(status).json({ responseMsg, error, errorMessages });
   }
-  
-};
+
+  private async validateUniqueEmail(email: string): Promise<{ exists: boolean; message: string }> {
+    try {
+      const admin = await Admin.findOne({ email: email }).exec();
+      if (admin) return { exists: true, message: "Email already exists" };
+      else {
+        const user = await User.findOne({ email: email }).exec();
+        if (user) return { exists: true, message: "Email already exists" };
+        else return { exists: false, message: "" };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+}
