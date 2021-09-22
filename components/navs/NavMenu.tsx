@@ -9,10 +9,9 @@ import { AuthActions } from "../../redux/actions/authActions";
 // types //
 import type { Dispatch } from "redux";
 import type { AuthAction } from "../../redux/_types/auth/actionTypes";
-import type { IAuthState, IGeneralState } from "../../redux/_types/generalTypes";
+import type { IGeneralState } from "../../redux/_types/generalTypes";
 // styles //
 import navMenuStyle from "../../styles/NavMenu.module.css";
-import { checkEmptyObjVals } from '../_helpers/displayHelpers';
 import { GenErrorModal } from '../modals/GenErrorModal';
 
 type NavValues = "home" | "news" | "blog" | "about";
@@ -45,7 +44,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
   const handleLogout = async (): Promise<any> => {
     try {
       await AuthActions.handleLogout(dispatch);
-      router.push("/login");
+      router.push("/");
     } catch (error) {
       AuthActions.handleAuthError(dispatch, error);
     }

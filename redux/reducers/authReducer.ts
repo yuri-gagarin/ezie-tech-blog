@@ -56,13 +56,10 @@ export default function authReducer(state: IAuthState = initialState, action: Au
     }
     case "AuthFailure": {
       return {
+        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
-        currentUser: action.payload.currentUser,
-        authToken: action.payload.authToken,
-        isAdmin: false,
-        loggedIn: false,
         error: action.payload.error,
         errorMessages: action.payload.errorMessages
       };

@@ -35,6 +35,6 @@ export default class AuthRoutes {
   private logoutRoute() {
     this.router
       .route("/api/logout")
-      .delete([ PassportContInstance.authenticate(StrategyNames.AuthStrategy), this.controller.logout ]);
+      .delete( this.controller.logout );
   }
 };

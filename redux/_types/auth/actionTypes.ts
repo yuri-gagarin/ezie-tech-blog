@@ -52,9 +52,6 @@ export type AuthFailure = {
     status: number;
     responseMsg: string;
     loading: boolean;
-    loggedIn: boolean;
-    authToken: string;
-    currentUser: null;
     error: any;
     errorMessages: string[];
   };

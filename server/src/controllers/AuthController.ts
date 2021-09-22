@@ -42,11 +42,6 @@ export default class AuthController {
         })
     );
   } 
-  logout = async (req: Request, res: Response): Promise<Response> => {
-    console.log(req.cookies);
-    return res.status(200).json({ responseMsg: "Logged out" });
-  }
-
   register = async (req: Request<any, any, RegisterReqBody>, res: Response<RegisterResponse | ErrorResponse>): Promise<Response> => {
     const { email, password, confirmPassword } = req.body;
     
@@ -79,7 +74,20 @@ export default class AuthController {
       return await this.sendErrorRes(res, { error, errorMessages: [ "Oops something went seriously wrong..." ]});
     }
   }
+  logout = async (req: Request, res: Response): Promise<Response> => {
+    
+    const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
+    const cookieOpts: CookieOptions = { maxAge: 0, httpOnly: true, domain, signed: true };
 
+    return (
+      res
+      .cookie(LoginCookies.JWTToken, "", cookieOpts)
+      .status(200)
+      .json({ responseMsg: "Logged out" })
+    );
+  }
+
+  // PRIVATE HELPERS //
   private async sendErrorRes(res: Response<ErrorResponse>, opts?: { status?: number; responseMsg?: string; error?: any; errorMessages?: string[] }): Promise<Response> {
     // set defaults //
     const status = (opts && opts.status) ? opts.status : 500;

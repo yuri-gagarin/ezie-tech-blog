@@ -38,7 +38,7 @@ const authRegisterSuccess = (data: { status: number; responseMsg: string; curren
 const authFailure = (data: { status: number; responseMsg: string; error: any; errorMessages: string[] }): AuthFailure => {
   return {
     type: "AuthFailure",
-    payload: { ...data, loading: false, loggedIn: false,  authToken: "", currentUser: null }
+    payload: { ...data, loading: false }
   };
 };
 
@@ -61,7 +61,7 @@ export class AuthActions {
     }
   }
 
-  public static handleLogout = async (dispatch: Dispatch<AuthAction>): Promise<any> => {
+  public static handleLogout = async (dispatch: Dispatch<AuthAction>): Promise<AuthLogoutSuccess> => {
     const axiosOpts: AxiosRequestConfig = {
       method: "DELETE",
       url: "/api/logout"
@@ -70,7 +70,7 @@ export class AuthActions {
     try {
       const response: AxiosResponse<LogoutRes> = await axios(axiosOpts);
       const { status, data } = response;
-      return;
+      return dispatch(authLogoutSuccess({ status, responseMsg: data.responseMsg, currentUser: null }));
     } catch (error) {
       throw error;
     }
