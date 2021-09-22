@@ -1,9 +1,14 @@
-import BlogPost, { IBlogPost } from "../models/BlogPost";
+import BlogPost from "../models/BlogPost";
+import { BasicController } from "../_types/abstracts/DefaultController";
+// types //
 import type { Request, Response } from "express";
+import type { IBlogPost } from "../models/BlogPost";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { BlogPostClientData, IndexBlogPostRes, OneBlogPostRes, CreateBlogPostRes, EditBlogPostRes, DeleteBlogPostRes, FetchBlogPostsOpts } from "../_types/blog_posts/blogPostTypes";
+import type { BlogPostClientData, IndexBlogPostRes, OneBlogPostRes, CreateBlogPostRes, EditBlogPostRes, DeleteBlogPostRes, FetchBlogPostsOpts, LikeBlogPostRes, BlogPostErrRes } from "../_types/blog_posts/blogPostTypes";
+import type { IUser } from "../models/User";
+import type { IAdmin } from "../models/Admin";
 
-export default class BlogPostsController implements ICRUDController {
+export default class BlogPostsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
     const { limit = 10, category, createdAt = "asc" } = req.query as FetchBlogPostsOpts;
     let blogPosts: IBlogPost[];
@@ -90,16 +95,33 @@ export default class BlogPostsController implements ICRUDController {
       .catch((error) => this.generalErrorResponse(res, { error }) );
   }
 
+  likeBlost = async (req: Request, res: Response<LikeBlogPostRes | BlogPostErrRes>): Promise<Response<LikeBlogPostRes | BlogPostErrRes>> => {
+    const { blog_post_id } = req.params;
+    const { _id: userId } = req.user as IUser | IAdmin;
+    let editedBlogPost: IBlogPost;
+    // validate correct data first //
+    if (!blog_post_id) return await this.userInputErrorResponse(res, [ "Could not resolve blog post id" ]);
+    if (!userId) return await this.generalErrorResponse(res, { status: 401, errorMessages: [ "Could not resolve user" ] });
 
-  private generalErrorResponse(res: Response, { status, responseMsg, error }: { status?: number, responseMsg?: string, error?: any }): Promise<Response> {
-    const _status = status ? status : 500;
-    const _responseMsg = responseMsg ? responseMsg : "An error occured";
-    const _error = error ? error : new Error("General error occured");
-    return Promise.resolve().then(() => {
-      return res.status(_status).json({
-        responseMsg: _responseMsg,
-        error: _error
-      });
-    });
+    try {
+      const blogPost = await BlogPost.findById({ _id: blog_post_id }).exec()
+      if (!blogPost) return await this.notFoundErrorResponse(res, [ "Blog Post data was not found" ]);
+      if (blogPost.likes.includes({ userId })) {
+        blogPost.likes = blogPost.likes.filter((likeData) => likeData.userId.equals(userId));
+        editedBlogPost = await blogPost.save();
+        return res.status(200).json({
+          responseMsg: "Unliked a blog post", editedBlogPost
+        });
+      } else {
+        blogPost.likes.push({ userId })
+        editedBlogPost = await blogPost.save();
+        return res.status(200).json({
+          responseMsg: "Liked a blog post", editedBlogPost
+        });
+      }
+    } catch (error) {
+      this.generalErrorResponse(res, { error, errorMessages: ["Server error occured" ] });
+    }
   }
+
 }

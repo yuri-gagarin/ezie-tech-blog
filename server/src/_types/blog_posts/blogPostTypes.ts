@@ -53,6 +53,18 @@ export type DeleteBlogPostRes = {
   error?: any;
   errorMessages?: string[];
 };
+
+export type LikeBlogPostRes = {
+  responseMsg: string;
+  editedBlogPost: IBlogPost;
+};
+
+export type BlogPostErrRes = {
+  responseMsg: string;
+  error: any;
+  errorMessages: string[];
+};
+
 export type FetchBlogPostsOpts = {
   category?: "all" | "informational" | "beginner" | "intermediate" | "advanced";
   createdAt?: "desc" | "asc";

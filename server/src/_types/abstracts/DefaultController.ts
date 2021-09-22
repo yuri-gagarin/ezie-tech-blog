@@ -15,15 +15,24 @@ export interface IGenericAuthController {
 
 export abstract class BasicController {
 
-  protected generalErrorResponse(res: Response, { status, responseMsg, error }: { status?: number, responseMsg?: string, error?: any }): Promise<Response> {
-    const _status = status ? status : 500;
-    const _responseMsg = responseMsg ? responseMsg : "An error occured";
-    const _error = error ? error : new Error("General error occured");
-    return Promise.resolve().then(() => {
-      return res.status(_status).json({
-        responseMsg: _responseMsg,
-        error: _error
-      });
-    });
+  protected async generalErrorResponse(res: Response, opts: { status?: number, responseMsg?: string, error?: any, errorMessages?: string[] }): Promise<Response<any>> {
+    const status = opts && opts.status ? opts.status : 500;
+    const responseMsg = opts && opts.responseMsg ? opts.responseMsg : "An error occured";
+    const error = opts && opts.error ? opts.error : new Error("General error occured");
+    const errorMessages = opts && opts.errorMessages ? opts.errorMessages : [ "A general error, try again"];
+
+    return res.status(status).json({ responseMsg, error, errorMessages });
+  }
+  protected async userInputErrorResponse(res: Response, customMessages?: string[]): Promise<Response>  {
+    const responseMsg = "Input Error";
+    const error = new Error("User Input Error");
+    const errorMessages: string[] = customMessages ? customMessages : [ "Seems like you entered something wrong" ];
+    return res.status(400).json({ responseMsg, error, errorMessages });
+  }
+  protected async notFoundErrorResponse(res: Response, customMessages?: string[]): Promise<Response> {
+    const responseMsg = "Not Found";
+    const error = new Error("Data not Found");
+    const errorMessages: string[] = customMessages ? customMessages : [ "Seems like we could not find what you're lookuing for"];
+    return res.status(404).json({ responseMsg, error, errorMessages });
   }
 }
