@@ -1,0 +1,10 @@
+.modalContent {
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.registerLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

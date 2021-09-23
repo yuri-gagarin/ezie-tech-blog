@@ -46,7 +46,7 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, navigate
               <Card.Meta style={{ marginTop: "5px" }}>
                 <Label color="teal" content={ ` Posted at: ` } icon="clock" />
                 <span className={ styles.dateSpan }>{formatTimeString(blogPosts[0].createdAt, { yearMonth: true })}</span>
-                <BlogPostLikes attached={"bottom right"} handleBlogPostLike={ handleBlogPostLike } />
+                <BlogPostLikes attached={"bottom right"} blogPostData={ blogPosts[0] } handleBlogPostLike={ handleBlogPostLike } />
               </Card.Meta>
               <Card.Description>{ trimStringToSpecificLength(blogPosts[0].content, 400) }</Card.Description>
             </Card.Content>

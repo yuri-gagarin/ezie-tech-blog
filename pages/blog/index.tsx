@@ -13,6 +13,7 @@ import { BlogHeader } from "../../components/blog/BlogHeader";
 import { BlogSideView } from "../../components/blog/BlogSideView";
 import { BlogBottomView } from "../../components/blog/BlogBottomView";
 import { GeneralNotImlementedModal } from "../../components/modals/GenNotImplementedModal";
+import { NeedLoginModal } from "../../components/modals/NeedLoginModal";
 // styles //
 import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
 // types //
@@ -39,6 +40,7 @@ interface IBlogPageProps extends IServerSideProps {
 const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
   // local state and hooks //
   const [ genNotImpModalState, setGenNotImpModalState ] = React.useState<boolean>(false);
+  const [ needLoginModalState, setNeedLoginModalState ] = React.useState<boolean>(false);
   // next hooks //
   const router = useRouter();
   // redux hooks and state //
@@ -67,10 +69,13 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
     handleFetchBlogPosts(dispatch);
   }, [ dispatch ]);
   */
-
+  React.useEffect(() => {
+    setNeedLoginModalState(true);
+  }, []);
   return (
     <React.Fragment>
       <GeneralNotImlementedModal modalOpen={ genNotImpModalState } dismissNotImpModal={ dismissNotImpModal } />
+      <NeedLoginModal modalOpen={ needLoginModalState } /> 
       <Head>
         <title>Ezie Blog - Dont Panic!</title>
       </Head>

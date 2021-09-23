@@ -40,7 +40,7 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBl
                       </Item.Extra>
                       <Item.Extra>
                         <Button  basic onClick={ () => navigateToBlogPost(blogPost._id) } color="pink" content="Read" />
-                        <BlogPostLikes attached={ "bottom right" } handleBlogPostLike={ handleBlogPostLike }/>
+                        <BlogPostLikes attached={ "bottom right" } blogPostData={ blogPost } handleBlogPostLike={ handleBlogPostLike }/>
                       </Item.Extra>
                     </Item.Content>
                   </Item>

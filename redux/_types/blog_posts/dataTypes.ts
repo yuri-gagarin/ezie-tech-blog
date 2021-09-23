@@ -4,6 +4,8 @@ export type BlogPostData = {
   author: string;
   content: string;
   category: "informational" | "beginner" | "intermediate" | "advanced" | "";
+  likes: string[];
+  numOflikes: number;
   slug: string;
   keywords: string[];
   live: boolean;
