@@ -7,11 +7,12 @@ import styles from "../../styles/modals/NeedLoginModal.module.css";
 
 interface INeedLoginModalProps {
   modalOpen: boolean;
+  handleCloseModal(): void;
 }
 
-export const NeedLoginModal: React.FunctionComponent<INeedLoginModalProps> = ({ modalOpen }): JSX.Element => {
+export const NeedLoginModal: React.FunctionComponent<INeedLoginModalProps> = ({ modalOpen, handleCloseModal }): JSX.Element => {
   return (
-    <Modal open={ modalOpen } style={{ position: "relative" }}  size="mini" closeIcon>
+    <Modal closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="mini">
       <Modal.Header style={{ textAlign: "center" }}>Login Required</Modal.Header>
       <Modal.Content>
         <p className={ styles.modalContent }>

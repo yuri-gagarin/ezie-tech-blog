@@ -7,17 +7,19 @@ import { BlogPostLikes } from "./BlogPostLikes";
 import styles from "../../styles/blog/BlogSideView.module.css";
 // types //
 import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
+import type { AdminData, UserData } from "../../redux/_types/users/dataTypes";
 // helpers //
 import { trimStringToSpecificLength, formatTimeString, capitalizeString } from "../_helpers/displayHelpers";
 
 interface IBlogViewProps {
   blogPosts: BlogPostData[];
+  currentUserData: AdminData | UserData | null;
   navigateToBlogPost(blogPostId: string): void;
   handleBlogPostSort({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any>;
   handleBlogPostLike(blogPostId: string): Promise<any>;
 }
 
-export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBlogPost, handleBlogPostSort, handleBlogPostLike }): JSX.Element => {
+export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, currentUserData, navigateToBlogPost, handleBlogPostSort, handleBlogPostLike }): JSX.Element => {
 
   return (
     <Grid.Column computer={ 5 } tablet={ 8 } mobile={ 16 } className={ styles.gridColumn }>
@@ -40,7 +42,12 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, navigateToBl
                       </Item.Extra>
                       <Item.Extra>
                         <Button  basic onClick={ () => navigateToBlogPost(blogPost._id) } color="pink" content="Read" />
-                        <BlogPostLikes attached={ "bottom right" } blogPostData={ blogPost } handleBlogPostLike={ handleBlogPostLike }/>
+                        <BlogPostLikes 
+                          attached={ "bottom right" } 
+                          blogPostData={ blogPost } 
+                          currentUserData={ currentUserData }
+                          handleBlogPostLike={ handleBlogPostLike }
+                        />
                       </Item.Extra>
                     </Item.Content>
                   </Item>

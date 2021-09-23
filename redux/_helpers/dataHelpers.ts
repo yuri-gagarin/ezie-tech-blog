@@ -24,10 +24,19 @@ export const checkEmptyObjVals = (obj: AnyObj): boolean => {
 
 export const processAxiosError = (error: any): { status: number; responseMsg: string; error: Error; errorMessages: string[] } => {
   if (error && error.response) {
-    const { response } = error as AxiosError<{ responseMsg: string; error: Error, errorMessages: string[] }>;
-    console.log(error.response);
-    const { status, data } = response;
-    return { status, ...data };
+    if (error.response.responseMsg && error.response.error && error.response.errorMessages) {
+      const { response } = error as AxiosError<{ responseMsg: string; error: Error, errorMessages: string[] }>;
+      const { status, data } = response;
+      return { status, ...data };
+    } else {
+      const { status = 500, data } = error.response;
+      return { 
+        status, 
+        responseMsg: data.responseMsg ? data.responseMsg : "An error occured",
+        error: data.error ? data.error : new Error("Unknown Error"),
+        errorMessages: [ "An error occured, we are working on it" ]
+      };
+    }
   } else {
     console.log("here");
     return {

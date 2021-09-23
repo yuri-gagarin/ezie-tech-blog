@@ -19,6 +19,7 @@ import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
 // types //
 import type { IGeneralState } from "../../redux/_types/generalTypes";
 import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
+// helpers //
 
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async(context) => {
@@ -45,37 +46,54 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
   const router = useRouter();
   // redux hooks and state //
   const dispatch = useDispatch();
-  const blogPostState = useSelector((state: IGeneralState) => state.blogPostsState)
-  const { blogPosts } = blogPostState;
+  const { authState, blogPostsState } = useSelector((state: IGeneralState) => state);
+  const { blogPosts } = blogPostsState;
+  const { currentUser, loggedIn, authToken } = authState;
 
   // action handlers //
   const navigateToBlogPost = (blogPostId: string): void => {
-    const currentPost: BlogPostData = BlogPostActions.handleSetCurrentBlogPost(dispatch, blogPostId, blogPostState);
+    const currentPost: BlogPostData = BlogPostActions.handleSetCurrentBlogPost(dispatch, blogPostId, blogPostsState);
     router.push(`/blog/${currentPost.slug}`);
   };
   const handleBlogPostSort = async ({ category, date, popularity }: { category?: SearchCategories; date?: "asc" | "desc"; popularity?: string }): Promise<any> => {
     if (category) return BlogPostActions.handleFetchBlogPosts(dispatch, { category })
   };
-  const handleBlogPostLike = async (blogPostId: string) => {
+  const handleBlogPostLike = async (blogPostId: string): Promise<any> => {
     // NOT IMPLEMENTED YET //
-    setGenNotImpModalState(true);
+    if (loggedIn || authToken) {
+      try {
+        return await BlogPostActions.handleToggleBlogPostLike(dispatch, blogPostId, authToken, blogPostsState);
+      } catch (error) {
+        return BlogPostActions.handleBlogPostError(dispatch, error);
+      }
+    } else {
+      return setNeedLoginModalState(true);
+    }
   };
+
   const dismissNotImpModal = (): void => {
     setGenNotImpModalState(false);
-  }
+  };
+  const dismissNeedLoginModal = (): void => {
+    setNeedLoginModalState(false);
+  };
   
+  // END action handlers //
+
   /*
   React.useEffect(() => {
     handleFetchBlogPosts(dispatch);
   }, [ dispatch ]);
   */
+ /*
   React.useEffect(() => {
     setNeedLoginModalState(true);
   }, []);
+  */
   return (
     <React.Fragment>
       <GeneralNotImlementedModal modalOpen={ genNotImpModalState } dismissNotImpModal={ dismissNotImpModal } />
-      <NeedLoginModal modalOpen={ needLoginModalState } /> 
+      <NeedLoginModal modalOpen={ needLoginModalState } handleCloseModal={ dismissNeedLoginModal } /> 
       <Head>
         <title>Ezie Blog - Dont Panic!</title>
       </Head>
@@ -83,12 +101,14 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
       <Grid.Row className={ blogMainStyle.blogPageRow } centered>
         <BlogSideView 
           blogPosts={ blogPosts } 
+          currentUserData={ currentUser }
           navigateToBlogPost={ navigateToBlogPost }
           handleBlogPostSort={ handleBlogPostSort }
           handleBlogPostLike={ handleBlogPostLike }
         />
         <BlogMainView 
           blogPosts={ blogPosts }
+          currentUserData={ currentUser }
           navigateToBlogPost={ navigateToBlogPost }
           handleBlogPostLike={ handleBlogPostLike }
         />

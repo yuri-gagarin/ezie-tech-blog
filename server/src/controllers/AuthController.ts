@@ -21,7 +21,7 @@ export default class AuthController {
     if (!user) return await this.sendErrorRes(res);
     // 
     const { token, expires } = issueJWT(user);
-    const { _id, email, firstName, lastName } = user;
+    const { _id, email, firstName, lastName, createdAt, editedAt } = user;
     const isAdmin: boolean = (("role" in user) && (user.role === "admin" || user.role === "owner")) ? true : false;
     //
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
@@ -35,7 +35,7 @@ export default class AuthController {
           responseMsg: "Logged in",
           success: true,
           isAdmin,
-          userData: { _id, email, firstName, lastName  },
+          userData: { _id, email, firstName, lastName, createdAt, editedAt },
           jwtToken: {
             token, expires
           }
@@ -63,7 +63,14 @@ export default class AuthController {
         .cookie(LoginCookies.JWTToken, token, cookieOpts)
         .json({
           responseMsg: "Registration success",
-          userData: { _id: userData._id, email: userData.email, },
+          userData: { 
+            _id: userData._id, 
+            email: userData.email, 
+            firstName: userData.firstName, 
+            lastName: userData.lastName, 
+            editedAt: userData.editedAt,
+            createdAt: userData.createdAt
+          },
           isAdmin: false,
           jwtToken: {
             token, expires

@@ -5,6 +5,7 @@ import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, 
 import type { IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts, DeleteBlogPostRes, EditBlogPostRes } from "../_types/blog_posts/dataTypes";
 // helpers //
 import { generateEmptyBlogPost } from "../_helpers/mockData";
+import { processAxiosError } from "../_helpers/dataHelpers";
 
 const blogPostAPIRequest = (): BlogPostAPIRequest => {
   return {
@@ -151,6 +152,14 @@ export class BlogPostActions {
     } catch (error) {
       throw error;
     }
+  }
+
+  static handleBlogPostError = (dispatch: Dispatch<BlogPostAction>, err: any): void => {
+    const { status, responseMsg, error, errorMessages } = processAxiosError(err);
+    dispatch({ 
+      type: "SetBlogPostError", 
+      payload: { loading: false, status, responseMsg, error, errorMessages } 
+    });
   }
 }
 

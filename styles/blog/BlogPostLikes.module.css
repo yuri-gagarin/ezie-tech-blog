@@ -2,6 +2,20 @@
   font-size: 1.25em !important;
   cursor: pointer;
 }
+.likedIcon {
+  color: red;
+}
+.notLikedIcon {
+  color: red;
+  -webkit-text-fill-color: white; 
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: red;
+}
+.notLikedIcon:hover {
+  -webkit-text-fill-color: white; 
+  -webkit-text-stroke-width: 4px;
+  -webkit-text-stroke-color: red;
+}
 
 .blogPostLabel > span:nth-child(1), .blogPostLabel > span:nth-child(3) {
   font-weight: bold;

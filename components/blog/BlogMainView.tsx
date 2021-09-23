@@ -6,6 +6,7 @@ import { BlogPostLikes } from "./BlogPostLikes";
 // styles //
 import styles from "../../styles/blog/BlogMainView.module.css";
 // types //
+import type { AdminData, UserData } from "../../redux/_types/users/dataTypes";
 import type { BlogPostData } from "../../redux/_types/blog_posts/dataTypes";
 // helpers //
 import { useWindowSize } from "../_helpers/monitorWindowSize";
@@ -13,10 +14,11 @@ import { formatTimeString, trimStringToSpecificLength, capitalizeString } from "
 
 interface IBlogMainViewProps {
   blogPosts: BlogPostData[];
+  currentUserData: UserData | AdminData;
   navigateToBlogPost(blogPostId: string): void;
   handleBlogPostLike(blogPostId: string): Promise<any>;
 }
-export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, navigateToBlogPost, handleBlogPostLike }): JSX.Element | null => {
+export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, currentUserData, navigateToBlogPost, handleBlogPostLike }): JSX.Element | null => {
   // local state and hooks //
   // custom hooks //
   const { width, height } = useWindowSize();
@@ -46,7 +48,12 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, navigate
               <Card.Meta style={{ marginTop: "5px" }}>
                 <Label color="teal" content={ ` Posted at: ` } icon="clock" />
                 <span className={ styles.dateSpan }>{formatTimeString(blogPosts[0].createdAt, { yearMonth: true })}</span>
-                <BlogPostLikes attached={"bottom right"} blogPostData={ blogPosts[0] } handleBlogPostLike={ handleBlogPostLike } />
+                <BlogPostLikes  
+                  attached={"bottom right"} 
+                  blogPostData={ blogPosts[0] } 
+                  currentUserData={ currentUserData }
+                  handleBlogPostLike={ handleBlogPostLike } 
+                />
               </Card.Meta>
               <Card.Description>{ trimStringToSpecificLength(blogPosts[0].content, 400) }</Card.Description>
             </Card.Content>
