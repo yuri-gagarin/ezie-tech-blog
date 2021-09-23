@@ -15,7 +15,7 @@ interface IBlogPostLikesProps {
 
 export const BlogPostLikes: React.FunctionComponent<IBlogPostLikesProps> = ({ attached, blogPostData, currentUserData, handleBlogPostLike }): JSX.Element => {
   // local comp state and  data //
-  const { _id: blogPostId, likes, numOflikes } = blogPostData;
+  const { _id: blogPostId, numOflikes } = blogPostData;
   const [ likedPost, setLikedPost ] = React.useState<boolean>(false);
 
   // lifecycle hooks //
@@ -35,7 +35,7 @@ export const BlogPostLikes: React.FunctionComponent<IBlogPostLikesProps> = ({ at
         <Popup 
           size="mini"
           position={"top center"}
-          content="Like Blog Post"
+          content={ likedPost ? "Unlike Blog Post" : "Like Blog Post" }
           trigger={<Icon color="red" name="heart" className={ `${styles.blogLikeIcon} ${ likedPost ? styles.likedIcon : styles.notLikedIcon }` } />}
         />
       </span>

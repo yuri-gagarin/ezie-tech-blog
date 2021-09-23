@@ -34,17 +34,44 @@ export default class BlogPostsController extends BasicController implements ICRU
   }
   getOne = async (req: Request, res: Response<OneBlogPostRes>): Promise<Response<OneBlogPostRes>> => {
     const { post_id } = req.params;
+    console.log(req.query)
     let blogPost: IBlogPost;
   
     if (!post_id) {
       return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve post") });
     }
-    blogPost = await BlogPost.findOne({ _id: post_id }).exec()
-    if (blogPost) {
-      return res.status(200).json({ responseMsg: "Fetched blog post", blogPost });
-    } else {
-      return await this.generalErrorResponse(res, { status: 404, error: new Error("Could not find post") });
+
+    if (req.query) {
+      // custom options to get a post //
+      if (req.query.searchBySlug) {
+        // the post_id is actually a slug //
+        try {
+          const blogPost = await BlogPost.findOne({ slug: post_id }).exec();
+          if (blogPost) {
+            return res.status(200).json({
+              responseMsg: `Retrieved post: ${blogPost.title}`, blogPost
+            });
+          } else {
+            return await this.notFoundErrorResponse(res, [ "Blog Post was not found" ]);
+          }
+        } catch (error) {
+          return await this.generalErrorResponse(res, { errorMessages: [ "Something went wrong retrieving the post" ] });
+        }
+      }
+    };
+
+    // general response to get it by id //
+    try {
+      blogPost = await BlogPost.findOne({ _id: post_id }).exec()
+      if (blogPost) {
+        return res.status(200).json({ responseMsg: "Fetched blog post", blogPost });
+      } else {
+        return await this.generalErrorResponse(res, { status: 404, error: new Error("Could not find post") });
+      }
+    } catch (error) {
+      return await this.generalErrorResponse(res, { error });
     }
+    
   }
   create(req: Request, res: Response<CreateBlogPostRes>): Promise<Response<CreateBlogPostRes>> {
     const blogPostData = req.body.blogPostData as BlogPostClientData;
