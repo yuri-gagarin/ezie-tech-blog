@@ -11,6 +11,8 @@ import combineRoutes from "./routes/CombineRoutes";
 // passport and auth //
 import PassportController from "./controllers/PassportController";
 import { NextServer } from "next/dist/server/next";
+// custom middleware //
+import { checkAndSetUniqueUserId } from "./_helpers/customMiddleware";
 
 export const PassportContInstance = new PassportController().initialize();
 
@@ -92,6 +94,7 @@ class Server {
     this.server.use(express.urlencoded({ extended: true }));
     this.server.use(cookieParser(process.env.COOKIE_SECRET));
     this.server.use(PassportContInstance.initialize());
+    this.server.use(checkAndSetUniqueUserId);
   }
   private configureRouter(): void {
     this.router = Router();

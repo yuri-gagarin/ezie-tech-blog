@@ -84,8 +84,16 @@
 
 .blogPostControlsDiv {
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 } 
+.blogPostLikesDiv  {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+  height: 35px;
+  margin-bottom: 15px;
+}
 
 @media only screen and (max-width: 768px) {
   .blogPostPageTitle {
@@ -97,5 +105,8 @@
   }
   .blogPostPageMainContent {
     padding: 1em 0.25em;
+  }
+  .blogPostLikesDiv {
+    width: 100%;
   }
 }

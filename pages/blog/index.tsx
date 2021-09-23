@@ -59,7 +59,6 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
     if (category) return BlogPostActions.handleFetchBlogPosts(dispatch, { category })
   };
   const handleBlogPostLike = async (blogPostId: string): Promise<any> => {
-    // NOT IMPLEMENTED YET //
     if (loggedIn || authToken) {
       try {
         return await BlogPostActions.handleToggleBlogPostLike(dispatch, blogPostId, authToken, blogPostsState);
@@ -80,16 +79,6 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
   
   // END action handlers //
 
-  /*
-  React.useEffect(() => {
-    handleFetchBlogPosts(dispatch);
-  }, [ dispatch ]);
-  */
- /*
-  React.useEffect(() => {
-    setNeedLoginModalState(true);
-  }, []);
-  */
   return (
     <React.Fragment>
       <GeneralNotImlementedModal modalOpen={ genNotImpModalState } dismissNotImpModal={ dismissNotImpModal } />

@@ -33,8 +33,8 @@ interface IPostPageProps {
 }
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
-  const slugArr = context.req.url.split("/")
-  const blogPostSlug: string = slugArr[slugArr.length - 1];
+  const slugArr = context.resolvedUrl.split("/")
+  let blogPostSlug: string = slugArr[slugArr.length - 1];
   const opts: AxiosRequestConfig = {
     method: "GET",
     url: "/api/posts/" + blogPostSlug,
@@ -55,14 +55,15 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     if (err.response && err.response.status === 404) {
       return {
         redirect: {
-          destination: "404",
+          destination: "/404",
           permanent: true
+          
         }
       }
     } else {
       return {
         redirect: {
-          destination: "error",
+          destination: "/error",
           permanent: true
         }
       }
@@ -141,21 +142,29 @@ const BlogPostPage: React.FunctionComponent<IPostPageProps> = ({ }): JSX.Element
             }}
           />
       </div>
+      <div className={ styles.blogPostControlsDiv }>
+        <Button.Group>
+          <Button basic content="Back" color="violet" onClick={ () => router.back() } />
+          <Button basic content="Contact Author" color="green" />
+          <Button basic content="Contact Us" color="purple" />
+        </Button.Group>
+      </div>
       <div className={ styles.blogPostLikesDiv }>
         <BlogPostLikes 
           blogPostData={ blogPostsState.currentBlogPost }
           currentUserData={ authState.currentUser }
           handleBlogPostLike={ handleBlogPostLike }
         />
-      </div>
-      <div className={ styles.blogPostControlsDiv }>
         <Button.Group>
-          <Button basic content="Back" color="violet" onClick={ () => router.back() } />
-          <Button basic content="Contact Author" color="green" />
-          <Button basic content="Contact Us" color="purple" />
-
+          <Button basic color="blue" icon={"comment"} content="View Comments" />            
+        </Button.Group>
+        <Button.Group>
+          <Button circular color='facebook' icon='facebook' />
+          <Button circular color='twitter' icon='twitter' />
+          <Button circular color='google plus' icon='google plus' />
         </Button.Group>
       </div>
+     
     </div>
     </>
   );
