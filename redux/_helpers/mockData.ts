@@ -1,5 +1,6 @@
 import type { BlogPostData } from "../_types/blog_posts/dataTypes";
 import type { IAuthState, IBlogPostState, IUserState } from "../_types/generalTypes";
+import { UserData } from "../_types/users/dataTypes";
 
 export const generateEmptyBlogPost = (): BlogPostData => {
   return {
@@ -15,6 +16,18 @@ export const generateEmptyBlogPost = (): BlogPostData => {
     slug: "",
     createdAt: "",
     editedAt: ""
+  };
+};
+
+export const generateEmptyUser = (): UserData => {
+  return {
+    _id: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    confirmed: false,
+    editedAt: "",
+    createdAt: ""
   };
 };
 
@@ -48,10 +61,7 @@ export const generateEmptyUserState = (): IUserState => {
     status: null,
     responseMsg: "",
     loading: false,
-    currentSelectedUser: {
-      _id: "", firstName: "", lastName: "", email: "", confirmed: false, editedAt: "", createdAt: ""
-    },
-    currentLoggedInUser: {
+    selectedUserData: {
       _id: "", firstName: "", lastName: "", email: "", confirmed: false, editedAt: "", createdAt: ""
     },
     usersArr: [],

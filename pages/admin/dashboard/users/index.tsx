@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Grid, GridRow } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
+// redux imports //
+import { UserActions } from "../../../../redux/actions/userActions";
 // additional component //
 import { AdminUserMenu } from "../../../../components/admin/users/AdminUserMenu";
 import { AdminRegisteredUsers } from "../../../../components/admin/users/AdminRegisteredUsers";

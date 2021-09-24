@@ -29,7 +29,7 @@ export default function usersReducer(state: IUserState = initState, action: User
     case "SetUser": {
       return {
         ...state,
-        currentLoggedInUser: action.payload.userData,
+        selectedUserData: action.payload.userData,
         error: null,
         errorMessages: null
       };
