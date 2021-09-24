@@ -91,7 +91,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
         />
       </Grid.Row>
       <Grid.Row className={ adminNewPostsStyle.previewRow }>
-        <Grid.Column width={ 8 } style={{ height: "100%", overflowY: "scroll" }}>
+        <Grid.Column stretched width={ 8 } style={{ paddingRight: "5px" }}>
           <PostForm 
             updateTitle={ updateTitle }
             updateAuthor={ updateAuthor }
@@ -101,7 +101,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
             postFormState={ postFormState }
           />
         </Grid.Column>
-        <Grid.Column width={ 8 } style={{ height: "100%" }}>
+        <Grid.Column stretched width={ 8 } style={{ paddingLeft: "5px" }}>
           <AdminPostPreview 
             { ...postFormState }
           />

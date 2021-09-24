@@ -44,7 +44,7 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
   };
   
   return (
-    <Form>
+    <Form className={ styles.adminPostForm }>
       <Form.Field>
         <label>Title:</label>
         <input value={ postFormState.postTitle } placeholder="title here..." onChange={ handlePostTitleChange } />

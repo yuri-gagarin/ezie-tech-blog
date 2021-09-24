@@ -1,8 +1,8 @@
 .adminPostPreviewWrapper {
-  border: 2px solid grey;
   width: 100%;
   height: 100%;
   border-radius: 3px;
+  border-left: 2px solid rgb(67, 156, 67);
   overflow-y: scroll;
 }
 .adminPostPreviewHeader {

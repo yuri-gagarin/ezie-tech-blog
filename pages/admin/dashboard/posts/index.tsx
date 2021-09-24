@@ -4,24 +4,52 @@ import { Button, Card, Grid, Segment } from "semantic-ui-react";
 import { useRouter } from "next/router";
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
-import { Dispatch } from "redux";
 import { BlogPostActions } from "../../../../redux/actions/blogPostActions";
 // additonal components //
 import { AdminLayout } from '../../../../components/admin/AdminLayout';
 import { BlogViewModal } from "../../../../components/admin/modals/BlogViewModal";
 // types //
-import { IGeneralState } from '../../../../redux/_types/generalTypes';
+import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import type { Dispatch } from "redux";
+import type { IGeneralState } from '../../../../redux/_types/generalTypes';
+import type { BlogPostAction } from '../../../../redux/_types/blog_posts/actionTypes';
 // styles //
 import styles from "../../../../styles/admin/AdminPostsIndex.module.css";
-import { BlogPostAction } from '../../../../redux/_types/blog_posts/actionTypes';
 // helpers //
+import { verifyAdminToken } from "../../../../components/_helpers/adminComponentHelpers";
 import { capitalizeString, formatTimeString, trimStringToSpecificLength } from "../../../../components/_helpers/displayHelpers";
+
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
+  const token = context.req["signedCookies"].JWTToken;
+  let validAdmin: boolean;
+  try {
+    validAdmin = await verifyAdminToken(token);
+  } catch (error) {
+    console.log(error);
+    validAdmin = false;
+  }
+
+  if (validAdmin) {
+    return {
+      props: { }
+    };
+  } else {
+    return {
+      redirect: {
+        destination: "/not_allowed",
+        statusCode: 301,
+      },
+      props: {
+        errorMessages: [ "Not Logged in "] 
+      }
+    };
+  }
+};
+
+
 interface IAdminPostsIndexProps {
 
 }
-
-/// TODO //
-// CREATE A LAYOUT FOR ADMIN //
 
 const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props): JSX.Element => {
   // local component state //

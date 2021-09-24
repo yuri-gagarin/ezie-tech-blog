@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 // redux //
 import { useDispatch, useSelector } from "react-redux";
 import type { Dispatch } from "redux";
-import { handleClearCurrentBlogPost } from "../../redux/actions/blogPostActions";
+import { BlogPostActions } from "../../redux/actions/blogPostActions";
 import { AuthActions } from "../../redux/actions/authActions";
 // types //
 import type { IGeneralState , IGeneralAppAction} from '../../redux/_types/generalTypes';
@@ -14,15 +14,20 @@ import type { MenuItemProps } from "semantic-ui-react";
 import adminMenuStyles from "../../styles/admin/AdminMenu.module.css";
 // helpers //
 import { checkEmptyObjVals } from "../_helpers/displayHelpers";
+import { AdminUserMenu } from './users/AdminUserMenu';
 
 // internal custom types //
 type MenuItemVal = "dashboard" | "posts" | "projects" | "news" | "users" | "";
+type LocalState = {
+  activeMenuItem: MenuItemVal;
+  showUserMenu: boolean;
+}
 interface IAdminMenuProps {
 
 }
 export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.Element => {
-  // local component hooks //
-  const [ activeMenuItem, setActiveMenuItem ] = React.useState<MenuItemVal>("");
+  // local component hooks and local state  //
+  const [ LocalState, setLocalState ] = React.useState<LocalState>({ activeMenuItem: "dashboard", showUserMenu: false });
   // next hooks //
   const router = useRouter();
   // redux hooks //
@@ -32,7 +37,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
   // action handlers //
   const handleGoToNewPost = (): void => {
     // clear current blog post if any //
-    if (!checkEmptyObjVals(currentBlogPost)) handleClearCurrentBlogPost(dispatch);
+    if (!checkEmptyObjVals(currentBlogPost)) BlogPostActions.handleClearCurrentBlogPost(dispatch);
     router.push("/admin/dashboard/posts/new");
   };
   const handleMenuItemClick = (_, data: MenuItemProps ) => {
@@ -40,30 +45,30 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
     switch(name) {
       case "dashboard": {
         router.push("/admin/dashboard");
-        setActiveMenuItem("dashboard");
+        setLocalState({ activeMenuItem: "dashboard", showUserMenu: false });
         break;
       }
       case "posts": {
         router.push("/admin/dashboard/posts");
-        setActiveMenuItem("posts");
-        break
+        setLocalState({ activeMenuItem: "posts", showUserMenu: false });
+        break;
       }
       case "projects": {
         router.push("/admin/dashboard/projects");
-        setActiveMenuItem("projects");
+        setLocalState({ activeMenuItem: "projects", showUserMenu: false });
         break;
       }
       case "news": {
         router.push("/admin/dashboard/news");
-        setActiveMenuItem("news");
+        setLocalState({ activeMenuItem: "news", showUserMenu: false });
         break;
       }
       case "users": {
         router.push("/admin/dashboard/users");
-        setActiveMenuItem("users");
+        setLocalState({ activeMenuItem: "users", showUserMenu: true });
         break;
       } 
-      default: setActiveMenuItem("");
+      default: setLocalState({ activeMenuItem: "", showUserMenu: false });
     }
   };
 
@@ -79,23 +84,23 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
   // lifecycle hooks //
   React.useEffect(() => {
     if (router.pathname.includes("/dashboard/posts")) {
-      setActiveMenuItem("posts");
+      setLocalState({ activeMenuItem: "posts", showUserMenu: false });
     } else if (router.pathname.includes("/dashboard/projects")) {
-      setActiveMenuItem("projects");
+      setLocalState({ activeMenuItem: "projects", showUserMenu: false });
     } else if (router.pathname.includes("/dashboard/news")) {
-      setActiveMenuItem("news");
+      setLocalState({ activeMenuItem: "news", showUserMenu: false });
     } else if(router.pathname.includes("/dashboard/users")) {
-      setActiveMenuItem("users");
+      setLocalState({ activeMenuItem: "users", showUserMenu: true });
     } else {
-      setActiveMenuItem("dashboard");
+      setLocalState({ activeMenuItem: "dashboard", showUserMenu: false });
     }
   }, [ router.pathname ]);
 
   return (
     <Grid.Row className={ adminMenuStyles.adminMenuRow } >
       <Menu pointing color="violet" fluid fixed="top" className={ adminMenuStyles.fixedAdminMenu }>
-        <Dropdown text='File' className={ adminMenuStyles.adminMenuFile }>
-          <Dropdown.Menu>
+        <Dropdown text='File' className={ `${adminMenuStyles.adminMenuFile} link item` }>
+          <Dropdown.Menu style={{ zIndex: 9999 }}>
             <Dropdown.Item>
               <Dropdown text='New' pointing="left">
                 <Dropdown.Menu style={{ left: "140px", transform: "translateY(-12px)"}}>
@@ -118,31 +123,34 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
           </Dropdown.Menu>
         </Dropdown>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="dashboard" active={ activeMenuItem === "dashboard" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="dashboard" active={ LocalState.activeMenuItem === "dashboard" }>
             Dashboard
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="posts" active={ activeMenuItem === "posts" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="posts" active={ LocalState.activeMenuItem === "posts" }>
             View Posts
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="projects" active={ activeMenuItem === "projects" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="projects" active={ LocalState.activeMenuItem === "projects" }>
             View Projects
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="news" active={ activeMenuItem === "news" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="news" active={ LocalState.activeMenuItem === "news" }>
             View News
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="users" active={ activeMenuItem === "users" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="users" active={ LocalState.activeMenuItem === "users" }>
             View Users
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu position="right">
+          {
+            <AdminUserMenu />
+          }
           <Menu.Item onClick={ handleLogout }>
             Logout
           </Menu.Item>

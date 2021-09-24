@@ -1,9 +1,11 @@
 .navRow {
+  position: relative;
   height: 40px;
-  align-items: center !important;
+  margin-top: 15px;
 }
 .previewRow {
   width: 100%;
   height: calc(100% - 80px);
   overflow: hidden;
+  padding-top: 0 !important;
 }
