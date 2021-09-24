@@ -7,12 +7,13 @@ import Footer from '../footer/Footer';
 import layoutStyles from "../../styles/layout/LayoutStyle.module.css";
 
 interface ILayoutProps {
+  pageProps: any;
 }
 
-const Layout: React.FunctionComponent<ILayoutProps> = ({ children }): JSX.Element => {
+const Layout: React.FunctionComponent<ILayoutProps> = ({ children, pageProps }): JSX.Element => {
   return (
     <Grid relaxed className={ layoutStyles.layoutWrapper }>
-      <NavMenu />
+      <NavMenu { ...pageProps }/>
       { children }
       <Footer />
     </Grid>

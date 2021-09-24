@@ -39,7 +39,7 @@ class WrappedApp extends App<AppInitialProps> {
   public render () {
     const { Component, pageProps } = this.props;
     return (
-      <Layout>
+      <Layout { ...pageProps }>
         <Component { ...pageProps } />
       </Layout>
     );
