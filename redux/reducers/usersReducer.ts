@@ -26,6 +26,50 @@ export default function usersReducer(state: IUserState = initState, action: User
         errorMessages: null
       };
     }
+    case "GetOneUser": {
+      return {
+        ...state,
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        selectedUserData: action.payload.user,
+        error: null,
+        errorMessages: null
+      };
+    }
+    case "CreateUser": {
+      return {
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        selectedUserData: action.payload.updatedSelectedUserData,
+        usersArr: action.payload.updatedUsersArr,
+        error: null,
+        errorMessages: null
+      };
+    }
+    case "EditUser": {
+      return {
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        selectedUserData: action.payload.updatedSelectedUserData,
+        usersArr: action.payload.updatedUsersArr,
+        error: null,
+        errorMessages: null
+      };
+    }
+    case "DeleteUser": {
+      return {
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        selectedUserData: action.payload.updatedSelectedUserData,
+        usersArr: action.payload.updatedUsersArr,
+        error: null,
+        errorMessages: null
+      };
+    }
     case "SetUser": {
       return {
         ...state,
@@ -34,8 +78,28 @@ export default function usersReducer(state: IUserState = initState, action: User
         errorMessages: null
       };
     }
+    case "ClearUser": {
+      return {
+        ...state,
+        selectedUserData: action.payload.userData,
+        error: null,
+        errorMessages: null
+      }
+    }
+    case "SetUserError": {
+      return {
+        ...state,
+        ...action.payload
+      };
+    }
+    case "ClearUserError": {
+      return {
+        ...state,
+        ...action.payload
+      };
+    }
     default: {
       return state;
     }
   }
-}
+};

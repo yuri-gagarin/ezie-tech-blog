@@ -3,7 +3,7 @@ import axios from "axios";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 import type { Dispatch } from "redux";
 import type { IUserState } from "../_types/generalTypes";
-import type { GetOneUser, GetUsers, EditUser, CreateUser, DeleteUser, UserAction, SetUserError } from "../_types/users/actionTypes";
+import type { GetOneUser, GetUsers, EditUser, CreateUser, DeleteUser, UserAction, SetUserError, ClearUserError } from "../_types/users/actionTypes";
 import type { GetAllUsersRes, GetOneUserRes, CreateUserRes, EditUserRes, DeleteUserRes, FetchUsersOpts, GetOneUserOpts, UserFormData, GenUserData, UserData } from "../_types/users/dataTypes";
 // helpers //
 import { generateEmptyUser } from "../_helpers/mockData"; 
@@ -100,9 +100,9 @@ export class UserActions {
     }
   }
 
-  public static async handleEditUser(data: { dispatch: Dispatch<UserAction>; JWTToken: string; userId: string; formData: UserFormData; userState: IUserState}): Promise<EditUser | SetUserError> {
-    const { dispatch, JWTToken, userId, formData, userState } = data;
-    const { usersArr } = userState;
+  public static async handleEditUser(data: { dispatch: Dispatch<UserAction>; JWTToken: string; userId: string; formData: UserFormData; usersState: IUserState}): Promise<EditUser | SetUserError> {
+    const { dispatch, JWTToken, userId, formData, usersState } = data;
+    const { usersArr } = usersState;
 
     const reqConfig: AxiosRequestConfig = {
       method: "PATCH",
@@ -133,9 +133,9 @@ export class UserActions {
     }
   }
 
-  public static async handleDeleteUser(data: { dispatch: Dispatch<UserAction>; JWTToken: string; userId: string; userState: IUserState; }): Promise<DeleteUser | SetUserError> {
-    const { dispatch, JWTToken, userId, userState } = data;
-    const { selectedUserData, usersArr } = userState;
+  public static async handleDeleteUser(data: { dispatch: Dispatch<UserAction>; JWTToken: string; userId: string; usersState: IUserState; }): Promise<DeleteUser | SetUserError> {
+    const { dispatch, JWTToken, userId, usersState } = data;
+    const { selectedUserData, usersArr } = usersState;
 
     const reqConfig: AxiosRequestConfig = {
       method: "DELETE",
@@ -158,5 +158,15 @@ export class UserActions {
     } catch (error) {
       return dispatch({ type: "SetUserError", payload: { ...processAxiosError(error), loading: false } });
     }
+  }
+
+  public static handleUserError(data: { dispatch: Dispatch<SetUserError>; error: any; status?: number; message?: string; customMessages?: string[] }): SetUserError {
+    const { dispatch, error, status = 500, message = "Application Error", customMessages } = data;
+    const errorMessages: string[] = customMessages ? customMessages : [ "Seems like an error occured. Please try again," ];
+    return dispatch({ type: "SetUserError", payload: { status, loading: false, responseMsg: message,  error, errorMessages } });
+  }
+
+  public static clearUserError({ dispatch }: { dispatch: Dispatch<ClearUserError>; }): ClearUserError {
+    return dispatch({ type: "ClearUserError", payload: { error: null, errorMessages: null } });
   }
 };
