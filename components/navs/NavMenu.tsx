@@ -14,7 +14,7 @@ import type { IGeneralState } from "../../redux/_types/generalTypes";
 import navMenuStyle from "../../styles/NavMenu.module.css";
 import { GenErrorModal } from '../modals/GenErrorModal';
 
-type NavValues = "home" | "news" | "blog" | "about";
+type NavValues = "home" | "news" | "blog" | "projects" | "about";
 type NavbarState = {
   activeItem: NavValues;
   showSearchBar: boolean;
@@ -58,6 +58,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
     if (router.route === "/" && navState.activeItem !== "home") setNavState({ activeItem: "home", showSearchBar: false });
     else if (router.route === "/blog" && navState.activeItem !== "blog") setNavState({  activeItem: "blog", showSearchBar: true });
     else if (router.route === "/news" && navState.activeItem !== "news") setNavState({ activeItem: "news", showSearchBar: false });
+    else if (router.route === "/projects" && navState.activeItem !== "projects") setNavState({ activeItem: "projects", showSearchBar: false });
     else if (router.route === "/about" && navState.activeItem !== "about") setNavState({ activeItem: "about", showSearchBar: false });
     //else setNavState({ activeItem: "home", showSearchBar: false });
   }, [ router.route, navState.activeItem ]);
@@ -100,6 +101,13 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
           className={ navMenuStyle.navMenuItem }
           name='news'
           active={ navState.activeItem === "news" }
+          onClick={ handleNavClick }
+          color="purple"
+        />
+         <Menu.Item
+          className={ navMenuStyle.navMenuItem }
+          name='projects'
+          active={ navState.activeItem === "projects" }
           onClick={ handleNavClick }
           color="purple"
         />

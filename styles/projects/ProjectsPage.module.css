@@ -1,0 +1,21 @@
+.projectsPageGrid {
+  border: 20px solid green;
+  height: 100vh;
+}
+
+.projectRow {
+  margin-top: 15px;
+}
+
+.titleSegment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  color: black;
+}
+
+.projectDivider {
+  padding: 0 !important;
+}
