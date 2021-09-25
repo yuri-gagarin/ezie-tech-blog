@@ -1,5 +1,24 @@
 import mongoose, { Schema } from "mongoose";
 
+export interface IProject extends mongoose.Document {
+  title: string;
+  creator: mongoose.Types.ObjectId;
+  description: string;
+  challenges: string;
+  solution: string;
+  languages: {
+    js: boolean; ts: boolean; python: boolean; ruby: boolean; cSharp: boolean; goLang: boolean;
+  };
+  libraries: {
+    bootstrap: boolean; semanticUI: boolean; materialUI: boolean; jquery: boolean; react: boolean; reactNative: boolean; redux: boolean;
+  };
+  frameworks: {
+    rails: boolean; nextJS: boolean; gatsbyJS: boolean; django: boolean; flask: boolean; ASP: boolean;
+  };
+  createdAt: Date;
+  editedAd: Date;
+};
+
 const projectSchema = new Schema({
   title: {
     type: String,
@@ -47,4 +66,6 @@ const projectSchema = new Schema({
   },
   createdAt: { type: Date, default: new Date() },
   editedAt: { type: Date, default: new Date() }
-})
+});
+
+export default mongoose.model<IProject>("Project", projectSchema);
