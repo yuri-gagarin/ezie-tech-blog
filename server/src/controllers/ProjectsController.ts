@@ -6,6 +6,7 @@ import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import type { ProjectData, ProjectIndexRes, ProjectGetOneRes, ProjectCreateRes, ProjectEditRes, ProjectDeleteRes } from "../_types/projects/projectTypes";
 import type { IProject } from "../models/Project";
 import { IAdmin } from "../models/Admin";
+import { normalizeProjectOpsData } from "./_helpers/validationHelpers";
 
 export default class ProjectsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<ProjectIndexRes>): Promise<Response<ProjectIndexRes>> => {
@@ -39,6 +40,7 @@ export default class ProjectsController extends BasicController implements ICRUD
     const { title, description, challenges, solution, languages = {},  libraries = {}, frameworks = {} } = req.body.projectData as ProjectData;
     const user: IAdmin = req.user as IAdmin;
 
+    if (!user) return await this.notFoundErrorResponse(res, [ "Could not resolve user account" ]);
     // have to validate valid project data //
     try {
       const createdProject: IProject = await Project.create({
@@ -60,11 +62,52 @@ export default class ProjectsController extends BasicController implements ICRUD
   edit = async (req: Request, res: Response<ProjectEditRes>): Promise<Response<ProjectEditRes>> => {
     const { project_id } = req.params;
     const { title, description, challenges, solution, languages = {},  libraries = {}, frameworks = {} } = req.body.projectData as ProjectData;
+    // TODO //
+    // validate input data //
     const user: IAdmin = req.user as IAdmin;
 
-    if (project_id) return await this.userInputErrorResponse(res, [ "Could not resolve user id" ]);
-  }
-  delete = async(request: Request, response: Response): Promise<Response> => {
+    if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve user account" ]);
+    if (!project_id) return await this.userInputErrorResponse(res, [ "Could not resolve user id" ]);
+
+    const normalizedData = normalizeProjectOpsData({ languages, libraries, frameworks });
+    try {
+      const editedProject: IProject | null = await Project.findOneAndUpdate(
+        { _id: project_id },
+        { title, description, challenges, solution, 
+          languages: normalizedData.languages, 
+          libraries: normalizedData.libraries, 
+          frameworks: normalizedData.frameworks, 
+          editedAd: new Date() },
+        { new: true }
+      ).exec();
+      if (editedProject) {
+        return res.status(200).json({ responseMsg: "Project info updated", editedProject })
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Queried project to update was not found" ]);
+      }
+    } catch (error) {
+      return await this.generalErrorResponse(res, { error });
+    }
 
   }
-}
+  delete = async (req: Request, res: Response<ProjectDeleteRes>): Promise<Response<ProjectDeleteRes>> => {
+    const { project_id } = req.params;
+    const user: IAdmin = req.user as IAdmin;
+    
+    if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve user accont" ]);
+    if (!project_id) return await this.userInputErrorResponse(res, [ "Could not resolve project to delete" ]);
+
+    try {
+      const deletedProject: IProject | null  = await Project.findOneAndDelete({ _id: project_id }).exec();
+      if (deletedProject) {
+        return res.status(200).json({
+          responseMsg: "Project deleted", deletedProject
+        });
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Project to delete was not found" ]);
+      }
+    } catch (error) {
+      return await this.generalErrorResponse(res, { error });
+    } 
+  }
+};
