@@ -1,12 +1,23 @@
 import * as React from 'react';
 import { Container, Grid, Header, Icon, Segment } from "semantic-ui-react";
+// redux imports //
+import { wrapper } from "../../redux/store";
 // types //
-// import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import type { Dispatch } from "redux";
+import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import type { ProjectAction } from "../../redux/_types/project/actionTypes";
 import styles from "../../styles/projects/ProjectsPage.module.css";
 
 interface IProjectsPageProps {
 
 }
+
+const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
+  const dispatch: Dispatch<ProjectAction> = store.dispatch;
+  return {
+    props: {}
+  }
+});
 
 const ProjectsPage: React.FunctionComponent<IProjectsPageProps> = (props): JSX.Element => {
   return (

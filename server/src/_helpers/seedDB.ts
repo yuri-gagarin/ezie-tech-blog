@@ -85,7 +85,7 @@ const processOption = async (data: any): Promise<void> => {
         process.exit(0);
       }
       default: {
-        console.log("Not supported\n");
+        console.log("Invalid input\n");
         return showMainScreen();
       }
     }
