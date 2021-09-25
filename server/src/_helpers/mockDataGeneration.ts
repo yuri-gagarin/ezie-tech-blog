@@ -1,6 +1,10 @@
+import mongoose from "mongoose";
 import faker from "faker";
 import BlogPost from "../models/BlogPost";
-import { randomIntFromInterval } from "./generalHelpers";
+import Project from "../models/Project";
+import { randomIntFromInterval, setRandBoolean } from "./generalHelpers";
+// types //
+import type { IProject } from "../models/Project";
 
 const pullRandomValsFromArray = <T>(array: T[]): T[] => {
   let returnArr: T[] = array
@@ -13,9 +17,10 @@ const pullRandomValsFromArray = <T>(array: T[]): T[] => {
   return returnArr;
 };
 
-export const generateMockBlogPosts = async () => {
+export const generateMockBlogPosts = async (num?: number) => {
   console.log("Generating mock Blog Posts");
-  for (let i = 0; i < 5; i++) {
+  const numOfBlogPosts = num ? num : 10;
+  for (let i = 0; i < numOfBlogPosts; i++) {
     const categories = ["informational", "beginner", "intermediate", "advanced"];
     let keywords = ["programming", "tech", "help", "javascript", "typescript", "nodejs", "html", "css", "react", "react-native", "mobile", "desktop", "ruby", "python", "next", "gatsby", "mongodb", "sql" ];
     const ranNum: number = randomIntFromInterval(1, 20);
@@ -35,6 +40,38 @@ export const generateMockBlogPosts = async () => {
       process.exit(1);
     }
   }
-  console.log("Done generation mock Blog Posts");
+  console.log("Done generating mock Blog Posts");
+};
+
+export const generateMockProjects = async (num?: number): Promise<number> => {
+  const numToGenerate: number = num ? num : 1;
+
+  for (let i = 0; i < num; i++) {
+    const newProject: IProject = new Project({
+      title: faker.lorem.words(randomIntFromInterval(1, 4)),
+      creator: new mongoose.Types.ObjectId(),
+      description: faker.lorem.paragraph(randomIntFromInterval(1, 2)),
+      challenges: faker.lorem.paragraph(randomIntFromInterval(1, 2)),
+      solution: faker.lorem.paragraph(randomIntFromInterval(1, 2)),
+      languages: {
+        js: setRandBoolean(), ts: setRandBoolean(), python: setRandBoolean(), ruby: setRandBoolean(), cSharp: setRandBoolean(), goLang: setRandBoolean()
+      },
+      libraries: {
+        bootstrap: setRandBoolean(), semanticUI: setRandBoolean(), materialUI: setRandBoolean(), jquery: setRandBoolean(), react: setRandBoolean(), reactNative: setRandBoolean(), redux: setRandBoolean()
+      },
+      frameworks: {
+        rails: setRandBoolean(), nextJS: setRandBoolean(), gatsbyJS: setRandBoolean(), django: setRandBoolean(), flask: setRandBoolean(), ASP: setRandBoolean()
+      },
+      createdAt: new Date(),
+      editedAt: new Date()
+    });
+    try {
+      await newProject.save();
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
+  }
+  return numToGenerate;
 };
 
