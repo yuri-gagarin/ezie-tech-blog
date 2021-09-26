@@ -5,14 +5,18 @@ import type { GenUserData } from "./users/dataTypes";
 import type { UserAction } from "./users/actionTypes";
 // auth //
 import type { AuthAction } from "./auth/actionTypes";
+// projects //
+import type { ProjectAction } from "./projects/actionTypes";
+import type { IProjectState } from "./projects/dataTypes";
 
 export interface IGeneralState  {
   authState: IAuthState;
   usersState: IUserState;
   blogPostsState: IBlogPostState;
+  projectsState: IProjectsState;
 };
 
-export type IGeneralAppAction = BlogPostAction | UserAction | AuthAction;
+export type IGeneralAppAction = BlogPostAction | UserAction | AuthAction | ProjectAction;
 
 export interface IUserState {
   status: number | null;

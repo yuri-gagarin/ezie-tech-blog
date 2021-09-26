@@ -5,7 +5,7 @@ import { wrapper } from "../../redux/store";
 // types //
 import type { Dispatch } from "redux";
 import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import type { ProjectAction } from "../../redux/_types/project/actionTypes";
+import type { ProjectAction } from "../../redux/_types/projects/actionTypes";
 import styles from "../../styles/projects/ProjectsPage.module.css";
 
 interface IProjectsPageProps {

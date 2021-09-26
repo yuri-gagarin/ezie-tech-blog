@@ -1,5 +1,6 @@
 import type { BlogPostData } from "../_types/blog_posts/dataTypes";
 import type { IAuthState, IBlogPostState, IUserState } from "../_types/generalTypes";
+import { IProjectState } from "../_types/projects/dataTypes";
 import { UserData } from "../_types/users/dataTypes";
 
 export const generateEmptyBlogPost = (): BlogPostData => {
@@ -83,3 +84,16 @@ export const generateEmptyAuthState = (): IAuthState => {
     errorMessages: null
   };
 };
+
+export const generateEmptyProjectsState = (): IProjectState => {
+  return {
+    status: null,
+    responseMsg: "",
+    loading: false,
+    currentSelectedProject: null,
+    projectsArr: [],
+    error: null,
+    errorMessages: null
+  };
+};
+

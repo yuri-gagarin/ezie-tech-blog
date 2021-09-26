@@ -42,7 +42,7 @@ export interface IProjectState {
   responseMsg: string;
   loading: boolean;
   projectsArr: ProjectData[];
-  currentSelectedProject: ProjectData;
+  currentSelectedProject: ProjectData | null;
   error: any;
   errorMessages: string[] | null;
 }

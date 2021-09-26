@@ -4,7 +4,6 @@ import { ProjectData, IProjectState } from "./dataTypes";
 export type ProjectAPIRequest = {
   readonly type: "ProjectsAPIRequest";
   readonly payload: {
-    responseMsg: string;
     loading: boolean;
   };
 };
@@ -23,7 +22,7 @@ export type GetOneProject = {
     status: number;
     responseMsg: string;
     loading: boolean;
-    projectPost: ProjectData;
+    project: ProjectData;
   };
 };
 export type CreateProject = {
@@ -76,15 +75,14 @@ export type ClearProjectError = {
 export type SetProject = {
   readonly type: "SetProject";
   readonly payload: {
-    projectPost: ProjectData;
-    currentProjectState: IProjectState;
+    project: ProjectData;
   };
 };
 export type ClearProject = {
   readonly type: "ClearProject";
   readonly payload: {
-    projectPost: ProjectData;
-  };
+    project: ProjectData;
+  }; 
 };
 
-export type ProjectAction = (ProjectAPIRequest | GetAllProjects | GetOneProject | CreateProject | EditBprojectPost | DeleteProject | ToggleProjectLike | SetProject | ClearProject | SetProjectError);
+export type ProjectAction = ProjectAPIRequest | GetAllProjects | GetOneProject | CreateProject | EditProject | DeleteProject | SetProjectError | ClearProjectError | SetProject | ClearProject;
