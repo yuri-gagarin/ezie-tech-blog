@@ -42,7 +42,9 @@ export interface IAuthState {
   responseMsg: string;
   loggedIn: boolean;
   authToken: string;
+  expires: string;
   isAdmin: boolean;
+  loggedInAt: number | null;
   currentUser: UserData | AdminData | null;
   error: any | null;
   errorMessages: any | string[];

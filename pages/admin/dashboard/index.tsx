@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps =  async (context: GetServer
   } else {
     return {
       redirect: {
-        destination: "/not_allowed",
+        destination: "/401",
         statusCode: 301,
       },
       props: {

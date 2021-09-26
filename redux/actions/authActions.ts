@@ -3,7 +3,7 @@ import axios from "../../components/axios/axiosInstance";
 import type { Dispatch } from "redux";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 // actions types //
-import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss } from "../_types/auth/actionTypes";
+import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState } from "../_types/auth/actionTypes";
 // data types //
 import type { AdminData } from "../_types/generalTypes";
 import type { UserData } from "../_types/users/dataTypes";
@@ -17,22 +17,22 @@ const authAPIRequest = (): AuthAPIRequest => {
     payload: { loading: true }
   };
 };
-const authLoginSuccess = (data: { status: number; responseMsg: string; authToken: string; isAdmin: boolean; currentUser: UserData | AdminData }): AuthLoginSuccess => {
+const authLoginSuccess = (data: { status: number; responseMsg: string; authToken: string; expires: string; isAdmin: boolean; currentUser: UserData | AdminData }): AuthLoginSuccess => {
   return {
     type: "AuthLoginSuccess",
-    payload: { ...data, loading: false, loggedIn: true  }
+    payload: { ...data, loading: false, loggedIn: true , loggedInAt: Date.now() }
   };
 };
 const authLogoutSuccess = (data: { status: number; responseMsg: string; currentUser: null }): AuthLogoutSuccess => {
   return {
     type: "AuthLogoutSuccess",
-    payload: { ...data, loading: false, loggedIn: false, authToken: "" }
+    payload: { ...data, loading: false, loggedIn: false, authToken: "", expires: "", loggedInAt: null }
   };
 };
-const authRegisterSuccess = (data: { status: number; responseMsg: string; currentUser: UserData; authToken: string; isAdmin: boolean }): AuthRegisterSuccess => {
+const authRegisterSuccess = (data: { status: number; responseMsg: string; currentUser: UserData; authToken: string; expires: string; isAdmin: boolean }): AuthRegisterSuccess => {
   return {
     type: "AuthRegisterSuccess",
-    payload: { ...data, loading: false, loggedIn: true }
+    payload: { ...data, loading: false, loggedIn: true, loggedInAt: Date.now() }
   };
 };
 const authFailure = (data: { status: number; responseMsg: string; error: any; errorMessages: string[] }): AuthFailure => {
@@ -55,7 +55,7 @@ export class AuthActions {
       const response: AxiosResponse<LoginRes> = await axios(axiosOpts);
       const { status, data } = response;
       const { responseMsg, jwtToken, userData, isAdmin } = data;
-      return dispatch(authLoginSuccess({ status, responseMsg, isAdmin, authToken: jwtToken.token, currentUser: userData }));
+      return dispatch(authLoginSuccess({ status, responseMsg, isAdmin, authToken: jwtToken.token, expires: jwtToken.expires, currentUser: userData }));
     } catch (error) {
       throw error;
     }
@@ -86,11 +86,20 @@ export class AuthActions {
     try {
       const { status, data }: AxiosResponse<RegisterRes> = await axios(axiosOpts);
       const { responseMsg, userData, jwtToken, isAdmin } = data;
-      return dispatch(authRegisterSuccess({ status, responseMsg, isAdmin, currentUser: userData, authToken: jwtToken.token }));
+      return dispatch(authRegisterSuccess({ status, responseMsg, isAdmin, currentUser: userData, authToken: jwtToken.token, expires: jwtToken.expires }));
     } catch (error) {
       throw error;
     }
   };
+
+  public static handleClearLoginState = (dispatch: Dispatch<AuthAction>): ClearLoginState => {
+    return dispatch({
+      type: "ClearLoginState",
+      payload: {
+        loggedIn: false, isAdmin: false, authToken: "", expires: "", loggedInAt: null, currentUser: null
+      }
+    });
+  }
 
   public static handleAuthError = (dispatch: Dispatch<AuthAction>, err: any): AuthFailure => {
     const { status, responseMsg, error, errorMessages } = processAxiosError(err);

@@ -23,7 +23,9 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         loggedIn: action.payload.loggedIn,
         currentUser: action.payload.currentUser,
         authToken: action.payload.authToken,
+        expires: action.payload.expires,
         isAdmin: action.payload.isAdmin,
+        loggedInAt: action.payload.loggedInAt,
         error: null,
         errorMessages: null
       };
@@ -36,7 +38,9 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         loggedIn: action.payload.loggedIn,
         currentUser: action.payload.currentUser,
         authToken: action.payload.authToken,
+        expires: action.payload.expires,
         isAdmin: action.payload.isAdmin,
+        loggedInAt: action.payload.loggedInAt,
         error: null,
         errorMessages: null
       }
@@ -48,8 +52,18 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         responseMsg: action.payload.responseMsg,
         currentUser: action.payload.currentUser,
         authToken: action.payload.authToken,
+        expires: action.payload.expires,
         isAdmin: false,
         loggedIn: false,
+        loggedInAt: action.payload.loggedInAt,
+        error: null,
+        errorMessages: null
+      };
+    }
+    case "ClearLoginState": {
+      return {
+        ...state,
+        ...action.payload,
         error: null,
         errorMessages: null
       };

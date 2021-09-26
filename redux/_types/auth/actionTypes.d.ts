@@ -17,7 +17,9 @@ export type AuthLoginSuccess = {
     loggedIn: boolean;
     isAdmin: boolean;
     authToken: string;
+    expires: string;
     currentUser: AdminData | UserData;
+    loggedInAt: number;
   };
 };
 
@@ -30,7 +32,9 @@ export type AuthRegisterSuccess = {
     loggedIn: boolean;
     isAdmin: boolean;
     authToken: string;
+    expires: string;
     currentUser: UserData;
+    loggedInAt: number;
   };
 };
 
@@ -42,7 +46,21 @@ export type AuthLogoutSuccess = {
     loading: boolean;
     loggedIn: boolean;
     authToken: string;
+    expires: string;
     currentUser: null;
+    loggedInAt: null;
+  };
+};
+
+export type ClearLoginState = {
+  readonly type: "ClearLoginState";
+  readonly payload: {
+    loggedIn: boolean;
+    isAdmin: boolean;
+    authToken: string;
+    expires: string;
+    currentUser: null;
+    loggedInAt: null;
   };
 };
 
@@ -66,8 +84,7 @@ export type AuthErrorDismiss = {
 };
 
 export type AuthAction = (
-    AuthAPIRequest | AuthLoginSuccess | AuthLogoutSuccess | 
-    AuthRegisterSuccess | AuthFailure | AuthErrorDismiss
+    AuthAPIRequest | AuthLoginSuccess | AuthLogoutSuccess | AuthRegisterSuccess | ClearLoginState | AuthFailure | AuthErrorDismiss
 );
 
 

@@ -6,3 +6,12 @@
   height: 100vh;
   border: 10px solid red;
 }
+
+.errorStatus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3em;
+  padding: 1em 0;
+  font-weight: bold;
+}
