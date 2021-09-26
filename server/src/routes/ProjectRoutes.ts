@@ -16,7 +16,7 @@ export default class ProjectRoutes extends CRUDRoutesController {
     this.getOne("/api/projects/:project_id");
     this.create("/api/projects");
     this.edit("/api/projects/:project_id");
-    this.delete("/api/projectss/:project_id");
+    this.delete("/api/projects/:project_id");
   }
 
   protected index(route: string): void {

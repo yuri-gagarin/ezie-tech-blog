@@ -6,7 +6,7 @@ import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import type { ProjectData, ProjectIndexRes, ProjectGetOneRes, ProjectCreateRes, ProjectEditRes, ProjectDeleteRes } from "../_types/projects/projectTypes";
 import type { IProject } from "../models/Project";
 import { IAdmin } from "../models/Admin";
-import { normalizeProjectOpsData } from "./_helpers/validationHelpers";
+import { normalizeProjectOpsData, validateProjectModelData } from "./_helpers/validationHelpers";
 
 export default class ProjectsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<ProjectIndexRes>): Promise<Response<ProjectIndexRes>> => {
@@ -42,6 +42,8 @@ export default class ProjectsController extends BasicController implements ICRUD
 
     if (!user) return await this.notFoundErrorResponse(res, [ "Could not resolve user account" ]);
     // have to validate valid project data //
+    const { valid, errorMessages } = validateProjectModelData({ title, description, challenges, solution });
+    if (!valid) return await this.userInputErrorResponse(res, errorMessages);
     try {
       const createdProject: IProject = await Project.create({
         creator: user._id,
@@ -49,8 +51,8 @@ export default class ProjectsController extends BasicController implements ICRUD
         languages: { ...languages }, 
         libraries: { ...libraries },
         frameworks: { ...frameworks },
-        createdAt: Date.now(),
-        editedAd: Date.now()
+        createdAt: new Date(),
+        editedAd: new Date()
       });
       return res.status(200).json({
         responseMsg: "Project created", createdProject
@@ -62,15 +64,16 @@ export default class ProjectsController extends BasicController implements ICRUD
   edit = async (req: Request, res: Response<ProjectEditRes>): Promise<Response<ProjectEditRes>> => {
     const { project_id } = req.params;
     const { title, description, challenges, solution, languages = {},  libraries = {}, frameworks = {} } = req.body.projectData as ProjectData;
-    // TODO //
-    // validate input data //
     const user: IAdmin = req.user as IAdmin;
 
     if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve user account" ]);
     if (!project_id) return await this.userInputErrorResponse(res, [ "Could not resolve user id" ]);
+    // validate correct input data //
+    const { valid, errorMessages } = validateProjectModelData({ title, description, challenges, solution });
+    if (!valid) return await this.userInputErrorResponse(res, errorMessages);
 
-    const normalizedData = normalizeProjectOpsData({ languages, libraries, frameworks });
     try {
+      const normalizedData = normalizeProjectOpsData({ languages, libraries, frameworks });
       const editedProject: IProject | null = await Project.findOneAndUpdate(
         { _id: project_id },
         { title, description, challenges, solution, 

@@ -19,10 +19,10 @@ export enum StrategyNames {
 export const issueJWT = (user: IUser): { token: string; expires: string } => {
   const { _id } = user;
   const secretKey = process.env.JWT_SECRET;
-  const expiresIn = "12hr";
+  const expiresIn = "1m";
   const payload = {
     sub: _id,
-    iat: Date.now()
+    iat: Math.floor(Date.now() / 1000)
   };
 
   const signedToken = jsonwebtoken.sign(payload, secretKey, { expiresIn });
@@ -63,7 +63,9 @@ export default class PassportController {
     }));
     this.passport.use(StrategyNames.AdminAuthStrategy, new JWTStrategy(this.opts, async (jwtPayload, done) => {
       try { 
-        const admin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
+        console.log(66)
+        const admin: IAdmin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
+        console.log(admin);
         if (admin) return done(null, admin);
         else return done(null, false);
       } catch (err) {

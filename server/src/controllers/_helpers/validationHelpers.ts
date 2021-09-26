@@ -28,6 +28,7 @@ export const validateRegistrationData = (data: { email?: string; password?: stri
   return res;
 };
 
+// Project model validators //
 export type NormalizedProjectOptsRes = {
   languages: { js: boolean; ts: boolean; python: boolean; ruby: boolean; cSharp: boolean; goLang: boolean; };
   libraries: { bootstrap: boolean; semanticUI: boolean; materialUI: boolean; jquery: boolean; react: boolean; reactNative: boolean; redux: boolean; };
@@ -59,3 +60,23 @@ export const normalizeProjectOpsData = (data: Args): NormalizedProjectOptsRes =>
   }
   return returnObj;
 };
+
+export const validateProjectModelData = (data: { title?: string; description?: string; challenges?: string; solution?: string }): ValidationRes => {
+  const res: ValidationRes = { valid: true, errorMessages: [] };
+
+  if (!data.title) {
+    res.errorMessages.push("Project title field is required");
+  }
+  if (!data.description) {
+    res.errorMessages.push("Project description field is required");
+  }
+  if (!data.challenges) {
+    res.errorMessages.push("Project challengers field is required");
+  }
+  if (!data.solution) {
+    res.errorMessages.push("Project solution field is required");
+  }
+  res.errorMessages.length > 0 ? res.valid = false : res.valid = true;
+  return res;
+}
+  
