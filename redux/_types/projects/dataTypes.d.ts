@@ -1,3 +1,6 @@
+import type { Dispatch } from "redux";
+import type { ProjectAction } from "./actionTypes";
+
 export type ProjectData = {
   _id: string;
   title: string;
@@ -45,7 +48,45 @@ export interface IProjectState {
   currentSelectedProject: ProjectData | null;
   error: any;
   errorMessages: string[] | null;
-}
+};
+
+export type ProjectFetchParams = {
+  date?: "asc" | "desc";
+  limit?: number;
+  title?: string;
+  owner?: string;
+};
+
+// redux actions method params //
+export type GetAllProjParams = {
+  dispatch: Dispatch<ProjectAction>;
+  opts?: ProjectFetchParams;
+};
+export type GetOneProjParams = {
+  dispatch: Dispatch<ProjectAction>;
+  modelId: string;
+  JWTToken?: string;
+  state: IProjectState;
+};
+export type CreateProjParams = {
+  dispatch: Dispatch<ProjectAction>;
+  JWTToken?: string;
+  formData: ProjectFormData;
+  state: IProjectState;
+};
+export type EditProjParams = {
+  dispatch: Dispatch<ProjectAction>;
+  modelId: string;
+  JWTToken?: string;
+  formData: ProjectFormData;
+  state: IProjectState;
+};
+export type DeleteProjParams = {
+  dispatch: Dispatch<ProjectAction>;
+  modelId: string;
+  JWTToken?: string;
+  state: IProjectState;
+};
 
 export type IndexProjectRes = {
   responseMsg: string;

@@ -8,7 +8,7 @@ export type ProjectAPIRequest = {
   };
 };
 export type GetAllProjects = {
-  readonly type: "GetProjects";
+  readonly type: "GetAllProjects";
   readonly payload: {
     status: number;
     responseMsg: string;

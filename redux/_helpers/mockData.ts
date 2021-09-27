@@ -87,6 +87,7 @@ export const generateEmptyAuthState = (): IAuthState => {
   };
 };
 
+// project state related //
 export const generateEmptyProjectsState = (): IProjectState => {
   return {
     status: null,
