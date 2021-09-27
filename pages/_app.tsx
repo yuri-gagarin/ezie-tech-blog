@@ -11,6 +11,7 @@ import Layout from '../components/layout/Layout';
 import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
 import "nprogress/nprogress.css";
+import 'react-image-lightbox/style.css'
 
 class WrappedApp extends App<AppInitialProps> {
   public static getInitialProps = wrapper.getInitialAppProps(store => async ({Component, ctx}) => {

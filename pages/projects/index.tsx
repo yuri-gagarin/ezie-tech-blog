@@ -1,6 +1,7 @@
 import * as React from 'react';
 // additional libraries //
 import { Grid, Header, Segment } from "semantic-ui-react";
+import Lightbox from 'react-image-lightbox';
 import ReactMarkdown from 'react-markdown/react-markdown.min';
 // next impports/ /
 import NextImage from "next/image";
@@ -13,13 +14,20 @@ import type { Dispatch } from "redux";
 import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import type { IGeneralState } from '../../redux/_types/generalTypes';
 import type { ProjectAction } from "../../redux/_types/projects/actionTypes";
-import styles from "../../styles/projects/ProjectsPage.module.css";
-import { useWindowSize } from '../../components/_helpers/monitorWindowSize';
 // styles //
-// helpres //
+import styles from "../../styles/projects/ProjectsPage.module.css";
+// helpers //
+import { useWindowSize } from '../../components/_helpers/monitorWindowSize';
+
+// TODO //
+// this nees to be rewritten to take in child components in the return value instead of the long markup //
 
 interface IProjectsPageProps {
 
+}
+type ImgModalState = {
+  photoIndex: number;
+  isOpen: boolean;
 }
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
@@ -35,13 +43,51 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 });
 
 const ProjectsPage: React.FunctionComponent<IProjectsPageProps> = (): JSX.Element => {
+  // local state //
+  const [ imgModalState, setImgModalState ] = React.useState<ImgModalState>({ isOpen: false, photoIndex: 0 });
+  const [ imgUrls, setImgUrls ] = React.useState<string[]>(["/images/blog1.jpg", "/images/blog1.jpg", "/images/blog1.jpg"]);
   // redux hooks and state //
   const { projectsArr } = useSelector((state: IGeneralState) => state.projectsState);
   // custom hooks //
   const { width } = useWindowSize();
 
+  // action handlers //
+  const handleOpenImgModal = (imgUrl: string): void => {
+    setImgModalState({ ...imgModalState, isOpen: true });
+  }
+  const handleCloseImgModal = (): void => {
+    setImgModalState({ ...imgModalState, isOpen: false });
+  };
+  const handleGoToPrevious = (): void => {
+    const { photoIndex } = imgModalState;
+    const nextIndex = (photoIndex + imgUrls.length - 1) % imgUrls.length;
+    setImgModalState({ ...imgModalState, photoIndex: nextIndex });
+  };
+  const handleGoToNext = (): void => {
+    const { photoIndex } = imgModalState;
+    const nextIndex = (photoIndex + 1) % imgUrls.length;
+    setImgModalState({ ...imgModalState, photoIndex: nextIndex });
+  };
+
+  React.useEffect(() => {
+    // images will load from firebase? maybe later??? //
+    console.log(imgModalState);
+  }, [ imgModalState ]);
+
   return (
     <Grid stackable divided className={ styles.projectsPageGrid }>
+      {
+        imgModalState.isOpen && (
+          <Lightbox 
+            mainSrc={ imgUrls[imgModalState.photoIndex] }
+            nextSrc={ imgUrls[(imgModalState.photoIndex + 1) % imgUrls.length] }
+            prevSrc={ imgUrls[(imgModalState.photoIndex + imgUrls.length - 1) % imgUrls.length] }
+            onCloseRequest={ handleCloseImgModal }
+            onMovePrevRequest={ handleGoToPrevious }
+            onMoveNextRequest={ handleGoToNext }
+          />
+        )
+      }
       {
         projectsArr.map((project, i) => {
           return (
@@ -86,7 +132,7 @@ const ProjectsPage: React.FunctionComponent<IProjectsPageProps> = (): JSX.Elemen
                 </Segment>
                 <Segment className={ styles.imageSegment }>
                   <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project first image" />
+                    <NextImage onClick={ () => handleOpenImgModal("/images/blog1.jpg") } layout="fill"  src="/images/blog1.jpg" alt="project first image" />
                   </div>
                   <div>
                     <NextImage layout="fill"  src="/images/blog1.jpg" alt="project second image" />
@@ -117,7 +163,7 @@ const ProjectsPage: React.FunctionComponent<IProjectsPageProps> = (): JSX.Elemen
             (
               width > 768 
               ? 
-              <Grid.Row className={ styles.projectRow } columns={2}>
+              <Grid.Row className={ styles.projectRow } columns={2} key={ project._id }>
               <Grid.Column width={ 8 }>
                 <Segment className={ styles.projectDetailsSegment }>
                   <div className={ styles.projectDetailsHeader }>
