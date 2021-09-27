@@ -50,14 +50,14 @@ export const generateMockProjects = async (num?: number): Promise<number> => {
     const newProject: IProject = new Project({
       title: faker.lorem.words(randomIntFromInterval(1, 4)),
       creator: new mongoose.Types.ObjectId(),
-      description: faker.lorem.paragraph(randomIntFromInterval(1, 2)),
-      challenges: faker.lorem.paragraph(randomIntFromInterval(1, 2)),
-      solution: faker.lorem.paragraph(randomIntFromInterval(1, 2)),
+      description: faker.lorem.paragraph(randomIntFromInterval(1, 3)),
+      challenges: faker.lorem.paragraph(randomIntFromInterval(2, 4)),
+      solution: faker.lorem.paragraph(randomIntFromInterval(2, 4)),
       languages: {
         js: setRandBoolean(), ts: setRandBoolean(), python: setRandBoolean(), ruby: setRandBoolean(), cSharp: setRandBoolean(), goLang: setRandBoolean()
       },
       libraries: {
-        bootstrap: setRandBoolean(), semanticUI: setRandBoolean(), materialUI: setRandBoolean(), jquery: setRandBoolean(), react: setRandBoolean(), reactNative: setRandBoolean(), redux: setRandBoolean()
+        bootstrap: setRandBoolean(), semanticUI: setRandBoolean(), materialUI: setRandBoolean(), jquery: setRandBoolean(), react: setRandBoolean(), reactNative: setRandBoolean(), redux: setRandBoolean(), socketIO: setRandBoolean()
       },
       frameworks: {
         rails: setRandBoolean(), nextJS: setRandBoolean(), gatsbyJS: setRandBoolean(), django: setRandBoolean(), flask: setRandBoolean(), ASP: setRandBoolean()

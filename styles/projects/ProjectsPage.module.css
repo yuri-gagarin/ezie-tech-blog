@@ -1,19 +1,77 @@
 .projectsPageGrid {
-  border: 20px solid green;
-  height: 100vh;
+  min-height: 100vh;
+  margin-top: 20px !important;
+  margin-bottom: 10px !important;
 }
-
-.projectRow {
-  margin-top: 15px;
-}
-
 .titleSegment {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: 100%;
   color: black;
+}
+.techDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+  width: 100%;
+}
+.techDivHeader {
+  display: flex;
+  justify-content: center;
+  font-size: 1.25em;
+  font-weight: bold;
+  font-family: "Wallpoet", cursive;
+  padding-top: 0.75em;
+}
+.svgLogosDiv {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 5px 0;
+}
+.logoImgDiv {
+  height: 50px;
+  width: 50px;
+  margin-right: 5px;
+}
+
+.imageSegment {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.imageSegment > div {
+  position: relative;
+  height: 150px;
+  width: calc(33% - 6px);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-right: 2px;
+}
+
+
+.projectDetailsSegment {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+}
+.projectDetailsHeader {
+  display: flex;
+  flex-direction: column;
+}
+.projectDetailsHeaderTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em 0;
+  font-family: "Righteous", cursive;
+  font-size: 2em;
+}
+.projectDetailsContent  {
+  padding: 0.5em 0.75em;
 }
 
 .projectDivider {

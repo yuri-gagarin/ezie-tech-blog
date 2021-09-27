@@ -10,7 +10,7 @@ export type ProjectData = {
     js?: boolean; ts?: boolean; python?: boolean; ruby?: boolean?; cSharp?: boolean; goLang?: boolean;
   };
   libraries?: {
-    bootstrap?: boolean; semanticUI?: boolean; materialUI?: boolean; jquery?: boolean; react?: boolean; reactNative?: boolean; redux?: boolean;
+    bootstrap?: boolean; semanticUI?: boolean; materialUI?: boolean; jquery?: boolean; react?: boolean; reactNative?: boolean; redux?: boolean; socketIO?: boolean;
   };
   frameworks?: {
     rails?: boolean; nextJS?: boolean; gatsbyJS?: boolean; django?: boolean; flask?: boolean; ASP?: boolean;

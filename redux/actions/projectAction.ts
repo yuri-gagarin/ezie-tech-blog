@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IGeneralCRUDActions } from "../_types/_general/generalTypes";
+import { IGeneralCRUDActions } from "../_types/_general/abstracts";
 // types //
 import type { AxiosRequestConfig } from "axios";
 import type { CreateProject, EditProject, DeleteProject, GetAllProjects, GetOneProject, ProjectAction, SetProjectError } from "../_types/projects/actionTypes";
@@ -10,11 +10,11 @@ import type {
 // helpers //
 import { processAxiosError } from "../_helpers/dataHelpers";
 
-export class ProjectActions extends IGeneralCRUDActions {
-  static async handleGetAll({ dispatch, opts }: GetAllProjParams): Promise<GetAllProjects | SetProjectError>  {
+class ProjectActions extends IGeneralCRUDActions {
+  async handleGetAll({ dispatch, opts }: GetAllProjParams): Promise<GetAllProjects | SetProjectError>  {
     const reqConfig: AxiosRequestConfig = {
       method: "GET",
-      url: "/projects",
+      url: "/api/projects",
       params: opts
     };
 
@@ -28,10 +28,10 @@ export class ProjectActions extends IGeneralCRUDActions {
       return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
     }
   }
-  static async handleGetOne({ dispatch, modelId }: GetOneProjParams): Promise<GetOneProject | SetProjectError> {
+  async handleGetOne({ dispatch, modelId }: GetOneProjParams): Promise<GetOneProject | SetProjectError> {
     const reqConfig: AxiosRequestConfig = {
       method: "GET",
-      url: `/projects/${modelId ? modelId : ""}`
+      url: `/api/projects/${modelId ? modelId : ""}`
     };
 
     dispatch({ type: "ProjectsAPIRequest", payload: { loading: true }});
@@ -44,10 +44,10 @@ export class ProjectActions extends IGeneralCRUDActions {
       return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
     }
   }
-  static async handleCreate({ dispatch, JWTToken, formData, state }: CreateProjParams): Promise<CreateProject | SetProjectError> {
+  async handleCreate({ dispatch, JWTToken, formData, state }: CreateProjParams): Promise<CreateProject | SetProjectError> {
     const reqConfig: AxiosRequestConfig = {
       method: "POST",
-      url: "/projects",
+      url: "/api/projects",
       headers: {
         "Authorization": JWTToken
       },
@@ -68,10 +68,10 @@ export class ProjectActions extends IGeneralCRUDActions {
       });
     }
   } 
-  static async handleEdit({ dispatch, modelId, JWTToken, formData, state }: EditProjParams): Promise<EditProject | SetProjectError> {
+  async handleEdit({ dispatch, modelId, JWTToken, formData, state }: EditProjParams): Promise<EditProject | SetProjectError> {
     const reqConfig: AxiosRequestConfig = {
       method: "PATCH",
-      url: `/projects/${modelId ? modelId : ""}`,
+      url: `/api/projects/${modelId ? modelId : ""}`,
       headers: {
         "Authorization": JWTToken
       },
@@ -95,11 +95,11 @@ export class ProjectActions extends IGeneralCRUDActions {
       return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
     }
   }
-  static async handleDelete({ dispatch, modelId, JWTToken, state }: DeleteProjParams): Promise<DeleteProject | SetProjectError> {
+  async handleDelete({ dispatch, modelId, JWTToken, state }: DeleteProjParams): Promise<DeleteProject | SetProjectError> {
     const { currentSelectedProject } = state;
     const reqConfig: AxiosRequestConfig = {
       method: "DELETE",
-      url: `/projects/${modelId ? modelId : ""}`,
+      url: `/api/projects/${modelId ? modelId : ""}`,
       headers: {
         "Authorization": JWTToken
       }    
@@ -122,3 +122,4 @@ export class ProjectActions extends IGeneralCRUDActions {
   }
 };
 
+export default new ProjectActions();

@@ -31,7 +31,7 @@ export const validateRegistrationData = (data: { email?: string; password?: stri
 // Project model validators //
 export type NormalizedProjectOptsRes = {
   languages: { js: boolean; ts: boolean; python: boolean; ruby: boolean; cSharp: boolean; goLang: boolean; };
-  libraries: { bootstrap: boolean; semanticUI: boolean; materialUI: boolean; jquery: boolean; react: boolean; reactNative: boolean; redux: boolean; };
+  libraries: { bootstrap: boolean; semanticUI: boolean; materialUI: boolean; jquery: boolean; react: boolean; reactNative: boolean; redux: boolean; socketIO: boolean };
   frameworks: { rails: boolean; nextJS: boolean; gatsbyJS: boolean; django: boolean; flask: boolean; ASP: boolean; };
 }
 type Args = {
@@ -43,7 +43,7 @@ export const normalizeProjectOpsData = (data: Args): NormalizedProjectOptsRes =>
   type KeysObj = { languages: string[]; libraries: string[]; frameworks: string[] };
   const keysObj: KeysObj = {
     languages: [ "js", "ts", "python", "ruby", "cSharp", "goLang" ],
-    libraries:  [ "bootstrap", "semanticUI", "materialUI", "jquery", "react", "reactNative", "redux" ],
+    libraries:  [ "bootstrap", "semanticUI", "materialUI", "jquery", "react", "reactNative", "redux", "socketIO" ],
     frameworks: [ "rails", "nextJS", "gatsbyJS", "django", "flask", "ASP" ]
   };
   const returnObj = {} as NormalizedProjectOptsRes;

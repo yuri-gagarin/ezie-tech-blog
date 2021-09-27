@@ -32,7 +32,7 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
         errorMessages: null
       };
     }
-    case "GetProjects": {
+    case "GetAllProjects": {
       return {
         ...state,
         status: action.payload.status,

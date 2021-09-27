@@ -45,12 +45,13 @@ export default class ProjectsController extends BasicController implements ICRUD
     const { valid, errorMessages } = validateProjectModelData({ title, description, challenges, solution });
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
     try {
+      const normalizedData = normalizeProjectOpsData({ languages, libraries, frameworks });
       const createdProject: IProject = await Project.create({
         creator: user._id,
         title, description, challenges, solution, 
-        languages: { ...languages }, 
-        libraries: { ...libraries },
-        frameworks: { ...frameworks },
+        languages: normalizedData.languages, 
+        libraries: normalizedData.libraries,
+        frameworks: normalizedData.frameworks,
         createdAt: new Date(),
         editedAd: new Date()
       });

@@ -13,7 +13,7 @@ export interface IGeneralState  {
   authState: IAuthState;
   usersState: IUserState;
   blogPostsState: IBlogPostState;
-  projectsState: IProjectsState;
+  projectsState: IProjectState;
 };
 
 export type IGeneralAppAction = BlogPostAction | UserAction | AuthAction | ProjectAction;

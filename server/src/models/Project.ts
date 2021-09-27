@@ -10,7 +10,7 @@ export interface IProject extends mongoose.Document {
     js: boolean; ts: boolean; python: boolean; ruby: boolean; cSharp: boolean; goLang: boolean;
   };
   libraries: {
-    bootstrap: boolean; semanticUI: boolean; materialUI: boolean; jquery: boolean; react: boolean; reactNative: boolean; redux: boolean;
+    bootstrap: boolean; semanticUI: boolean; materialUI: boolean; jquery: boolean; react: boolean; reactNative: boolean; redux: boolean; socketIO: Boolean;
   };
   frameworks: {
     rails: boolean; nextJS: boolean; gatsbyJS: boolean; django: boolean; flask: boolean; ASP: boolean;
@@ -55,6 +55,7 @@ const projectSchema = new Schema({
     react: { type: Boolean, default: false },
     reactNative: { type: Boolean, default: false },
     redux: { type: Boolean, default: false },
+    socketIO: { type: Boolean, default: false }
   },
   frameworks: {
     rails: { type: Boolean, deafult: false },
