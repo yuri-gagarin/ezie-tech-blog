@@ -8,7 +8,7 @@ import NextImage from "next/image";
 // redux imports //
 import { useSelector } from "react-redux";
 import { wrapper } from "../../redux/store";
-import ProjectActions from '../../redux/actions/projectAction';
+import { ProjectActions } from '../../redux/actions/projectActions';
 // types //
 import type { Dispatch } from "redux";
 import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";

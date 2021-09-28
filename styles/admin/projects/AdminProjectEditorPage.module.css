@@ -1,13 +1,10 @@
 .mainGrid {
   min-height: 100vh;
-  border: 10px solid red !important;
 }
 .projectEditorMenuRow {
   height: 50px;
-  border: 2px solid green;
 }
 .projectEditorFormRow {
   min-height: calc(100% - 50px);
-  border: 10px solid blue;
   justify-content: center !important;
 }

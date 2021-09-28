@@ -77,5 +77,24 @@ export const loginFormValidator = (data: { email?: string; password?; emailError
   return res;
 };
 
+// PROJECT Model validators //
+export const validateProjectForm = (data: { title?: string; description?: string; challenges?: string; solution?: string; }): ValidationResponse => {
+  const { title, description, challenges, solution } = data;
+  const res: ValidationResponse = { valid: true, errorMessages: [] };
+  if (!title) {
+    res.errorMessages.push("Project title is required");
+  }
+  if (!description) {
+    res.errorMessages.push("Project description is required");
+  }
+  if (!challenges) {
+    res.errorMessages.push("Project challenges content is required");
+  }
+  if (!solution) {
+    res.errorMessages.push("Project solution content is required");
+  }
+  res.valid = res.errorMessages.length > 0 ? false : true;
+  return res;
+}
 
 

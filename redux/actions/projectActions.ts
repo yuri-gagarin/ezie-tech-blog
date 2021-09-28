@@ -10,7 +10,7 @@ import type {
 // helpers //
 import { processAxiosError } from "../_helpers/dataHelpers";
 
-class ProjectActions extends IGeneralCRUDActions {
+class ProjectReduxActions extends IGeneralCRUDActions {
   async handleGetAll({ dispatch, opts }: GetAllProjParams): Promise<GetAllProjects | SetProjectError>  {
     const reqConfig: AxiosRequestConfig = {
       method: "GET",
@@ -122,4 +122,4 @@ class ProjectActions extends IGeneralCRUDActions {
   }
 };
 
-export default new ProjectActions();
+export const ProjectActions = new ProjectReduxActions();
