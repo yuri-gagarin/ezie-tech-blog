@@ -5,6 +5,8 @@ import App, { AppInitialProps, AppContext } from "next/app";
 import Router from "next/router";
 // redux imports //
 import { wrapper } from "../redux/store";
+// firebase for storage //
+import FirebaseController from "../firebase/firebaseSetup";
 // additional components //
 import Layout from '../components/layout/Layout';
 // styles //
@@ -24,6 +26,7 @@ class WrappedApp extends App<AppInitialProps> {
   });
 
   componentDidMount() {
+    const firebaseCont = new FirebaseController();
     NProgress.configure({ showSpinner: true, easing: "ease", speed: 500 });
     Router.events.on("routeChangeStart", () => {
       console.log("routing");
