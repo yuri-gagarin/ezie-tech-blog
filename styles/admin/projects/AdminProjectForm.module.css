@@ -1,0 +1,21 @@
+.projectFormStyle {
+  width: 100%;
+  border: 3px solid green;
+  padding: 1em 1.5em;
+}
+
+.additionalOptsLabel {
+  width: 130px;
+}
+.additionalOptsCheckbox {
+  border: 1px solid mediumslateblue;
+  border-radius: 2px;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+@media only screen and (max-width: 768px) {
+  .projectFormStyle {
+    padding: 0.5em 0;
+  }
+}
