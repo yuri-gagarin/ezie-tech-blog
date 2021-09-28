@@ -23,9 +23,8 @@ class ProjectReduxActions extends IGeneralCRUDActions {
       const { status, data }: AxiosResponse<IndexProjectRes> = await axios(reqConfig);
       const { responseMsg, projects } = data;
       return dispatch({ type: "GetAllProjects", payload: { status, responseMsg, projects, loading: false } });
-    } catch (err) {
-      const { status, responseMsg, error, errorMessages } = processAxiosError(err);
-      return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
+    } catch (error) {
+      throw error;
     }
   }
   async handleGetOne({ dispatch, modelId }: GetOneProjParams): Promise<GetOneProject | SetProjectError> {
@@ -40,8 +39,7 @@ class ProjectReduxActions extends IGeneralCRUDActions {
       const { responseMsg, project } = data;
       return dispatch({ type: "GetOneProject", payload: { status, responseMsg, project, loading: false } });
     } catch (err) {
-      const { status, responseMsg, error, errorMessages } = processAxiosError(err);
-      return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
+      throw err;
     }
   }
   async handleCreate({ dispatch, JWTToken, formData, state }: CreateProjParams): Promise<CreateProject> {
@@ -87,8 +85,7 @@ class ProjectReduxActions extends IGeneralCRUDActions {
         payload: { status, responseMsg, editedProject, updatedProjects, loading: false } 
       });
     } catch (err) {
-      const { status, responseMsg, error, errorMessages } = processAxiosError(err);
-      return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
+      throw err;
     }
   }
   async handleDelete({ dispatch, modelId, JWTToken, state }: DeleteProjParams): Promise<DeleteProject | SetProjectError> {
@@ -112,8 +109,7 @@ class ProjectReduxActions extends IGeneralCRUDActions {
         payload: { status, responseMsg, updatedCurrentProject, updatedProjects, loading: false } 
       });
     } catch (err) {
-      const { status, responseMsg, error, errorMessages } = processAxiosError(err);
-      return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
+      throw err;
     }
   }
 

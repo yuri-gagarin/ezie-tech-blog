@@ -2,16 +2,16 @@ import * as React from 'react';
 // next imports //
 // redux //
 import { useSelector, useDispatch } from "react-redux";
-import { BlogPostActions } from "../../../redux/actions/blogPostActions";
+import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additional components //
-import { AdminLayout } from '../../../components/admin/AdminLayout';
-import { AdminMain } from '../../../components/admin/AdminMain';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminMain } from '@/components/admin/AdminMain';
 // types //
 import type { Dispatch } from "redux";
 import type { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from "next";
-import type { IGeneralState, IGeneralAppAction } from '../../../redux/_types/generalTypes';
+import type { IGeneralState, IGeneralAppAction } from '@/redux/_types/generalTypes';
 // helpers //
-import { verifyAdminToken } from "../../../components/_helpers/adminComponentHelpers";
+import { verifyAdminToken } from "@/components/_helpers/adminComponentHelpers";
 
 interface IAdminDashProps {
 

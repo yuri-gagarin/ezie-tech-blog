@@ -19,7 +19,7 @@ export enum StrategyNames {
 export const issueJWT = (user: IUser): { token: string; expires: string } => {
   const { _id } = user;
   const secretKey = process.env.JWT_SECRET;
-  const expiresIn = "1m";
+  const expiresIn = "12h";
   const payload = {
     sub: _id,
     iat: Math.floor(Date.now() / 1000)
