@@ -87,6 +87,13 @@ export type DeleteProjParams = {
   JWTToken?: string;
   state: IProjectState;
 };
+export type ClearProjParams = {
+  dispatch: Dispatch<ProjectAction>;
+};
+export type ProjErrorParams = {
+  dispatch: Dispatch<ProjectAction>;
+  error: any;
+};
 
 export type IndexProjectRes = {
   responseMsg: string;

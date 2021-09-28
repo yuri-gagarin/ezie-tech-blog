@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Grid, GridRow } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
+// next imports //
+import { useRouter } from "next/router";
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
 import { ProjectActions } from "@/redux/actions/projectActions";
@@ -22,6 +24,8 @@ interface IAdminProjectEditorProps {
 
 const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = (props): JSX.Element => {
   // local component state and hooks //
+  // next hooks //
+  const router = useRouter();
   // redux state and hooks //
   const dispatch = useDispatch<Dispatch<ProjectAction>>();
   const { authState, projectsState } = useSelector((state: IGeneralState) => state);
@@ -30,20 +34,27 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = (p
     const { currentSelectedProject } = projectsState;
     const { loggedIn, authToken: JWTToken, isAdmin } = authState;
     // NOTE //
-    // potential API errors already handled within the redux methods //
     if (loggedIn && JWTToken && isAdmin) {
       if (currentSelectedProject && currentSelectedProject._id) {
         const { _id: modelId } = currentSelectedProject;  
-        await ProjectActions.handleEdit({ dispatch, modelId, JWTToken, formData, state: projectsState });
+        try {
+          await ProjectActions.handleEdit({ dispatch, modelId, JWTToken, formData, state: projectsState });
+        } catch (error) {
+          return ProjectActions.handleError({ dispatch, error });
+        }
       } else {
-        await ProjectActions.handleCreate({ dispatch, JWTToken, formData, state: projectsState });
+        try {
+          await ProjectActions.handleCreate({ dispatch, JWTToken, formData, state: projectsState });
+        } catch (error) {
+          return ProjectActions.handleError({ dispatch, error });
+        }
       }
-    } else {
-      return;
+      router.push("/admin/dashboard/projects");
     }
   };
   const handleMenuCancelBtnClick = (): void => {
-
+    ProjectActions.handleClearCurrentProjData({ dispatch });
+    router.push("/admin/dashboard/projects");
   };
   const handleMenuPublicBtnClick = async (): Promise<any> => {
 

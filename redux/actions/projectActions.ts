@@ -2,9 +2,9 @@ import axios, { AxiosResponse } from "axios";
 import { IGeneralCRUDActions } from "../_types/_general/abstracts";
 // types //
 import type { AxiosRequestConfig } from "axios";
-import type { CreateProject, EditProject, DeleteProject, GetAllProjects, GetOneProject, ProjectAction, SetProjectError } from "../_types/projects/actionTypes";
+import type { CreateProject, EditProject, DeleteProject, GetAllProjects, GetOneProject, ProjectAction, SetProjectError, ClearProject } from "../_types/projects/actionTypes";
 import type { 
-  GetAllProjParams, GetOneProjParams, CreateProjParams, EditProjParams, DeleteProjParams,
+  GetAllProjParams, GetOneProjParams, CreateProjParams, EditProjParams, DeleteProjParams, ProjErrorParams, ClearProjParams,
   IndexProjectRes, OneProjectRes, CreateProjectRes, EditProjectRes, DeleteProjectRes, ProjectData
 } from "../_types/projects/dataTypes";
 // helpers //
@@ -44,7 +44,7 @@ class ProjectReduxActions extends IGeneralCRUDActions {
       return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
     }
   }
-  async handleCreate({ dispatch, JWTToken, formData, state }: CreateProjParams): Promise<CreateProject | SetProjectError> {
+  async handleCreate({ dispatch, JWTToken, formData, state }: CreateProjParams): Promise<CreateProject> {
     const reqConfig: AxiosRequestConfig = {
       method: "POST",
       url: "/api/projects",
@@ -61,11 +61,7 @@ class ProjectReduxActions extends IGeneralCRUDActions {
       const updatedProjects: ProjectData[] = [ { ...createdProject }, ...state.projectsArr ];
       return dispatch({ type: "CreateProject", payload: { status, responseMsg, createdProject, updatedProjects, loading: false } });
     } catch (err) {
-      const { status, responseMsg, error, errorMessages } = processAxiosError(err);
-      return dispatch({ 
-        type: "SetProjectError", 
-        payload: { status, responseMsg, error, errorMessages, loading: false } 
-      });
+      throw err;
     }
   } 
   async handleEdit({ dispatch, modelId, JWTToken, formData, state }: EditProjParams): Promise<EditProject | SetProjectError> {
@@ -119,6 +115,15 @@ class ProjectReduxActions extends IGeneralCRUDActions {
       const { status, responseMsg, error, errorMessages } = processAxiosError(err);
       return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false } });
     }
+  }
+
+  // non API actions //
+  handleClearCurrentProjData({ dispatch }: ClearProjParams): ClearProject {
+    return dispatch({ type: "ClearProject", payload: { project: null }});
+  }
+  handleError({ dispatch, error: err }: ProjErrorParams): SetProjectError {
+    const { status, responseMsg, error, errorMessages } = processAxiosError(err);
+    return dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false }});
   }
 };
 

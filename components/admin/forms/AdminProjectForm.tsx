@@ -4,7 +4,7 @@ import { Checkbox, Grid, Label, Form, TextArea } from "semantic-ui-react";
 import { AdminProjectsMenu } from "@/components/admin/projects/AdminProjectsMenu";
 // types //
 import type { CheckboxProps, TextAreaProps } from "semantic-ui-react";
-import type { ProjectData, ProjectFormData } from 'redux/_types/projects/dataTypes';
+import type { ProjectData } from 'redux/_types/projects/dataTypes';
 // styles //
 import styles from "@/styles/admin/projects/AdminProjectForm.module.css";
 // helpers //
