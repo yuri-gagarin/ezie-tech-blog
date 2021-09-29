@@ -29,7 +29,6 @@ class WrappedApp extends App<AppInitialProps> {
     const firebaseCont = new FirebaseController();
     NProgress.configure({ showSpinner: true, easing: "ease", speed: 500 });
     Router.events.on("routeChangeStart", () => {
-      console.log("routing");
       NProgress.start();
     });
     Router.events.on("routeChangeComplete", () => {

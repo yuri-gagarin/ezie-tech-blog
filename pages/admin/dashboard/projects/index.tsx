@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { Grid } from "semantic-ui-react";
-// additional components //
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { Card, Grid } from "semantic-ui-react";
 // next imports //
 // redux imports //
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ProjectActions } from "@/redux/actions/projectActions";
+// additional components //
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminProjectCard } from '@/components/admin/projects/AdminProjectCard';
+import { AdminProjectPreview } from '@/components/admin/projects/AdminProjectPreview';
 // types //
 import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult} from "next";
 import type { Dispatch } from "redux";
 import type { ProjectAction } from "@/redux/_types/projects/actionTypes";
+import type { IGeneralState } from "@/redux/_types/generalTypes";
 // styles //
 import styles from "@/styles/projects/AdminProjectsMainPage.module.css";
 // helpers //
@@ -48,10 +51,26 @@ export const getServerSideProps: GetServerSideProps =  async (context: GetServer
 
 const AdminProjectsMainPage: React.FunctionComponent<IAdminProjectsMainPageProps> = (props): JSX.Element => {
   // local state and hooks //
+  const [ projectPreviewOpen, setProjectPreviewOpen ] = React.useState<boolean>(false);
   // next hooks //
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<ProjectAction>>();
+  const { projectsState } = useSelector((state: IGeneralState) => state);
+  const { currentSelectedProject, projectsArr } = projectsState;
 
+  // actions //
+  const handleOpenProject = (projectId: string): void => {
+    if(ProjectActions.handleSetCurrentProjData({ dispatch, projectId, state: projectsState })) {
+      setProjectPreviewOpen(true);
+    }
+  };
+  const closePreviewModal = (): void => {
+    if(ProjectActions.handleClearCurrentProjData({ dispatch })) {
+      setProjectPreviewOpen(false);
+    }
+  };
+
+  // END actions //
   // lifecycle methods //
   React.useEffect(() => {
     // add any async data fetching here //
@@ -67,7 +86,12 @@ const AdminProjectsMainPage: React.FunctionComponent<IAdminProjectsMainPageProps
   
   return (
     <AdminLayout>
-      <Grid divided stackable padded style={{ height: "100vh", border: "10px solid red" }} columns={2}>
+      <AdminProjectPreview 
+        open={ projectPreviewOpen } 
+        projectData={ currentSelectedProject } 
+        closePreviewModal={ closePreviewModal }
+      />
+      <Grid divided stackable padded columns={2}>
         <Grid.Row style={{ height: "50px" }}>
           <Grid.Column width={16} textAlign="center">
             <h3>Projects</h3>
@@ -76,6 +100,19 @@ const AdminProjectsMainPage: React.FunctionComponent<IAdminProjectsMainPageProps
         <Grid.Row style={{ height: "calc(100vh - 50px)"}}>
           <Grid.Column width={"8"} textAlign="center" style={{ height: "100%" }}>
             <h4>Published</h4>
+            <Card.Group>
+              {
+                projectsArr.map((projectData) => {
+                  return (
+                    <AdminProjectCard 
+                      key={ projectData._id }
+                      projectData={ projectData }
+                      openProject={ handleOpenProject }
+                    />
+                  )
+                })
+              }
+            </Card.Group>
           </Grid.Column>
           <Grid.Column width={"8"} textAlign="center" style={{ height: "100%" }}>
             <h4>Unpublished</h4>

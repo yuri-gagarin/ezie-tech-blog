@@ -2,9 +2,9 @@ import axios, { AxiosResponse } from "axios";
 import { IGeneralCRUDActions } from "../_types/_general/abstracts";
 // types //
 import type { AxiosRequestConfig } from "axios";
-import type { CreateProject, EditProject, DeleteProject, GetAllProjects, GetOneProject, ProjectAction, SetProjectError, ClearProject } from "../_types/projects/actionTypes";
+import type { CreateProject, EditProject, DeleteProject, GetAllProjects, GetOneProject, ProjectAction, SetProjectError, ClearProject, SetProject } from "../_types/projects/actionTypes";
 import type { 
-  GetAllProjParams, GetOneProjParams, CreateProjParams, EditProjParams, DeleteProjParams, ProjErrorParams, ClearProjParams,
+  GetAllProjParams, GetOneProjParams, CreateProjParams, EditProjParams, DeleteProjParams, ProjErrorParams, SetProjParams, ClearProjParams,
   IndexProjectRes, OneProjectRes, CreateProjectRes, EditProjectRes, DeleteProjectRes, ProjectData
 } from "../_types/projects/dataTypes";
 // helpers //
@@ -114,6 +114,19 @@ class ProjectReduxActions extends IGeneralCRUDActions {
   }
 
   // non API actions //
+  handleSetCurrentProjData({ dispatch, projectId, state }: SetProjParams): boolean {
+    const project: ProjectData | undefined = state.projectsArr.filter((projData) => projData._id === projectId)[0];
+    if (project) {
+      dispatch({ type: "SetProject", payload: { project }});
+      return true;
+    } else {
+      const { status, responseMsg } = state;
+      const error = new Error("User Error");
+      const errorMessages = [ "Couldn't resolve a project to open" ];
+      dispatch({ type: "SetProjectError", payload: { status, responseMsg, error, errorMessages, loading: false }});
+      return false;
+    }
+  }
   handleClearCurrentProjData({ dispatch }: ClearProjParams): ClearProject {
     return dispatch({ type: "ClearProject", payload: { project: null }});
   }

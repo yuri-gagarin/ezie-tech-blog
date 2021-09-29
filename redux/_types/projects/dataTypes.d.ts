@@ -87,6 +87,11 @@ export type DeleteProjParams = {
   JWTToken?: string;
   state: IProjectState;
 };
+export type SetProjParams = {
+  dispatch: Dispatch<ProjectAction>;
+  projectId: string;
+  state: IProjectState;
+};
 export type ClearProjParams = {
   dispatch: Dispatch<ProjectAction>;
 };

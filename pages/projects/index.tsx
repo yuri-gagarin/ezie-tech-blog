@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Grid, Header, Segment } from "semantic-ui-react";
 import Lightbox from 'react-image-lightbox';
 import ReactMarkdown from 'react-markdown/react-markdown.min';
-// next impports/ /
+// next imports/ /
 import NextImage from "next/image";
 // redux imports //
 import { useSelector } from "react-redux";

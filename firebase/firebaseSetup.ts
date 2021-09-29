@@ -18,8 +18,6 @@ export default class FirebaseController {
   //private analytics: Analytics;
 
   constructor() {
-    console.log(14)
-    console.log(process.env.FIREBASE_STORAGE_BUCKET)
     this.firebaseConfig = {
       apiKey: process.env.FIREBASE_API_KEY,
       authDomain: process.env.FIREBASE_AUTH_DOMAIN,
