@@ -15,6 +15,8 @@ export interface IProject extends mongoose.Document {
   frameworks: {
     rails: boolean; nextJS: boolean; gatsbyJS: boolean; django: boolean; flask: boolean; ASP: boolean;
   };
+  published: boolean;
+  images: string[];
   createdAt: Date;
   editedAd: Date;
 };
@@ -64,6 +66,14 @@ const projectSchema = new Schema({
     django: { type: Boolean, deafult: false },
     flask: { type: Boolean, deafult: false },
     ASP: { type: Boolean, deafult: false },
+  },
+  images: {
+    type: [String],
+    default: []
+  },
+  published: {
+    type: Boolean,
+    default: false
   },
   createdAt: { type: Date, default: new Date() },
   editedAt: { type: Date, default: new Date() }

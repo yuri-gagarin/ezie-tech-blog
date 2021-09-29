@@ -4,12 +4,13 @@ import { Dropdown, Grid, Menu } from "semantic-ui-react";
 import { useRouter } from 'next/router';
 // redux //
 import { useDispatch, useSelector } from "react-redux";
-import type { Dispatch } from "redux";
-import { BlogPostActions } from "../../redux/actions/blogPostActions";
-import { AuthActions } from "../../redux/actions/authActions";
+import { BlogPostActions } from "@/redux/actions/blogPostActions";
+import { ProjectActions } from "@/redux/actions/projectActions";
+import { AuthActions } from "@/redux/actions/authActions";
 // types //
+import type { Dispatch } from "redux";
 import type { IGeneralState , IGeneralAppAction} from '../../redux/_types/generalTypes';
-import type { MenuItemProps } from "semantic-ui-react";
+import type { DropdownItemProps, MenuItemProps } from "semantic-ui-react";
 // styles //
 import adminMenuStyles from "../../styles/admin/AdminMenu.module.css";
 // helpers //
@@ -32,17 +33,36 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
   const router = useRouter();
   // redux hooks //
   const dispatch = useDispatch<Dispatch<IGeneralAppAction>>();
-  const { currentBlogPost } = useSelector((state: IGeneralState) => state.blogPostsState);
+  const { currentBlogPost, currentSelectedProject } = useSelector((state: IGeneralState) => {
+    return {
+      currentBlogPost: state.blogPostsState.currentBlogPost,
+      currentSelectedProject: state.projectsState.currentSelectedProject
+    };
+  });
 
   // action handlers //
-  const handleGoToNewPost = (): void => {
+  const handleGoToNew = (e, data: DropdownItemProps): void => {
+    const option = data.value as string;
+    switch (option) {
+      case "post": {
+        if (!checkEmptyObjVals(currentBlogPost)) BlogPostActions.handleClearCurrentBlogPost(dispatch);
+        router.push("/admin/dashboard/posts/new");
+        break;
+      }
+      case "project": {
+        if (!currentSelectedProject) ProjectActions.handleClearCurrentProjData({ dispatch });
+        router.push("/admin/dashboard/projects/editor");
+        break;
+      }
+      default: return;
+    }
     // clear current blog post if any //
     if (!checkEmptyObjVals(currentBlogPost)) BlogPostActions.handleClearCurrentBlogPost(dispatch);
     router.push("/admin/dashboard/posts/new");
   };
   const handleMenuItemClick = (_, data: MenuItemProps ) => {
     const name = data.name as MenuItemVal;
-    switch(name) {
+    switch (name) {
       case "dashboard": {
         router.push("/admin/dashboard");
         setLocalState({ activeMenuItem: "dashboard", showUserMenu: false });
@@ -104,8 +124,8 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
             <Dropdown.Item>
               <Dropdown text='New' pointing="left">
                 <Dropdown.Menu style={{ left: "140px", transform: "translateY(-12px)"}}>
-                  <Dropdown.Item onClick={ handleGoToNewPost } >Blog Post</Dropdown.Item >
-                  <Dropdown.Item>Project</Dropdown.Item>
+                  <Dropdown.Item onClick={ handleGoToNew } value="post">Blog Post</Dropdown.Item >
+                  <Dropdown.Item onClick={ handleGoToNew } value="project">Project</Dropdown.Item>
                   <Dropdown.Item>News Post</Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item>User</Dropdown.Item>

@@ -17,6 +17,8 @@ export type ProjectData = {
   frameworks: {
     rails: boolean; nextJS: boolean; gatsbyJS: boolean; django: boolean; flask: boolean; ASP: boolean;
   };
+  images: string[];
+  published: boolean;
   createdAt: string;
   editedAd: string;
 };
@@ -36,6 +38,8 @@ export type ProjectFormData = {
   frameworks?: {
     rails?: boolean; nextJS?: boolean; gatsbyJS?: boolean; django?: boolean; flask?: boolean; ASP?: boolean;
   };
+  images?: string[];
+  published?: boolean;
   createdAt?: string;
   editedAd?: string;
 };

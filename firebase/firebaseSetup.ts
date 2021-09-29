@@ -1,10 +1,10 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getStorage, ref } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 //
 import type { FirebaseApp, FirebaseOptions } from "firebase/app";
-import type { FirebaseStorage } from "firebase/storage";
+import type { FirebaseStorage, StorageReference, UploadResult } from "firebase/storage";
 import type { Analytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -30,6 +30,21 @@ export default class FirebaseController {
     this.initialize();
     this.initializeStorage();
   } 
+
+  public async uploadPojectImage(imageFile: File): Promise<{ downloadUrl: string; snapshot: UploadResult }> {
+    const imagePath = `/project_images/${imageFile.name}`;
+    const projectImagesRef = ref(this.firebaseStorage, imagePath);
+    try {
+      const snapshot = await uploadBytes(projectImagesRef, imageFile);
+      const downloadUrl = await getDownloadURL(projectImagesRef);
+      return {
+        downloadUrl, snapshot
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
 
   private initialize(): void {
     this.app = initializeApp(this.firebaseConfig);

@@ -7,28 +7,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { ProjectActions } from "@/redux/actions/projectActions";
 // additional components //
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { AdminProjectsMenu } from "@/components/admin/projects/AdminProjectsMenu";
 import { AdminProjectForm } from '@/components/admin/forms/AdminProjectForm';
 // types //
 import type { Dispatch } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 import type { ProjectAction } from '@/redux/_types/projects/actionTypes';
 import type { ProjectFormData } from '@/redux/_types/projects/dataTypes';
+import type FirebaseController from 'firebase/firebaseSetup';
 // styles //
 import styles from "@/styles/admin/projects/AdminProjectEditorPage.module.css";
 // helpers //
 
 interface IAdminProjectEditorProps {
-
+  firebaseContInstance: FirebaseController
 }
 
-const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = (props): JSX.Element => {
+const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({ firebaseContInstance }): JSX.Element => {
   // local component state and hooks //
   // next hooks //
   const router = useRouter();
   // redux state and hooks //
   const dispatch = useDispatch<Dispatch<ProjectAction>>();
   const { authState, projectsState } = useSelector((state: IGeneralState) => state);
+
   // action handlers //
   const handleSaveProjectData = async (formData: ProjectFormData): Promise<any> => {
     const { currentSelectedProject } = projectsState;
@@ -59,6 +60,12 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = (p
   const handleMenuPublicBtnClick = async (): Promise<any> => {
 
   };
+  const handleUploadProjectImage = (file: File) => {
+    if (file && firebaseContInstance) {
+      firebaseContInstance.uploadPojectImage(file);
+    }
+  }
+  // END action handlers //
 
   return (
     <AdminLayout>
@@ -69,6 +76,7 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = (p
             handleSaveProjectData={ handleSaveProjectData }
             handleMenuCancelBtnclick={ handleMenuCancelBtnClick }
             handleMenuPublishBtnClick={ handleMenuPublicBtnClick }
+            handleUploadProjectImage={ handleUploadProjectImage }
           />
         </Grid.Row>
       </Grid>

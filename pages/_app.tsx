@@ -15,7 +15,17 @@ import 'semantic-ui-css/semantic.min.css';
 import "nprogress/nprogress.css";
 import 'react-image-lightbox/style.css'
 
-class WrappedApp extends App<AppInitialProps> {
+interface IAppInitialState {
+  firebaseContInstance: null | FirebaseController;
+}
+class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
+  constructor(props: any) {
+    super(props)
+    this.state = {
+      firebaseContInstance: new FirebaseController()
+    }
+  }
+  
   public static getInitialProps = wrapper.getInitialAppProps(store => async ({Component, ctx}) => {
     return {
       pageProps: {
@@ -26,7 +36,6 @@ class WrappedApp extends App<AppInitialProps> {
   });
 
   componentDidMount() {
-    const firebaseCont = new FirebaseController();
     NProgress.configure({ showSpinner: true, easing: "ease", speed: 500 });
     Router.events.on("routeChangeStart", () => {
       NProgress.start();
@@ -41,9 +50,13 @@ class WrappedApp extends App<AppInitialProps> {
   
   public render () {
     const { Component, pageProps } = this.props;
+    const { firebaseContInstance } = this.state;
     return (
       <Layout { ...pageProps }>
-        <Component { ...pageProps } />
+        <Component 
+          firebaseContInstance={firebaseContInstance} 
+          { ...pageProps } 
+        />
       </Layout>
     );
   }

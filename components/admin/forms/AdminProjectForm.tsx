@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Checkbox, Grid, Label, Form, TextArea } from "semantic-ui-react"; 
 // additional components //
+import { AdminFileInput } from '@/components/admin/forms/AdminFileInput';
 import { AdminProjectsMenu } from "@/components/admin/projects/AdminProjectsMenu";
 // types //
 import type { CheckboxProps, TextAreaProps } from "semantic-ui-react";
@@ -15,6 +16,7 @@ interface IAdminProjectFormProps {
   handleSaveProjectData(data: FormState): Promise<any>;
   handleMenuCancelBtnclick(): void;
   handleMenuPublishBtnClick(): Promise<boolean>;
+  handleUploadProjectImage(file: File): void;
 }
 type FormState = {
   title: string;
@@ -32,7 +34,7 @@ type FormState = {
   solution: string;
 };
 
-export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> = ({ projectData, handleSaveProjectData, handleMenuCancelBtnclick, handleMenuPublishBtnClick }): JSX.Element => {
+export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> = ({ projectData, handleSaveProjectData, handleMenuCancelBtnclick, handleMenuPublishBtnClick, handleUploadProjectImage }): JSX.Element => {
   // local form state //
   const [ formState, setFormState ] = React.useState<FormState>({
     title: projectData ? projectData.title : "",
@@ -135,6 +137,9 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
           <Checkbox className={ styles.additionalOptsCheckbox } label="Django" value="django" onChange={ handleFrameworksCheckboxChange }/>
           <Checkbox className={ styles.additionalOptsCheckbox } label="Flask" value="flask" onChange={ handleFrameworksCheckboxChange }/>
           <Checkbox className={ styles.additionalOptsCheckbox } label="Asp.NET" value="ASP" onChange={ handleFrameworksCheckboxChange }/>
+        </Form.Field>
+        <Form.Field>
+          <AdminFileInput handleUploadPic={ handleUploadProjectImage } />
         </Form.Field>
         <Form.Field>
           <Label color="teal" content="Challenges:" />

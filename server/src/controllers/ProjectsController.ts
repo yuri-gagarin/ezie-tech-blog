@@ -52,6 +52,8 @@ export default class ProjectsController extends BasicController implements ICRUD
         languages: normalizedData.languages, 
         libraries: normalizedData.libraries,
         frameworks: normalizedData.frameworks,
+        images: [],
+        published: false,
         createdAt: new Date(),
         editedAd: new Date()
       });
