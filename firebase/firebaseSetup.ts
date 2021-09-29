@@ -39,7 +39,6 @@ export default class FirebaseController {
     this.firebaseStorage = getStorage(this.app);
     //const storageRef = ref(this.firebaseStorage);
     //console.log(storageRef);
-    console.log(this.app)
   }
 };
 
