@@ -3,7 +3,7 @@ import { BasicController } from "../_types/abstracts/DefaultController";
 // types //
 import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { ProjectData, ProjectIndexRes, ProjectGetOneRes, ProjectCreateRes, ProjectEditRes, ProjectDeleteRes } from "../_types/projects/projectTypes";
+import type { ProjectData, ProjectIndexRes, ProjectGetOneRes, ProjectCreateRes, ProjectEditRes, ProjectDeleteRes, ProjectImgRes } from "../_types/projects/projectTypes";
 import type { IProject } from "../models/Project";
 import { IAdmin } from "../models/Admin";
 import { normalizeProjectOpsData, validateProjectModelData } from "./_helpers/validationHelpers";
@@ -111,6 +111,50 @@ export default class ProjectsController extends BasicController implements ICRUD
         });
       } else {
         return await this.notFoundErrorResponse(res, [ "Project to delete was not found" ]);
+      }
+    } catch (error) {
+      return await this.generalErrorResponse(res, { error });
+    } 
+  }
+
+  uploadImage = async (req: Request, res: Response<ProjectImgRes>): Promise<Response<ProjectImgRes>> => {
+    const { project_id } = req.params;
+    const { imageURL } = req.body;
+    const user: IAdmin = req.user as IAdmin;
+
+    if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve user accont" ]);
+    if (!imageURL || !project_id) return await this.userInputErrorResponse(res, [ "Could not resolve project to delete" ]);
+
+    try {
+      const updatedProject: IProject | null = await Project.findOneAndUpdate({ _id: project_id }, { $push: { images: { imageURL } } }, { new: true }).exec()
+      if (updatedProject) {
+        return res.status(200).json({
+          responseMsg: "Project updated", updatedProject
+        });
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Project to update was not found" ]);
+      }
+    } catch (error) {
+      return await this.generalErrorResponse(res, { error });
+    } 
+  }
+
+  removeImage = async (req: Request, res: Response<ProjectImgRes>): Promise<Response<ProjectImgRes>> => {
+    const { project_id } = req.params;
+    const { imageURL } = req.body;
+    const user: IAdmin = req.user as IAdmin;
+
+    if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve user accont" ]);
+    if (!imageURL || !project_id) return await this.userInputErrorResponse(res, [ "Could not resolve project to delete" ]);
+
+    try {
+      const updatedProject: IProject | null = await Project.findOneAndUpdate({ _id: project_id }, { $pull: { images: { imageURL } } }, { new: true }).exec()
+      if (updatedProject) {
+        return res.status(200).json({
+          responseMsg: "Project updated", updatedProject
+        });
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Project to update was not found" ]);
       }
     } catch (error) {
       return await this.generalErrorResponse(res, { error });

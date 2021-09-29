@@ -61,8 +61,8 @@ export type UploadProjectImage = {
     status: number;
     responseMsg: string;
     loading: boolean;
-    updatedCurrentProject: ProjectData;
-    updatedProjects: ProjectData[];
+    updatedProject: ProjectData;
+    updatedProjectsArr: ProjectData[];
     updatedProductImages: string[];
   };
 };
@@ -72,8 +72,8 @@ export type DeleteProjectImage = {
     status: number;
     responseMsg: string;
     loading: boolean;
-    updatedCurrentProject: ProjectData;
-    updatedProjects: ProjectData[];
+    updatedProject: ProjectData;
+    updatedProjectsArr: ProjectData[];
     updatedProductImages: string[];
   };
 };

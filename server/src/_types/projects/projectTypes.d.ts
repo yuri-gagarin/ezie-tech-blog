@@ -41,3 +41,7 @@ export type ProjectDeleteRes = {
   responseMsg: string;
   deletedProject: IProject;
 };
+export type ProjectImgRes = {
+  responseMsg: string;
+  updatedProject: IProject;
+};

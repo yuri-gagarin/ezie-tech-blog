@@ -17,6 +17,8 @@ export default class ProjectRoutes extends CRUDRoutesController {
     this.create("/api/projects");
     this.edit("/api/projects/:project_id");
     this.delete("/api/projects/:project_id");
+    this.addImage("/api/projects/add_image/:project_id");
+    this.removeImage("/api/projects/remove_image/:project_id");
   }
 
   protected index(route: string): void {
@@ -39,5 +41,25 @@ export default class ProjectRoutes extends CRUDRoutesController {
     super.delete(route, [ 
       PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false })
     ]);
+  }
+  private addImage(route: string): void {
+    this.router
+      .route(route)
+      .patch(
+        [ 
+          PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false })
+        ],
+        this.controller.uploadImage
+      );
+  }
+  private removeImage(route: string): void {
+    this.router
+      .route(route)
+      .patch(
+        [
+          PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false })
+        ],
+        this.controller.removeImage
+      );
   }
 };

@@ -8,7 +8,7 @@ import type {
 } from "../_types/projects/actionTypes";
 import type { 
   GetAllProjParams, GetOneProjParams, CreateProjParams, EditProjParams, DeleteProjParams, ProjErrorParams, SetProjParams, ClearProjParams,
-  IndexProjectRes, OneProjectRes, CreateProjectRes, EditProjectRes, DeleteProjectRes, UploadProjImgRes, ProjectData, UploadImageParams
+  IndexProjectRes, OneProjectRes, CreateProjectRes, EditProjectRes, DeleteProjectRes, UploadProjImgRes, ProjectData, UploadImageParams, RemoveImageParams
 } from "../_types/projects/dataTypes";
 // helpers //
 import { processAxiosError } from "../_helpers/dataHelpers";
@@ -116,10 +116,10 @@ class ProjectReduxActions extends IGeneralCRUDActions {
     }
   }
   async handleAddImage({ dispatch, modelId, JWTToken, imageURL, state }: UploadImageParams): Promise<UploadProjectImage> {
-    const { currentSelectedProject, projectsArr } = state;
+    const { projectsArr } = state;
     const reqConfig: AxiosRequestConfig = {
       method: "PATCH",
-      url: `/api/projects/add_images/${modelId ? modelId : ""}`,
+      url: `/api/projects/add_image/${modelId ? modelId : ""}`,
       headers: { 
         "Authorization": JWTToken 
       },
@@ -130,7 +130,8 @@ class ProjectReduxActions extends IGeneralCRUDActions {
     try {
       const { status, data }: AxiosResponse<UploadProjImgRes> = await axios(reqConfig);
       const { responseMsg, updatedProject } = data;
-      const updatedProjects: ProjectData[] = projectsArr.map((projectData) => {
+
+      const updatedProjectsArr: ProjectData[] = projectsArr.map((projectData) => {
         if (projectData._id === updatedProject._id) return { ...updatedProject, images: [ ...updatedProject.images ]};
         else return projectData;
       });
@@ -139,7 +140,39 @@ class ProjectReduxActions extends IGeneralCRUDActions {
       return dispatch({ 
         type: "UploadProjectImage", 
         payload: { 
-          status, responseMsg, updatedCurrentProject: updatedProject, updatedProjects, updatedProductImages, loading: false 
+          status, responseMsg, updatedProject, updatedProjectsArr, updatedProductImages, loading: false 
+        }
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+  async handleRemoveImage({ dispatch, modelId, JWTToken, imageURL, state }: RemoveImageParams): Promise<DeleteProjectImage> {
+    const { projectsArr } = state; 
+    const reqConfig: AxiosRequestConfig = {
+      method: "PATCH",
+      url: `/api/projects/remove_image/${modelId ? modelId : ""}`,
+      headers: { 
+        "Authorization": JWTToken 
+      },
+      data: { imageURL }
+    };
+
+    dispatch({ type: "ProjectsAPIRequest", payload: { loading: true }});
+    try {
+      const { status, data }: AxiosResponse<UploadProjImgRes> = await axios(reqConfig);
+      const { responseMsg, updatedProject } = data;
+
+      const updatedProjectsArr: ProjectData[] = projectsArr.map((projectData) => {
+        if (projectData._id === updatedProject._id) return { ...updatedProject, images: [ ...updatedProject.images ]};
+        else return projectData;
+      });
+      const updatedProductImages: string[] = [ ...updatedProject.images ];
+      
+      return dispatch({ 
+        type: "DeleteProjectImage", 
+        payload: { 
+          status, responseMsg, updatedProject, updatedProjectsArr, updatedProductImages, loading: false 
         }
       });
     } catch (error) {

@@ -98,10 +98,14 @@ export type UploadImageParams = {
   JWTToken?: string;
   imageURL: string;
   state: IProjectState;
-}
+};
 export type RemoveImageParams = {
-
-}
+  dispatch: Dispatch<ProjectAction>;
+  modelId: string;
+  JWTToken?: string;
+  imageURL: string;
+  state: IProjectState;
+};
 
 // non api types //
 export type SetProjParams = {

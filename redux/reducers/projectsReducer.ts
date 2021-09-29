@@ -96,8 +96,8 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
-        currentSelectedProject: action.payload.updatedCurrentProject,
-        projectsArr: action.payload.updatedProjects,
+        currentSelectedProject: action.payload.updatedProject,
+        projectsArr: action.payload.updatedProjectsArr,
         currentProjectImages: action.payload.updatedProductImages,
         error: null,
         errorMessages: null
@@ -108,8 +108,8 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
-        currentSelectedProject: action.payload.updatedCurrentProject,
-        projectsArr: action.payload.updatedProjects,
+        currentSelectedProject: action.payload.updatedProject,
+        projectsArr: action.payload.updatedProjectsArr,
         currentProjectImages: action.payload.updatedProductImages,
         error: null,
         errorMessages: null
