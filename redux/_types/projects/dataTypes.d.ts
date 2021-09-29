@@ -50,6 +50,7 @@ export interface IProjectState {
   loading: boolean;
   projectsArr: ProjectData[];
   currentSelectedProject: ProjectData | null;
+  currentProjectImages: string[] | null;
   error: any;
   errorMessages: string[] | null;
 };
@@ -91,6 +92,18 @@ export type DeleteProjParams = {
   JWTToken?: string;
   state: IProjectState;
 };
+export type UploadImageParams = {
+  dispatch: Dispatch<ProjectAction>;
+  modelId: string;
+  JWTToken?: string;
+  imageURL: string;
+  state: IProjectState;
+}
+export type RemoveImageParams = {
+
+}
+
+// non api types //
 export type SetProjParams = {
   dispatch: Dispatch<ProjectAction>;
   projectId: string;
@@ -104,6 +117,7 @@ export type ProjErrorParams = {
   error: any;
 };
 
+// response types //
 export type IndexProjectRes = {
   responseMsg: string;
   projects: ProjectData[];
@@ -134,3 +148,9 @@ export type DeleteProjectRes = {
   error?: any;
   errorMessages?: string[];
 };
+export type UploadProjImgRes = {
+  responseMsg: string;
+  updatedProject: ProjectData;
+  error?: any;
+  errorMessages?: string[];
+}

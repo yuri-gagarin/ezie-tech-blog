@@ -50,6 +50,7 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
         currentSelectedProject: action.payload.project,
+        currentProjectImages: [ ...action.payload.project.images ],
         error: null,
         errorMessages: null
       };
@@ -60,6 +61,7 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
         currentSelectedProject: action.payload.createdProject,
+        currentProjectImages: [ ...action.payload.createdProject.images ],
         projectsArr: action.payload.updatedProjects,
         error: null,
         errorMessages: null
@@ -71,6 +73,7 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
         currentSelectedProject: action.payload.editedProject,
+        currentProjectImages: [ ...action.payload.editedProject.images ],
         projectsArr: action.payload.updatedProjects,
         error: null,
         errorMessages: null
@@ -82,7 +85,32 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
         currentSelectedProject: action.payload.updatedCurrentProject,
+        currentProjectImages: null,
         projectsArr: action.payload.updatedProjects,
+        error: null,
+        errorMessages: null
+      };
+    }
+    case "UploadProjectImage": {
+      return {
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        currentSelectedProject: action.payload.updatedCurrentProject,
+        projectsArr: action.payload.updatedProjects,
+        currentProjectImages: action.payload.updatedProductImages,
+        error: null,
+        errorMessages: null
+      };
+    }
+    case "DeleteProjectImage": {
+      return {
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        currentSelectedProject: action.payload.updatedCurrentProject,
+        projectsArr: action.payload.updatedProjects,
+        currentProjectImages: action.payload.updatedProductImages,
         error: null,
         errorMessages: null
       };

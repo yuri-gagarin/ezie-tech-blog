@@ -2,10 +2,13 @@ import axios, { AxiosResponse } from "axios";
 import { IGeneralCRUDActions } from "../_types/_general/abstracts";
 // types //
 import type { AxiosRequestConfig } from "axios";
-import type { CreateProject, EditProject, DeleteProject, GetAllProjects, GetOneProject, ProjectAction, SetProjectError, ClearProject, SetProject } from "../_types/projects/actionTypes";
+import type { 
+  CreateProject, EditProject, DeleteProject, GetAllProjects, GetOneProject, 
+  UploadProjectImage, DeleteProjectImage, SetProjectError, ClearProject, SetProject 
+} from "../_types/projects/actionTypes";
 import type { 
   GetAllProjParams, GetOneProjParams, CreateProjParams, EditProjParams, DeleteProjParams, ProjErrorParams, SetProjParams, ClearProjParams,
-  IndexProjectRes, OneProjectRes, CreateProjectRes, EditProjectRes, DeleteProjectRes, ProjectData
+  IndexProjectRes, OneProjectRes, CreateProjectRes, EditProjectRes, DeleteProjectRes, UploadProjImgRes, ProjectData, UploadImageParams
 } from "../_types/projects/dataTypes";
 // helpers //
 import { processAxiosError } from "../_helpers/dataHelpers";
@@ -103,13 +106,44 @@ class ProjectReduxActions extends IGeneralCRUDActions {
       const { status, data }: AxiosResponse<DeleteProjectRes> = await axios(reqConfig);
       const { responseMsg, deletedProject } = data;
       const updatedProjects: ProjectData[] = state.projectsArr.filter((projData) => projData._id !== deletedProject._id);
-      const updatedCurrentProject: ProjectData = currentSelectedProject._id === deletedProject._id ? null : currentSelectedProject;
+      const updatedCurrentProject: ProjectData | null = currentSelectedProject._id === deletedProject._id ? null : currentSelectedProject;
       return dispatch({ 
         type: "DeleteProject", 
         payload: { status, responseMsg, updatedCurrentProject, updatedProjects, loading: false } 
       });
     } catch (err) {
       throw err;
+    }
+  }
+  async handleAddImage({ dispatch, modelId, JWTToken, imageURL, state }: UploadImageParams): Promise<UploadProjectImage> {
+    const { currentSelectedProject, projectsArr } = state;
+    const reqConfig: AxiosRequestConfig = {
+      method: "PATCH",
+      url: `/api/projects/add_images/${modelId ? modelId : ""}`,
+      headers: { 
+        "Authorization": JWTToken 
+      },
+      data: { imageURL }
+    };
+
+    dispatch({ type: "ProjectsAPIRequest", payload: { loading: true }});
+    try {
+      const { status, data }: AxiosResponse<UploadProjImgRes> = await axios(reqConfig);
+      const { responseMsg, updatedProject } = data;
+      const updatedProjects: ProjectData[] = projectsArr.map((projectData) => {
+        if (projectData._id === updatedProject._id) return { ...updatedProject, images: [ ...updatedProject.images ]};
+        else return projectData;
+      });
+      const updatedProductImages: string[] = [ ...updatedProject.images ];
+      
+      return dispatch({ 
+        type: "UploadProjectImage", 
+        payload: { 
+          status, responseMsg, updatedCurrentProject: updatedProject, updatedProjects, updatedProductImages, loading: false 
+        }
+      });
+    } catch (error) {
+      throw error;
     }
   }
 

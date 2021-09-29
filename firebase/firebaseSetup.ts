@@ -1,15 +1,16 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, deleteObject, getDownloadURL } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 //
 import type { FirebaseApp, FirebaseOptions } from "firebase/app";
 import type { FirebaseStorage, StorageReference, UploadResult } from "firebase/storage";
 import type { Analytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import type { Dispatch } from 'hoist-non-react-statics/node_modules/@types/react';
+import type { ProjectAction } from '@/redux/_types/projects/actionTypes';
 
-// Your web app's Firebase configuration
+// TODO //
+// implement better error handling //
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export default class FirebaseController {
   private firebaseConfig: FirebaseOptions;
@@ -31,19 +32,25 @@ export default class FirebaseController {
     this.initializeStorage();
   } 
 
-  public async uploadPojectImage(imageFile: File): Promise<{ downloadUrl: string; snapshot: UploadResult }> {
+  public async uploadPojectImage(imageFile: File, dispatch: Dispatch<ProjectAction>): Promise<{ imageURL: string; snapshot: UploadResult }> {
     const imagePath = `/project_images/${imageFile.name}`;
     const projectImagesRef = ref(this.firebaseStorage, imagePath);
+    
+    dispatch({ type: "ProjectsAPIRequest", payload: { loading: true } });
     try {
       const snapshot = await uploadBytes(projectImagesRef, imageFile);
-      const downloadUrl = await getDownloadURL(projectImagesRef);
+      const imageURL = await getDownloadURL(projectImagesRef);
       return {
-        downloadUrl, snapshot
+        imageURL, snapshot
       }
     }
     catch (error) {
-      console.log(error);
+      throw error;
     }
+  }
+  public async removePojectImage(imageURL: string, dispatch: Dispatch<ProjectAction>): Promise<any> {
+      const imgRef = ref(this.firebaseStorage, imageURL);
+      console.log(imgRef);
   }
 
   private initialize(): void {

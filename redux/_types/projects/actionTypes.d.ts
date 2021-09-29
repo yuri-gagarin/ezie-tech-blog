@@ -51,10 +51,33 @@ export type DeleteProject = {
     status: number;
     responseMsg: string;
     loading: boolean;
-    updatedCurrentProject: ProjectData;
+    updatedCurrentProject: ProjectData | null;
     updatedProjects: ProjectData[];
   };
 };
+export type UploadProjectImage = {
+  readonly type: "UploadProjectImage";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    updatedCurrentProject: ProjectData;
+    updatedProjects: ProjectData[];
+    updatedProductImages: string[];
+  };
+};
+export type DeleteProjectImage = {
+  readonly type: "DeleteProjectImage";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    updatedCurrentProject: ProjectData;
+    updatedProjects: ProjectData[];
+    updatedProductImages: string[];
+  };
+};
+// non api actions //
 export type SetProjectError = {
   readonly type: "SetProjectError";
   readonly payload: {
@@ -71,7 +94,6 @@ export type ClearProjectError = {
     error: null, errorMessages: null;
   };
 };
-// non api actions //
 export type SetProject = {
   readonly type: "SetProject";
   readonly payload: {
@@ -85,4 +107,6 @@ export type ClearProject = {
   }; 
 };
 
-export type ProjectAction = ProjectAPIRequest | GetAllProjects | GetOneProject | CreateProject | EditProject | DeleteProject | SetProjectError | ClearProjectError | SetProject | ClearProject;
+export type ProjectAction = (
+  ProjectAPIRequest | GetAllProjects | GetOneProject | CreateProject | EditProject | DeleteProject |
+  UploadProjectImage | DeleteProjectImage | SetProjectError | ClearProjectError | SetProject | ClearProject);

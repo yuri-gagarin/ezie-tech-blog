@@ -12,7 +12,7 @@ import { AdminProjectForm } from '@/components/admin/forms/AdminProjectForm';
 import type { Dispatch } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 import type { ProjectAction } from '@/redux/_types/projects/actionTypes';
-import type { ProjectFormData } from '@/redux/_types/projects/dataTypes';
+import type { ProjectData, ProjectFormData } from '@/redux/_types/projects/dataTypes';
 import type FirebaseController from 'firebase/firebaseSetup';
 // styles //
 import styles from "@/styles/admin/projects/AdminProjectEditorPage.module.css";
@@ -60,9 +60,35 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({
   const handleMenuPublicBtnClick = async (): Promise<any> => {
 
   };
-  const handleUploadProjectImage = (file: File) => {
-    if (file && firebaseContInstance) {
-      firebaseContInstance.uploadPojectImage(file);
+  // image handling //
+  // at this time its Firebase storage //
+  const handleUploadProjectImage = async (file: File): Promise<void> => {
+    if (!projectsState.currentSelectedProject) return;
+
+    const { authToken: JWTToken } = authState;
+    const { _id: modelId } = projectsState.currentSelectedProject;
+
+    if (file && firebaseContInstance && JWTToken) {
+      try {
+        const { imageURL } = await firebaseContInstance.uploadPojectImage(file, dispatch);
+        await ProjectActions.handleAddImage({ dispatch, modelId, JWTToken, imageURL, state: projectsState });
+      } catch (error) {
+        ProjectActions.handleError({ dispatch, error });
+      }
+    }
+  };
+  const handleRemoveProjectImage = async (imageURL: string): Promise<void> => {
+    if (!projectsState.currentSelectedProject) return;
+
+    const { authToken: JWTToken } = authState;
+    const { _id: modelId } = projectsState.currentSelectedProject;
+
+    if (firebaseContInstance && JWTToken) {
+      try {
+        await firebaseContInstance.removePojectImage(imageURL, dispatch);
+      } catch (error) {
+        ProjectActions.handleError({ dispatch, error });
+      }
     }
   }
   // END action handlers //
