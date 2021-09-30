@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox, Grid, Label, Form, TextArea, Container } from "semantic-ui-react"; 
+import { Checkbox, Grid, Label, Message, Form, TextArea, Container } from "semantic-ui-react"; 
 // additional components //
 import { AdminFileInput } from '@/components/admin/forms/AdminFileInput';
 import { AdminProjectsMenu } from "@/components/admin/projects/AdminProjectsMenu";
@@ -29,11 +29,12 @@ interface IAdminProjectFormProps {
   loading: boolean;
   projectData: ProjectData | null;
   currentProjectImages: string[] | null;
+  errorMessages: string[] | null;
   handleSaveProjectData(data: FormState): Promise<any>;
   handleMenuCancelBtnclick(): void;
   handleMenuPublishBtnClick(): Promise<boolean>;
-  handleUploadProjectImage(file: File): Promise<any>;
-  handleDeleteProjectImage(imageURL: string): Promise<any>;
+  handleUploadProjectImage(file: File): Promise<boolean>;
+  handleDeleteProjectImage(imageURL: string): Promise<boolean>;
 }
 type FormState = {
   title: string;
@@ -51,7 +52,7 @@ type FormState = {
   solution: string;
 };
 
-export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> = ({ loading, projectData, currentProjectImages, handleSaveProjectData, handleMenuCancelBtnclick, handleMenuPublishBtnClick, handleUploadProjectImage, handleDeleteProjectImage }): JSX.Element => {
+export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> = ({ loading, projectData, currentProjectImages, errorMessages, handleSaveProjectData, handleMenuCancelBtnclick, handleMenuPublishBtnClick, handleUploadProjectImage, handleDeleteProjectImage }): JSX.Element => {
   // local form state //
   const [ formState, setFormState ] = React.useState<FormState>({
     title: projectData ? projectData.title : "",
@@ -110,6 +111,14 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
 
   return (
     <Grid.Column largeScreen={16} style={{ paddingLeft: 0, paddingRight: 0 }}>
+      {
+        (errorMessages && errorMessages)
+        ?
+        <Message error visible header="An error occured" list={ errorMessages } />
+        :
+        null
+      }
+
       <AdminProjectsMenu 
         menuSaveBtnClick={ menuSaveBtnClick }
         menuCancelBtnClick={ handleMenuCancelBtnclick }
@@ -157,7 +166,7 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
           ?
             <React.Fragment>
               <Form.Field>
-                <AdminFileInput loading={ loading } handleUploadPic={ handleUploadProjectImage } />
+                <AdminFileInput loading={ loading } handleUploadImage={ handleUploadProjectImage } />
               </Form.Field>
               {
                 currentProjectImages && currentProjectImages.length > 0

@@ -13,17 +13,18 @@ import type { Dispatch } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 import type { ProjectAction } from '@/redux/_types/projects/actionTypes';
 import type { ProjectData, ProjectFormData } from '@/redux/_types/projects/dataTypes';
-import type FirebaseController from 'firebase/firebaseSetup';
+import type { IFirebaseController } from 'firebase/firebaseSetup';
 // styles //
 import styles from "@/styles/admin/projects/AdminProjectEditorPage.module.css";
 // helpers //
 
 interface IAdminProjectEditorProps {
-  firebaseContInstance: FirebaseController
+  firebaseContInstance: IFirebaseController;
 }
 
 const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({ firebaseContInstance }): JSX.Element => {
   // local component state and hooks //
+  const [ uploadState, setUploadState ] = React.useState<{ started: boolean; finished: boolean; }>({ started: false, finished: false });
   // next hooks //
   const router = useRouter();
   // redux state and hooks //
@@ -62,7 +63,7 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({
   };
   // image handling //
   // at this time its Firebase storage //
-  const handleUploadProjectImage = async (file: File): Promise<void> => {
+  const handleUploadProjectImage = async (file: File): Promise<boolean> => {
     if (!currentSelectedProject) return;
 
     const { authToken: JWTToken, firebaseData } = authState;
@@ -73,12 +74,13 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({
         const { adminFirebaseToken } = firebaseData;
         const { imageURL } = await firebaseContInstance.uploadPojectImage(file, adminFirebaseToken, dispatch);
         await ProjectActions.handleAddImage({ dispatch, modelId, JWTToken, imageURL, state: projectsState });
+        return true;
       } catch (error) {
         ProjectActions.handleError({ dispatch, error });
       }
     }
   };
-  const handleRemoveProjectImage = async (imageURL: string): Promise<void> => {
+  const handleRemoveProjectImage = async (imageURL: string): Promise<boolean> => {
     if (!currentSelectedProject) return;
 
     const { authToken: JWTToken, firebaseData } = authState;
@@ -86,8 +88,10 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({
 
     if (firebaseContInstance && JWTToken && firebaseData) {
       try {
-        if (await firebaseContInstance.removePojectImage(imageURL, dispatch)) {
+        const { adminFirebaseToken } = firebaseData;
+        if (await firebaseContInstance.removePojectImage(imageURL, adminFirebaseToken, dispatch)) {
           await ProjectActions.handleRemoveImage({ dispatch, modelId, JWTToken, imageURL, state: projectsState });
+          return true;
         }
       } catch (error) {
         console.log(error);
@@ -105,6 +109,7 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({
             loading={ loading }
             projectData={ projectsState.currentSelectedProject } 
             currentProjectImages={ projectsState.currentProjectImages }
+            errorMessages={ projectsState.errorMessages }
             handleSaveProjectData={ handleSaveProjectData }
             handleMenuCancelBtnclick={ handleMenuCancelBtnClick }
             handleMenuPublishBtnClick={ handleMenuPublicBtnClick }

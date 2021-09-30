@@ -5,27 +5,34 @@ import { Button, Icon } from 'semantic-ui-react';
 
 interface IAdminFileInputProps {
   loading: boolean;
-  handleUploadPic(file: File): void;
+  handleUploadImage(file: File): Promise<boolean>;
 }
 
 type LocalState = {
   file: File | null;
 }
 
-export const AdminFileInput: React.FunctionComponent<IAdminFileInputProps> = ({ loading, handleUploadPic }): JSX.Element => {
+export const AdminFileInput: React.FunctionComponent<IAdminFileInputProps> = ({ loading, handleUploadImage }): JSX.Element => {
   const [ localState, setLocalState ] = React.useState<LocalState>({ file: null });
-  const fileInputRef: React.MutableRefObject<HTMLInputElement> | null = React.useRef<HTMLInputElement>(null);
+  const fileInputRef: React.MutableRefObject<HTMLInputElement> | null = React.useRef(null);
+  const loadingRef: React.MutableRefObject<boolean> = React.useRef(loading);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files[0];
     setLocalState((s) => ({ ...s, file }));
   };
-  const handleUpload = (): void => {
-    handleUploadPic(localState.file);
+  const handleUpload = async (): Promise<void> => {
+    if (await handleUploadImage(localState.file)) setLocalState({ file: null });
   };
   const cancelUpload = (): void => {
     setLocalState((s) => ({ ...s, file: null }));
   };
+
+  
+  React.useEffect(() => {
+    console.log("Ref loading: ", loadingRef.current);
+    console.log("Current loading: ", loading);
+  }, [ loadingRef, loading ]);
 
   return (
     <div>
@@ -39,7 +46,7 @@ export const AdminFileInput: React.FunctionComponent<IAdminFileInputProps> = ({ 
           </Button>
           <Button color="green" onClick={ handleUpload } loading={ loading }>
             <Icon name="upload" />
-            Upload
+            { loading ? "Loading" : "Upload" }
           </Button>
         </Button.Group>
         :

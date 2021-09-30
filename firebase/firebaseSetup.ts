@@ -54,11 +54,13 @@ export default class FirebaseController {
       throw error;
     }
   }
-  public async removePojectImage(imageURL: string, dispatch: Dispatch<ProjectAction>): Promise<any> {
+  public async removePojectImage(imageURL: string, firebaseToken: string, dispatch: Dispatch<ProjectAction>): Promise<any> {
       const imgRef = ref(this.firebaseStorage, imageURL);
       dispatch({ type: "ProjectsAPIRequest", payload: { loading: true } });
       try {
-        await deleteObject(imgRef)
+        const auth = getAuth(this.app);
+        await signInWithCustomToken(auth, firebaseToken);
+        await deleteObject(imgRef);
         return true;
       } catch (error) {
         console.log("Firebase error");
@@ -77,6 +79,8 @@ export default class FirebaseController {
     //console.log(storageRef);
   }
 };
+
+export type IFirebaseController = FirebaseController;
 
 
 

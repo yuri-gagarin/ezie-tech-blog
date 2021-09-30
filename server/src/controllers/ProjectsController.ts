@@ -68,7 +68,7 @@ export default class ProjectsController extends BasicController implements ICRUD
     const { project_id } = req.params;
     const { title, description, challenges, solution, languages = {},  libraries = {}, frameworks = {} } = req.body.projectData as ProjectData;
     const user: IAdmin = req.user as IAdmin;
-
+    
     if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve user account" ]);
     if (!project_id) return await this.userInputErrorResponse(res, [ "Could not resolve user id" ]);
     // validate correct input data //
@@ -76,7 +76,9 @@ export default class ProjectsController extends BasicController implements ICRUD
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
 
     try {
+      console.log(req.body.projectData);
       const normalizedData = normalizeProjectOpsData({ languages, libraries, frameworks });
+      console.log(normalizedData);
       const editedProject: IProject | null = await Project.findOneAndUpdate(
         { _id: project_id },
         { title, description, challenges, solution, 
@@ -92,6 +94,7 @@ export default class ProjectsController extends BasicController implements ICRUD
         return await this.notFoundErrorResponse(res, [ "Queried project to update was not found" ]);
       }
     } catch (error) {
+      console.log(error)
       return await this.generalErrorResponse(res, { error });
     }
 

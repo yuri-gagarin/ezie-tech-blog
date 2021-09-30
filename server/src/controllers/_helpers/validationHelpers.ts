@@ -46,7 +46,11 @@ export const normalizeProjectOpsData = (data: Args): NormalizedProjectOptsRes =>
     libraries:  [ "bootstrap", "semanticUI", "materialUI", "jquery", "react", "reactNative", "redux", "socketIO" ],
     frameworks: [ "rails", "nextJS", "gatsbyJS", "django", "flask", "ASP" ]
   };
-  const returnObj = {} as NormalizedProjectOptsRes;
+  const returnObj = {
+    languages: {},
+    libraries: {},
+    frameworks: {}
+  } as NormalizedProjectOptsRes;
 
   const keys: string[] = Object.keys(data);
   for (const key of keys) {
