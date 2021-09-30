@@ -2,6 +2,7 @@ import express, { Router, Express } from "express";
 import next from "next";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 dotenv.config();
 // 
 // database and routes //
@@ -97,6 +98,7 @@ class Server {
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: true }));
     this.server.use(cookieParser(process.env.COOKIE_SECRET));
+    this.server.use(cors());
     this.server.use(PassportContInstance.initialize());
     this.server.use(checkAndSetUniqueUserId);
   }
