@@ -1,0 +1,89 @@
+.titleSegment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: black;
+}
+.techDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+  width: 100%;
+}
+.techDivHeader {
+  display: flex;
+  justify-content: center;
+  font-size: 1.25em;
+  font-weight: bold;
+  font-family: "Wallpoet", cursive;
+  padding-top: 0.75em;
+}
+.svgLogosDiv {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 5px 0;
+}
+.logoImgDiv {
+  height: 50px;
+  width: 50px;
+  margin-right: 5px;
+}
+
+.imageSegment {
+  position: relative !important;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  background-color: #a333c8 !important;
+  -ms-overflow-style: none;  
+  scrollbar-width: none; 
+}
+.imageSegment::-webkit-scrollbar {
+  display: none;
+}
+.imageWrapper {
+  display: flex;
+}
+.imageDiv {
+  position: relative;
+  min-height: 200px;
+  /*width: calc(33% - 6px);*/
+  width: 200px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.projectDetailsSegment {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+}
+.projectDetailsHeader {
+  display: flex;
+  flex-direction: column;
+}
+.projectDetailsHeaderTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em 0;
+  font-family: "Righteous", cursive;
+  font-size: 2em;
+}
+.projectDetailsContent  {
+  padding: 0.5em 0.75em;
+}
+
+@media screen and (max-width: 768px) {
+  .imageSegment {
+    width: 100vw !important;
+    justify-content: flex-start;
+    margin-left: 10px !important;
+  }
+}

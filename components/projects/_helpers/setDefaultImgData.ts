@@ -9,11 +9,11 @@ export const setDefaultProjImgData = (projectData: ProjectData): DefaultImgData[
       if (projectData.images[i]) {
         imgData.push({ key: `${i}_${projectData.images[i]}`, url: projectData.images[i] });
       } else 
-        imgData.push({ key: `${i}_programming_stock_${i}.jpg`, url: `/images/defaults/programming_stock_${i}.jpg` })
+        imgData.push({ key: `${i}_programming_stock_${i+1}.jpg`, url: `/images/defaults/programming_stock_${i+1}.jpg` })
     }
   } else {
     for (let i = 0; i < 3; i++) {
-      imgData.push({ key: `${i}_programming_stock_${i}.jpg`, url: `/images/defaults/programming_stock_${i}.jpg` })
+      imgData.push({ key: `${i}_programming_stock_${i+1}.jpg`, url: `/images/defaults/programming_stock_${i+1}.jpg` })
     }
   }
   return imgData;

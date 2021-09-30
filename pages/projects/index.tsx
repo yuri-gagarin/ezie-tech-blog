@@ -1,14 +1,14 @@
 import * as React from 'react';
 // additional libraries //
-import { Grid, Header, Segment } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import Lightbox from 'react-image-lightbox';
-import ReactMarkdown from 'react-markdown/react-markdown.min';
-// next imports/ /
-import NextImage from "next/image";
 // redux imports //
 import { useSelector } from "react-redux";
 import { wrapper } from "../../redux/store";
 import { ProjectActions } from '../../redux/actions/projectActions';
+// additional components //
+import { ProjectLeftAlign } from '@/components/projects/ProjectLeftAlign';
+import { ProjectRightAlign } from '@/components/projects/ProjectRightAlign';
 // types //
 import type { Dispatch } from "redux";
 import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
@@ -28,6 +28,7 @@ interface IProjectsPageProps {
 type ImgModalState = {
   photoIndex: number;
   isOpen: boolean;
+  imageURLs: string[];
 }
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
@@ -44,28 +45,28 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
 const ProjectsPage: React.FunctionComponent<IProjectsPageProps> = (): JSX.Element => {
   // local state //
-  const [ imgModalState, setImgModalState ] = React.useState<ImgModalState>({ isOpen: false, photoIndex: 0 });
-  const [ imgUrls, setImgUrls ] = React.useState<string[]>(["/images/blog1.jpg", "/images/blog1.jpg", "/images/blog1.jpg"]);
+  const [ imgModalState, setImgModalState ] = React.useState<ImgModalState>({ isOpen: false, photoIndex: 0 , imageURLs: [] });
   // redux hooks and state //
   const { projectsArr } = useSelector((state: IGeneralState) => state.projectsState);
   // custom hooks //
   const { width } = useWindowSize();
 
   // action handlers //
-  const handleOpenImgModal = (imgUrl: string): void => {
-    setImgModalState({ ...imgModalState, isOpen: true });
+  const handleOpenImgModal = (imgUrl: string, imageURLs: string[]): void => {
+    const photoIndex: number = imageURLs.indexOf(imgUrl);
+    setImgModalState({  isOpen: true, photoIndex, imageURLs });
   }
   const handleCloseImgModal = (): void => {
-    setImgModalState({ ...imgModalState, isOpen: false });
+    setImgModalState({ isOpen: false, photoIndex: 0, imageURLs: [] });
   };
   const handleGoToPrevious = (): void => {
-    const { photoIndex } = imgModalState;
-    const nextIndex = (photoIndex + imgUrls.length - 1) % imgUrls.length;
+    const { photoIndex, imageURLs } = imgModalState;
+    const nextIndex = (photoIndex + imageURLs.length - 1) % imageURLs.length;
     setImgModalState({ ...imgModalState, photoIndex: nextIndex });
   };
   const handleGoToNext = (): void => {
-    const { photoIndex } = imgModalState;
-    const nextIndex = (photoIndex + 1) % imgUrls.length;
+    const { photoIndex, imageURLs } = imgModalState;
+    const nextIndex = (photoIndex + 1) % imageURLs.length;
     setImgModalState({ ...imgModalState, photoIndex: nextIndex });
   };
 
@@ -79,223 +80,29 @@ const ProjectsPage: React.FunctionComponent<IProjectsPageProps> = (): JSX.Elemen
       {
         imgModalState.isOpen && (
           <Lightbox 
-            mainSrc={ imgUrls[imgModalState.photoIndex] }
-            nextSrc={ imgUrls[(imgModalState.photoIndex + 1) % imgUrls.length] }
-            prevSrc={ imgUrls[(imgModalState.photoIndex + imgUrls.length - 1) % imgUrls.length] }
+            mainSrc={ imgModalState.imageURLs[imgModalState.photoIndex] }
+            nextSrc={ imgModalState.imageURLs[(imgModalState.photoIndex + 1) % imgModalState.imageURLs.length] }
+            prevSrc={ imgModalState.imageURLs[(imgModalState.photoIndex + imgModalState.imageURLs.length - 1) % imgModalState.imageURLs.length] }
             onCloseRequest={ handleCloseImgModal }
             onMovePrevRequest={ handleGoToPrevious }
             onMoveNextRequest={ handleGoToNext }
           />
         )
       }
+      <Grid.Row color="purple" style={{ wdith: "100%", height: "100px "}} />
       {
-        projectsArr.map((project, i) => {
+        projectsArr.map((projectData, i) => {
           return (
-            i % 2 == 0
+            i % 2 === 0
             ?
-            <Grid.Row columns={2} key={ project._id}>
-              <Grid.Column color="purple" width={ 8 }>
-                <Segment className={ styles.titleSegment }>
-                  <Header>{ project.title }</Header>
-                  <div>{ project.description }</div>
-                  <div className={ styles.techDiv }>
-                    <div className={ styles.techDivHeader }>Languages</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.languages.js ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/javascript.svg" alt="js"></NextImage></div> : null }
-                      { project.languages.ts ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/typescript.svg" alt="ts"></NextImage></div> : null }
-                      { project.languages.python ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/python.svg" alt="python"></NextImage></div> : null }
-                      { project.languages.ruby ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/ruby.svg" alt="ruby"></NextImage></div> : null }
-                      { project.languages.cSharp ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/cSharp.svg" alt="c#"></NextImage></div> : null }
-                      { project.languages.goLang ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/go_lang.svg" alt="go"></NextImage></div> : null }
-                    </div>
-                    <div className={ styles.techDivHeader }>Libraries</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.libraries.react ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/react.svg" alt="React"></NextImage></div> : null }
-                      { project.libraries.reactNative ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/react_native.svg" alt="React Native"></NextImage></div> : null }
-                      { project.libraries.redux ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/redux.svg" alt="Redux"></NextImage></div> : null }
-                      { project.libraries.bootstrap ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/bootstrap.svg" alt="Bootstrap"></NextImage></div> : null }
-                      { project.libraries.semanticUI ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/semantic_ui.svg" alt="SemanticUI"></NextImage></div> : null }
-                      { project.libraries.materialUI ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/material_ui.svg" alt="MaterialUI"></NextImage></div> : null }
-                      { project.libraries.socketIO ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/socket_io.svg" alt="SocketIO"></NextImage></div> : null }
-                    </div>
-                    <div className={ styles.techDivHeader }>Frameworks</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.frameworks.nextJS ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/nextjs.svg" alt="NextJs"></NextImage></div> : null }
-                      { project.frameworks.gatsbyJS ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/gatsby.svg" alt="GatsbyJs"></NextImage></div> : null }
-                      { project.frameworks.rails ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/rails.svg" alt="Rails"></NextImage></div> : null }
-                      { project.frameworks.django ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/django.svg" alt="Django"></NextImage></div> : null }
-                      { project.frameworks.flask ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/flask.svg" alt="Flask"></NextImage></div> : null }
-                      { project.frameworks.ASP ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/aspNET.svg" alt="Asp.NET"></NextImage></div> : null }
-                    </div>
-
-                  </div>
-                </Segment>
-                <Segment className={ styles.imageSegment }>
-                  <div>
-                    <NextImage onClick={ () => handleOpenImgModal("/images/blog1.jpg") } layout="fill"  src="/images/blog1.jpg" alt="project first image" />
-                  </div>
-                  <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project second image" />
-                  </div>
-                  <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project third image" />
-                  </div>
-                </Segment>
-              </Grid.Column>
-              <Grid.Column width={ 8 }>
-                <Segment className={ styles.projectDetailsSegment }>
-                  <div className={ styles.projectDetailsHeader }>
-                    <div className={ styles.projectDetailsHeaderTitle }>Challenges</div>
-                    <div className={ styles.projectDetailsContent }>
-                      <ReactMarkdown children={ project.challenges } />
-                    </div>
-                  </div>
-                  <div className={ styles.projectDetailsHeader }>
-                    <div className={ styles.projectDetailsHeaderTitle }>Solutions</div>
-                    <div className={ styles.projectDetailsContent }>
-                      <ReactMarkdown children={ project.solution } />
-                    </div>
-                  </div>
-                </Segment>
-              </Grid.Column>
-            </Grid.Row>
+            <ProjectLeftAlign key={ projectData._id } project={ projectData } handleOpenImageModal={ handleOpenImgModal } />
             :
             (
-              width > 768 
-              ? 
-              <Grid.Row className={ styles.projectRow } columns={2} key={ project._id }>
-              <Grid.Column width={ 8 }>
-                <Segment className={ styles.projectDetailsSegment }>
-                  <div className={ styles.projectDetailsHeader }>
-                    <div className={ styles.projectDetailsHeaderTitle }>Challenges</div>
-                    <div className={ styles.projectDetailsContent }>
-                      <ReactMarkdown children={ project.challenges } />
-                    </div>
-                  </div>
-                  <div className={ styles.projectDetailsHeader }>
-                    <div className={ styles.projectDetailsHeaderTitle }>Solutions</div>
-                    <div className={ styles.projectDetailsContent }>
-                      <ReactMarkdown children={ project.solution } />
-                    </div>
-                  </div>
-                </Segment>
-              </Grid.Column>
-              <Grid.Column color="purple" width={ 8 }>
-              <Segment className={ styles.titleSegment }>
-                  <Header>{ project.title }</Header>
-                  <div>{ project.description }</div>
-                  <div className={ styles.techDiv }>
-                    <div className={ styles.techDivHeader }>Languages</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.languages.js ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/javascript.svg" alt="js"></NextImage></div> : null }
-                      { project.languages.ts ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/typescript.svg" alt="ts"></NextImage></div> : null }
-                      { project.languages.python ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/python.svg" alt="python"></NextImage></div> : null }
-                      { project.languages.ruby ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/ruby.svg" alt="ruby"></NextImage></div> : null }
-                      { project.languages.cSharp ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/cSharp.svg" alt="c#"></NextImage></div> : null }
-                      { project.languages.goLang ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/go_lang.svg" alt="go"></NextImage></div> : null }
-                    </div>
-                    <div className={ styles.techDivHeader }>Libraries</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.libraries.react ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/react.svg" alt="React"></NextImage></div> : null }
-                      { project.libraries.reactNative ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/react_native.svg" alt="React Native"></NextImage></div> : null }
-                      { project.libraries.redux ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/redux.svg" alt="Redux"></NextImage></div> : null }
-                      { project.libraries.bootstrap ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/bootstrap.svg" alt="Bootstrap"></NextImage></div> : null }
-                      { project.libraries.semanticUI ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/semantic_ui.svg" alt="SemanticUI"></NextImage></div> : null }
-                      { project.libraries.materialUI ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/material_ui.svg" alt="MaterialUI"></NextImage></div> : null }
-                      { project.libraries.socketIO ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/socket_io.svg" alt="SocketIO"></NextImage></div> : null }
-                    </div>
-                    <div className={ styles.techDivHeader }>Frameworks</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.frameworks.nextJS ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/nextjs.svg" alt="NextJs"></NextImage></div> : null }
-                      { project.frameworks.gatsbyJS ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/gatsby.svg" alt="GatsbyJs"></NextImage></div> : null }
-                      { project.frameworks.rails ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/rails.svg" alt="Rails"></NextImage></div> : null }
-                      { project.frameworks.django ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/django.svg" alt="Django"></NextImage></div> : null }
-                      { project.frameworks.flask ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/flask.svg" alt="Flask"></NextImage></div> : null }
-                      { project.frameworks.ASP ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/aspNET.svg" alt="Asp.NET"></NextImage></div> : null }
-                    </div>
-
-                  </div>
-                </Segment>
-                <Segment className={ styles.imageSegment }>
-                  <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project first image" />
-                  </div>
-                  <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project second image" />
-                  </div>
-                  <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project third image" />
-                  </div>
-                </Segment>
-              </Grid.Column>
-            </Grid.Row>
-            :
-            <Grid.Row columns={2} key={ project._id}>
-              <Grid.Column color="purple" width={ 8 }>
-                <Segment className={ styles.titleSegment }>
-                  <Header>{ project.title }</Header>
-                  <div>{ project.description }</div>
-                  <div className={ styles.techDiv }>
-                    <div className={ styles.techDivHeader }>Languages</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.languages.js ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/javascript.svg" alt="js"></NextImage></div> : null }
-                      { project.languages.ts ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/typescript.svg" alt="ts"></NextImage></div> : null }
-                      { project.languages.python ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/python.svg" alt="python"></NextImage></div> : null }
-                      { project.languages.ruby ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/ruby.svg" alt="ruby"></NextImage></div> : null }
-                      { project.languages.cSharp ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/cSharp.svg" alt="c#"></NextImage></div> : null }
-                      { project.languages.goLang ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/go_lang.svg" alt="go"></NextImage></div> : null }
-                    </div>
-                    <div className={ styles.techDivHeader }>Libraries</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.libraries.react ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/react.svg" alt="React"></NextImage></div> : null }
-                      { project.libraries.reactNative ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/react_native.svg" alt="React Native"></NextImage></div> : null }
-                      { project.libraries.redux ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/redux.svg" alt="Redux"></NextImage></div> : null }
-                      { project.libraries.bootstrap ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/bootstrap.svg" alt="Bootstrap"></NextImage></div> : null }
-                      { project.libraries.semanticUI ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/semantic_ui.svg" alt="SemanticUI"></NextImage></div> : null }
-                      { project.libraries.materialUI ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/material_ui.svg" alt="MaterialUI"></NextImage></div> : null }
-                      { project.libraries.socketIO ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/socket_io.svg" alt="SocketIO"></NextImage></div> : null }
-                    </div>
-                    <div className={ styles.techDivHeader }>Frameworks</div>
-                    <div className={ styles.svgLogosDiv }>
-                      { project.frameworks.nextJS ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/nextjs.svg" alt="NextJs"></NextImage></div> : null }
-                      { project.frameworks.gatsbyJS ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/gatsby.svg" alt="GatsbyJs"></NextImage></div> : null }
-                      { project.frameworks.rails ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/rails.svg" alt="Rails"></NextImage></div> : null }
-                      { project.frameworks.django ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/django.svg" alt="Django"></NextImage></div> : null }
-                      { project.frameworks.flask ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/flask.svg" alt="Flask"></NextImage></div> : null }
-                      { project.frameworks.ASP ? <div className={ styles.logoImgDiv }><NextImage height="100%" width="100%" src="/logos/tech_logos/aspNET.svg" alt="Asp.NET"></NextImage></div> : null }
-                    </div>
-
-                  </div>
-                </Segment>
-                <Segment className={ styles.imageSegment }>
-                  <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project first image" />
-                  </div>
-                  <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project second image" />
-                  </div>
-                  <div>
-                    <NextImage layout="fill"  src="/images/blog1.jpg" alt="project third image" />
-                  </div>
-                </Segment>
-              </Grid.Column>
-              <Grid.Column width={ 8 }>
-                <Segment className={ styles.projectDetailsSegment }>
-                  <div className={ styles.projectDetailsHeader }>
-                    <div className={ styles.projectDetailsHeaderTitle }>Challenges</div>
-                    <div className={ styles.projectDetailsContent }>
-                      <ReactMarkdown children={ project.challenges } />
-                    </div>
-                  </div>
-                  <div className={ styles.projectDetailsHeader }>
-                    <div className={ styles.projectDetailsHeaderTitle }>Solutions</div>
-                    <div className={ styles.projectDetailsContent }>
-                      <ReactMarkdown children={ project.solution } />
-                    </div>
-                  </div>
-                </Segment>
-              </Grid.Column>
-            </Grid.Row>
+              width < 768  /* needed to make everything flow nicely on mobile */
+              ?
+              <ProjectLeftAlign key={ projectData._id } project={ projectData } handleOpenImageModal={ handleOpenImgModal } />
+              :
+              <ProjectRightAlign key={ projectData._id } project={ projectData } handleOpenImageModal={ handleOpenImgModal } />
             )
           )
         })

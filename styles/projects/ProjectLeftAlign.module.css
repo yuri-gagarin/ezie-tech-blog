@@ -32,18 +32,29 @@
 }
 
 .imageSegment {
+  position: relative !important;
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  background-color: #a333c8 !important;
+  -ms-overflow-style: none;  
+  scrollbar-width: none; 
 }
-.imageSegment > div {
+.imageSegment::-webkit-scrollbar {
+  display: none;
+}
+.imageWrapper {
+  display: flex;
+}
+.imageDiv {
   position: relative;
-  height: 150px;
-  width: calc(33% - 6px);
+  min-height: 200px;
+  /*width: calc(33% - 6px);*/
+  width: 200px;
   border-radius: 5px;
   overflow: hidden;
-  margin-right: 2px;
+  margin-right: 10px;
   cursor: pointer;
 }
 
@@ -68,4 +79,12 @@
 }
 .projectDetailsContent  {
   padding: 0.5em 0.75em;
+}
+
+@media screen and (max-width: 768px) {
+  .imageSegment {
+    width: 100vw !important;
+    justify-content: flex-start;
+    margin-left: 10px !important;
+  }
 }

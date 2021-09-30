@@ -14,7 +14,7 @@ import { setDefaultProjImgData } from "./_helpers/setDefaultImgData";
 
 interface IProjectLeftAlignProps {
   project: ProjectData;
-  handleOpenImageModal(imageURL: string): void;
+  handleOpenImageModal(imageURL: string, projectImages: string[]): void;
 }
 
 export const ProjectLeftAlign: React.FunctionComponent<IProjectLeftAlignProps> = ({ project, handleOpenImageModal }): JSX.Element => {
@@ -23,10 +23,10 @@ export const ProjectLeftAlign: React.FunctionComponent<IProjectLeftAlignProps> =
   React.useEffect(() => {
     if (project) setDisplayImages(setDefaultProjImgData(project));
   }, [ project ]);
-
+  
   return (
-    <Grid.Row columns={2} key={ project._id}>
-      <Grid.Column color="purple" width={ 8 }>
+    <Grid.Row key={ project._id}>
+      <Grid.Column color="purple" largeScreen={8} mobile={16}>
         <Segment className={ styles.titleSegment }>
           <Header>{ project.title }</Header>
           <div>{ project.description }</div>
@@ -63,18 +63,20 @@ export const ProjectLeftAlign: React.FunctionComponent<IProjectLeftAlignProps> =
           </div>
         </Segment>
         <Segment className={ styles.imageSegment }>
+          <div className={ styles.imageWrapper }>
           {
             displayImages.map((imgData) => {
               return (
-                <div key={ imgData.key }>
-                  <NextImage onClick={ () => handleOpenImageModal(imgData.url) } layout="fill"  src="/images/blog1.jpg" alt="project first image" />
+                <div className={ styles.imageDiv } key={ imgData.key }>
+                  <NextImage onClick={ () => handleOpenImageModal(imgData.url, displayImages.map((data) => data.url)) } layout="fill" objectFit="cover" src={ imgData.url } alt="project image" />
                 </div>
               )
             })
           }
+          </div>
         </Segment>
       </Grid.Column>
-      <Grid.Column width={ 8 }>
+      <Grid.Column largeScreen={8} mobile={16} >
         <Segment className={ styles.projectDetailsSegment }>
           <div className={ styles.projectDetailsHeader }>
             <div className={ styles.projectDetailsHeaderTitle }>Challenges</div>
