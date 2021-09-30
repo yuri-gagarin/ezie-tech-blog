@@ -12,12 +12,26 @@ import styles from "@/styles/admin/projects/AdminProjectForm.module.css";
 // helpers //
 import { validateProjectForm } from "@/components/_helpers/validators";
 
+
+const mockURLS = [
+  "https://picsum.photos/200/300",
+  "https://picsum.photos/200/300",
+  "https://picsum.photos/200/300",
+  "https://picsum.photos/200/300",
+  "https://picsum.photos/200/300",
+  "https://picsum.photos/200/300",
+  "https://picsum.photos/200/300"
+];
+
+
 interface IAdminProjectFormProps {
   projectData: ProjectData | null;
+  currentProjectImages: string[] | null;
   handleSaveProjectData(data: FormState): Promise<any>;
   handleMenuCancelBtnclick(): void;
   handleMenuPublishBtnClick(): Promise<boolean>;
-  handleUploadProjectImage(file: File): Promise<boolean>;
+  handleUploadProjectImage(file: File): Promise<any>;
+  handleDeleteProjectImage(imageURL: string): Promise<any>;
 }
 type FormState = {
   title: string;
@@ -35,7 +49,7 @@ type FormState = {
   solution: string;
 };
 
-export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> = ({ projectData, handleSaveProjectData, handleMenuCancelBtnclick, handleMenuPublishBtnClick, handleUploadProjectImage }): JSX.Element => {
+export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> = ({ projectData, currentProjectImages, handleSaveProjectData, handleMenuCancelBtnclick, handleMenuPublishBtnClick, handleUploadProjectImage, handleDeleteProjectImage }): JSX.Element => {
   // local form state //
   const [ formState, setFormState ] = React.useState<FormState>({
     title: projectData ? projectData.title : "",
@@ -43,8 +57,8 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
     languages: projectData && projectData.languages ? { ...projectData.languages } : { js: false, ts: false, python: false, ruby: false, cSharp: false, goLang: false },
     libraries: projectData && projectData.libraries ? { ...projectData.libraries } : { bootstrap: false, semanticUI: false, materialUI: false, jquery: false, react: false, reactNative: false, redux: false, socketIO: false },
     frameworks: projectData && projectData.frameworks ? { ...projectData.frameworks } : { rails: false, nextJS: false, gatsbyJS: false, django: false, flask: false, ASP: false },
-    challenges: "",
-    solution: ""
+    challenges: projectData && projectData.challenges ? projectData.challenges : "",
+    solution: projectData && projectData.description ? projectData.description : ""
   });
 
   // action and event listeners //
@@ -92,10 +106,6 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
   };
   // END actions and event listeners //
 
-  React.useEffect(() => {
-    console.log(formState);
-  }, [ formState ]);
-
   return (
     <Grid.Column largeScreen={16} style={{ paddingLeft: 0, paddingRight: 0 }}>
       <AdminProjectsMenu 
@@ -106,49 +116,56 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
       <Form className={ styles.projectFormStyle }>
         <Form.Field width="16"> 
           <Label color="grey" content="Project Title:" />
-          <input placeholder="Project title here..." onChange={ handleTitleChange } />
-          <Label color="grey" content="Project Title:" />
-          <TextArea placeholder="Project description here..." onChange={ handleDescriptionChange } />
+          <input placeholder="Project title here..." onChange={ handleTitleChange } value={ formState.title || ""} />
+          <Label color="grey" content="Project Description:" />
+          <TextArea placeholder="Project description here..." onChange={ handleDescriptionChange } value={ formState.description || "" } />
         </Form.Field>
         <Form.Field>
           <Label className={ styles.additionalOptsLabel } color="purple" content="Languages Used:" />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="JavaScript" value="js" onChange={ handleLangCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="TypeScript" value="ts" onChange={ handleLangCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Python" value="python" onChange={ handleLangCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Ruby" value="ruby" onChange={ handleLangCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="C#" value="cSharp" onChange={ handleLangCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Go" value="goLang" onChange={ handleLangCheckboxChange } />
+          <Checkbox className={ styles.additionalOptsCheckbox } label="JavaScript" value="js" onChange={ handleLangCheckboxChange } checked={ formState.languages.js } />
+          <Checkbox className={ styles.additionalOptsCheckbox } label="TypeScript" value="ts" onChange={ handleLangCheckboxChange } checked={ formState.languages.ts } />
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Python" value="python" onChange={ handleLangCheckboxChange } checked={ formState.languages.python } />
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Ruby" value="ruby" onChange={ handleLangCheckboxChange } checked={ formState.languages.ruby } />
+          <Checkbox className={ styles.additionalOptsCheckbox } label="C#" value="cSharp" onChange={ handleLangCheckboxChange } checked={ formState.languages.cSharp } />
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Go" value="goLang" onChange={ handleLangCheckboxChange } checked={ formState.languages.goLang } />
         </Form.Field>
         <Form.Field>
           <Label className={ styles.additionalOptsLabel } color="purple" content={ "Libraries Used:" } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Bootstrap" value="bootstrap" onChange={ handleLibCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="SemanticUI" value="semanticUI" onChange={ handleLibCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="MaterialUI" value="materialUI" onChange={ handleLibCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="React" value="react" onChange={ handleLibCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Redux" value="redux" onChange={ handleLibCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="ReactNative" value="reactNative" onChange={ handleLibCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="jQuery" value="jquery" onChange={ handleLibCheckboxChange } />
-          <Checkbox className={ styles.additionalOptsCheckbox } label="SocketIO" value="socketIO" onChange={ handleLibCheckboxChange } />
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Bootstrap" value="bootstrap" onChange={ handleLibCheckboxChange } checked={ formState.libraries.bootstrap }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="SemanticUI" value="semanticUI" onChange={ handleLibCheckboxChange } checked={ formState.libraries.semanticUI }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="MaterialUI" value="materialUI" onChange={ handleLibCheckboxChange } checked={ formState.libraries.materialUI }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="React" value="react" onChange={ handleLibCheckboxChange } checked={ formState.libraries.react }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Redux" value="redux" onChange={ handleLibCheckboxChange } checked={ formState.libraries.redux }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="ReactNative" value="reactNative" onChange={ handleLibCheckboxChange } checked={ formState.libraries.reactNative }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="jQuery" value="jquery" onChange={ handleLibCheckboxChange } checked={ formState.libraries.jquery }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="SocketIO" value="socketIO" onChange={ handleLibCheckboxChange } checked={ formState.libraries.socketIO }/>
         </Form.Field>
         <Form.Field>
-          <Label className={ styles.additionalOptsLabel } color="purple" content="Frameworks Used:" onChange={ handleFrameworksCheckboxChange }/>
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Rails" value="rails" onChange={ handleFrameworksCheckboxChange }/>
-          <Checkbox className={ styles.additionalOptsCheckbox } label="NextJS" value="nextJS" onChange={ handleFrameworksCheckboxChange }/>
-          <Checkbox className={ styles.additionalOptsCheckbox } label="GatsbyJS" value="gatsbyJS" onChange={ handleFrameworksCheckboxChange }/>
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Django" value="django" onChange={ handleFrameworksCheckboxChange }/>
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Flask" value="flask" onChange={ handleFrameworksCheckboxChange }/>
-          <Checkbox className={ styles.additionalOptsCheckbox } label="Asp.NET" value="ASP" onChange={ handleFrameworksCheckboxChange }/>
+          <Label className={ styles.additionalOptsLabel } color="purple" content="Frameworks Used:" />
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Rails" value="rails" onChange={ handleFrameworksCheckboxChange } checked={ formState.frameworks.rails }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="NextJS" value="nextJS" onChange={ handleFrameworksCheckboxChange } checked={ formState.frameworks.nextJS }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="GatsbyJS" value="gatsbyJS" onChange={ handleFrameworksCheckboxChange } checked={ formState.frameworks.gatsbyJS }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Django" value="django" onChange={ handleFrameworksCheckboxChange } checked={ formState.frameworks.django }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Flask" value="flask" onChange={ handleFrameworksCheckboxChange } checked={ formState.frameworks.flask }/>
+          <Checkbox className={ styles.additionalOptsCheckbox } label="Asp.NET" value="ASP" onChange={ handleFrameworksCheckboxChange } checked={ formState.frameworks.ASP }/>
         </Form.Field>
         {
-          projectData 
+          projectData
           ?
             <React.Fragment>
               <Form.Field>
                 <AdminFileInput handleUploadPic={ handleUploadProjectImage } />
               </Form.Field>
-              <Form.Field>
-                <ImagePreviewCarousel imageURLs={[]} />
-              </Form.Field>
+              {
+                currentProjectImages && currentProjectImages.length > 0
+                  ?
+                  <Form.Field>
+                    <ImagePreviewCarousel imageURLs={ currentProjectImages } handleDeleteProjectImage={ handleDeleteProjectImage } />
+                  </Form.Field>
+                  :
+                  null
+              }
+              
             </React.Fragment>
           :
             null
@@ -156,11 +173,11 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
         :
         <Form.Field>
           <Label color="teal" content="Challenges:" />
-          <TextArea rows={10} onChange={ handleChallengesChange } />
+          <TextArea rows={10} onChange={ handleChallengesChange } value={ formState.challenges } />
         </Form.Field>
         <Form.Field>
           <Label color="teal" content="Solutions:" />
-          <TextArea rows={10} onChange={ handleSolutionChange } />
+          <TextArea rows={10} onChange={ handleSolutionChange } value={ formState.solution } />
         </Form.Field>
       </Form>
     </Grid.Column>

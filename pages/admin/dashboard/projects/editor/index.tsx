@@ -70,6 +70,7 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({
 
     if (file && firebaseContInstance && JWTToken) {
       try {
+        console.log(73)
         const { imageURL } = await firebaseContInstance.uploadPojectImage(file, dispatch);
         await ProjectActions.handleAddImage({ dispatch, modelId, JWTToken, imageURL, state: projectsState });
       } catch (error) {
@@ -99,10 +100,12 @@ const AdminProjectEditor: React.FunctionComponent<IAdminProjectEditorProps> = ({
         <Grid.Row className={ styles.projectEditorFormRow }>
           <AdminProjectForm  
             projectData={ projectsState.currentSelectedProject } 
+            currentProjectImages={ projectsState.currentProjectImages }
             handleSaveProjectData={ handleSaveProjectData }
             handleMenuCancelBtnclick={ handleMenuCancelBtnClick }
             handleMenuPublishBtnClick={ handleMenuPublicBtnClick }
             handleUploadProjectImage={ handleUploadProjectImage }
+            handleDeleteProjectImage={ handleRemoveProjectImage }
           />
         </Grid.Row>
       </Grid>

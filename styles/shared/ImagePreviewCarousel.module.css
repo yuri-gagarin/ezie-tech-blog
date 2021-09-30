@@ -19,7 +19,15 @@
   border: 2px solid rgb(88, 128, 88);
   border-radius: 5px;
   margin-right: 5px;
+  padding: 15px 0;
 }
-.imageWrapper > img {
-  border-radius: 5px;
+.imageWrapper > div > img {
+  border-radius: 5px !important;
+  cursor: pointer;
+}
+.deleteIcon {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  cursor: pointer;
 }

@@ -121,12 +121,13 @@ export default class ProjectsController extends BasicController implements ICRUD
     const { project_id } = req.params;
     const { imageURL } = req.body;
     const user: IAdmin = req.user as IAdmin;
-
+    console.log(124)
+    console.log(imageURL)
     if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve user accont" ]);
     if (!imageURL || !project_id) return await this.userInputErrorResponse(res, [ "Could not resolve project to delete" ]);
-
+    console.log(127);
     try {
-      const updatedProject: IProject | null = await Project.findOneAndUpdate({ _id: project_id }, { $push: { images: { imageURL } } }, { new: true }).exec()
+      const updatedProject: IProject | null = await Project.findOneAndUpdate({ _id: project_id }, { $push: { images: imageURL as string } }, { new: true }).exec()
       if (updatedProject) {
         return res.status(200).json({
           responseMsg: "Project updated", updatedProject
@@ -135,6 +136,7 @@ export default class ProjectsController extends BasicController implements ICRUD
         return await this.notFoundErrorResponse(res, [ "Project to update was not found" ]);
       }
     } catch (error) {
+      console.log(error);
       return await this.generalErrorResponse(res, { error });
     } 
   }
@@ -148,7 +150,7 @@ export default class ProjectsController extends BasicController implements ICRUD
     if (!imageURL || !project_id) return await this.userInputErrorResponse(res, [ "Could not resolve project to delete" ]);
 
     try {
-      const updatedProject: IProject | null = await Project.findOneAndUpdate({ _id: project_id }, { $pull: { images: { imageURL } } }, { new: true }).exec()
+      const updatedProject: IProject | null = await Project.findOneAndUpdate({ _id: project_id }, { $pull: { images: imageURL as string } }, { new: true }).exec()
       if (updatedProject) {
         return res.status(200).json({
           responseMsg: "Project updated", updatedProject

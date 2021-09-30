@@ -95,6 +95,7 @@ export const generateEmptyProjectsState = (): IProjectState => {
     loading: false,
     currentSelectedProject: null,
     projectsArr: [],
+    currentProjectImages: null,
     error: null,
     errorMessages: null
   };

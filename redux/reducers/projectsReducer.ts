@@ -11,6 +11,7 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
       return {
         ...state,
         currentSelectedProject: action.payload.project,
+        currentProjectImages: [ ...action.payload.project.images ],
         error: null,
         errorMessages: null
       };
@@ -19,6 +20,7 @@ export default function blogPostsReducer(state: IProjectState = initialState, ac
       return {
         ...state,
         currentSelectedProject: action.payload.project,
+        currentProjectImages: null,
         error: null,
         errorMessages: null
       };
