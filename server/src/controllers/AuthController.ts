@@ -1,8 +1,10 @@
+import * as firebaseAdmin from "firebase-admin";
 import User from "../models/User";
 import Admin from "../models/Admin";
-//
+// additional //
 import { issueJWT } from "./PassportController";
 // types 
+import type { Types } from "mongoose";
 import type { Request, Response, CookieOptions } from "express";
 import type { IAdmin } from "../models/Admin";
 import type { IUser } from "../models/User";
@@ -17,6 +19,7 @@ enum LoginCookies {
 export default class AuthController {
   login = async (req: Request, res: Response<LoginResponse | ErrorResponse>): Promise<Response> => {
     const user = req.user as (IUser | IAdmin);
+    let adminFirebaseToken: string;
     // 
     if (!user) return await this.sendErrorRes(res);
     // 
@@ -26,7 +29,17 @@ export default class AuthController {
     //
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
     const cookieOpts: CookieOptions = { maxAge: 3600 * 1000 * 12, httpOnly: true, domain, signed: true };
-    //
+    // generate firebase access token if isAdmin //
+    if (isAdmin) {
+      const userId = (user._id as Types.ObjectId).toHexString();
+      try {
+        adminFirebaseToken = await firebaseAdmin.auth().createCustomToken(userId);
+      } catch (error) {
+        console.log(error);
+        return this.sendErrorRes(res, { status: 500, error, errorMessages: [ "Firebase Error" ] });
+      }
+    }
+
     return (
       res
         .cookie(LoginCookies.JWTToken, token, cookieOpts)
@@ -38,7 +51,8 @@ export default class AuthController {
           userData: { _id, email, firstName, lastName, createdAt, editedAt },
           jwtToken: {
             token, expires
-          }
+          },
+          adminFirebaseAuth: isAdmin ? { adminFirebaseToken, expires: Date.now() + (3600 * 1000) } : null
         })
     );
   } 

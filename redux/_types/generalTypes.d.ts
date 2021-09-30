@@ -5,6 +5,7 @@ import type { GenUserData } from "./users/dataTypes";
 import type { UserAction } from "./users/actionTypes";
 // auth //
 import type { AuthAction } from "./auth/actionTypes";
+import type { IAuthState } from "./auth/dataTypes";
 // projects //
 import type { ProjectAction } from "./projects/actionTypes";
 import type { IProjectState } from "./projects/dataTypes";
@@ -35,19 +36,6 @@ export interface IBlogPostState {
   currentBlogPost: BlogPostData;
   error: any;
   errorMessages: string[] | null;
-};
-export interface IAuthState {
-  status: number | null;
-  loading: boolean;
-  responseMsg: string;
-  loggedIn: boolean;
-  authToken: string;
-  expires: string;
-  isAdmin: boolean;
-  loggedInAt: number | null;
-  currentUser: UserData | AdminData | null;
-  error: any | null;
-  errorMessages: any | string[];
 };
 export type AdminData = {
   _id: string;

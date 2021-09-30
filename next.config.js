@@ -3,7 +3,7 @@ const withTM = require('next-transpile-modules')(['react-markdown',"react-syntax
 module.exports = withTM({
   reactStrictMode: true,
   env: {
-    FIREBASE_API_KEY: "AIzaSyD1I_FwPg7A25m5nf_H6LTCNsXJh8W8mxY?",
+    FIREBASE_API_KEY: "AIzaSyD1I_FwPg7A25m5nf_H6LTCNsXJh8W8mxY",
     FIREBASE_AUTH_DOMAIN: "eezie-tech.firebaseapp.com",
     FIREBASE_PROJECT_ID: "eezie-tech",
     FIREBASE_STORAGE_BUCKET: "eezie-tech.appspot.com",

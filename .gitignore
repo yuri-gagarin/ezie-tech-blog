@@ -34,4 +34,5 @@ yarn-error.log*
 # vercel
 .vercel
 
-server/build
+/server/build
+/server/src/config

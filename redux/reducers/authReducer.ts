@@ -1,4 +1,4 @@
-import type { IAuthState } from "../_types/generalTypes";
+import type { IAuthState } from "../_types/auth/dataTypes";
 import type { AuthAction } from "../_types/auth/actionTypes";
 // 
 import { generateEmptyAuthState} from "../_helpers/mockData";
@@ -26,6 +26,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         expires: action.payload.expires,
         isAdmin: action.payload.isAdmin,
         loggedInAt: action.payload.loggedInAt,
+        firebaseData: action.payload.firebaseData,
         error: null,
         errorMessages: null
       };
@@ -41,6 +42,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         expires: action.payload.expires,
         isAdmin: action.payload.isAdmin,
         loggedInAt: action.payload.loggedInAt,
+        firebaseData: action.payload.firebaseData,
         error: null,
         errorMessages: null
       }
@@ -56,6 +58,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         isAdmin: false,
         loggedIn: false,
         loggedInAt: action.payload.loggedInAt,
+        firebaseData: action.payload.firebaseData,
         error: null,
         errorMessages: null
       };

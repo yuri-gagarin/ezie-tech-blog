@@ -12,6 +12,7 @@ export type LoginResponse = {
   readonly isAdmin: boolean;
   readonly userData: ResUserData | ResAdminData;
   readonly jwtToken: { token: string; expires: string };
+  readonly adminFirebaseAuth: { adminFirebaseToken: string; expires: number } | null;
 };
 
 

@@ -4,18 +4,21 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 dotenv.config();
 // 
-import type { Request, Response } from "express";
 // database and routes //
 import mongoSetup from "./database/mongoSetup";
 import combineRoutes from "./routes/CombineRoutes";
 // passport and auth //
 import PassportController from "./controllers/PassportController";
-import { NextServer } from "next/dist/server/next";
+// firebase //
+import FirebaseServerController from "./controllers/FirebaseController";
 // custom middleware //
 import { checkAndSetUniqueUserId } from "./_helpers/customMiddleware";
+// types //
+import type { NextServer } from "next/dist/server/next";
+import type { Request, Response } from "express";
+
 
 export const PassportContInstance = new PassportController().initialize();
-
 /*
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -67,6 +70,7 @@ class Server {
     this.configureNextApp();
     this.configureServer();
     this.configureRouter();
+    this.launchFirebaseAdmin();
   }
 
   public async init(): Promise<any> {
@@ -106,6 +110,14 @@ class Server {
   }
   private async configureDB(): Promise<any> {
     return await mongoSetup();
+  }
+  private launchFirebaseAdmin(): void {
+    try {
+      new FirebaseServerController();
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
   }
 };
 

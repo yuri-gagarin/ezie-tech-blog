@@ -11,13 +11,17 @@ import type { LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes"
 // helpers //
 import { processAxiosError } from '../_helpers/dataHelpers';
 
+// TODO //
+// rewrite as a class //
+// ALex? //
+
 const authAPIRequest = (): AuthAPIRequest => {
   return {
     type: "AuthAPIRequest",
     payload: { loading: true }
   };
 };
-const authLoginSuccess = (data: { status: number; responseMsg: string; authToken: string; expires: string; isAdmin: boolean; currentUser: UserData | AdminData }): AuthLoginSuccess => {
+const authLoginSuccess = (data: { status: number; responseMsg: string; authToken: string; expires: string; isAdmin: boolean; currentUser: UserData | AdminData; firebaseData: { adminFirebaseToken: string; expires: number } | null; }): AuthLoginSuccess => {
   return {
     type: "AuthLoginSuccess",
     payload: { ...data, loading: false, loggedIn: true , loggedInAt: Date.now() }
@@ -26,13 +30,13 @@ const authLoginSuccess = (data: { status: number; responseMsg: string; authToken
 const authLogoutSuccess = (data: { status: number; responseMsg: string; currentUser: null }): AuthLogoutSuccess => {
   return {
     type: "AuthLogoutSuccess",
-    payload: { ...data, loading: false, loggedIn: false, authToken: "", expires: "", loggedInAt: null }
+    payload: { ...data, loading: false, loggedIn: false, authToken: "", expires: "", loggedInAt: null, firebaseData: null }
   };
 };
 const authRegisterSuccess = (data: { status: number; responseMsg: string; currentUser: UserData; authToken: string; expires: string; isAdmin: boolean }): AuthRegisterSuccess => {
   return {
     type: "AuthRegisterSuccess",
-    payload: { ...data, loading: false, loggedIn: true, loggedInAt: Date.now() }
+    payload: { ...data, loading: false, loggedIn: true, loggedInAt: Date.now(), firebaseData: null }
   };
 };
 const authFailure = (data: { status: number; responseMsg: string; error: any; errorMessages: string[] }): AuthFailure => {
@@ -54,8 +58,8 @@ export class AuthActions {
     try {
       const response: AxiosResponse<LoginRes> = await axios(axiosOpts);
       const { status, data } = response;
-      const { responseMsg, jwtToken, userData, isAdmin } = data;
-      return dispatch(authLoginSuccess({ status, responseMsg, isAdmin, authToken: jwtToken.token, expires: jwtToken.expires, currentUser: userData }));
+      const { responseMsg, jwtToken, userData, isAdmin, adminFirebaseAuth } = data;
+      return dispatch(authLoginSuccess({ status, responseMsg, isAdmin, authToken: jwtToken.token, expires: jwtToken.expires, currentUser: userData, firebaseData: adminFirebaseAuth }));
     } catch (error) {
       throw error;
     }
@@ -96,7 +100,7 @@ export class AuthActions {
     return dispatch({
       type: "ClearLoginState",
       payload: {
-        loggedIn: false, isAdmin: false, authToken: "", expires: "", loggedInAt: null, currentUser: null
+        loggedIn: false, isAdmin: false, authToken: "", expires: "", loggedInAt: null, currentUser: null, firebaseData: null
       }
     });
   }

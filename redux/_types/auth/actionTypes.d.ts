@@ -20,6 +20,7 @@ export type AuthLoginSuccess = {
     expires: string;
     currentUser: AdminData | UserData;
     loggedInAt: number;
+    firebaseData: { adminFirebaseToken: string; expires: number } | null;
   };
 };
 
@@ -35,6 +36,7 @@ export type AuthRegisterSuccess = {
     expires: string;
     currentUser: UserData;
     loggedInAt: number;
+    firebaseData: null;
   };
 };
 
@@ -49,6 +51,7 @@ export type AuthLogoutSuccess = {
     expires: string;
     currentUser: null;
     loggedInAt: null;
+    firebaseData: null;
   };
 };
 
@@ -61,6 +64,7 @@ export type ClearLoginState = {
     expires: string;
     currentUser: null;
     loggedInAt: null;
+    firebaseData: null;
   };
 };
 

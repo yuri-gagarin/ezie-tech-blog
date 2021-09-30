@@ -1,7 +1,8 @@
 import type { BlogPostData } from "../_types/blog_posts/dataTypes";
-import type { IAuthState, IBlogPostState, IUserState } from "../_types/generalTypes";
-import { IProjectState } from "../_types/projects/dataTypes";
-import { UserData } from "../_types/users/dataTypes";
+import type { IBlogPostState, IUserState } from "../_types/generalTypes";
+import type { IAuthState } from "../_types/auth/dataTypes";
+import type { IProjectState } from "../_types/projects/dataTypes";
+import type { UserData } from "../_types/users/dataTypes";
 
 export const generateEmptyBlogPost = (): BlogPostData => {
   return {
@@ -79,6 +80,7 @@ export const generateEmptyAuthState = (): IAuthState => {
     loggedIn: false,
     authToken: "",
     expires: "",
+    firebaseData: null,
     loggedInAt: null,
     isAdmin: false,
     currentUser: null,

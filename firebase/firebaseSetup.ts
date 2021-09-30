@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, deleteObject, getDownloadURL } from "firebase/storage";
+import { getAuth, signInWithCustomToken } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 //
 import type { FirebaseApp, FirebaseOptions } from "firebase/app";
@@ -32,13 +33,15 @@ export default class FirebaseController {
     this.initializeStorage();
   } 
 
-  public async uploadPojectImage(imageFile: File, dispatch: Dispatch<ProjectAction>): Promise<{ imageURL: string; snapshot: UploadResult }> {
+  public async uploadPojectImage(imageFile: File, firebaseToken: string, dispatch: Dispatch<ProjectAction>): Promise<{ imageURL: string; snapshot: UploadResult }> {
     const dateStamp: string = Date.now().toString();
     const imagePath = `/project_images/${dateStamp}_${imageFile.name}`;
     const projectImagesRef = ref(this.firebaseStorage, imagePath);
-    
+
     dispatch({ type: "ProjectsAPIRequest", payload: { loading: true } });
     try {
+      const auth = getAuth(this.app);
+      await signInWithCustomToken(auth, firebaseToken);
       const snapshot = await uploadBytes(projectImagesRef, imageFile);
       const imageURL = await getDownloadURL(projectImagesRef);
       return {
@@ -46,15 +49,20 @@ export default class FirebaseController {
       }
     }
     catch (error) {
+      console.log("Firebase error");
+      console.log(error);
       throw error;
     }
   }
   public async removePojectImage(imageURL: string, dispatch: Dispatch<ProjectAction>): Promise<any> {
       const imgRef = ref(this.firebaseStorage, imageURL);
+      dispatch({ type: "ProjectsAPIRequest", payload: { loading: true } });
       try {
         await deleteObject(imgRef)
         return true;
       } catch (error) {
+        console.log("Firebase error");
+        console.log(error);
         throw error;
       }
   }
