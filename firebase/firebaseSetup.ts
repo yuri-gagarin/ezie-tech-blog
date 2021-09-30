@@ -33,7 +33,8 @@ export default class FirebaseController {
   } 
 
   public async uploadPojectImage(imageFile: File, dispatch: Dispatch<ProjectAction>): Promise<{ imageURL: string; snapshot: UploadResult }> {
-    const imagePath = `/project_images/${imageFile.name}`;
+    const dateStamp: string = Date.now().toString();
+    const imagePath = `/project_images/${dateStamp}_${imageFile.name}`;
     const projectImagesRef = ref(this.firebaseStorage, imagePath);
     
     dispatch({ type: "ProjectsAPIRequest", payload: { loading: true } });
@@ -50,7 +51,12 @@ export default class FirebaseController {
   }
   public async removePojectImage(imageURL: string, dispatch: Dispatch<ProjectAction>): Promise<any> {
       const imgRef = ref(this.firebaseStorage, imageURL);
-      console.log(imgRef);
+      try {
+        await deleteObject(imgRef)
+        return true;
+      } catch (error) {
+        throw error;
+      }
   }
 
   private initialize(): void {

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Button, Icon } from 'semantic-ui-react';
 // styles //
-import styles from "@/styles/admin/forms/AdminFileInput.module.css";
+// import styles from "@/styles/admin/forms/AdminFileInput.module.css";
 
 interface IAdminFileInputProps {
+  loading: boolean;
   handleUploadPic(file: File): void;
 }
 
@@ -11,7 +12,7 @@ type LocalState = {
   file: File | null;
 }
 
-export const AdminFileInput: React.FunctionComponent<IAdminFileInputProps> = ({ handleUploadPic }): JSX.Element => {
+export const AdminFileInput: React.FunctionComponent<IAdminFileInputProps> = ({ loading, handleUploadPic }): JSX.Element => {
   const [ localState, setLocalState ] = React.useState<LocalState>({ file: null });
   const fileInputRef: React.MutableRefObject<HTMLInputElement> | null = React.useRef<HTMLInputElement>(null);
 
@@ -36,7 +37,7 @@ export const AdminFileInput: React.FunctionComponent<IAdminFileInputProps> = ({ 
             <Icon name="remove" color="orange" />
             Cancel
           </Button>
-          <Button color="green" onClick={ handleUpload }>
+          <Button color="green" onClick={ handleUpload } loading={ loading }>
             <Icon name="upload" />
             Upload
           </Button>

@@ -12,6 +12,6 @@ module.exports = withTM({
     FIREBASE_MEASUREMENT_ID: "G-DEYE4BE588"
   },
   images: {
-    domains: [ "picsum.photos" ]
+    domains: [ "picsum.photos", "firebasestorage.googleapis.com" ]
   }
 });

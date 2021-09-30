@@ -13,6 +13,7 @@ import styles from "@/styles/admin/projects/AdminProjectForm.module.css";
 import { validateProjectForm } from "@/components/_helpers/validators";
 
 
+/*
 const mockURLS = [
   "https://picsum.photos/200/300",
   "https://picsum.photos/200/300",
@@ -22,9 +23,10 @@ const mockURLS = [
   "https://picsum.photos/200/300",
   "https://picsum.photos/200/300"
 ];
-
+*/
 
 interface IAdminProjectFormProps {
+  loading: boolean;
   projectData: ProjectData | null;
   currentProjectImages: string[] | null;
   handleSaveProjectData(data: FormState): Promise<any>;
@@ -49,7 +51,7 @@ type FormState = {
   solution: string;
 };
 
-export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> = ({ projectData, currentProjectImages, handleSaveProjectData, handleMenuCancelBtnclick, handleMenuPublishBtnClick, handleUploadProjectImage, handleDeleteProjectImage }): JSX.Element => {
+export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> = ({ loading, projectData, currentProjectImages, handleSaveProjectData, handleMenuCancelBtnclick, handleMenuPublishBtnClick, handleUploadProjectImage, handleDeleteProjectImage }): JSX.Element => {
   // local form state //
   const [ formState, setFormState ] = React.useState<FormState>({
     title: projectData ? projectData.title : "",
@@ -155,13 +157,13 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
           ?
             <React.Fragment>
               <Form.Field>
-                <AdminFileInput handleUploadPic={ handleUploadProjectImage } />
+                <AdminFileInput loading={ loading } handleUploadPic={ handleUploadProjectImage } />
               </Form.Field>
               {
                 currentProjectImages && currentProjectImages.length > 0
                   ?
                   <Form.Field>
-                    <ImagePreviewCarousel imageURLs={ /*currentProjectImages */ mockURLS } handleDeleteProjectImage={ handleDeleteProjectImage } />
+                    <ImagePreviewCarousel imageURLs={ currentProjectImages } handleDeleteProjectImage={ handleDeleteProjectImage } />
                   </Form.Field>
                   :
                   null
