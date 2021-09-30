@@ -13,6 +13,7 @@ interface ImagePreviewCarouselProps {
 export const ImagePreviewCarousel: React.FunctionComponent<ImagePreviewCarouselProps> = ({ imageURLs, handleDeleteProjectImage }): JSX.Element => {
   return (
     <div className={ styles.carouselWrapper }>
+      <div className={ styles.imagesWrapper }>
       {
         imageURLs.map((url, i) => {
           return (
@@ -23,6 +24,7 @@ export const ImagePreviewCarousel: React.FunctionComponent<ImagePreviewCarouselP
           )
         })
       }
+      </div>
     </div>
   );
 };

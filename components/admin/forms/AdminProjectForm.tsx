@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox, Grid, Label, Form, TextArea } from "semantic-ui-react"; 
+import { Checkbox, Grid, Label, Form, TextArea, Container } from "semantic-ui-react"; 
 // additional components //
 import { AdminFileInput } from '@/components/admin/forms/AdminFileInput';
 import { AdminProjectsMenu } from "@/components/admin/projects/AdminProjectsMenu";
@@ -113,6 +113,7 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
         menuCancelBtnClick={ handleMenuCancelBtnclick }
         menuPublishClick={ handleMenuPublishBtnClick }
       />
+      <Container style={{ border: "5px solid red", width: "100vw"}}>
       <Form className={ styles.projectFormStyle }>
         <Form.Field width="16"> 
           <Label color="grey" content="Project Title:" />
@@ -160,7 +161,7 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
                 currentProjectImages && currentProjectImages.length > 0
                   ?
                   <Form.Field>
-                    <ImagePreviewCarousel imageURLs={ currentProjectImages } handleDeleteProjectImage={ handleDeleteProjectImage } />
+                    <ImagePreviewCarousel imageURLs={ /*currentProjectImages */ mockURLS } handleDeleteProjectImage={ handleDeleteProjectImage } />
                   </Form.Field>
                   :
                   null
@@ -180,6 +181,7 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
           <TextArea rows={10} onChange={ handleSolutionChange } value={ formState.solution } />
         </Form.Field>
       </Form>
+      </Container>
     </Grid.Column>
   );
 };

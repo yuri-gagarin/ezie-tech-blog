@@ -1,18 +1,21 @@
 .carouselWrapper {
   position: relative;
   display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
   height: 300px;
   width: 100%;
   overflow-x: scroll;
-  border: 2px solid lightblue;
+  border: 10px solid lightblue;
   border-radius: 5px;
   padding: 0 1em;
 }
+.imagesWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
 .imageWrapper {
-  display: block;
   position: relative;
   height: 250px;
   width: 250px;
