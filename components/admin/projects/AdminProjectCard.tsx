@@ -8,9 +8,10 @@ import type { ProjectData } from '@/redux/_types/projects/dataTypes';
 interface IAdminProjectCardProps {
   projectData: ProjectData
   openProject(projectId: string): void;
+  editProject(projectId: string): void;
 }
 
-export const AdminProjectCard: React.FunctionComponent<IAdminProjectCardProps> = ({ projectData, openProject }): JSX.Element => {
+export const AdminProjectCard: React.FunctionComponent<IAdminProjectCardProps> = ({ projectData, openProject, editProject }): JSX.Element => {
   const { _id: projectId, title, description } = projectData;
   return (
     <Card fluid>
@@ -21,7 +22,7 @@ export const AdminProjectCard: React.FunctionComponent<IAdminProjectCardProps> =
       <Card.Content>
         <Button.Group>
           <Button icon="file" content="Open" onClick={ () => openProject(projectId) } />
-          <Button icon="edit" content="Edit" />
+          <Button icon="edit" content="Edit" onClick={ () => editProject(projectId) }/>
         </Button.Group>
       </Card.Content>
     </Card>

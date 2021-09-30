@@ -3,6 +3,7 @@ import { Checkbox, Grid, Label, Form, TextArea } from "semantic-ui-react";
 // additional components //
 import { AdminFileInput } from '@/components/admin/forms/AdminFileInput';
 import { AdminProjectsMenu } from "@/components/admin/projects/AdminProjectsMenu";
+import { ImagePreviewCarousel } from '@/components/shared/ImagePreviewCarousel';
 // types //
 import type { CheckboxProps, TextAreaProps } from "semantic-ui-react";
 import type { ProjectData } from 'redux/_types/projects/dataTypes';
@@ -16,7 +17,7 @@ interface IAdminProjectFormProps {
   handleSaveProjectData(data: FormState): Promise<any>;
   handleMenuCancelBtnclick(): void;
   handleMenuPublishBtnClick(): Promise<boolean>;
-  handleUploadProjectImage(file: File): void;
+  handleUploadProjectImage(file: File): Promise<boolean>;
 }
 type FormState = {
   title: string;
@@ -138,9 +139,21 @@ export const AdminProjectForm: React.FunctionComponent<IAdminProjectFormProps> =
           <Checkbox className={ styles.additionalOptsCheckbox } label="Flask" value="flask" onChange={ handleFrameworksCheckboxChange }/>
           <Checkbox className={ styles.additionalOptsCheckbox } label="Asp.NET" value="ASP" onChange={ handleFrameworksCheckboxChange }/>
         </Form.Field>
-        <Form.Field>
-          <AdminFileInput handleUploadPic={ handleUploadProjectImage } />
-        </Form.Field>
+        {
+          projectData 
+          ?
+            <React.Fragment>
+              <Form.Field>
+                <AdminFileInput handleUploadPic={ handleUploadProjectImage } />
+              </Form.Field>
+              <Form.Field>
+                <ImagePreviewCarousel imageURLs={[]} />
+              </Form.Field>
+            </React.Fragment>
+          :
+            null
+        }
+        :
         <Form.Field>
           <Label color="teal" content="Challenges:" />
           <TextArea rows={10} onChange={ handleChallengesChange } />

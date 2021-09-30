@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Card, Grid } from "semantic-ui-react";
 // next imports //
+import { useRouter } from 'next/router';
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
 import { ProjectActions } from "@/redux/actions/projectActions";
@@ -14,7 +15,7 @@ import type { Dispatch } from "redux";
 import type { ProjectAction } from "@/redux/_types/projects/actionTypes";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 // styles //
-import styles from "@/styles/projects/AdminProjectsMainPage.module.css";
+import styles from "@/styles/admin/projects/AdminProjectsMainPage.module.css";
 // helpers //
 import { verifyAdminToken } from "@/components/_helpers/adminComponentHelpers";
 
@@ -53,6 +54,7 @@ const AdminProjectsMainPage: React.FunctionComponent<IAdminProjectsMainPageProps
   // local state and hooks //
   const [ projectPreviewOpen, setProjectPreviewOpen ] = React.useState<boolean>(false);
   // next hooks //
+  const router = useRouter();
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<ProjectAction>>();
   const { projectsState } = useSelector((state: IGeneralState) => state);
@@ -64,6 +66,12 @@ const AdminProjectsMainPage: React.FunctionComponent<IAdminProjectsMainPageProps
       setProjectPreviewOpen(true);
     }
   };
+  const handleGoToEditProject = (projectId: string): void => {
+    if (projectId) { 
+      ProjectActions.handleSetCurrentProjData({ dispatch, projectId, state: projectsState });
+      router.push("/admin/dashboard/projects/editor");
+    }
+  }
   const closePreviewModal = (): void => {
     if(ProjectActions.handleClearCurrentProjData({ dispatch })) {
       setProjectPreviewOpen(false);
@@ -91,13 +99,13 @@ const AdminProjectsMainPage: React.FunctionComponent<IAdminProjectsMainPageProps
         projectData={ currentSelectedProject } 
         closePreviewModal={ closePreviewModal }
       />
-      <Grid divided stackable padded columns={2}>
+      <Grid divided stackable padded columns={2} className={ styles.mainGrid }>
         <Grid.Row style={{ height: "50px" }}>
           <Grid.Column width={16} textAlign="center">
             <h3>Projects</h3>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row style={{ height: "calc(100vh - 50px)"}}>
+        <Grid.Row style={{ minHeight: "calc(100vh - 50px)"}}>
           <Grid.Column width={"8"} textAlign="center" style={{ height: "100%" }}>
             <h4>Published</h4>
             <Card.Group>
@@ -108,6 +116,7 @@ const AdminProjectsMainPage: React.FunctionComponent<IAdminProjectsMainPageProps
                       key={ projectData._id }
                       projectData={ projectData }
                       openProject={ handleOpenProject }
+                      editProject={ handleGoToEditProject }
                     />
                   )
                 })

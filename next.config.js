@@ -10,5 +10,8 @@ module.exports = withTM({
     FIREBASE_MESSAGING_SENDER_ID: "684598146249",
     FIREBASE_APP_ID: "1:684598146249:web:6ce3fefd1d41ef1cff8918",
     FIREBASE_MEASUREMENT_ID: "G-DEYE4BE588"
+  },
+  images: {
+    domains: [ "picsum.photos" ]
   }
 });
