@@ -16,7 +16,7 @@ export const HomeProjects: React.FunctionComponent<IProjectsHomeProps> = (props)
         <div className={ projectsHomeStyles.projectsLeft }> 
           <p className={ projectsHomeStyles.projectsLeftContent }>
             Every project, every idea, every case is different. There is not one single language, not one single framework to tackle every use case.
-            We do love our favorites of course but always keep an open mind and learn and keep up to date. The indusrty only moves forward and we with it.
+            The indusrty only moves forward and we with it.
           </p>
         </div>
         <div className={ projectsHomeStyles.projectsRight }>
