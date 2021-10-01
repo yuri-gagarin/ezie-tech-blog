@@ -1,9 +1,10 @@
 .mobileSidebarMenuDiv {
-  width: 100%;
-  height: 50px;
+  height: 55px;
+  margin-top: 5px;
+  padding: 0 5px;
 }
 .mobileSidebarMenu {
-  border-radius: 0;
+  border-radius: 0 !important;
   height: 100%;
 }
 .sidebarMain {
@@ -15,5 +16,5 @@
 }
 
 .mobileMenuPusher {
-  width: 101vw !important;
+  margin-left: 10px !important;
 }

@@ -45,3 +45,27 @@
 .loginDivBottom > a {
   font-size: 1.25em;
 }
+
+@media only screen and (max-width: 425px) {
+  .loginWrapper {
+    justify-content: flex-start;
+  }
+  .passwordField > span {
+    position: absolute;
+    transform: translateY(0);
+    bottom: 10px;
+    left: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  .loginFormContainer {
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+    border: none;
+  }
+  .textInput {
+    width: 100% !important;
+  }
+}

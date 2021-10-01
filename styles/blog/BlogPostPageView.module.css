@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 1px solid green;
 }
 
 .blogPostPageTitle {
@@ -109,4 +110,7 @@
   .blogPostLikesDiv {
     width: 100%;
   }
+}
+@media only screen and (max-width: 550px) {
+  
 }

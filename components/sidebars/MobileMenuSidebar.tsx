@@ -48,15 +48,18 @@ export const MobileMenuSidebar: React.FunctionComponent<IMobileMenuSidebarProps>
         break;
       }
     }
-  }
+  };
+  const handleGoToLogin = (): void => {
+    router.push("/login");
+  };
 
   return (
-    <Sidebar.Pushable as={Segment}>
+    <Sidebar.Pushable as={Segment} >
       <div className={ styles.mobileSidebarMenuDiv }>
         <Menu inverted color="violet" className={ styles.mobileSidebarMenu } fluid>
           <Menu.Item content="Menu" icon="options" as="a" onClick={ () => setVisible(true) }/>
           
-          <Menu.Item position="right" as="a" icon="user" content="Login" />
+          <Menu.Item position="right" as="a" icon="user" content="Login" onClick={ handleGoToLogin } />
        
         </Menu>
       </div>
@@ -96,7 +99,7 @@ export const MobileMenuSidebar: React.FunctionComponent<IMobileMenuSidebarProps>
         </Menu.Item>
       </Sidebar>
 
-      <Sidebar.Pusher className={ styles.mobileMenuPusher }>
+      <Sidebar.Pusher className={ styles.mobileMenuPusher } > 
         { children }
       </Sidebar.Pusher>
     </Sidebar.Pushable>

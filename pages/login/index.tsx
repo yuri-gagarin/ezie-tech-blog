@@ -5,19 +5,19 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // redux and actions //
 import { useDispatch, useSelector } from "react-redux";
-import { AuthActions } from "../../redux/actions/authActions";
+import { AuthActions } from "@/redux/actions/authActions";
 // additional components //
-import { GenErrorModal } from "../../components/modals/GenErrorModal";
+import { GenErrorModal } from "@/components/modals/GenErrorModal";
 // style //
-import styles from "../../styles/login/LoginPage.module.css";
+import styles from "@/styles/login/LoginPage.module.css";
 // types //
 import type { GetStaticProps, GetStaticPropsResult } from "next";
 import type { Dispatch } from "redux";
 import type { InputOnChangeData } from "semantic-ui-react";
-import type { IGeneralState } from "../../redux/_types/generalTypes";
-import type { AuthAction } from '../../redux/_types/auth/actionTypes';
+import type { IGeneralState } from "@/redux/_types/generalTypes";
+import type { AuthAction } from '@/redux/_types/auth/actionTypes';
 // helpers //
-import { loginFormValidator } from "../../components/_helpers/validators";
+import { loginFormValidator } from "@/components/_helpers/validators";
 
 interface ILoginPageProps {
 
@@ -114,11 +114,11 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
         <Form>
           <Form.Field inline error={ loginFormState.emailError ? true : false }>
             <Label style={{ width: "75px" }} content="Email: " />
-            <Input icon="mail"  iconPosition="left" placeholder="Email..." onChange={ handleEmaiInputChange } />
+            <Input className={ styles.textInput } icon="mail"  iconPosition="left" placeholder="Email..." onChange={ handleEmaiInputChange } />
           </Form.Field>
           <Form.Field error={ loginFormState.passwordError ? true : false } inline className={ styles.passwordField }>
             <Label style={{ width: "75px" }} content="Password: " />
-            <Input placeholder="Password..." type={showPassword ? "text": "password"} onChange={ handlePasswordChange } />
+            <Input className={ styles.textInput } placeholder="Password..." type={showPassword ? "text": "password"} onChange={ handlePasswordChange } />
             <Popup
               content={`${showPassword ? "Hide" : "Show"} password`}
               trigger={ <span><Icon onClick={ handlePasswordHideClick } name="hide" /></span> }

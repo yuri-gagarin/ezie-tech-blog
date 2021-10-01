@@ -7,18 +7,18 @@ import { useRouter } from "next/router";
 // redux and actions //
 import type { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthActions } from "../../redux/actions/authActions";
+import { AuthActions } from "@/redux/actions/authActions";
 // additional components //
-import { GenErrorModal } from "../../components/modals/GenErrorModal";
+import { GenErrorModal } from "@/components/modals/GenErrorModal";
 // style //
-import styles from "../../styles/register/RegisterPage.module.css";
+import styles from "@/styles/register/RegisterPage.module.css";
 // types //
 import type { InputOnChangeData } from "semantic-ui-react";
-import type { IAuthState, IGeneralState } from "../../redux/_types/generalTypes";
-import type { AuthAction } from '../../redux/_types/auth/actionTypes';
+import type { IGeneralState } from "@/redux/_types/generalTypes";
+import type { AuthAction } from '@/redux/_types/auth/actionTypes';
 // helpers //
-import { isDefined } from "../../components/_helpers/displayHelpers";
-import { registerFormValidator } from "../../components/_helpers/validators";
+import { isDefined } from "@/components/_helpers/displayHelpers";
+import { registerFormValidator } from "@/components/_helpers/validators";
 
 interface IRegisterPageProps {
 
@@ -128,11 +128,11 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
         <Form>
           <Form.Field inline error={ isDefined(registerFormState.emailError) }>
             <Label style={{ width: "75px" }} content="Email: " />
-            <Input icon="mail"  iconPosition="left" placeholder={`${ registerFormState.emailError ? registerFormState.emailError : "Email..." }`} onChange={ handleEmaiInputChange } />
+            <Input className={ styles.textInput } icon="mail"  iconPosition="left" placeholder={`${ registerFormState.emailError ? registerFormState.emailError : "Email..." }`} onChange={ handleEmaiInputChange } />
           </Form.Field>
           <Form.Field inline error={ isDefined(registerFormState.passwordError) } className={ styles.passwordField }>
             <Label style={{ width: "75px" }} content="Password: " />
-            <Input placeholder={`${ registerFormState.passwordError ? registerFormState.passwordError : "Password..." }`} type={showPassword ? "text": "password"} onChange={ handlePasswordChange } />
+            <Input className={ styles.textInput } placeholder={`${ registerFormState.passwordError ? registerFormState.passwordError : "Password..." }`} type={showPassword ? "text": "password"} onChange={ handlePasswordChange } />
             <Popup
               content={`${showPassword ? "Hide" : "Show"} password`}
               trigger={ <span><Icon onClick={ handlePasswordHideClick } name={ showPassword ? "hide" : "eye" }/></span> }
@@ -141,7 +141,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
           </Form.Field>
           <Form.Field inline error={ isDefined(registerFormState.confirmPasswordError) } className={ styles.passwordConfField }>
             <Label style={{ width: "75px" }} content="Confirm Password: " />
-            <Input placeholder={`${ registerFormState.confirmPasswordError ? registerFormState.confirmPasswordError : "Retype password..." }`} type={showPassword ? "text": "password"} onChange={ handleConfirmPasswordChange }/>
+            <Input className={ styles.textInput } placeholder={`${ registerFormState.confirmPasswordError ? registerFormState.confirmPasswordError : "Retype password..." }`} type={showPassword ? "text": "password"} onChange={ handleConfirmPasswordChange }/>
             <Popup
               content={`${showPassword ? "Hide" : "Show"} password`}
               trigger={ <span><Icon onClick={ handlePasswordConfirmHideClick } name={ showPasswordConfirm ? "hide" : "eye" }/></span> }

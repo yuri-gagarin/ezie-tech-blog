@@ -1,5 +1,4 @@
 .layoutWrapper {
   display: flex !important;
   flex-direction: column !important;
-  border: 10px solid green;
 }
