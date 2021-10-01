@@ -44,6 +44,8 @@ export const setDefaultBlogPosts = (blogPostData: BlogPostData[]): BlogPostData[
         slug: "slug",
         keywords: [ "default" ],
         live: true,
+        likes: [],
+        numOflikes: 0,
         createdAt: new Date(Date.now()).toISOString(),
         editedAt: new Date(Date.now()).toISOString(),
       }

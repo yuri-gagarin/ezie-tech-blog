@@ -1,0 +1,19 @@
+.mobileSidebarMenuDiv {
+  width: 100%;
+  height: 50px;
+}
+.mobileSidebarMenu {
+  border-radius: 0;
+  height: 100%;
+}
+.sidebarMain {
+  width: 100% !important;
+  background-color: #6435c9 !important;
+}
+.closeMenuBtn {
+  background-color: #390d99 !important;
+}
+
+.mobileMenuPusher {
+  width: 101vw !important;
+}
