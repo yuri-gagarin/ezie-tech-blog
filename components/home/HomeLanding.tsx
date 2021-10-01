@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Grid } from "semantic-ui-react";
+// addtional imports //
+import { MainTitle } from "@/components/headers/MainTitle";
 // styles //
-import homeLandingStyle from "../../styles/home/HomeLanding.module.css";
+import homeLandingStyle from "@/styles/home/HomeLanding.module.css";
 
 interface IHomeLandingProps {
 
@@ -10,10 +12,7 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = (props): 
   return (
     <Grid.Row className={ homeLandingStyle.wrapperRow } >
       <div className={ homeLandingStyle.rowLeft }> 
-        <div className={ homeLandingStyle.logoDiv }>
-          <div>Eezie</div>
-          <div>Tech</div>
-        </div>
+        <MainTitle />
       </div>
       <div className={ homeLandingStyle.rowRight }> 
         <div className={ homeLandingStyle.topRight }>
@@ -32,4 +31,9 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = (props): 
     </Grid.Row>
   );
 };
-
+/*
+<div className={ homeLandingStyle.logoDiv }>
+  <div>Eezie</div>
+  <div>Tech</div>
+</div>
+*/
