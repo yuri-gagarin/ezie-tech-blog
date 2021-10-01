@@ -101,3 +101,12 @@
     -webkit-text-stroke: 1px white;
   }
 }
+
+@media only screen and (max-width: 768px) {
+  .tech {
+    top: 0px;
+  } 
+  .mainTitle {
+    top: -60px;
+  }
+}

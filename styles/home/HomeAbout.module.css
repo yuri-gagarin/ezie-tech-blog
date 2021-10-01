@@ -61,10 +61,17 @@
   }
 }
 @media only screen and (max-width: 768px) {
+  .wrapperRow {
+    height: auto;
+  }
+  .aboutDescriptionDiv {
+    border: none;
+  }
   .descriptionWrapper {
-    width: 100%;
+    width: 100%;    
   }
   .descriptionContent {
     font-size: 1em;
+    text-align: center;
   }
 }

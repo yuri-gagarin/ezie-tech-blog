@@ -4,23 +4,23 @@ import { Grid, Header, Segment } from "semantic-ui-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 // redux and actions //
-import { wrapper } from "../../redux/store";
+import { wrapper } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { BlogPostActions } from "../../redux/actions/blogPostActions";
+import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additional components //
-import { BlogMainView } from "../../components/blog/BlogMainView";
-import { BlogHeader } from "../../components/blog/BlogHeader";
-import { BlogSideView } from "../../components/blog/BlogSideView";
-import { BlogBottomView } from "../../components/blog/BlogBottomView";
-import { GeneralNotImlementedModal } from "../../components/modals/GenNotImplementedModal";
-import { NeedLoginModal } from "../../components/modals/NeedLoginModal";
+import { BlogMainView } from "@/components/blog/BlogMainView";
+import { BlogHeader } from "@/components/blog/BlogHeader";
+import { BlogSideView } from "@/components/blog/BlogSideView";
+import { BlogBottomView } from "@/components/blog/BlogBottomView";
+import { GeneralNotImlementedModal } from "@/components/modals/GenNotImplementedModal";
+import { NeedLoginModal } from "@/components/modals/NeedLoginModal";
 // styles //
-import blogMainStyle from "../../styles/blog/BlogMainStyle.module.css";
+import blogMainStyle from "@/styles/blog/BlogMainStyle.module.css";
 // types //
-import type { IGeneralState } from "../../redux/_types/generalTypes";
-import type { BlogPostData, SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
+import type { IGeneralState } from "@/redux/_types/generalTypes";
+import type { BlogPostData, SearchCategories } from "@/redux/_types/blog_posts/dataTypes";
 // helpers //
-
+import { useWindowSize } from "@/components/_helpers/monitorWindowSize";
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async(context) => {
   const dispatch = store.dispatch;
@@ -49,6 +49,8 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
   const { authState, blogPostsState } = useSelector((state: IGeneralState) => state);
   const { blogPosts } = blogPostsState;
   const { currentUser, loggedIn, authToken } = authState;
+  // custom hooks //
+  const { width } = useWindowSize();
 
   // action handlers //
   const navigateToBlogPost = (blogPostId: string): void => {
@@ -102,12 +104,19 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
           handleBlogPostLike={ handleBlogPostLike }
         />
       </Grid.Row>
-      <Grid.Row className={ blogMainStyle.blogBottomRow} centered>
-        <Grid.Column largeScreen={12} tablet={14} mobile={16}>
-          <Segment textAlign="center" className={ blogMainStyle.bottomRowTitle }>Read More</Segment>
-          <BlogBottomView blogPosts={ blogPosts } navigateToBlogPost={ navigateToBlogPost } />
-        </Grid.Column>
-      </Grid.Row>
+      {
+        width > 550 
+        ?
+        <Grid.Row className={ blogMainStyle.blogBottomRow} centered>
+          <Grid.Column largeScreen={12} tablet={14} mobile={16}>
+            <Segment textAlign="center" className={ blogMainStyle.bottomRowTitle }>Read More</Segment>
+            <BlogBottomView blogPosts={ blogPosts } navigateToBlogPost={ navigateToBlogPost } />
+          </Grid.Column>
+        </Grid.Row>
+        :
+        null
+      }
+      
     </React.Fragment>
   );
 };

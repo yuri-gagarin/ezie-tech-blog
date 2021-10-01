@@ -25,7 +25,7 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = (props): 
           <span>Learn</span>
           <span>Plan</span>
           <span>Relax</span>
-          <span>Take it &apos;eezie&apos;</span>
+          <span>Take it eezie</span>
         </div>
       </div>
     </Grid.Row>

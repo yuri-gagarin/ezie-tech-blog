@@ -82,6 +82,9 @@
 }
 
 @media screen and (max-width: 768px) {
+  .projectsWrapper {
+    margin-top: 1em;
+  }
   .projectsTitle {
     text-align: center;
     line-height: 1em;
@@ -91,5 +94,22 @@
   }
   .projectsRight, .projectsLeft {
     width: 100%;
+  }
+  .projectsLeftContent {
+    border-radius: 0;
+  }
+  .projectsRight {
+    display: flex;
+    min-height: 200px;
+    flex-direction: column;
+    align-items: center;
+  }
+  .projectsRightTitle, .projectsMoreBtn {
+    position: relative;
+    left: 0;
+    transform: translateX(0);
+  }
+  .projectsRightTitle {
+    min-height: 100px;
   }
 }
