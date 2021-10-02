@@ -17,7 +17,7 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({ children, pageProps }):
   // custom hooks //
   const { width } = useWindowSize();
   return (
-    <Grid className={ layoutStyles.layoutWrapper }>
+    <div className={ layoutStyles.layoutWrapper }>
       {
         width > 550 
         ?
@@ -32,7 +32,7 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({ children, pageProps }):
       }
      
       <Footer />
-    </Grid>
+    </div>
   )
 };
 

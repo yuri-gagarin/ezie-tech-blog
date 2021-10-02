@@ -1,0 +1,9 @@
+.newsMainPageGrid {
+  min-height: 100vh;
+  width: 100%;
+} 
+.headerRow {
+  border: 5px solid green;
+  height: 200px;
+  margin-top: 0px;
+}

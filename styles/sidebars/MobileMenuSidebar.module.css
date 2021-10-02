@@ -1,7 +1,5 @@
 .mobileSidebarMenuDiv {
   height: 55px;
-  margin-top: 5px;
-  padding: 0 5px;
 }
 .mobileSidebarMenu {
   border-radius: 0 !important;
@@ -14,7 +12,8 @@
 .closeMenuBtn {
   background-color: #390d99 !important;
 }
-
+/*
 .mobileMenuPusher {
   margin-left: 10px !important;
 }
+*/

@@ -23,8 +23,7 @@ export default function Home() {
     <React.Fragment>
       <Head>
         <title>Eezie Tech Home</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <meta name="description" content="Eezie tech. We make tech easy for people of all backgrounds." />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />        <meta name="description" content="Eezie tech. We make tech easy for people of all backgrounds." />
         <meta name="keywords" content="programming web development nodej typescript react javascript express"></meta>
       </Head>
       <HomeLanding />
