@@ -16,6 +16,9 @@ import TestRoutes from "../routes/TestRoutes";
 // users //
 import UsersController from "../controllers/UsersController";
 import UserRoutes from "./UserRoutes";
+// rss routes //
+import { RssController } from "../controllers/RssController";
+import RSSRoutes from "./RssRoutes";
 
 export default function combineRoutes(router: Router): void {
   new AuthRoutes(router, new AuthController());
@@ -24,4 +27,5 @@ export default function combineRoutes(router: Router): void {
   new ProjectRoutes(router, new ProjectsController());
   new TestRoutes(router, new TestController());
   new UserRoutes(router, new UsersController());
+  new RSSRoutes(router, new RssController());
 };

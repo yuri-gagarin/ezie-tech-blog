@@ -18,3 +18,11 @@ export const checkAndSetUniqueUserId = (req: Request, res: Response, next: NextF
     next();
   }
 };
+
+export const rssCorsMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  if (req.url.includes("/api/rss")) {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  }
+};
+
