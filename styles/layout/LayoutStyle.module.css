@@ -6,3 +6,7 @@
 .layoutWrapper::-webkit-scrollbar {
   display: none;
 }
+
+.mobileView {
+  margin: 0 !important;
+}

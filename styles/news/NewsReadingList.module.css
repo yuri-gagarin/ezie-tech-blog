@@ -1,0 +1,12 @@
+.newsReadingListSegment, .newsReadingListLogin {
+  display: flex;
+  min-height: calc(45vh);
+  border: 2px solid lightgray;
+  border-radius: 5px;
+}
+
+.newsReadingListLogin {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

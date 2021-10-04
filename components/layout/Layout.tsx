@@ -17,7 +17,7 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({ children, pageProps }):
   // custom hooks //
   const { width } = useWindowSize();
   return (
-    <div className={ layoutStyles.layoutWrapper }>
+    <Grid className={ `${layoutStyles.layoutWrapper} ${ width < 550 ? layoutStyles.mobileView : ""}` }>
       {
         width > 550 
         ?
@@ -32,7 +32,7 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({ children, pageProps }):
       }
      
       <Footer />
-    </div>
+    </Grid>
   )
 };
 

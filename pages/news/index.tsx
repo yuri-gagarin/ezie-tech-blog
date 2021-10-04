@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RssActions } from '@/redux/actions/rssActions';
 // additonal components //
 import { NewsControls } from "@/components/news/NewsControls";
+import { NewsReadingList } from "@/components/news/NewsReadingList";
 // types //
 import type { DropdownItemProps } from "semantic-ui-react";
 import type { Dispatch } from "redux";
@@ -17,7 +18,8 @@ import type { FetchRSSOptions, RSSSources } from '@/redux/_types/rss/dataTypes';
 // styles //
 import styles from "@/styles/news/NewsMainPage.module.css";
 // helpers //
-import { formatTimeString } from "@/components/_helpers/displayHelpers"
+import { formatTimeString } from "@/components/_helpers/displayHelpers";
+import { useWindowSize } from "@/components/_helpers/monitorWindowSize";
 
 interface INewsMainPageProps {
 }
@@ -27,7 +29,9 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   const router = useRouter();
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<RSSAction>>();
-  const { rssState } = useSelector((state: IGeneralState) => state);
+  const { authState, rssState } = useSelector((state: IGeneralState) => state);
+  // custom hooks //
+  const { width } = useWindowSize();
 
   // action handlers //
   const handleGoToArticle = (link: string): void => {
@@ -62,19 +66,17 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   }, [ dispatch ]);
 
   return (
-    <div className={ styles.newsMainPageGrid }>
+    <Grid className={ styles.newsMainPageGrid }>
       <Grid.Row className={ styles.headerRow }>
-        <div>Hello there</div>
+        <h1>RSS News</h1>
       </Grid.Row>
-      <Grid.Row>
-        <NewsControls 
-          source={ rssState.source }
-          handleRSSSourceSelect={ handleRSSSourceSelect } 
-        />
-      </Grid.Row>
-      <Grid.Row>
-        <Grid.Column mobile={ 16 }>
-          <Container>
+      <Grid.Row centered className={ styles.feedRow }>
+        <Grid.Column mobile={16} computer={10}>
+          <NewsControls 
+            source={ rssState.source }
+            handleRSSSourceSelect={ handleRSSSourceSelect } 
+          />
+          <Container className={ styles.feedContainer }>
             <Item.Group divided>
               {
                 rssState.rssFeed.map((rssData) => {
@@ -98,8 +100,18 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
             </Item.Group>
           </Container>
         </Grid.Column>
+        {
+          width > 990 
+          ?
+          <Grid.Column computer={4}>
+            <NewsReadingList authState={ authState } />
+          </Grid.Column>
+          :
+          null
+        }
+        
       </Grid.Row>
-    </div>
+    </Grid>
   );
 };
 
