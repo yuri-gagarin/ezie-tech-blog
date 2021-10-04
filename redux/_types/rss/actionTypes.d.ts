@@ -1,3 +1,5 @@
+import type { RSSData } from "./dataTypes";
+
 export type RSSAPIRequest = {
   type: "RSSAPIRequest";
   payload: {
@@ -12,7 +14,10 @@ export type FetchRSSFeed = {
     responseMsg: string;
     status: number;
     loading: boolean;
-    rssFeed: any[];
+    rssFeed: RSSData[];
+    source: "reddit" | "medium" | "cnet" | "all";
+    logoURL: string;
+    title: string;
     error: null;
     errorMessages: null;
   };

@@ -1,9 +1,10 @@
+import { parseStringPromise } from "xml2js";
 import type { Request, Response } from "express";
 
 export type RSSGetParams = {
   option: "reddit" | "cnet" | "medium";
-  
-}
+};
+export type ResponseSource = "reddit" | "medium" | "cnet";
 export type RSSQueryParams = {
   redditOpts?: {
     filter?: "new" | "hot" | "top";
@@ -19,11 +20,13 @@ export class RssController {
     const { option }: RSSGetParams = req.params as RSSGetParams;
     const { redditOpts, mediumOpts } = req.query as RSSQueryParams;
     let url: string;
+    let responseSource: ResponseSource;
     switch (option) {
       case "reddit": {
         const baseURL = "http://www.reddit.com/r";
         const { subreddit = "technology", filter = "hot" } = redditOpts ? redditOpts : {};
         url = `${baseURL}/${subreddit}/${filter}/.rss`;
+        responseSource = "reddit";
         break;
       }
       case "medium": {
@@ -31,10 +34,12 @@ export class RssController {
         const { topic = "tech", user = null } = mediumOpts ? mediumOpts : {};
         if (user) url = `${baseURL}/@${user}`;
         else url = `${baseURL}/tag/${topic}`;
+        responseSource = "medium";
         break;
       }
       case "cnet": {
         url = "http://www.reddit.com/r/technology/hot/.rss";
+        responseSource = "cnet";
         break;
       }
       default: {

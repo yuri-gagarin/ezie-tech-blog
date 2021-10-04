@@ -23,9 +23,9 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
       (async function(): Promise<any> {
         try {
           const optsData: FetchRSSOptions = { option: "reddit" };
-          const optsDataO: FetchRSSOptions = { option: "medium" };
+          //const optsDataO: FetchRSSOptions = { option: "medium" };
           await RssActions.getRSSFeed({ dispatch, optsData });
-          await RssActions.getRSSFeed({ dispatch, optsData: { option: "medium" } })
+          //await RssActions.getRSSFeed({ dispatch, optsData: { option: "medium" } })
         } catch (error) {
           RssActions.handleRssFeedError(error, dispatch)
         }

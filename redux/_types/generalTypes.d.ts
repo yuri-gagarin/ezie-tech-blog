@@ -9,15 +9,19 @@ import type { IAuthState } from "./auth/dataTypes";
 // projects //
 import type { ProjectAction } from "./projects/actionTypes";
 import type { IProjectState } from "./projects/dataTypes";
+// RSS //
+import type { RSSAction } from "./rss/actionTypes";
+import type { IRSSState } from "./rss/dataTypes";
 
 export interface IGeneralState  {
   authState: IAuthState;
   usersState: IUserState;
   blogPostsState: IBlogPostState;
   projectsState: IProjectState;
+  rssState: IRSSState;
 };
 
-export type IGeneralAppAction = BlogPostAction | UserAction | AuthAction | ProjectAction;
+export type IGeneralAppAction = BlogPostAction | UserAction | AuthAction | ProjectAction | RSSAction;
 
 export interface IUserState {
   status: number | null;
