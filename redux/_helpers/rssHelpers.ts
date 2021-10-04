@@ -57,8 +57,26 @@ export const parseMediumRSSObj = (rssObj: any): RSSNormalizedRes => {
 };
 export const parseCnetRSSObj = (rssObj: any): RSSNormalizedRes => {
   const rssFeed: RSSData[] = [];
-  console.log(rssObj)
-  return { source: "cnet", title: "title", logoURL: "", rssFeed: [] };
+  const data = rssObj.rss.channel[0];
+  const title: string = data.title[0];
+  const logoURL: string = data.image[0].url[0];
+  for (const entry of data.item) {
+    const data: RSSData = {
+      author: {
+        username: entry["dc:creator"] && Array.isArray(entry["dc:creator"]) ? entry["dc:creator"][0] : "Cnet Author",
+        uri: ""
+      },
+      provider: "cnet",
+      thumbnailPreviewURI: entry["media:thumbnail"] &&  Array.isArray( entry["media:thumbnail"]) ? entry["media:thumbnail"][0].$.url : logoURL,
+      articleLink: entry.link[0],
+      title: entry.title[0],
+      category: [ "Technology" ],
+      published: entry.pubDate[0],
+      updated: entry.pubDate[0]
+    };
+    rssFeed.push(data);
+  }
+  return { source: "cnet", title, logoURL, rssFeed };
 };
 
 export const parseRSSResponse = ({ rssObj, source }: { rssObj: any; source: RSSSources }): RSSNormalizedRes => {

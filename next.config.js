@@ -12,6 +12,6 @@ module.exports = withTM({
     FIREBASE_MEASUREMENT_ID: "G-DEYE4BE588"
   },
   images: {
-    domains: [ "picsum.photos", "firebasestorage.googleapis.com", "external-preview.redd.it", "cdn-images-1.medium.com" ]
+    domains: [ "picsum.photos", "firebasestorage.googleapis.com", "external-preview.redd.it", "cdn-images-1.medium.com", "www.cnet.com", "gcp-assets-origin-fly.cnet.com" ]
   }
 });
