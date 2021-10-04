@@ -6,11 +6,14 @@ import { useRouter } from 'next/router';
 // redux imports and actions //
 import { useDispatch, useSelector } from "react-redux";
 import { RssActions } from '@/redux/actions/rssActions';
+// additonal components //
+import { NewsControls } from "@/components/news/NewsControls";
 // types //
+import type { DropdownItemProps } from "semantic-ui-react";
 import type { Dispatch } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 import type { RSSAction } from '@/redux/_types/rss/actionTypes';
-import type { FetchRSSOptions } from '@/redux/_types/rss/dataTypes';
+import type { FetchRSSOptions, RSSSources } from '@/redux/_types/rss/dataTypes';
 // styles //
 import styles from "@/styles/news/NewsMainPage.module.css";
 // helpers //
@@ -29,6 +32,14 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   // action handlers //
   const handleGoToArticle = (link: string): void => {
     router.push(link);
+  };
+  const handleRSSSourceSelect = async (_, data: DropdownItemProps): Promise<any> => {
+    const source = data.value as RSSSources;
+    try {
+      await RssActions.getRSSFeed({ dispatch, optsData: { option: source } });
+    } catch (error) {
+      RssActions.handleRssFeedError(error, dispatch);
+    }
   };
   // END action handlers //
   
@@ -56,6 +67,10 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
         <div>Hello there</div>
       </Grid.Row>
       <Grid.Row>
+        <NewsControls 
+          source={ rssState.source }
+          handleRSSSourceSelect={ handleRSSSourceSelect } 
+        />
       </Grid.Row>
       <Grid.Row>
         <Grid.Column mobile={ 16 }>
