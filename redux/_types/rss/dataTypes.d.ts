@@ -16,6 +16,9 @@ export type RSSData = {
   author: { username?: string; uri?: string };
   thumbnailPreviewURI?: string;
   articleLink: string;
+  category: string[];
+  provider: RSSSources | string;
+  author?: string;
   title: string;
   published: string;
   updated: string;
@@ -32,5 +35,8 @@ export type FetchRSSOptions = {
     topic?: string;
     user?: string;
   };
+  cnetOpts?: {
+    topic?: string;
+  }
 };
 

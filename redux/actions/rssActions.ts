@@ -7,7 +7,7 @@ import type { FetchRSSFeed, RSSAction, SetRSSFeedError, ClearRSSFeedError } from
 import type { FetchRSSOptions } from "@/redux/_types/rss/dataTypes";
 // helpers //
 import { processAxiosError } from "../_helpers/dataHelpers";
-import { parseRedditRSSObj } from "../_helpers/rssHelpers";
+import { parseRSSResponse } from "../_helpers/rssHelpers";
 
 class RSSReduxActions {
 
@@ -24,8 +24,9 @@ class RSSReduxActions {
     dispatch({ type: "RSSAPIRequest", payload: { loading: true, error: null, errorMessages: null } });
     try {
       const { status, statusText: responseMsg, data }: AxiosResponse<any> = await axios(reqOpts);
+
       const rssObj = await parseStringPromise(data);
-      const { source, title, logoURL, rssFeed, } = parseRedditRSSObj(rssObj);
+      const { source, title, logoURL, rssFeed, } = parseRSSResponse({ rssObj, source: option });
       return dispatch({ 
         type: "FetchRSSFeed",  
         payload: { status, responseMsg, source, title, logoURL, rssFeed, error: null, errorMessages: null, loading: false }

@@ -83,12 +83,13 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
                   return (
                     <Item key={ rssData.articleLink } className={ styles.feedItem } >
                       <div className= { styles.feedImage }>
-                        <NextImage src={ rssData.thumbnailPreviewURI ? rssData.thumbnailPreviewURI : "/images/defaults/generic_rss.svg" } height="50px" width="50px" objectFit="cover" />
+                        <NextImage src={ rssData.thumbnailPreviewURI ? rssData.thumbnailPreviewURI : "/images/defaults/generic_rss.svg" } height="50px" width="50px" objectFit="contain" />
                       </div>
                       <Item.Content className={ styles.feedContent}>
                         <Item.Header as="a" onClick={ () => handleGoToArticle(rssData.articleLink) }>
                           { rssData.title }
                         </Item.Header>
+                        <Item.Meta>{`Posted by: ${rssData.author.username || "Anonymous"}`}</Item.Meta>
                         <Item.Meta>
                           {`Published at: ${formatTimeString(rssData.published, { yearMonthDay: true } )}`}
                         </Item.Meta>

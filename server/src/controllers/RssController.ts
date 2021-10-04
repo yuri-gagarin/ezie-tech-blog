@@ -38,7 +38,7 @@ export class RssController {
         break;
       }
       case "cnet": {
-        url = "http://www.reddit.com/r/technology/hot/.rss";
+        url = "https://www.cnet.com/rss/news/";
         responseSource = "cnet";
         break;
       }
@@ -55,7 +55,6 @@ export class RssController {
       const text = await response.text();
       res.setHeader("Content-Type", "application/rss-xml");
       res.send(text);
-      console.log(53)
     } catch (error) {
       console.log("rss error");
       console.log(error)
