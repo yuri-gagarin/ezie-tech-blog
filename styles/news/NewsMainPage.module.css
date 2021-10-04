@@ -7,3 +7,22 @@
   height: 200px;
   margin-top: 0px;
 }
+
+.feedItem {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+}
+.feedImage {
+  display: flex;
+  width: 20%;
+  width: 50px;
+  height: 50px;
+}
+.feedImage > div {
+  border-radius: 5px;
+}
+.feedContent {
+  width: 80% !important;
+  padding: 0 0.5em !important;
+}

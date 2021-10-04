@@ -8,9 +8,12 @@ export const trimStringToSpecificLength = (stringToTrim: string, numOfChars?: nu
 type FormatTimeStringOpts = {
   yearOnly?: boolean;
   yearMonth?: boolean;
+  yearMonthDay?: boolean;
 }
 export const formatTimeString = (timeString: string, opts?: FormatTimeStringOpts): string => {
   const months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+  const days = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
+
   try {
     const date = new Date(timeString);
     if (opts) {
@@ -20,6 +23,12 @@ export const formatTimeString = (timeString: string, opts?: FormatTimeStringOpts
       } else if (opts.yearMonth) {
         const monthIndex = date.getMonth();
         return `${months[monthIndex]} ${date.getFullYear()}`;
+      } else if(opts.yearMonthDay) {
+        const monthIndex = date.getMonth();
+        const dayIndex = date.getDay();
+        const dayOfMonth = date.getDate();
+        const fullYear = date.getFullYear();
+        return `${days[dayIndex]} ${months[monthIndex]} ${dayOfMonth} ${fullYear}`;
       }
     } else {
       return date.toLocaleDateString();
