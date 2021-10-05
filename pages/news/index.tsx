@@ -37,6 +37,12 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   const handleGoToArticle = (link: string): void => {
     router.push(link);
   };
+  const handleAddToReadingList = async () => {
+
+  };
+  const handleRemoveFromReadingList = async () => {
+    
+  }
   const handleRSSSourceSelect = async (_, data: DropdownItemProps): Promise<any> => {
     const source = data.value as RSSSources;
     try {
@@ -94,6 +100,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
                           {`Published at: ${formatTimeString(rssData.published, { yearMonthDay: true } )}`}
                         </Item.Meta>
                       </Item.Content>
+
                     </Item>
                   )
                 })
