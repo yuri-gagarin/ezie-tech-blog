@@ -105,7 +105,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
           width > 990 
           ?
           <Grid.Column computer={4}>
-            <NewsReadingList authState={ authState } />
+            <NewsReadingList readingList={ rssState.readingList } authState={ authState } />
           </Grid.Column>
           :
           null

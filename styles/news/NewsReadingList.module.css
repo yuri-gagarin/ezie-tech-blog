@@ -1,12 +1,56 @@
 .newsReadingListSegment, .newsReadingListLogin {
   display: flex;
-  min-height: calc(100vh - 200px);
+  height: calc(100vh - 200px);
   border: 2px solid lightgray;
-  border-radius: 5px;
+  border-radius: 5px; 
 }
 
 .newsReadingListLogin {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+
+.newsReadingListSegment {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.headerDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+  border-bottom: 1px solid lightgray;
+}
+
+.readingListItemsWrapper {
+  width: 100%;
+  height: calc(100% - 40px);
+  margin-top: 0 !important;
+  overflow-y: scroll;
+}
+.noItemsDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.noItemsDiv > div {
+  text-align: center;
+  padding: 0 0.5em;
+}
+.noItemsDiv > div:nth-child(1) {
+  font-size: 1.5em;
+  font-family: "Righteous";
+}
+.noItemsDiv > div:nth-child(2) {
+  font-size: 1em;
+  font-family: 'Times New Roman', Times, serif;
+  font-style: italic;
+  color: gray;
+  padding: 0.5em;
 }

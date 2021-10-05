@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { Button, Header, Icon, Item, Segment } from "semantic-ui-react";
+import { Button, Header, Icon, Item } from "semantic-ui-react";
 // types //
 import type { IAuthState } from '@/redux/_types/auth/dataTypes';
+import type { RSSData } from '@/redux/_types/rss/dataTypes';
 // styles //
 import styles from "@/styles/news/NewsReadingList.module.css";
 
 interface IFeedReadingListProps {
-  authState: IAuthState
+  authState: IAuthState;
+  readingList: RSSData[];
 }
 
-export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState }): JSX.Element => {
+export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState, readingList }): JSX.Element => {
   const { loggedIn, authToken  } = authState;
   // local state and refs //
   const [ elementFixed, setElementFixed ] = React.useState<boolean>(false);
@@ -36,8 +38,24 @@ export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState }):
     loggedIn && authToken
     ?
     <div className={ `${styles.newsReadingListSegment} ${elementFixed ? styles.fixed : "" }` } ref={ readingListRef }>
-      <Header>My Reading List</Header>
-      <Item.Group>
+      <div className={ styles.headerDiv }>
+        <h3>My Reading List</h3>
+      </div>
+      <Item.Group className={ styles.readingListItemsWrapper }>
+        {
+          readingList.length > 0
+          ?
+          readingList.map((rssData) => {
+            <Item key={ rssData.articleLink }>
+              <Item.Header as="a">{ rssData.title } </Item.Header>
+            </Item>
+          })
+          :
+          <div className={ styles.noItemsDiv }>
+            <div>No items in the reading list yet</div>
+            <div>Items you add will appear here</div>
+          </div>
+        }
         <Item>
 
         </Item>
