@@ -25,13 +25,23 @@ export type FetchRSSFeed = {
 export type AddRSSToReadingList = {
   type: "AddRSStoReadingList";
   payload: {
-    readingList: RSSData[]; error: null; errorMessages: null;
+    status: number; 
+    responseMsg: string; 
+    loading: boolean; 
+    readingList: RSSData[]; 
+    error: null; 
+    errorMessages: null;
   };
 };
 export type RemoveRSSFromReadingList = {
   type: "RemoveRSSFromReadingList";
   payload: {
-    readingList: RSSData[]; error: null; errorMessages: null;
+    status: number; 
+    responseMsg: string; 
+    loading: boolean;
+    readingList: RSSData[]; 
+    error: null; 
+    errorMessages: null;
   };
 };
 export type SetRSSFeedError = {

@@ -1,5 +1,8 @@
 import { Types } from "mongoose";
+import RssReadingList from "../models/RssReadingList";
+// type imports //
 import type { Request, Response, NextFunction, CookieOptions } from "express";
+import type { GenUserData } from "@/redux/_types/users/dataTypes";
 
 export const checkAndSetUniqueUserId = (req: Request, res: Response, next: NextFunction): void => {
   const UNIQUE_USER_ID = "uniqueUserId";
@@ -25,4 +28,14 @@ export const rssCorsMiddleware = (req: Request, res: Response, next: NextFunctio
     next();
   }
 };
+
+export const validateUserReadingListAccess = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const user = req.user as GenUserData;
+
+  try {
+    next()
+  } catch (error) {
+
+  }
+}
 

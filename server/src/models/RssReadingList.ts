@@ -19,14 +19,14 @@ const RssReadingListSchema = new Schema({
     type: [{
       _id: Schema.Types.ObjectId,
       author: {
-          username: String,
-          uri: String,
+          username: { type: String, default: "" },
+          uri: { type: String, default: "" }
       },
-      thumbnailPreviewURI: String,
-      articleLink: String,
-      category: [String],
-      provider: String,
-      title: String,
+      thumbnailPreviewURI: { type: String, default: "" },
+      articleLink: { type: String, default: "" },
+      category: { type: [String], default: [] },
+      provider: { type: String, default: "" },
+      title: { type: String, default: "" },
       published: {
         type: Date,
         default: new Date()

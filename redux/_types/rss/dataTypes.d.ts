@@ -1,3 +1,5 @@
+import RssReadingList from "server/src/models/RssReadingList";
+
 export interface IRSSState {
   status: null | number;
   loading: boolean;
@@ -24,8 +26,15 @@ export type RSSData = {
   title: string;
   published: string;
   updated: string;
-}
+};
 
+export type RssReadingListData = {
+  _id: string;
+  userId: mongoose.Types.ObjectId;
+  items: RSSData[];
+  createdAt: Date;
+  editedAt: Date;
+}
 
 export type FetchRSSOptions = {
   option: RSSSources;
@@ -41,4 +50,15 @@ export type FetchRSSOptions = {
     topic?: string;
   }
 };
+
+// response types //
+export type AddToReaderRes = {
+  responseMsg: string;
+  rssData: RSSData;
+};
+export type RemoveFromReaderRes = {
+  responseMsg: string;
+  rssDataId: string;
+};
+
 

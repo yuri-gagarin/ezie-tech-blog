@@ -1,14 +1,26 @@
 import { Types } from "mongoose";
 
+export type ClientRSSData = {
+  _id?: Types.ObjectId;
+  author?: { username?: string; uri?: string };
+  thumbnailPreviewURI?: string;
+  articleLink?: string;
+  category?: string[];
+  provider?: string;
+  author?: string;
+  title?: string;
+  published?: string;
+  updated?: string;
+}
 export type RSSData = {
   _id: Types.ObjectId;
   author: { username: string; uri: string };
   thumbnailPreviewURI: string;
   articleLink: string;
   category: string[];
-  provider: RSSSources | string;
+  provider: string;
   author: string;
   title: string;
-  published: Date;
-  updated: Date;
+  published: string;
+  updated: string;
 };
