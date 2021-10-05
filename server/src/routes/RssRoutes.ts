@@ -16,6 +16,7 @@ export default class RSSRoutes {
   }
   private initialize(): void {
     this.getRssRoute("/api/rss/:option");
+    this.getReadingList("/api/rss/reading_list/get")
     this.addToReadingList("/api/rss/reading_list/add");
     this.removeFromReadingList("/api/rss/reading_list/remove");
   }
@@ -24,6 +25,16 @@ export default class RSSRoutes {
     this.router
       .route(route)
       .get([ rssCorsMiddleware ], this.controller.handleRssRequest);
+  }
+  private getReadingList(route: string): void {
+    this.router
+      .route(route)
+      .get(
+        [
+          PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false })
+        ],
+        this.controller.handleGetReadingList
+        )
   }
   private addToReadingList(route: string): void {
     this.router

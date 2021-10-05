@@ -30,10 +30,10 @@ export type RSSData = {
 
 export type RssReadingListData = {
   _id: string;
-  userId: mongoose.Types.ObjectId;
+  userId: string;
   items: RSSData[];
-  createdAt: Date;
-  editedAt: Date;
+  createdAt: string;
+  editedAt: string;
 }
 
 export type FetchRSSOptions = {
@@ -59,6 +59,10 @@ export type AddToReaderRes = {
 export type RemoveFromReaderRes = {
   responseMsg: string;
   rssDataId: string;
+};
+export type GetReadingListRes = {
+  responseMsg: string;
+  readingListModel: RssReadingListData;
 };
 
 

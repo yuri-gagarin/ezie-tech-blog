@@ -22,6 +22,17 @@ export type FetchRSSFeed = {
     errorMessages: null;
   };
 };
+export type GetRSSReadingList = {
+  type: "GetRSSReadingList";
+  payload: {
+    status: number; 
+    responseMsg: string; 
+    loading: boolean; 
+    readingList: RSSData[]; 
+    error: null; 
+    errorMessages: null;
+  };
+};
 export type AddRSSToReadingList = {
   type: "AddRSStoReadingList";
   payload: {
@@ -63,5 +74,5 @@ export type ClearRSSFeedError = {
 };
 
 export type RSSAction = (
-  RSSAPIRequest | FetchRSSFeed | SetRSSFeedError | AddRSSToReadingList | RemoveRSSFromReadingList | ClearRSSFeedError
+  RSSAPIRequest | FetchRSSFeed | SetRSSFeedError | GetRSSReadingList | AddRSSToReadingList | RemoveRSSFromReadingList | ClearRSSFeedError
 );

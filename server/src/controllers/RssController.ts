@@ -1,27 +1,14 @@
 import { Types } from "mongoose";
-import RssReadingList from "../models/RssReadingList";
+import RssReadingList, { IRssReadingList } from "../models/RssReadingList";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // type imports //
 import type { Request, Response } from "express";
 import type { GenUserData } from "@/redux/_types/users/dataTypes";
 import type { ClientRSSData, RSSData } from "../_types/news/newsTypes";
+import type { RSSGetParams, RSSQueryParams, ResponseSource, GetReadingListRes, ReadingListAddRes, ReadingListRemoveRes } from "../_types/news/controllerTypes";
 
-export type RSSGetParams = {
-  option: "reddit" | "cnet" | "medium" | "all";
-};
-export type ResponseSource = "reddit" | "medium" | "cnet";
-export type RSSQueryParams = {
-  redditOpts?: {
-    filter?: "new" | "hot" | "top";
-    subreddit?: "technology" | "apple" | "windows" | "mobile" | "realtech" | "tech";
-  };
-  mediumOpts?: {
-    topic?: string;
-    user?: string;
-  };
-}
 export class RssController extends BasicController {
-  handleRssRequest = async (req: Request, res: Response) => {
+  handleRssRequest = async (req: Request, res: Response): Promise<Response> => {
     const { option }: RSSGetParams = req.params as RSSGetParams;
     const { redditOpts, mediumOpts } = req.query as RSSQueryParams;
     let url: string;
@@ -72,7 +59,23 @@ export class RssController extends BasicController {
     }
   }
 
-  handleAddToReadingList = async (req: Request, res: Response): Promise<Response> => {
+  handleGetReadingList = async (req: Request, res: Response<GetReadingListRes>): Promise<Response> => {
+    const user = req.user as GenUserData;
+    
+    if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve the user" ]);
+
+    try {
+      const { _id: userId } = user;
+      const readingListModel: IRssReadingList | null = await RssReadingList.findOne({ userId }).exec();
+      return res.status(200).json({
+        responseMsg: "Reading list response", readingListModel
+      });
+    } catch (error) {
+      return await this.generalErrorResponse(res, { error });
+    }
+  }
+
+  handleAddToReadingList = async (req: Request, res: Response<ReadingListAddRes>): Promise<Response> => {
     const user = req.user as GenUserData;
     const rssData = req.body.rssData as ClientRSSData;
 
@@ -98,7 +101,7 @@ export class RssController extends BasicController {
       return await this.generalErrorResponse(res, { error });
     }
   }
-  handleRemoveFromReadingList = async (req: Request, res: Response): Promise<Response> => {
+  handleRemoveFromReadingList = async (req: Request, res: Response<ReadingListRemoveRes>): Promise<Response> => {
     const user = req.user as GenUserData;
     const { rssDataId } = req.body;
 
