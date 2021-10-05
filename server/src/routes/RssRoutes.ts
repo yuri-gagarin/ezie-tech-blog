@@ -16,8 +16,8 @@ export default class RSSRoutes {
   }
   private initialize(): void {
     this.getRssRoute("/api/rss/:option");
-    this.addToReadingList("/api/rss/reading_list_add");
-    this.removeFromReadingList("/api/rss/reading_list_remove");
+    this.addToReadingList("/api/rss/reading_list/add");
+    this.removeFromReadingList("/api/rss/reading_list/remove");
   }
   
   private getRssRoute(route: string): void {
@@ -32,7 +32,7 @@ export default class RSSRoutes {
         [ 
           PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }) 
         ],
-        this.controller.handleRemoveFromReadingList
+        this.controller.handleAddToReadingList
       );
   }
   private removeFromReadingList(route: string): void {

@@ -39,9 +39,10 @@ class RSSReduxActions {
 
   async handleAddToReadingList(data: { dispatch: Dispatch<RSSAction>; JWTToken: string; rssData: RSSData; rssState: IRSSState }): Promise<AddRSSToReadingList> {
     const { dispatch, JWTToken, rssData, rssState } = data;
+    console.log(rssData)
     const reqOpts: AxiosRequestConfig = {
       method: "POST",
-      url: "/api/rss/reading_list_add",
+      url: "/api/rss/reading_list/add",
       headers: { "Authorization": JWTToken },
       data: { rssData }
     };
@@ -63,7 +64,7 @@ class RSSReduxActions {
     const { dispatch, JWTToken, rssDataId, rssState } = data;
     const reqOpts: AxiosRequestConfig = {
       method: "PATCH",
-      url: "/api/rss/reading_list_remove",
+      url: "/api/rss/reading_list/remove",
       headers: { "Authorization": JWTToken },
       data: { rssDataId }
     };

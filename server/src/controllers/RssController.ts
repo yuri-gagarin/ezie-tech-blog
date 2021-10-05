@@ -74,7 +74,7 @@ export class RssController extends BasicController {
 
   handleAddToReadingList = async (req: Request, res: Response): Promise<Response> => {
     const user = req.user as GenUserData;
-    const rssData = req.body.rssData as ClientRSSData ;
+    const rssData = req.body.rssData as ClientRSSData;
 
     if (!user) return this.notAllowedErrorResponse(res, [ "Could not resolve user data" ]);
     if (!rssData) return this.userInputErrorResponse(res, [ "Could not resolve reading list item to save" ]);
@@ -94,6 +94,7 @@ export class RssController extends BasicController {
         return this.generalErrorResponse(res, { errorMessages: [ "Could not resolve a reading list model" ] });
       }
     } catch (error) {
+      console.log(error)
       return await this.generalErrorResponse(res, { error });
     }
   }

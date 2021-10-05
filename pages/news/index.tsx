@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Container, Grid, Item } from "semantic-ui-react"; 
+import { Container, Grid, Item, Label, Popup } from "semantic-ui-react"; 
 // next imports //
 import NextImage from "next/image";
 import { useRouter } from 'next/router';
@@ -14,7 +14,7 @@ import type { DropdownItemProps } from "semantic-ui-react";
 import type { Dispatch } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 import type { RSSAction } from '@/redux/_types/rss/actionTypes';
-import type { FetchRSSOptions, RSSSources } from '@/redux/_types/rss/dataTypes';
+import type { FetchRSSOptions, RSSData, RSSSources } from '@/redux/_types/rss/dataTypes';
 // styles //
 import styles from "@/styles/news/NewsMainPage.module.css";
 // helpers //
@@ -37,8 +37,18 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   const handleGoToArticle = (link: string): void => {
     router.push(link);
   };
-  const handleAddToReadingList = async () => {
-
+  const handleAddToReadingList = async (rssData: RSSData): Promise<void> => {
+    const { loggedIn, authToken: JWTToken } = authState
+    if (loggedIn && JWTToken) {
+      try {
+        await RssActions.handleAddToReadingList({ dispatch, rssData, JWTToken, rssState });
+      } catch (error) {
+        RssActions.handleRssFeedError(error, dispatch);
+      }
+    } else {
+      return;
+    }
+   
   };
   const handleRemoveFromReadingList = async () => {
     
@@ -100,7 +110,13 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
                           {`Published at: ${formatTimeString(rssData.published, { yearMonthDay: true } )}`}
                         </Item.Meta>
                       </Item.Content>
-
+                      <Popup
+                        content="Add to reading list"
+                        trigger={ 
+                          <Label className={ styles.addToReaderLabel } color="purple" attached="bottom right" icon="plus square outline" onClick={ () => handleAddToReadingList(rssData) }/> 
+                        }
+                      />
+                    
                     </Item>
                   )
                 })

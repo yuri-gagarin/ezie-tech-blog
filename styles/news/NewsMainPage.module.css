@@ -34,6 +34,7 @@
 }
 
 .feedItem {
+  position: relative;
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
@@ -51,6 +52,18 @@
 .feedContent {
   width: 80% !important;
   padding: 0 0.5em !important;
+}
+
+.addToReaderLabel {
+  cursor: pointer;
+}
+.addToReaderLabel > i {
+  margin-left: 10px !important;
+  font-size: 1.25em;
+}
+.addToReaderLabel:hover {
+  transform: scale(1.1);
+  transition: scale 1s ease-in;
 }
 
 @media screen and (min-width: 768px) {
