@@ -3,8 +3,8 @@ import { parseStringPromise } from "xml2js";
 // types //
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type { Dispatch } from "redux";
-import type { FetchRSSFeed, RSSAction, SetRSSFeedError, ClearRSSFeedError } from "@/redux/_types/rss/actionTypes";
-import type { FetchRSSOptions } from "@/redux/_types/rss/dataTypes";
+import type { FetchRSSFeed, RSSAction, SetRSSFeedError, AddRSSToReadingList, RemoveRSSFromReadingList, ClearRSSFeedError } from "@/redux/_types/rss/actionTypes";
+import type { FetchRSSOptions, IRSSState, RSSData } from "@/redux/_types/rss/dataTypes";
 // helpers //
 import { processAxiosError } from "../_helpers/dataHelpers";
 import { parseRSSResponse } from "../_helpers/rssHelpers";
@@ -36,6 +36,21 @@ class RSSReduxActions {
       throw error;
     }
   } 
+
+  handleAddToReadingList({ dispatch, rssData, rssState }: { dispatch: Dispatch<RSSAction>; rssData: RSSData; rssState: IRSSState }): AddRSSToReadingList {
+    const updatedList: RSSData[] = [{  ...rssData }, ...rssState.readingList ];
+    return dispatch({
+      type: "AddRSStoReadingList",
+      payload: { readingList: updatedList, error: null, errorMessages: null }
+    });
+  };
+  handleRemoveFromReadingList({ dispatch, rssData, rssState }: { dispatch: Dispatch<RSSAction>; rssData: RSSData, rssState: IRSSState }): RemoveRSSFromReadingList {
+    const updatedList: RSSData[] = rssState.readingList.filter((data) => data.articleLink === rssData.articleLink);
+    return dispatch({
+      type: "RemoveRSSFromReadingList",
+      payload: { readingList: updatedList, error: null, errorMessages: null }
+    });
+  };
 
   handleRssFeedError(err: any, dispatch: Dispatch<RSSAction>): SetRSSFeedError {
     const { responseMsg, status, error, errorMessages } = processAxiosError(err);

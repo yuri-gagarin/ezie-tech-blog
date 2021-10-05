@@ -1,8 +1,7 @@
-import { parseStringPromise } from "xml2js";
 import type { Request, Response } from "express";
 
 export type RSSGetParams = {
-  option: "reddit" | "cnet" | "medium";
+  option: "reddit" | "cnet" | "medium" | "all";
 };
 export type ResponseSource = "reddit" | "medium" | "cnet";
 export type RSSQueryParams = {
@@ -21,6 +20,7 @@ export class RssController {
     const { redditOpts, mediumOpts } = req.query as RSSQueryParams;
     let url: string;
     let responseSource: ResponseSource;
+    let rssText: string;
     switch (option) {
       case "reddit": {
         const baseURL = "http://www.reddit.com/r";
@@ -64,5 +64,21 @@ export class RssController {
         errorMessages: [ "Could not resolve RSS feed" ]
       });
     }
+  }
+
+  private getAllRssSources() {
+    const rssSources = {
+      reddit: "http://www.reddit.com/r",
+      cnet: "https://www.cnet.com/rss/news/",
+      medium: "https://www.medium.com/feed"
+    };
+  }
+  private getRssUrl({ key }: { key: ResponseSource}): string {
+    const rssSources = {
+      reddit: "http://www.reddit.com/r",
+      cnet: "https://www.cnet.com/rss/news/",
+      medium: "https://www.medium.com/feed"
+    };
+    return rssSources[key];
   }
 }

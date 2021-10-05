@@ -6,6 +6,7 @@ export interface IRSSState {
   logoURL: string;
   title: string;
   rssFeed: RSSData[]; // we should normalize the data later //
+  readingList: RSSData[];
   error: any | null;
   errorMessages: string[] | null;
 };
@@ -13,6 +14,7 @@ export interface IRSSState {
 export type RSSSources = "reddit" | "medium" | "cnet" | "all";
 
 export type RSSData = {
+  _id?: string; // for saved feeds //
   author: { username?: string; uri?: string };
   thumbnailPreviewURI?: string;
   articleLink: string;

@@ -9,6 +9,7 @@ const initialState: IRSSState = {
   logoURL: "",
   title: "",
   rssFeed:[],
+  readingList: [],
   error: null,
   errorMessages: null
 };
@@ -22,6 +23,18 @@ export default function RSSReducer(state: IRSSState = initialState, action: RSSA
       };
     }
     case "FetchRSSFeed": {
+      return {
+        ...state,
+        ...action.payload
+      };
+    }
+    case "AddRSStoReadingList": {
+      return {
+        ...state,
+        ...action.payload
+      };
+    }
+    case "RemoveRSSFromReadingList": {
       return {
         ...state,
         ...action.payload
