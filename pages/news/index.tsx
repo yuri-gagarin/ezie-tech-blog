@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { Container, Grid, Item, Label, Popup } from "semantic-ui-react"; 
+import { Grid } from "semantic-ui-react"; 
 // next imports //
-import NextImage from "next/image";
 import { useRouter } from 'next/router';
 // redux imports and actions //
 import { useDispatch, useSelector } from "react-redux";
 import { RssActions } from '@/redux/actions/rssActions';
 // additonal components //
-import { NewsControls } from "@/components/news/NewsControls";
-import { NewsReadingList } from "@/components/news/NewsReadingList";
-import { NeedLoginModal } from "@/components/modals/NeedLoginModal";
 import { GenInfoModal } from "@/components/modals/GenInfoModal";
+import { NewsControls } from "@/components/news/NewsControls";
+import { NewsFeedComponent } from '@/components/news/NewsFeedComponent';
+import { NeedLoginModal } from "@/components/modals/NeedLoginModal";
+import { NewsReadingList } from "@/components/news/NewsReadingList";
 // types //
 import type { DropdownItemProps } from "semantic-ui-react";
 import type { Dispatch } from "redux";
@@ -20,10 +20,11 @@ import type { FetchRSSOptions, RSSData, RSSSources } from '@/redux/_types/rss/da
 // styles //
 import styles from "@/styles/news/NewsMainPage.module.css";
 // helpers //
-import { formatTimeString } from "@/components/_helpers/displayHelpers";
 import { useWindowSize } from "@/components/_helpers/monitorWindowSize";
+import { openInNewTab } from "@/components/_helpers/miscComponentHelprs";
 
 interface INewsMainPageProps {
+
 }
 
 const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.Element => {
@@ -31,7 +32,6 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   const [ needLoginModalOpen, setNeedLoginModalOpen ] = React.useState<boolean>(false);
   const [ infoModalState, setInfoModalState ] = React.useState<{ open; header: string; messages: string[]; }>({ open: false, header: "", messages: [] });
   // next hooks //
-  const router = useRouter();
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<RSSAction>>();
   const { authState, rssState } = useSelector((state: IGeneralState) => state);
@@ -40,7 +40,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
 
   // action handlers //
   const handleGoToArticle = (link: string): void => {
-    router.push(link);
+    openInNewTab(link);
   };
   const handleCloseNeedLoginModal = (): void => {
     setNeedLoginModalOpen(false);
@@ -135,37 +135,11 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
             source={ rssState.source }
             handleRSSSourceSelect={ handleRSSSourceSelect } 
           />
-          <Container className={ styles.feedContainer }>
-            <Item.Group divided>
-              {
-                rssState.rssFeed.map((rssData) => {
-                  return (
-                    <Item key={ rssData.articleLink } className={ styles.feedItem } >
-                      <div className= { styles.feedImage }>
-                        <NextImage src={ rssData.thumbnailPreviewURI ? rssData.thumbnailPreviewURI : "/images/defaults/generic_rss.svg" } height="50px" width="50px" objectFit="contain" />
-                      </div>
-                      <Item.Content className={ styles.feedContent}>
-                        <Item.Header as="a" onClick={ () => handleGoToArticle(rssData.articleLink) }>
-                          { rssData.title }
-                        </Item.Header>
-                        <Item.Meta>{`Posted by: ${rssData.author.username || "Anonymous"}`}</Item.Meta>
-                        <Item.Meta>
-                          {`Published at: ${formatTimeString(rssData.published, { yearMonthDay: true } )}`}
-                        </Item.Meta>
-                      </Item.Content>
-                      <Popup
-                        content="Add to reading list"
-                        trigger={ 
-                          <Label className={ styles.addToReaderLabel } color="purple" attached="bottom right" icon="plus square outline" onClick={ () => handleAddToReadingList(rssData) }/> 
-                        }
-                      />
-                    
-                    </Item>
-                  )
-                })
-              }
-            </Item.Group>
-          </Container>
+          <NewsFeedComponent 
+            rssState={ rssState }
+            handleGoToArticle= { handleGoToArticle }
+            handleAddToReadingList={ handleAddToReadingList }
+          />
         </Grid.Column>
         {
           width > 990 
