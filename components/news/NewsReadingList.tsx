@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { Button, Header, Icon, Item } from "semantic-ui-react";
+// next imports //
+import NextImage from "next/image";
 // types //
 import type { IAuthState } from '@/redux/_types/auth/dataTypes';
 import type { RSSData } from '@/redux/_types/rss/dataTypes';
 // styles //
 import styles from "@/styles/news/NewsReadingList.module.css";
-
+// helpers //
+import { formatTimeString } from "@/components/_helpers/displayHelpers"
 interface IFeedReadingListProps {
   authState: IAuthState;
   readingList: RSSData[];
+  handleRemoveFromReadingList(rssId: string): Promise<any>;
 }
 
-export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState, readingList }): JSX.Element => {
+export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState, readingList, handleRemoveFromReadingList }): JSX.Element => {
   const { loggedIn, authToken  } = authState;
   // local state and refs //
   const [ elementFixed, setElementFixed ] = React.useState<boolean>(false);
@@ -34,6 +38,7 @@ export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState, re
       if (current) readingListObserver.unobserve(current);
     }
   }, [ readingListRef, elementFixed ]);
+
   return (
     loggedIn && authToken
     ?
@@ -41,14 +46,25 @@ export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState, re
       <div className={ styles.headerDiv }>
         <h3>My Reading List</h3>
       </div>
-      <Item.Group className={ styles.readingListItemsWrapper }>
+      <Item.Group className={ styles.readingListItemsWrapper } divided>
         {
           readingList.length > 0
           ?
           readingList.map((rssData) => {
-            <Item key={ rssData.articleLink }>
-              <Item.Header as="a">{ rssData.title } </Item.Header>
-            </Item>
+            return (
+              <Item className={ styles.rssReadingListItem } key={ rssData.articleLink }>
+                <Item.Content>
+                  <Item.Header as="a">{ rssData.title } </Item.Header>
+                  <Item.Meta>{`Published at: ${formatTimeString(rssData.published, { yearMonthDay: true } )}`}</Item.Meta>
+                  <Item.Description className={ styles.rssReadingListItemControls }>
+                    <div className={ styles.itemLogoDiv }>
+                      <NextImage src={"/logos/rss_logos/cnet_logo.svg"} height="30px" width="30px" objectFit="contain" />
+                    </div>
+                    <Button size="mini" color="orange" content="Remove" onClick={ () => handleRemoveFromReadingList(rssData._id) }/>
+                  </Item.Description>
+                </Item.Content>
+              </Item>
+            )
           })
           :
           <div className={ styles.noItemsDiv }>

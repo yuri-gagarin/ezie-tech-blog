@@ -1,24 +1,31 @@
 import { Types } from "mongoose";
+import { parseStringPromise } from "xml2js";
+// models and extenstions //
 import RssReadingList, { IRssReadingList } from "../models/RssReadingList";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // type imports //
 import type { Request, Response } from "express";
 import type { GenUserData } from "@/redux/_types/users/dataTypes";
 import type { ClientRSSData, RSSData } from "../_types/news/newsTypes";
-import type { RSSGetParams, RSSQueryParams, ResponseSource, GetReadingListRes, ReadingListAddRes, ReadingListRemoveRes } from "../_types/news/controllerTypes";
+import type { 
+  RSSGetParams, RSSQueryParams, ResponseSource, 
+  RssRequestRes, GetReadingListRes, ReadingListAddRes, ReadingListRemoveRes 
+} from "../_types/news/controllerTypes";
+// helpers //
+import { parseRSSResponse } from "./_helpers/dataHelpers";
 
 export class RssController extends BasicController {
-  handleRssRequest = async (req: Request, res: Response): Promise<Response> => {
+  handleRssRequest = async (req: Request, res: Response<RssRequestRes>): Promise<Response> => {
     const { option }: RSSGetParams = req.params as RSSGetParams;
     const { redditOpts, mediumOpts } = req.query as RSSQueryParams;
     let url: string;
     let responseSource: ResponseSource;
-    let rssText: string;
+
     switch (option) {
       case "reddit": {
+        const { filter = "hot", limit = 10, subreddit = "technology", skip = 0 } = redditOpts ? redditOpts : {};
         const baseURL = "http://www.reddit.com/r";
-        const { subreddit = "technology", filter = "hot" } = redditOpts ? redditOpts : {};
-        url = `${baseURL}/${subreddit}/${filter}/.rss`;
+        url = `${baseURL}/${subreddit}/${filter}/.rss?limit=${limit}&skip=${skip}`;
         responseSource = "reddit";
         break;
       }
@@ -36,26 +43,20 @@ export class RssController extends BasicController {
         break;
       }
       default: {
-        return res.status(500).json({
-          responseMsg: "Error",
-          error: new Error("RSS feed error"),
-          errorMessages: [ "Could not resolve RSS feed" ]
-        })
+       return await this.userInputErrorResponse(res, [ "Could not resolve RSS feed source" ]);
       }
     }
     try {
       const response = await fetch(url);
-      const text = await response.text();
-      res.setHeader("Content-Type", "application/rss-xml");
-      res.send(text);
+      const rssObj = await parseStringPromise(await response.text());
+      const { source, title, logoURL, rssFeed } = parseRSSResponse({ rssObj, source: option });
+      return res.status(200).json({
+        responseMsg: "RSS feed success", source, title, logoURL, rssFeed
+      })
     } catch (error) {
       console.log("rss error");
       console.log(error)
-      return res.status(500).json({
-        responseMsg: "Error",
-        error: new Error("RSS feed error"),
-        errorMessages: [ "Could not resolve RSS feed" ]
-      });
+      return await this.generalErrorResponse(res, { error, errorMessages: [ "Rss GET error" ] });
     }
   }
 

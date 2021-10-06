@@ -1,8 +1,10 @@
-import type { RSSData, RSSSources } from "@/redux/_types/rss/dataTypes";
-
+import { Types } from "mongoose";
+// type imports //
+import type { RSSData } from "../../_types/news/newsTypes";
+import type { ResponseSource } from "../../_types/news/controllerTypes";
 
 export type RSSNormalizedRes = {
-  source: RSSSources; 
+  source: ResponseSource; 
   title: string; 
   logoURL: string; 
   rssFeed: RSSData[];
@@ -15,6 +17,7 @@ export const parseRedditRSSObj = (rssObj: any): RSSNormalizedRes => {
   const logoURL = rssObj.feed.logo[0];
   for (const entry of foundEntries) {
     const data: RSSData = {
+      _id: new Types.ObjectId(),
       author: {
         username: entry.author[0].name[0],
         uri: entry.author[0].uri[0]
@@ -39,6 +42,7 @@ export const parseMediumRSSObj = (rssObj: any): RSSNormalizedRes => {
   const logoURL: string = data.image[0].url[0];
   for (const entry of data.item) {
     const data: RSSData = {
+      _id: new Types.ObjectId(),
       author: {
         username: entry["dc:creator"] && Array.isArray(entry["dc:creator"]) ? entry["dc:creator"][0] : "Medium Author",
         uri: "",
@@ -62,6 +66,7 @@ export const parseCnetRSSObj = (rssObj: any): RSSNormalizedRes => {
   const logoURL: string = data.image[0].url[0];
   for (const entry of data.item) {
     const data: RSSData = {
+      _id: new Types.ObjectId(),
       author: {
         username: entry["dc:creator"] && Array.isArray(entry["dc:creator"]) ? entry["dc:creator"][0] : "Cnet Author",
         uri: ""
@@ -79,7 +84,7 @@ export const parseCnetRSSObj = (rssObj: any): RSSNormalizedRes => {
   return { source: "cnet", title, logoURL, rssFeed };
 };
 
-export const parseRSSResponse = ({ rssObj, source }: { rssObj: any; source: RSSSources }): RSSNormalizedRes => {
+export const parseRSSResponse = ({ rssObj, source }: { rssObj: any; source: ResponseSource }): RSSNormalizedRes => {
   switch (source) {
     case "reddit": {
       return parseRedditRSSObj(rssObj);

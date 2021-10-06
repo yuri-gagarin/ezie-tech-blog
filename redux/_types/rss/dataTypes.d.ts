@@ -16,9 +16,9 @@ export interface IRSSState {
 export type RSSSources = "reddit" | "medium" | "cnet" | "all";
 
 export type RSSData = {
-  _id?: string; // for saved feeds //
-  author: { username?: string; uri?: string };
-  thumbnailPreviewURI?: string;
+  _id: string; // for saved feeds //
+  author: { username: string; uri: string };
+  thumbnailPreviewURI: string;
   articleLink: string;
   category: string[];
   provider: RSSSources | string;
@@ -52,6 +52,14 @@ export type FetchRSSOptions = {
 };
 
 // response types //
+export type GetRSSRes = {
+  responseMsg: string;
+  source: RSSSources;
+  title: string;
+  logoURL: string;
+  rssFeed: RSSData[];
+};
+
 export type AddToReaderRes = {
   responseMsg: string;
   rssData: RSSData;

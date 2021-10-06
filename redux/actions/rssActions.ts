@@ -1,13 +1,11 @@
 import axios from "axios";
-import { parseStringPromise } from "xml2js";
 // types //
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type { Dispatch } from "redux";
 import type { FetchRSSFeed, RSSAction, SetRSSFeedError, GetRSSReadingList, AddRSSToReadingList, RemoveRSSFromReadingList, ClearRSSFeedError } from "@/redux/_types/rss/actionTypes";
-import type { FetchRSSOptions, IRSSState, RSSData, GetReadingListRes, AddToReaderRes, RemoveFromReaderRes } from "@/redux/_types/rss/dataTypes";
+import type { FetchRSSOptions, IRSSState, RSSData, GetReadingListRes, AddToReaderRes, RemoveFromReaderRes, GetRSSRes } from "@/redux/_types/rss/dataTypes";
 // helpers //
 import { processAxiosError } from "../_helpers/dataHelpers";
-import { parseRSSResponse } from "../_helpers/rssHelpers";
 
 class RSSReduxActions {
 
@@ -23,10 +21,8 @@ class RSSReduxActions {
     }
     dispatch({ type: "RSSAPIRequest", payload: { loading: true, error: null, errorMessages: null } });
     try {
-      const { status, statusText: responseMsg, data }: AxiosResponse<any> = await axios(reqOpts);
-
-      const rssObj = await parseStringPromise(data);
-      const { source, title, logoURL, rssFeed, } = parseRSSResponse({ rssObj, source: option });
+      const { status, data }: AxiosResponse<GetRSSRes> = await axios(reqOpts);
+      const { responseMsg, source, title, logoURL, rssFeed } = data;
       return dispatch({ 
         type: "FetchRSSFeed",  
         payload: { status, responseMsg, source, title, logoURL, rssFeed, error: null, errorMessages: null, loading: false }
@@ -37,8 +33,8 @@ class RSSReduxActions {
     }
   } 
 
-  async handleGetReadingList(data: { dispatch: Dispatch<RSSAction>; JWTToken: string; rssState: IRSSState }): Promise<GetRSSReadingList> {
-    const { dispatch, JWTToken, rssState } = data;
+  async handleGetReadingList(data: { dispatch: Dispatch<RSSAction>; JWTToken: string; }): Promise<GetRSSReadingList> {
+    const { dispatch, JWTToken } = data;
     const reqOpts: AxiosRequestConfig = {
       method: "GET",
       url: "/api/rss/reading_list/get",

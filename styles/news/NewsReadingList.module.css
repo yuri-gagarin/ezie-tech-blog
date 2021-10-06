@@ -29,6 +29,7 @@
   width: 100%;
   height: calc(100% - 40px);
   margin-top: 0 !important;
+  padding: 0.5em 0;
   overflow-y: scroll;
 }
 .noItemsDiv {
@@ -53,4 +54,24 @@
   font-style: italic;
   color: gray;
   padding: 0.5em;
+}
+
+.rssReadingListItem {
+  position: relative;
+  padding: 0.5em !important;
+}
+
+.rssReadingListItemControls  {
+  display: flex;
+  justify-content: space-between;
+}
+.itemLogoDiv {
+  display: flex;
+  width: 50px !important;
+  align-items: center;
+  justify-content: center;
+}
+.itemLogoDiv {
+  height: 30px;
+  width: 30px;
 }

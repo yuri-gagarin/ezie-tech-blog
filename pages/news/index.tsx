@@ -9,6 +9,7 @@ import { RssActions } from '@/redux/actions/rssActions';
 // additonal components //
 import { NewsControls } from "@/components/news/NewsControls";
 import { NewsReadingList } from "@/components/news/NewsReadingList";
+import { NeedLoginModal } from "@/components/modals/NeedLoginModal";
 // types //
 import type { DropdownItemProps } from "semantic-ui-react";
 import type { Dispatch } from "redux";
@@ -25,6 +26,8 @@ interface INewsMainPageProps {
 }
 
 const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.Element => {
+  // local state and hooks //
+  const [ needLoginModalOpen, setNeedLoginModalOpen ] = React.useState<boolean>(false);
   // next hooks //
   const router = useRouter();
   // redux hooks and state //
@@ -37,6 +40,10 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   const handleGoToArticle = (link: string): void => {
     router.push(link);
   };
+  const handleCloseNeedLoginModal = (): void => {
+    setNeedLoginModalOpen(false);
+  };
+  
   const handleAddToReadingList = async (rssData: RSSData): Promise<void> => {
     const { loggedIn, authToken: JWTToken } = authState
     if (loggedIn && JWTToken) {
@@ -46,12 +53,21 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
         RssActions.handleRssFeedError(error, dispatch);
       }
     } else {
-      return;
+      setNeedLoginModalOpen(true);
     }
    
   };
-  const handleRemoveFromReadingList = async () => {
-    
+  const handleRemoveFromReadingList = async (rssDataId: string) => {
+    const { loggedIn, authToken: JWTToken } = authState;
+    if (loggedIn && JWTToken) {
+      try {
+        await RssActions.handleRemoveFromReadingList({ dispatch, JWTToken, rssDataId, rssState });
+      } catch (error) {
+        RssActions.handleRssFeedError(error, dispatch);
+      }
+    } else {
+      setNeedLoginModalOpen(true);
+    }
   }
   const handleRSSSourceSelect = async (_, data: DropdownItemProps): Promise<any> => {
     const source = data.value as RSSSources;
@@ -65,6 +81,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   
   // lifecycle hooks //
   React.useEffect(() => {
+    const { loggedIn, authToken: JWTToken } = authState;
     let loaded = true;
     if (loaded) {
       (async function(): Promise<any> {
@@ -72,6 +89,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
           const optsData: FetchRSSOptions = { option: "reddit" };
           //const optsDataO: FetchRSSOptions = { option: "medium" };
           await RssActions.getRSSFeed({ dispatch, optsData });
+          if (loggedIn && JWTToken) await RssActions.handleGetReadingList({ dispatch, JWTToken });
           //await RssActions.getRSSFeed({ dispatch, optsData: { option: "medium" } })
         } catch (error) {
           RssActions.handleRssFeedError(error, dispatch)
@@ -79,10 +97,11 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
       })();
     }
     return () => { loaded = false };
-  }, [ dispatch ]);
+  }, [ dispatch, authState ]);
 
   return (
     <Grid className={ styles.newsMainPageGrid }>
+      <NeedLoginModal modalOpen={ needLoginModalOpen } handleCloseModal={ handleCloseNeedLoginModal } />
       <Grid.Row className={ styles.headerRow }>
         <h1>RSS News</h1>
       </Grid.Row>
@@ -128,7 +147,11 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
           width > 990 
           ?
           <Grid.Column computer={4}>
-            <NewsReadingList readingList={ rssState.readingList } authState={ authState } />
+            <NewsReadingList 
+              readingList={ rssState.readingList } 
+              authState={ authState } 
+              handleRemoveFromReadingList={ handleRemoveFromReadingList }
+            />
           </Grid.Column>
           :
           null

@@ -28,6 +28,12 @@ export default function RSSReducer(state: IRSSState = initialState, action: RSSA
         ...action.payload
       };
     }
+    case "GetRSSReadingList": {
+      return {
+        ...state,
+        ...action.payload
+      };
+    }
     case "AddRSStoReadingList": {
       return {
         ...state,

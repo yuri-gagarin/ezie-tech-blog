@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 export type ClientRSSData = {
-  _id?: Types.ObjectId;
+  _id?: string;
   author?: { username?: string; uri?: string };
   thumbnailPreviewURI?: string;
   articleLink?: string;
