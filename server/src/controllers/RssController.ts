@@ -143,7 +143,7 @@ export class RssController extends BasicController {
   }
   private normalizeReaderRssOb(data: ClientRSSData): RSSData {
     const normalized: RSSData = {
-      _id: new Types.ObjectId(),
+      _id: data._id ? new Types.ObjectId(data._id) : new Types.ObjectId(),
       author: { 
         username: data.author && data.author.username || "Anonymous",
         uri: data.author && data.author.uri || ""

@@ -10,6 +10,7 @@ import { RssActions } from '@/redux/actions/rssActions';
 import { NewsControls } from "@/components/news/NewsControls";
 import { NewsReadingList } from "@/components/news/NewsReadingList";
 import { NeedLoginModal } from "@/components/modals/NeedLoginModal";
+import { GenInfoModal } from "@/components/modals/GenInfoModal";
 // types //
 import type { DropdownItemProps } from "semantic-ui-react";
 import type { Dispatch } from "redux";
@@ -28,6 +29,7 @@ interface INewsMainPageProps {
 const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.Element => {
   // local state and hooks //
   const [ needLoginModalOpen, setNeedLoginModalOpen ] = React.useState<boolean>(false);
+  const [ infoModalState, setInfoModalState ] = React.useState<{ open; header: string; messages: string[]; }>({ open: false, header: "", messages: [] });
   // next hooks //
   const router = useRouter();
   // redux hooks and state //
@@ -43,17 +45,26 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   const handleCloseNeedLoginModal = (): void => {
     setNeedLoginModalOpen(false);
   };
+  const handleCloseInfoModal = (): void => {
+    setInfoModalState({ open: false, header: "", messages: [] });
+  };
   
-  const handleAddToReadingList = async (rssData: RSSData): Promise<void> => {
-    const { loggedIn, authToken: JWTToken } = authState
+  const handleAddToReadingList = async (rssData: RSSData): Promise<any> => {
+    const { loggedIn, authToken: JWTToken } = authState;
+    const { readingList } = rssState;
+   
+    if (readingList.some((data) => data.articleLink === rssData.articleLink)) {
+      return setInfoModalState({ open: true, header: "Ooops..", messages: [ "This item already exists in your reading list" ] });
+    }
+
     if (loggedIn && JWTToken) {
       try {
-        await RssActions.handleAddToReadingList({ dispatch, rssData, JWTToken, rssState });
+        return await RssActions.handleAddToReadingList({ dispatch, rssData, JWTToken, rssState });
       } catch (error) {
         RssActions.handleRssFeedError(error, dispatch);
       }
     } else {
-      setNeedLoginModalOpen(true);
+      return setNeedLoginModalOpen(true);
     }
    
   };
@@ -98,10 +109,23 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
     }
     return () => { loaded = false };
   }, [ dispatch, authState ]);
+  // clear info modal if open //
+  React.useEffect(() => {
+    if (infoModalState.open) {
+      setTimeout(() => {
+        if (infoModalState.open) setInfoModalState({ open: false, header: "", messages: [] });
+      }, 2000);
+    }
+  }, [ infoModalState ]);
 
   return (
     <Grid className={ styles.newsMainPageGrid }>
       <NeedLoginModal modalOpen={ needLoginModalOpen } handleCloseModal={ handleCloseNeedLoginModal } />
+      <GenInfoModal 
+        position="fixed-top"
+        duration={100}
+        open={ infoModalState.open } header={ infoModalState.header } messages={ infoModalState.messages } handleInfoModalClose={ handleCloseInfoModal } 
+      />
       <Grid.Row className={ styles.headerRow }>
         <h1>RSS News</h1>
       </Grid.Row>

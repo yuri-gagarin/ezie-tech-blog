@@ -1,0 +1,45 @@
+.infoSegment {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 10%;
+  left: 40%;
+  height: 200px;
+  min-width: 200px;
+  background-color: rgb(255, 255, 255);
+  z-index: 9999;
+  border: 6px solid lightskyblue;
+  border-radius: 10px;
+}
+.infoHeader {
+  display: flex;
+  justify-content: center;
+  font-size: 2em;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 1em 0.5em;
+  color: blue;
+}
+.infoMessagesWrapper {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+.infoMessagesWrapper > ul {
+  padding-right: 1em;
+  color: orange;
+}
+
+.fixedTop {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+  background-color: white;
+}
