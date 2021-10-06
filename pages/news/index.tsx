@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Grid } from "semantic-ui-react"; 
 // next imports //
-import { useRouter } from 'next/router';
 // redux imports and actions //
 import { useDispatch, useSelector } from "react-redux";
 import { RssActions } from '@/redux/actions/rssActions';

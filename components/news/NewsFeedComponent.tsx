@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Container, Item, Label, Popup } from "semantic-ui-react";
 // next imports //
 import NextImage from "next/image";
+// additional components //
+import { GeneralLoadingComponent } from '../shared/GeneralLoadingComponent';
 // types //
 import type { IRSSState, RSSData } from "@/redux/_types/rss/dataTypes";
 // styles //
@@ -17,7 +19,12 @@ interface INewsFeedComponentProps {
 }
 
 export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps> = ({ rssState, handleGoToArticle, handleAddToReadingList }): JSX.Element => {
+  const { loading } = rssState;
   return (
+    loading
+    ?
+    <GeneralLoadingComponent loaderText="Loading feed"  />
+    :
     <Container className={ styles.feedContainer }>
       <Item.Group divided>
         {
