@@ -6,6 +6,7 @@ import type { ResponseSource } from "../../_types/news/controllerTypes";
 export type RSSNormalizedRes = {
   source: ResponseSource; 
   title: string; 
+  lastItemId: string;
   logoURL: string; 
   rssFeed: RSSData[];
 };
@@ -15,6 +16,8 @@ export const parseRedditRSSObj = (rssObj: any): RSSNormalizedRes => {
   const foundEntries: any[] = rssObj.feed.entry;
   const title = rssObj.feed.title[0];
   const logoURL = rssObj.feed.logo[0];
+  //
+  const lastItemId: string = foundEntries[foundEntries.length - 1].id[0] || "";
   for (const entry of foundEntries) {
     const data: RSSData = {
       _id: new Types.ObjectId(),
@@ -32,7 +35,7 @@ export const parseRedditRSSObj = (rssObj: any): RSSNormalizedRes => {
     };
     entries.push(data);
   }
-  return { source: "reddit", title, logoURL, rssFeed: entries };
+  return { source: "reddit", title, logoURL, lastItemId, rssFeed: entries };
 };
 
 export const parseMediumRSSObj = (rssObj: any): RSSNormalizedRes => {
@@ -57,7 +60,7 @@ export const parseMediumRSSObj = (rssObj: any): RSSNormalizedRes => {
     };
     rssFeed.push(data);
   }
-  return { source: "medium", title, logoURL, rssFeed };
+  return { source: "medium", title, logoURL, lastItemId: "", rssFeed };
 };
 export const parseCnetRSSObj = (rssObj: any): RSSNormalizedRes => {
   const rssFeed: RSSData[] = [];
@@ -81,7 +84,7 @@ export const parseCnetRSSObj = (rssObj: any): RSSNormalizedRes => {
     };
     rssFeed.push(data);
   }
-  return { source: "cnet", title, logoURL, rssFeed };
+  return { source: "cnet", title, logoURL, lastItemId: "", rssFeed };
 };
 
 export const parseRSSResponse = ({ rssObj, source }: { rssObj: any; source: ResponseSource }): RSSNormalizedRes => {
@@ -96,7 +99,7 @@ export const parseRSSResponse = ({ rssObj, source }: { rssObj: any; source: Resp
       return parseCnetRSSObj(rssObj);
     }
     default: {
-      return { source: "all", title: "title", logoURL: "logo", rssFeed: [] };
+      return { source: "all", title: "title", logoURL: "logo", lastItemId: "", rssFeed: [] };
     }
   }
 };

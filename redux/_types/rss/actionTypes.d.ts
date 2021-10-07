@@ -18,6 +18,8 @@ export type FetchRSSFeed = {
     source: "reddit" | "medium" | "cnet" | "all";
     logoURL: string;
     title: string;
+    lastItemId: string;
+    currentPage: number;
     error: null;
     errorMessages: null;
   };

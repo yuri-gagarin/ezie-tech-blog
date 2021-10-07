@@ -10,22 +10,19 @@ import { processAxiosError } from "../_helpers/dataHelpers";
 class RSSReduxActions {
 
   async getRSSFeed({ dispatch, optsData }: { dispatch: Dispatch<RSSAction>; optsData: FetchRSSOptions }): Promise<FetchRSSFeed>  {
-    const { option, redditOpts, mediumOpts } = optsData;
+    const { option, redditOpts = null, mediumOpts = null, getOpts = null, currentPage = 1 } = optsData;
     const reqOpts: AxiosRequestConfig = {
       method: "GET",
       url: `/api/rss/${option}`,
-      params: {
-        redditOpts: redditOpts ? redditOpts : null,
-        mediumOpts: mediumOpts ? mediumOpts : null
-      }
+      params: { ...redditOpts, ...mediumOpts, ...getOpts }
     }
     dispatch({ type: "RSSAPIRequest", payload: { loading: true, error: null, errorMessages: null } });
     try {
       const { status, data }: AxiosResponse<GetRSSRes> = await axios(reqOpts);
-      const { responseMsg, source, title, logoURL, rssFeed } = data;
+      const { responseMsg, source, title, logoURL, lastItemId, rssFeed } = data;
       return dispatch({ 
         type: "FetchRSSFeed",  
-        payload: { status, responseMsg, source, title, logoURL, rssFeed, error: null, errorMessages: null, loading: false }
+        payload: { status, responseMsg, source, title, logoURL, lastItemId, currentPage, rssFeed, error: null, errorMessages: null, loading: false }
       });
     } catch (error) {
       console.log(error);

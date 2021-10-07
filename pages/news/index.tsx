@@ -11,7 +11,7 @@ import { NewsFeedComponent } from '@/components/news/NewsFeedComponent';
 import { NeedLoginModal } from "@/components/modals/NeedLoginModal";
 import { NewsReadingList } from "@/components/news/NewsReadingList";
 // types //
-import type { DropdownItemProps } from "semantic-ui-react";
+import type { DropdownItemProps, PaginationProps } from "semantic-ui-react";
 import type { Dispatch } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 import type { RSSAction } from '@/redux/_types/rss/actionTypes';
@@ -87,6 +87,23 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
       RssActions.handleRssFeedError(error, dispatch);
     }
   };
+
+  const handleRSSFeedPageChange = async (e, data: PaginationProps): Promise<any> => {
+    const { currentPage, lastItemId } = rssState;
+    const nextPage: number = Number(data.activePage);
+    try {
+      if (nextPage === currentPage) return;
+      if (nextPage > currentPage) { 
+        await RssActions.getRSSFeed(
+          { dispatch, optsData: { option: "reddit", currentPage: nextPage, getOpts: { limit: 10, after: lastItemId } } }
+        );
+      } else {
+        await RssActions.getRSSFeed({ dispatch, optsData: { option: "reddit", currentPage: nextPage, getOpts: { limit: 10, before: lastItemId } } });
+      }
+    } catch (error) {
+      return RssActions.handleRssFeedError(error, dispatch);
+    }
+  };
   // END action handlers //
   
   // lifecycle hooks //
@@ -138,6 +155,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
             rssState={ rssState }
             handleGoToArticle= { handleGoToArticle }
             handleAddToReadingList={ handleAddToReadingList }
+            handleRSSFeedPageChange={ handleRSSFeedPageChange }
           />
         </Grid.Column>
         {

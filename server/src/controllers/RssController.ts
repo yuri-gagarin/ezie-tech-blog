@@ -17,21 +17,22 @@ import { parseRSSResponse } from "./_helpers/dataHelpers";
 export class RssController extends BasicController {
   handleRssRequest = async (req: Request, res: Response<RssRequestRes>): Promise<Response> => {
     const { option }: RSSGetParams = req.params as RSSGetParams;
-    const { redditOpts, mediumOpts } = req.query as RSSQueryParams;
+    const { filter = "hot", subreddit = "technology", topic = "tech", user = null, skip = 0, before, after } = req.query as RSSQueryParams;
     let url: string;
+    let redditPageOpts: string;
     let responseSource: ResponseSource;
 
     switch (option) {
       case "reddit": {
-        const { filter = "hot", limit = 10, subreddit = "technology", skip = 0 } = redditOpts ? redditOpts : {};
         const baseURL = "http://www.reddit.com/r";
-        url = `${baseURL}/${subreddit}/${filter}/.rss?limit=${limit}&skip=${skip}`;
+        if (after) redditPageOpts = `&after=${after}`;
+        if (before) redditPageOpts = `&before=${before}`;
+        url = `${baseURL}/${subreddit}/${filter}/.rss?limit=${10}${redditPageOpts || ""}`;
         responseSource = "reddit";
         break;
       }
       case "medium": {
         const baseURL = "https://www.medium.com/feed";
-        const { topic = "tech", user = null } = mediumOpts ? mediumOpts : {};
         if (user) url = `${baseURL}/@${user}`;
         else url = `${baseURL}/tag/${topic}`;
         responseSource = "medium";
@@ -49,9 +50,9 @@ export class RssController extends BasicController {
     try {
       const response = await fetch(url);
       const rssObj = await parseStringPromise(await response.text());
-      const { source, title, logoURL, rssFeed } = parseRSSResponse({ rssObj, source: option });
+      const { source, title, logoURL, lastItemId, rssFeed } = parseRSSResponse({ rssObj, source: option });
       return res.status(200).json({
-        responseMsg: "RSS feed success", source, title, logoURL, rssFeed
+        responseMsg: "RSS feed success", source, title, logoURL, lastItemId, rssFeed
       })
     } catch (error) {
       console.log("rss error");

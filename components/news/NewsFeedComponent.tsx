@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Container, Item, Label, Popup } from "semantic-ui-react";
+import { Container, Item, Label, Pagination, Popup } from "semantic-ui-react";
 // next imports //
 import NextImage from "next/image";
 // additional components //
 import { GeneralLoadingComponent } from '../shared/GeneralLoadingComponent';
 // types //
+import type { PaginationProps } from "semantic-ui-react";
 import type { IRSSState, RSSData } from "@/redux/_types/rss/dataTypes";
 // styles //
 import styles from "@/styles/news/NewsFeedComponent.module.css";
@@ -16,10 +17,12 @@ interface INewsFeedComponentProps {
   rssState: IRSSState;
   handleGoToArticle(articleLink: string): void;
   handleAddToReadingList(rssData: RSSData): Promise<any>;
+  handleRSSFeedPageChange(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>, data: PaginationProps): Promise<any>;
 }
 
-export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps> = ({ rssState, handleGoToArticle, handleAddToReadingList }): JSX.Element => {
-  const { loading } = rssState;
+export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps> = ({ rssState, handleGoToArticle, handleAddToReadingList, handleRSSFeedPageChange }): JSX.Element => {
+  // local hooks and state //
+  const { loading, currentPage } = rssState;
   return (
     loading
     ?
@@ -54,6 +57,13 @@ export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps>
           })
         }
       </Item.Group>
+      <div className={ styles.paginationControls }>
+        <Pagination 
+          totalPages={10} 
+          activePage={ currentPage }
+          onPageChange={ handleRSSFeedPageChange } 
+        />
+      </div>
     </Container>
   );
 };

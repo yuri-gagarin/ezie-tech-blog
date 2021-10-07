@@ -8,6 +8,8 @@ const initialState: IRSSState = {
   source: "",
   logoURL: "",
   title: "",
+  lastItemId: "",
+  currentPage: 1,
   rssFeed:[],
   readingList: [],
   error: null,

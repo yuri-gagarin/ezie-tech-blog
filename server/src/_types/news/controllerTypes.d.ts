@@ -7,22 +7,21 @@ export type RSSGetParams = {
 export type ResponseSource = "reddit" | "medium" | "cnet" | "all";
 
 export type RSSQueryParams = {
-  redditOpts?: {
-    filter?: "new" | "hot" | "top";
-    subreddit?: "technology" | "apple" | "windows" | "mobile" | "realtech" | "tech";
-    limit?: number;
-    skip?: number;
-  };
-  mediumOpts?: {
-    topic?: string;
-    user?: string;
-  };
+  filter?: "new" | "hot" | "top";
+  subreddit?: "technology" | "apple" | "windows" | "mobile" | "realtech" | "tech";
+  topic?: string;
+  user?: string;
+  limit?: number;
+  skip?: number;
+  before?: string;
+  after?: string;
 };
 
 export type RssRequestRes = {
   responseMsg: string;
   source: ResponseSource;
   title: string;
+  lastItemId: string;
   logoURL: string;
   rssFeed: RSSData[];
 }

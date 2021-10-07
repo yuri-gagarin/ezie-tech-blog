@@ -7,6 +7,8 @@ export interface IRSSState {
   source: RSSSources | "";
   logoURL: string;
   title: string;
+  lastItemId: string;
+  currentPage: number;
   rssFeed: RSSData[]; // we should normalize the data later //
   readingList: RSSData[];
   error: any | null;
@@ -49,6 +51,13 @@ export type FetchRSSOptions = {
   cnetOpts?: {
     topic?: string;
   }
+  getOpts?: {
+    limit?: number;
+    skip?: number;
+    before?: string;
+    after?: string;
+  }
+  currentPage?: number;
 };
 
 // response types //
@@ -56,6 +65,7 @@ export type GetRSSRes = {
   responseMsg: string;
   source: RSSSources;
   title: string;
+  lastItemId: string;
   logoURL: string;
   rssFeed: RSSData[];
 };
