@@ -1,3 +1,12 @@
+.latestBlogRow {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.latestBlogWrapper {
+  width: 100%;
+}
+
 .techBlogBtnOuter {
   width: 100%;
   display: flex;
@@ -9,7 +18,10 @@
   justify-content: center;
 }
 
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 550px) {
+  .latestBlogWrapper {
+    width: 75%;
+  }
   .techBlogBtnInner {
     width: 150px;
   }

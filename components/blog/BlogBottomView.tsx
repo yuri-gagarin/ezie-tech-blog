@@ -38,10 +38,8 @@ export const BlogBottomView: React.FunctionComponent<IBlogBottomViewProps> = ({ 
               <Card.Description>
                 { trimStringToSpecificLength(postData.content, 200) }
               </Card.Description>
-              <Card.Description>
-                <Button basic color="pink" content="Read" onClick={ () => navigateToBlogPost(postData._id) } />
-              </Card.Description>
             </Card.Content>
+            <Button attached="bottom" basic color="pink" content="Read" onClick={ () => navigateToBlogPost(postData._id) } />
           </Card>
         )
       })

@@ -18,7 +18,10 @@
     flex-wrap: nowrap !important;
     overflow-x: scroll !important;
     -webkit-overflow-scrolling: touch !important;
-    padding: 0 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 1em;
+    padding-right: 2em;
   }
   .blogBottomCard {
     flex: 0 0 90% !important;

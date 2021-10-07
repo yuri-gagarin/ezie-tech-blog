@@ -16,11 +16,13 @@ interface IHomeLatestBlogProps {
 export const HomeLatestBlog: React.FunctionComponent<IHomeLatestBlogProps> = ({ blogPostsArr, navigateToBlogPost, navigateToBlogsPage }): JSX.Element => {
   return (
     <>
-      <Grid.Row>
-        <BlogBottomView 
-          blogPosts={ blogPostsArr }
-          navigateToBlogPost={ navigateToBlogPost }
-        />
+      <Grid.Row className={ styles.latestBlogRow }>
+        <div className={ styles.latestBlogWrapper }>
+          <BlogBottomView 
+            blogPosts={ blogPostsArr }
+            navigateToBlogPost={ navigateToBlogPost }
+          />
+        </div>
       </Grid.Row>
       <Grid.Row>
         <div className={ styles.techBlogBtnOuter }>

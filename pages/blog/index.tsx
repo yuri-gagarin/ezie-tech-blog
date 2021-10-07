@@ -105,10 +105,10 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
         />
       </Grid.Row>
       {
-        width > 550 
+        width > 768 
         ?
         <Grid.Row className={ blogMainStyle.blogBottomRow} centered>
-          <Grid.Column largeScreen={12} tablet={14} mobile={16}>
+          <Grid.Column computer={12} tablet={13} mobile={16}>
             <Segment textAlign="center" className={ blogMainStyle.bottomRowTitle }>Read More</Segment>
             <BlogBottomView blogPosts={ blogPosts } navigateToBlogPost={ navigateToBlogPost } />
           </Grid.Column>

@@ -46,3 +46,8 @@
     padding-right: 1em;
   }
 }
+@media only screen and (max-width: 990px) {
+  .gridColumn {
+    padding: 0.5em 1em !important;
+  }
+}
