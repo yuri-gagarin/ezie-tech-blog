@@ -12,3 +12,14 @@
   margin-left: -1px  !important;
   font-family: "Righteous", 'Courier New', Courier, monospace;
 }
+
+@media screen and (max-width: 768px) {
+  .cardGroup {
+    flex-wrap: nowrap !important;
+    overflow-x: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .blogBottomCard {
+    flex: 0 0 75% !important;
+  }
+}

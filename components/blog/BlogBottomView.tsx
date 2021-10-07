@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Button, Card, Image, Label } from "semantic-ui-react";
 // types //
-import type { BlogPostData } from '../../redux/_types/blog_posts/dataTypes';
+import type { BlogPostData } from '@/redux/_types/blog_posts/dataTypes';
 // styles //
-import styles from "../../styles/blog/BlogBottomView.module.css";
+import styles from "@/styles/blog/BlogBottomView.module.css";
 // helpers //
 import { trimStringToSpecificLength, capitalizeString, formatTimeString } from "../_helpers/displayHelpers";
 
@@ -16,11 +16,11 @@ export const BlogBottomView: React.FunctionComponent<IBlogBottomViewProps> = ({ 
   return (
     blogPosts.length > 3 
     ?
-    <Card.Group centered itemsPerRow={3} >
+    <Card.Group itemsPerRow={3} className={ styles.cardGroup } >
     {
       blogPosts.slice(1, 4).map((postData) => {
         return (
-          <Card className={ styles.blogBottomCard } key={ postData._id } fluid>
+          <Card className={ styles.blogBottomCard } key={ postData._id }>
             <Image src="/images/blog1.jpg" alt="image" />
             <Card.Content>
               <Card.Header>{ postData.title }</Card.Header>

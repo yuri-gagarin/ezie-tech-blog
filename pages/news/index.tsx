@@ -135,17 +135,17 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   }, [ infoModalState ]);
 
   return (
-    <Grid className={ styles.newsMainPageGrid }>
+    <Grid stackable divided className={ styles.newsMainPageGrid } style={{ border: "4px solid green"}}>
       <NeedLoginModal modalOpen={ needLoginModalOpen } handleCloseModal={ handleCloseNeedLoginModal } />
       <GenInfoModal 
         position="fixed-top"
         duration={100}
         open={ infoModalState.open } header={ infoModalState.header } messages={ infoModalState.messages } handleInfoModalClose={ handleCloseInfoModal } 
       />
-      <Grid.Row className={ styles.headerRow }>
+      <Grid.Row className={ styles.headerRow } >
         <h1>RSS News</h1>
       </Grid.Row>
-      <Grid.Row centered className={ styles.feedRow }>
+      <Grid.Row centered className={ styles.feedRow } style={{ width: "100%"}}>
         <Grid.Column mobile={16} computer={10}>
           <NewsControls 
             source={ rssState.source }

@@ -36,6 +36,15 @@
 }
 
 .paginationControls {
-  display: flex;
-  justify-content: center;
+  display: flex !important;
+  justify-content: center !important;
+  width: 100%;
+}
+
+
+@media screen and (max-width: 550px) {
+ 
+  .feedItem {
+    padding: 0.5em !important;
+  }
 }

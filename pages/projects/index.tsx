@@ -76,7 +76,7 @@ const ProjectsPage: React.FunctionComponent<IProjectsPageProps> = (): JSX.Elemen
   }, [ imgModalState ]);
 
   return (
-    <Grid stackable divided className={ styles.projectsPageGrid }>
+    <Grid stackable divided className={ styles.projectsPageGrid } style={{ border: "5px solid green"}}>
       {
         imgModalState.isOpen && (
           <Lightbox 
@@ -89,7 +89,7 @@ const ProjectsPage: React.FunctionComponent<IProjectsPageProps> = (): JSX.Elemen
           />
         )
       }
-      <Grid.Row color="purple" style={{ wdith: "100%", height: "100px "}} />
+      <Grid.Row color="purple" style={{ width: "100%", height: "100px "}} />
       {
         projectsArr.map((projectData, i) => {
           return (

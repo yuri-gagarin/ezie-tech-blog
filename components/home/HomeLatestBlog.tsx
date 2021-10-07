@@ -12,14 +12,10 @@ interface IHomeLatestBlogProps {
 
 export const HomeLatestBlog: React.FunctionComponent<IHomeLatestBlogProps> = ({ blogPostsArr, navigateToBlogPost }): JSX.Element => {
   return (
-    <Grid.Row>
-      <Container>
-        <BlogBottomView 
-          blogPosts={ blogPostsArr }
-          navigateToBlogPost={ navigateToBlogPost }
-        />
-      </Container>
-    </Grid.Row>
+    <BlogBottomView 
+      blogPosts={ blogPostsArr }
+      navigateToBlogPost={ navigateToBlogPost }
+    />
   );
 };
 

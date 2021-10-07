@@ -29,7 +29,7 @@ export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps>
     <GeneralLoadingComponent loaderText="Loading feed"  />
     :
     <Container className={ styles.feedContainer }>
-      <Item.Group divided>
+      <Item.Group divided className={ styles.feedGroup }>
         {
           rssState.rssFeed.map((rssData) => {
             return (
@@ -57,13 +57,16 @@ export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps>
           })
         }
       </Item.Group>
-      <div className={ styles.paginationControls }>
+      <Container className={ styles.paginationControls }>
       {
         source == "reddit"
         ?
         <Pagination 
           totalPages={10} 
           activePage={ currentPage }
+          boundaryRange={0}
+          firstItem={null}
+          lastItem={null}
           onPageChange={ handleRSSFeedPageChange } 
         />
         :
@@ -79,7 +82,7 @@ export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps>
           }
         />
       }
-      </div>
+      </Container>
     </Container>
   );
 };
