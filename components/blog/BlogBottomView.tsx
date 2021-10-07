@@ -16,7 +16,7 @@ export const BlogBottomView: React.FunctionComponent<IBlogBottomViewProps> = ({ 
   return (
     blogPosts.length > 3 
     ?
-    <Card.Group centered itemsPerRow={3} stackable>
+    <Card.Group centered itemsPerRow={3} >
     {
       blogPosts.slice(1, 4).map((postData) => {
         return (
