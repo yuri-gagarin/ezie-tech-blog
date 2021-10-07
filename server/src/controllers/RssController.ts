@@ -34,12 +34,12 @@ export class RssController extends BasicController {
       case "medium": {
         const baseURL = "https://www.medium.com/feed";
         if (user) url = `${baseURL}/@${user}`;
-        else url = `${baseURL}/tag/${topic}`;
+        else url = `${baseURL}/tag/${topic}?limit=10`;
         responseSource = "medium";
         break;
       }
       case "cnet": {
-        url = "https://www.cnet.com/rss/news/";
+        url = "https://www.cnet.com/rss/news?limit=10";
         responseSource = "cnet";
         break;
       }

@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { parse } from 'node-html-parser';
 // type imports //
 import type { RSSData } from "../../_types/news/newsTypes";
 import type { ResponseSource } from "../../_types/news/controllerTypes";
@@ -19,6 +20,7 @@ export const parseRedditRSSObj = (rssObj: any): RSSNormalizedRes => {
   //
   const lastItemId: string = foundEntries[foundEntries.length - 1].id[0] || "";
   for (const entry of foundEntries) {
+    const contentObj = parse(entry.content[0]['_']);
     const data: RSSData = {
       _id: new Types.ObjectId(),
       author: {
@@ -27,7 +29,7 @@ export const parseRedditRSSObj = (rssObj: any): RSSNormalizedRes => {
       },
       provider: "reddit",
       thumbnailPreviewURI: entry["media:thumbnail"] ? entry["media:thumbnail"][0].$.url : "",
-      articleLink: entry.link[0].$.href,
+      articleLink: contentObj.querySelectorAll("a")[2].rawAttributes.href,
       title: entry.title[0],
       category: ["technology"],
       published: entry.published[0],

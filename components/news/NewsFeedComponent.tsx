@@ -22,7 +22,7 @@ interface INewsFeedComponentProps {
 
 export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps> = ({ rssState, handleGoToArticle, handleAddToReadingList, handleRSSFeedPageChange }): JSX.Element => {
   // local hooks and state //
-  const { loading, currentPage } = rssState;
+  const { loading, source, currentPage } = rssState;
   return (
     loading
     ?
@@ -58,11 +58,27 @@ export const NewsFeedComponent: React.FunctionComponent<INewsFeedComponentProps>
         }
       </Item.Group>
       <div className={ styles.paginationControls }>
+      {
+        source == "reddit"
+        ?
         <Pagination 
           totalPages={10} 
           activePage={ currentPage }
           onPageChange={ handleRSSFeedPageChange } 
         />
+        :
+        <Popup
+          content={ "Only reddit feed supports pagination for now" }
+          trigger={
+            <Pagination 
+              disabled={ true }
+              totalPages={10} 
+              activePage={ currentPage }
+              onPageChange={ handleRSSFeedPageChange } 
+            />
+          }
+        />
+      }
       </div>
     </Container>
   );
