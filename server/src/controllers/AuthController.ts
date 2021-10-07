@@ -28,7 +28,7 @@ export default class AuthController {
     const isAdmin: boolean = (("role" in user) && (user.role === "admin" || user.role === "owner")) ? true : false;
     //
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
-    const cookieOpts: CookieOptions = { maxAge: 3600 * 1000 * 12, httpOnly: true, domain, signed: true };
+    const cookieOpts: CookieOptions = { maxAge: 3600 * 1000 * 12, httpOnly: true, domain, signed: true, sameSite: "strict" };
     // generate firebase access token if isAdmin //
     if (isAdmin) {
       const userId = (user._id as Types.ObjectId).toHexString();
@@ -66,7 +66,7 @@ export default class AuthController {
     if (exists) return await this.sendErrorRes(res, { status: 400, error: new Error("User Input Error"), errorMessages: [ message ] });
     // assuming all is well ... //
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
-    const cookieOpts: CookieOptions = { maxAge: 3600000, httpOnly: true, domain, signed: true };
+    const cookieOpts: CookieOptions = { maxAge: 3600000, httpOnly: true, domain, signed: true, sameSite: "strict" };
 
     try {
       const userData = await User.create({ email, password, confirmed: false, createdAt: new Date(), editedAt: new Date() });
@@ -98,7 +98,7 @@ export default class AuthController {
   logout = async (req: Request, res: Response): Promise<Response> => {
     
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
-    const cookieOpts: CookieOptions = { maxAge: 0, httpOnly: true, domain, signed: true };
+    const cookieOpts: CookieOptions = { maxAge: 0, httpOnly: true, domain, signed: true, sameSite: "strict" };
 
     return (
       res
