@@ -1,0 +1,11 @@
+.mainLandingBlog {
+  width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .mainLandingGrid {
+    margin: 0 !important;
+  }
+}
+
+

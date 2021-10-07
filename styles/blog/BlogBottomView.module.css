@@ -18,8 +18,11 @@
     flex-wrap: nowrap !important;
     overflow-x: scroll !important;
     -webkit-overflow-scrolling: touch !important;
+    padding: 0 1em;
   }
   .blogBottomCard {
-    flex: 0 0 75% !important;
+    flex: 0 0 90% !important;
+    margin: 0 !important;
+    margin-left: 5% !important;
   }
 }

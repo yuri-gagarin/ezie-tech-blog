@@ -1,4 +1,5 @@
 import React from 'react';
+import { Grid } from "semantic-ui-react";
 // next js imports //
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -12,6 +13,8 @@ import { HomeAbout } from '@/components/home/HomeAbout';
 import { HomeLatestBlog } from '@/components/home/HomeLatestBlog';
 import { HomeTech } from '@/components/home/HomeTech';
 import { HomeProjects } from "@/components/home/HomeProjects";
+// styles //
+import styles from "@/styles/MainLandingPage.module.css";
 // types //
 import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import type { Dispatch } from "redux";
@@ -42,9 +45,12 @@ export default function Home(): JSX.Element {
   const navigateToBlogPost = (blogPostId: string) => {
     const currentPost: BlogPostData = BlogPostActions.handleSetCurrentBlogPost(dispatch, blogPostId, blogPostsState);
     router.push(`/blog/${currentPost.slug}`);
-  }
+  };
+  const navigateToBlogsPage = (): void => {
+    router.push("/blog");
+  };
   return ( 
-    <React.Fragment>
+    <Grid className={ styles.mainLandingGrid }>
       <Head>
         <title>Eezie Tech Home</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />        <meta name="description" content="Eezie tech. We make tech easy for people of all backgrounds." />
@@ -56,8 +62,9 @@ export default function Home(): JSX.Element {
       <HomeLatestBlog 
         blogPostsArr={ blogPostsState.blogPosts }
         navigateToBlogPost={ navigateToBlogPost }
+        navigateToBlogsPage={ navigateToBlogsPage }
       />
       <HomeProjects />
-    </React.Fragment>
+    </Grid>
   );
 };

@@ -1,0 +1,16 @@
+.techBlogBtnOuter {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.techBlogBtnInner {
+  display: flex;
+  width: 75%;
+  justify-content: center;
+}
+
+@media screen and (min-width: 500px) {
+  .techBlogBtnInner {
+    width: 150px;
+  }
+}
