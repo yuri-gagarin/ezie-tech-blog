@@ -1,6 +1,9 @@
 .mobileSidebarMenuDiv {
   height: 55px;
   background-color: #6435c9;
+  padding-top: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 .mobileSidebarMenu {
   border-radius: 0 !important;

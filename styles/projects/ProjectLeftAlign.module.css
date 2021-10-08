@@ -5,6 +5,9 @@
   justify-content: flex-start;
   color: black;
 }
+.descriptionDiv {
+  padding: 0 1em;
+}
 .techDiv {
   display: flex;
   flex-direction: column;
@@ -82,9 +85,13 @@
 }
 
 @media screen and (max-width: 768px) {
+  .projectIntroColumn, .titleSegment, .imageSegment, .projectDetailsSegment {
+    border: none !important;
+  }
+  
   .imageSegment {
     width: 100vw !important;
     justify-content: flex-start;
-    margin-left: 10px !important;
+    margin: 0 auto !important;
   }
 }

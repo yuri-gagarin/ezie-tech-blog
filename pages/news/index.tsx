@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid } from "semantic-ui-react"; 
+import { Container, Grid } from "semantic-ui-react"; 
 // next imports //
 // redux imports and actions //
 import { useDispatch, useSelector } from "react-redux";
@@ -147,16 +147,18 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
       </Grid.Row>
       <Grid.Row centered className={ styles.feedRow } style={{ width: "100%"}}>
         <Grid.Column mobile={16} computer={10}>
-          <NewsControls 
-            source={ rssState.source }
-            handleRSSSourceSelect={ handleRSSSourceSelect } 
-          />
-          <NewsFeedComponent 
-            rssState={ rssState }
-            handleGoToArticle= { handleGoToArticle }
-            handleAddToReadingList={ handleAddToReadingList }
-            handleRSSFeedPageChange={ handleRSSFeedPageChange }
-          />
+          <Container>
+            <NewsControls 
+              source={ rssState.source }
+              handleRSSSourceSelect={ handleRSSSourceSelect } 
+            />
+            <NewsFeedComponent 
+              rssState={ rssState }
+              handleGoToArticle= { handleGoToArticle }
+              handleAddToReadingList={ handleAddToReadingList }
+              handleRSSFeedPageChange={ handleRSSFeedPageChange }
+            />
+          </Container>
         </Grid.Column>
         {
           width > 990 

@@ -26,10 +26,10 @@ export const ProjectLeftAlign: React.FunctionComponent<IProjectLeftAlignProps> =
   
   return (
     <Grid.Row key={ project._id}>
-      <Grid.Column color="purple" largeScreen={8} mobile={16}>
+      <Grid.Column className= { styles.projectIntroColumn }color="purple" largeScreen={8} mobile={16}>
         <Segment className={ styles.titleSegment }>
           <Header>{ project.title }</Header>
-          <div>{ project.description }</div>
+          <div className={ styles.descriptionDiv }>{ project.description }</div>
           <div className={ styles.techDiv }>
             <div className={ styles.techDivHeader }>Languages</div>
             <div className={ styles.svgLogosDiv }>

@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Dropdown, DropdownItemProps, Icon, Menu } from "semantic-ui-react";
+import { Dropdown, DropdownItemProps, Menu } from "semantic-ui-react";
 // 
 //import axiosInstance from "../axios/axiosInstance";
 //import { AxiosRequestConfig } from "axios";
 import type { SearchCategories } from "../../redux/_types/blog_posts/dataTypes";
+// styles //
 import styles from "../../styles/blog/BlogSortControls.module.css";
 
 interface IBlogSortControlsProps {
@@ -46,7 +47,7 @@ export const BlogSortControls: React.FunctionComponent<IBlogSortControlsProps> =
   };
   
   return (
-    <Menu fluid> 
+    <Menu fluid className={ styles.blogSortControlsMenu }> 
       <Dropdown icon="clock" pointing text={`Sort by: ${localState.dropdownValue}`} className={ styles.dropdownMenu }>
         <Dropdown.Menu className={ styles.timeSortMenu }>
           <Dropdown.Item value="New" onClick={ handlePostSortClick }>

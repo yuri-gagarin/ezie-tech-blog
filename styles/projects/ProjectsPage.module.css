@@ -1,10 +1,13 @@
 .projectsPageGrid {
   min-height: 100vh;
-  margin-top: 10px !important;
   margin-bottom: 10px !important;
 }
-
-
 .projectDivider {
   padding: 0 !important;
+}
+
+@media screen and (max-width: 768) {
+  .projectsPageGrid {
+    margin-top: 0 !important;
+  }
 }
