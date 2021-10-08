@@ -52,7 +52,7 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, currentU
               <Card.Description>{ trimStringToSpecificLength(blogPosts[0].content, 500) }</Card.Description>
             </Card.Content>
             <Card.Content className={ styles.bottomContent }>
-              <Button className={ styles.readMoreBtn } basic color="pink" onClick={ () => navigateToBlogPost(blogPosts[0]._id) } content="Read more" />
+              <Button className={ styles.readMoreBtn } size="small" basic color="pink" onClick={ () => navigateToBlogPost(blogPosts[0]._id) } content="Read more" />
               <div className={ styles.likesDiv}>
                 <BlogPostLikes  
                   blogPostData={ blogPosts[0] } 

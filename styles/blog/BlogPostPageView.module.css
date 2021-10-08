@@ -1,22 +1,21 @@
 .blogPostPageWrapper {
   height: auto;
   width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  border: 1px solid green;
 }
 
 .blogPostPageTitle {
   display: flex;
-  height: 200px;
-  width: 110%;
+  min-height: 200px;
+  width: 100%;
   border: 1px solid #c02183;;
-  border-radius: 5px;
   justify-content: center;
   align-items: center;
-  font-family: 'Righteous', cursive;
+  font-family: 'Audiowide', cursive;
   -webkit-text-fill-color: #c02183; /* Will override color (regardless of order) */
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: white;
@@ -41,6 +40,10 @@
   width: 100%;
   margin-top: 5px;
 }
+.blogPostAuthorAndTimeStamps {
+  display: flex;
+  flex-wrap: wrap;
+}
 .blogPostAuthorDiv, .blogPostTimeStampsDiv {  
   display: flex;
   padding: 0.25em 15px;
@@ -63,25 +66,23 @@
   justify-content: center;
 }
 
+.blogPostKeywordsDiv {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+  border-radius: 3px;
+  padding: 15px 15%;
+}
+.blogPostKeywordsDiv > div {
+  margin-bottom: 5px !important;
+}
+
 .blogPostPageMainContent {
   padding: 10px 15%;
   margin-bottom: 50px;
 }
 
-.blogPostKeywordsDiv {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  border-radius: 3px;
-  padding: 15px 10px;
-}
-
-.blogPostKeywordsSpan {
-  border: 1px solid blue;
-  margin: 1px;
-  padding: 5px 10px;
-  border-radius: 3px;
-}
 
 .blogPostControlsDiv {
   margin-top: 10px;
@@ -99,18 +100,25 @@
 @media only screen and (max-width: 768px) {
   .blogPostPageTitle {
     width: 100%;
+    min-height: 100px;
   }
   .blogPostTitleContent {
     text-align: center;
     line-height: 1em;
+    font-size: 2em;
   }
-  .blogPostPageMainContent {
-    padding: 1em 0.25em;
+  .blogPostPageMainContent, .blogPostKeywordsDiv {
+    padding: 1em;
   }
   .blogPostLikesDiv {
     width: 100%;
   }
 }
 @media only screen and (max-width: 550px) {
-  
+  .blogPostControlsDiv {
+    width: 100%;
+  }
+  .blogPostAuthorDiv > span:nth-child(2), .blogPostTimeStampsDiv > span:nth-child(2) {
+    font-size: 1em;
+  }
 }

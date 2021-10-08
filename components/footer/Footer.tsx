@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, Menu } from "semantic-ui-react";
 // styles //
-import footerStyles from "../../styles/footer/Footer.module.css";
+import footerStyles from "@/styles/footer/Footer.module.css";
 
 interface IFooterProps {
 }
@@ -14,7 +14,7 @@ const Footer: React.FunctionComponent<IFooterProps> = (props): JSX.Element => {
 
   return (
     <div className={ footerStyles.footerWrapper }>
-      <Menu fluid inverted>
+      <Menu inverted fluid>
         <Menu.Menu position="left">
           <Menu.Item
             name="instagram"
@@ -38,7 +38,7 @@ const Footer: React.FunctionComponent<IFooterProps> = (props): JSX.Element => {
         <Menu.Menu position="right">
           <Menu.Item 
             as="segment" 
-            content="Copyright © Yuriy Ivanov 2021"
+            content="© Yuriy Ivanov 2021"
           /> 
         </Menu.Menu>
       </Menu>  

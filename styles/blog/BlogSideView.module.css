@@ -40,6 +40,12 @@
   border: 3px solid red;
 }
 
+@media only screen and (max-width: 550px) {
+  .infoLabel {
+    width: calc(50% - 0.5rem) !important;
+  }
+}
+
 @media only screen and (max-width: 720px) {
   .cardGroupWrapper {
     padding-left: 1em;

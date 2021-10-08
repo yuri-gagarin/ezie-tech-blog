@@ -143,7 +143,7 @@ const BlogPostPage: React.FunctionComponent<IPostPageProps> = ({ }): JSX.Element
           />
       </div>
       <div className={ styles.blogPostControlsDiv }>
-        <Button.Group>
+        <Button.Group fluid>
           <Button basic content="Back" color="violet" onClick={ () => router.back() } />
           <Button basic content="Contact Author" color="green" />
           <Button basic content="Contact Us" color="purple" />
