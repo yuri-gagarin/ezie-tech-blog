@@ -54,7 +54,7 @@ export const MobileMenuSidebar: React.FunctionComponent<IMobileMenuSidebarProps>
   };
 
   return (
-    <Sidebar.Pushable as={Segment} >
+    <Sidebar.Pushable as={Segment} style={{ margin: 0 }} >
       <div className={ styles.mobileSidebarMenuDiv }>
         <Menu inverted color="violet" className={ styles.mobileSidebarMenu } fluid>
           <Menu.Item content="Menu" icon="options" as="a" onClick={ () => setVisible(true) }/>

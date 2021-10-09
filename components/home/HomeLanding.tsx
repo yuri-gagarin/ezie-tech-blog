@@ -2,25 +2,27 @@ import * as React from 'react';
 import { Grid } from "semantic-ui-react";
 // addtional imports //
 import { MainTitle } from "@/components/headers/MainTitle";
+import { AnimatedCyberButton } from '../animated/AnimatedCyberButton';
 // styles //
-import homeLandingStyle from "@/styles/home/HomeLanding.module.css";
+import styles from "@/styles/home/HomeLanding.module.css";
 
 interface IHomeLandingProps {
 
 };
 export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = (props): JSX.Element => {
   return (
-    <Grid.Row className={ homeLandingStyle.wrapperRow } >
-      <div className={ homeLandingStyle.rowLeft }> 
+    <Grid.Row className={ styles.wrapperRow } >
+      <div className={ styles.rowLeft }> 
         <MainTitle />
+        <AnimatedCyberButton content="More" />
       </div>
-      <div className={ homeLandingStyle.rowRight }> 
-        <div className={ homeLandingStyle.topRight }>
+      <div className={ styles.rowRight }> 
+        <div className={ styles.topRight }>
           <span>Demystifying today&apos;s</span>
           <span>technoloogy</span> 
           <span>one step at a time.</span>
         </div>
-        <div className={ homeLandingStyle.rightDescription }>
+        <div className={ styles.rightDescription }>
           <span>Read</span>
           <span>Learn</span>
           <span>Plan</span>
@@ -32,7 +34,7 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = (props): 
   );
 };
 /*
-<div className={ homeLandingStyle.logoDiv }>
+<div className={ styles.logoDiv }>
   <div>Eezie</div>
   <div>Tech</div>
 </div>
