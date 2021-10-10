@@ -7,14 +7,22 @@ import { AnimatedCyberButton } from '../animated/AnimatedCyberButton';
 import styles from "@/styles/home/HomeLanding.module.css";
 
 interface IHomeLandingProps {
-
+  handleSeeMore(): void;
 };
-export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = (props): JSX.Element => {
+export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handleSeeMore }): JSX.Element => {
   return (
     <Grid.Row className={ styles.wrapperRow } >
       <div className={ styles.rowLeft }> 
         <MainTitle />
-        <AnimatedCyberButton content="More" />
+        <div className={ styles.seeMoreBtnWrapper }>
+          <AnimatedCyberButton 
+            content="More" 
+            clip="clipLeftBottom" 
+            color="violet" 
+            pauseInterval={ 5000 } 
+            onClick={ handleSeeMore }
+          />
+        </div>
       </div>
       <div className={ styles.rowRight }> 
         <div className={ styles.topRight }>

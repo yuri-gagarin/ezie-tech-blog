@@ -3,11 +3,34 @@
   align-items: center;
   justify-content: center;
 }
+
+.clipLeftBottom {
+  --clip: polygon(0 0, 100% 0, 100% 100%, 8% 100%, 0 75%);
+}
+.clipLeftTop {
+  --clip: polygon(8% 0, 100% 0, 100% 100%, 0 100%, 0 25%);
+}
+.cliRightBottom {
+  --clip: polygon(100% 0, 100% 75%, 92% 100%, 0 100%, 0 0);
+}
+.clipRightTop {
+  --clip: polygon(92% 0, 100% 25%, 100% 100%, 0 100%, 0 0);
+}
+.clipAll {
+  --clip: polygon(8% 0, 93% 0, 100% 25%, 100% 75%, 92% 100%, 8% 100%, 0 75%, 0 25%);
+}
+.clipNone {
+  --clip: polygon(100% 0, 100% 100%, 0 100%, 0 0);
+}
+
+.violet {
+  --primary: #AA076B;
+  --light-primary: #rgb(196, 10, 124)
+}
+
 .animatedCyberBtn {
-  position: absolute;
-  left: 50%;
-  bottom: 10px;
-  --primary: hsl(var(--primary-hue), 85%, calc(var(--primary-lightness, 50) * 1%));
+  position: relative;
+  transform: translate(0);
   --shadow-primary: hsl(var(--shadow-primary-hue), 90%, 50%);
   --primary-hue: 0;
   --primary-lightness: 50;
@@ -17,11 +40,10 @@
   --label-size: 9px;
   --shadow-secondary-hue: 60;
   --shadow-secondary: hsl(var(--shadow-secondary-hue), 90%, 60%);
-  --clip: polygon(0 0, 100% 0, 100% 100%, 95% 100%, 95% 90%, 85% 90%, 85% 100%, 8% 100%, 0 70%);
   --border: 4px;
   --shimmy-distance: 5;
   --clip-one: polygon(0 2%, 100% 2%, 100% 95%, 95% 95%, 95% 90%, 85% 90%, 85% 95%, 8% 95%, 0 70%);
-  --clip-two: polygon(0 78%, 100% 78%, 100% 100%, 95% 100%, 95% 90%, 85% 90%, 85% 100%, 8% 100%, 0 78%);
+  --clip-two: polygon(0 78%, 100% 78%, 100% 100%, 8% 100%, 0 78%);
   --clip-three: polygon(0 44%, 100% 44%, 100% 54%, 95% 54%, 95% 54%, 85% 54%, 85% 54%, 8% 54%, 0 54%);
   --clip-four: polygon(0 0, 100% 0, 100% 0, 95% 0, 95% 0, 85% 0, 85% 0, 8% 0, 0 0);
   --clip-five: polygon(0 0, 100% 0, 100% 0, 95% 0, 95% 0, 85% 0, 85% 0, 8% 0, 0 0);
@@ -37,13 +59,15 @@
   letter-spacing: 2px;
   font-weight: 700;
   border: 0;
+  width: 100%;
   min-width: 300px;
   height: 75px;
   line-height: 75px;
 }
 
+
 .animatedCyberBtn:hover {
-  --primary: hsl(var(--primary-hue), 85%, calc(var(--primary-lightness, 50) * 0.8%));
+  --primary: var(var(--light-primary))
 }
 .animatedCyberBtn:active {
   --primary: hsl(var(--primary-hue), 85%, calc(var(--primary-lightness, 50) * 0.6%));
@@ -75,12 +99,7 @@
   background: var(--shadow-primary);
   text-shadow: 2px 2px var(--shadow-primary), -2px -2px var(--shadow-secondary);
   clip-path: var(--clip);
-  animation: glitch 2s infinite;
-  display: none;
-}
-
-.animatedCyberBtn:hover .cyberBtnGlitch {
-  display: block;
+  display: none; 
 }
 
 .cyberBtnGlitch::before {
@@ -93,6 +112,16 @@
   clip-path: var(--clip);
   background: var(--primary);
   z-index: -1;
+}
+
+/* different animation options */
+.intervaled {
+  display: block;
+  animation: glitch 2s infinite;
+}
+.hovered:hover .cyberBtnGlitch {
+  display: block;
+  animation: glitch 2s infinite;
 }
 
 @keyframes glitch {

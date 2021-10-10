@@ -36,6 +36,8 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 })
 
 export default function Home(): JSX.Element {
+  // local state and refs //
+  const latestBlogRef = React.createRef<HTMLDivElement>()
   // next hooks //
   const router = useRouter();
   // redux hooks //
@@ -49,6 +51,10 @@ export default function Home(): JSX.Element {
   const navigateToBlogsPage = (): void => {
     router.push("/blog");
   };
+  const handleSeeMore = (): void => {
+    if (latestBlogRef.current) latestBlogRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
   return ( 
     <Grid className={ styles.mainLandingGrid }>
       <Head>
@@ -56,10 +62,11 @@ export default function Home(): JSX.Element {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />        <meta name="description" content="Eezie tech. We make tech easy for people of all backgrounds." />
         <meta name="keywords" content="programming web development nodej typescript react javascript express"></meta>
       </Head>
-      <HomeLanding />
+      <HomeLanding handleSeeMore={ handleSeeMore } />
       <HomeAbout />
       <HomeTech />
       <HomeLatestBlog 
+        ref={ latestBlogRef }
         blogPostsArr={ blogPostsState.blogPosts }
         navigateToBlogPost={ navigateToBlogPost }
         navigateToBlogsPage={ navigateToBlogsPage }

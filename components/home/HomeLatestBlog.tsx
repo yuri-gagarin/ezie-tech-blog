@@ -13,11 +13,11 @@ interface IHomeLatestBlogProps {
   navigateToBlogsPage(): void;
 }
 
-export const HomeLatestBlog: React.FunctionComponent<IHomeLatestBlogProps> = ({ blogPostsArr, navigateToBlogPost, navigateToBlogsPage }): JSX.Element => {
+export const HomeLatestBlog = React.forwardRef<HTMLDivElement, IHomeLatestBlogProps>(({ blogPostsArr, navigateToBlogPost, navigateToBlogsPage }, ref) => {
   return (
     <>
       <Grid.Row className={ styles.latestBlogRow }>
-        <div className={ styles.latestBlogWrapper }>
+        <div className={ styles.latestBlogWrapper } ref={ ref }>
           <BlogBottomView 
             blogPosts={ blogPostsArr }
             navigateToBlogPost={ navigateToBlogPost }
@@ -33,5 +33,7 @@ export const HomeLatestBlog: React.FunctionComponent<IHomeLatestBlogProps> = ({ 
       </Grid.Row>
     </>
   );
-};
+});
+HomeLatestBlog.displayName = 'HomeLatesBlog';
+
 
