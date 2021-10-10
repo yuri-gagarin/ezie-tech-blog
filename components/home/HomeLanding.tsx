@@ -3,6 +3,7 @@ import { Grid } from "semantic-ui-react";
 // addtional imports //
 import { MainTitle } from "@/components/headers/MainTitle";
 import { AnimatedCyberButton } from '../animated/AnimatedCyberButton';
+import { AnimatedShinyButton } from '../animated/AnimatedShinyButton';
 import { AnimatedScrollingCode } from '../animated/AnimatedScrollingCode';
 // styles //
 import styles from "@/styles/home/HomeLanding.module.css";
@@ -20,6 +21,7 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handle
         <div className={ styles.titleWrapper }>
           <MainTitle />
         </div>
+       
         <div className={ styles.seeMoreBtnWrapper }>
           <AnimatedCyberButton 
             content="More" 
@@ -34,6 +36,13 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handle
           <span>Learn</span>
           <span>Plan</span>
           <span>Relax</span>
+        </div>
+        <div className={ styles.controlBtns }>
+          <AnimatedShinyButton content="Blog" />
+          <AnimatedShinyButton content="Projects" />
+          <AnimatedShinyButton content="News" />
+          <AnimatedShinyButton content="About" />
+
         </div>
       </div>
     </Grid.Row>

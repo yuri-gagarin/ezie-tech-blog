@@ -7,38 +7,25 @@
 .landingMain {
   display: flex;
   position: relative;
+  align-items: center;
   height: 100%;
   width: 100%;
-  border: 10px solid green;
 }
 .titleWrapper {
   display: flex;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 100%;
-
 }
-/*
-.rowLeft, .rowRight {
+.controlBtns {
+  position: absolute;
   display: flex;
-  position: relative;
-  flex-direction: row;
-  justify-content: center;
   align-items: center;
-  height: 100%;
+  justify-content: center;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
 }
-.rowLeft {
-  width: 33%;
-  background: #8E2DE2;
-  background: -webkit-linear-gradient(to left, #4A00E0, #8E2DE2);  
-  background: linear-gradient(to left, #4A00E0, #8E2DE2); 
-}
-.rowRight {
-  width: 67%;
-}
-*/
 
 .seeMoreBtnWrapper {
   position: absolute;
@@ -135,26 +122,11 @@
   }
 }
 
-@media only screen and (max-width: 1024px) {
-  .rowLeft, .rowRight {
-    width: 50%;
-  }
-}
-
 @media only screen and (max-width: 768px) {
   .wrapperRow {
     height: 100vh;
     display: flex !important;
     flex-direction: column !important;
-  }
-  .rowLeft, .rowRight {
-    width: 100%;
-  }
-  .rowLeft {
-    height: 40%;
-  }
-  .rowRight {
-    height: 60%;
   }
   .topRight {
     left: 0;
