@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Grid } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 // next imports //
 import NextImage from "next/image";
 // styles //
@@ -9,12 +9,12 @@ interface IHomeTechProps {
 
 }
 
-export const HomeTech: React.FunctionComponent<IHomeTechProps> = (props): JSX.Element => {
+export const HomeTech = React.forwardRef<HTMLDivElement>((props, ref) => {
 
   return (
     <Grid.Row className={ homeTechStyle.homeTechRow } centered> 
       <Grid.Column>
-        <div className={ homeTechStyle.techTitleDiv }>
+        <div className={ homeTechStyle.techTitleDiv } ref={ ref }>
           Our Tech
         </div>
         <div className={ homeTechStyle.techDescDiv }>
@@ -71,5 +71,7 @@ export const HomeTech: React.FunctionComponent<IHomeTechProps> = (props): JSX.El
       </Grid.Column>
     </Grid.Row>
   );
-};
+});
+
+HomeTech.displayName = "HomeTech";
 

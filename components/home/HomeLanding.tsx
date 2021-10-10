@@ -19,7 +19,7 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handle
             content="More" 
             clip="clipLeftBottom" 
             color="violet" 
-            pauseInterval={ 5000 } 
+            pauseInterval={ 3000 } 
             onClick={ handleSeeMore }
           />
         </div>

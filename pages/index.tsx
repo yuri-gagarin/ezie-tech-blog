@@ -37,7 +37,8 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
 export default function Home(): JSX.Element {
   // local state and refs //
-  const latestBlogRef = React.createRef<HTMLDivElement>()
+  const latestTechRef = React.createRef<HTMLDivElement>();
+  const latestBlogRef = React.createRef<HTMLDivElement>();
   // next hooks //
   const router = useRouter();
   // redux hooks //
@@ -52,7 +53,7 @@ export default function Home(): JSX.Element {
     router.push("/blog");
   };
   const handleSeeMore = (): void => {
-    if (latestBlogRef.current) latestBlogRef.current.scrollIntoView({ behavior: "smooth" });
+    if (latestTechRef.current) latestTechRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
   return ( 
@@ -64,7 +65,9 @@ export default function Home(): JSX.Element {
       </Head>
       <HomeLanding handleSeeMore={ handleSeeMore } />
       <HomeAbout />
-      <HomeTech />
+      <HomeTech 
+        ref={ latestTechRef }
+      />
       <HomeLatestBlog 
         ref={ latestBlogRef }
         blogPostsArr={ blogPostsState.blogPosts }
