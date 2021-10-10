@@ -10,9 +10,7 @@ export const HomeAbout: React.FunctionComponent<IHomeAboutProps> = (props): JSX.
   return (
     <Grid.Row className={ styles.wrapperRow }>
       <div className={ styles.aboutDiv }>
-        <div className={ styles.aboutDivContent }>
-          <h4>Technology doesn&apos;t have to be confusing</h4>
-        </div>
+       
       </div>
       <div className={ styles.aboutDescriptionDiv }>
         <div className={ styles.descriptionWrapper }>

@@ -3,6 +3,7 @@ import { Grid } from "semantic-ui-react";
 // addtional imports //
 import { MainTitle } from "@/components/headers/MainTitle";
 import { AnimatedCyberButton } from '../animated/AnimatedCyberButton';
+import { AnimatedScrollingCode } from '../animated/AnimatedScrollingCode';
 // styles //
 import styles from "@/styles/home/HomeLanding.module.css";
 
@@ -12,8 +13,13 @@ interface IHomeLandingProps {
 export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handleSeeMore }): JSX.Element => {
   return (
     <Grid.Row className={ styles.wrapperRow } >
-      <div className={ styles.rowLeft }> 
-        <MainTitle />
+      <div className={ styles.landingMain }> 
+        <AnimatedScrollingCode />
+        <div className={ styles.imgOverlay}> 
+        </div> 
+        <div className={ styles.titleWrapper }>
+          <MainTitle />
+        </div>
         <div className={ styles.seeMoreBtnWrapper }>
           <AnimatedCyberButton 
             content="More" 
@@ -23,19 +29,11 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handle
             onClick={ handleSeeMore }
           />
         </div>
-      </div>
-      <div className={ styles.rowRight }> 
-        <div className={ styles.topRight }>
-          <span>Demystifying today&apos;s</span>
-          <span>technoloogy</span> 
-          <span>one step at a time.</span>
-        </div>
         <div className={ styles.rightDescription }>
           <span>Read</span>
           <span>Learn</span>
           <span>Plan</span>
           <span>Relax</span>
-          <span>Take it eezie</span>
         </div>
       </div>
     </Grid.Row>
@@ -46,4 +44,29 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handle
   <div>Eezie</div>
   <div>Tech</div>
 </div>
+*/
+
+/*
+  <div className={ styles.rowLeft }> 
+    <MainTitle />
+   
+  </div>
+  <div className={ styles.rowRight }>   
+    <AnimatedScrollingCode />
+   
+    <div className={ styles.rightSocial }>
+    </div>
+    <div className={ styles.rightDescription }>
+      <span>Read</span>
+      <span>Learn</span>
+      <span>Plan</span>
+      <span>Relax</span>
+    </div>
+    <div className={ styles.topRight }>
+      <span>Today&apos;s</span>
+      <span>tech</span> 
+      <span>made</span>
+      <span>easy</span>
+    </div>
+  </div>
 */

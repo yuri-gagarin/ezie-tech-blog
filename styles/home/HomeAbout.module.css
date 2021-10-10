@@ -2,19 +2,20 @@
   position: relative;
   width: 100%;
   height: 35vh;
-  background: #8E2DE2;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */  
   padding: 0 !important;
+  background: transparent !important;
 }
 
 .aboutDiv {
   width: 33%;
   display: flex;
   align-items: center;
-  background: #AA076B;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #61045F, #AA076B);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #61045F, #AA076B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  /*
+  background: #AA076B;  
+  background: -webkit-linear-gradient(to left, #61045F, #AA076B);  
+  background: linear-gradient(to left, #61045F, #AA076B); 
+  */
+  background: transparent;
 }
 .aboutDivContent {
   display: flex;
@@ -34,9 +35,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border-left: 10px solid white;
-  border-top: 10px solid white;
   width: 67%;
+  background: #8E2DE2;  
+  background: -webkit-linear-gradient(to right, #4A00E0, #8E2DE2);
+  background: linear-gradient(to right, #4A00E0, #8E2DE2); 
 }
 .descriptionWrapper {
   width: 75%;

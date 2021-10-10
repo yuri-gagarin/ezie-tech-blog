@@ -5,10 +5,10 @@
 
 .tech {
   position: absolute;
-  right: 20%;
-  bottom: -40px;
+  right: 50%;
+  bottom: -1.5em;
   font-family: 'Mr Dafoe', cursive;
-  font-size: 60px;
+  font-size: 6em;
   margin-top: 160px;
   margin-bottom: 0;
   color: #EB219B;
@@ -28,7 +28,7 @@
   left: 50%;
   transform: translateX(-50%);
   font-family: 'Audiowide', cursive;
-  font-size: 110px;
+  font-size: 13em;
   line-height: 1;
   margin: 0;
   /* font-weight: normal; */
