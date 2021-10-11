@@ -1,0 +1,19 @@
+.animatedHomeNavWrapper {
+  position: absolute;
+  height: 60px;
+  left: 0;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  border: 4px solid green;
+}
+.buttonDiv {
+  width: 100px;
+}
+
+@media screen and (max-width: 480px) {
+  .buttonDiv {
+    width: 80px;
+  }
+}

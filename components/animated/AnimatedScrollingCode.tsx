@@ -10,8 +10,8 @@ export const AnimatedScrollingCode: React.FunctionComponent<IAdnimatedScrollingC
 
   const createCanvas = (canvas: HTMLCanvasElement): NodeJS.Timer => {
     // 
-    //canvas.height = window.innerHeight;
-    //canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
     //
     const font_size = 10;
     const fontColors: string[] = ["#f4427d", "#a832a4", "#1c9c25", "#014a06", "#2926ed", "#c9bc04"];

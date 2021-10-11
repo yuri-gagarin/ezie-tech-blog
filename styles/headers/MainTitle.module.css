@@ -101,12 +101,25 @@
     -webkit-text-stroke: 1px white;
   }
 }
+ 
 
-@media only screen and (max-width: 768px) {
-  .tech {
-    top: 0px;
-  } 
+
+@media screen and (max-width: 786px) {
   .mainTitle {
-    top: -60px;
+    font-size: 10em;
+  }
+  .tech {
+    font-size: 6em;
+    bottom: -1em;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .mainTitle {
+    font-size: 7em;
+  }
+  .tech {
+    font-size: 4em;
+    bottom: -0.66em;
   }
 }

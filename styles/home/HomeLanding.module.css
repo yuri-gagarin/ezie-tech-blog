@@ -103,6 +103,15 @@
   opacity: 0.2;
 }
 
+.topMenu {
+  position: absolute;
+  left: 0;
+  top: 50px;
+  right: 0;
+  height: 50px;
+  border: 5px solid red;
+}
+
 
 @keyframes moveBg {
   0% {
