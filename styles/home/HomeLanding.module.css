@@ -1,6 +1,6 @@
 .wrapperRow {
   width: 100%;
-  height: 100vh;
+  height: 105vh;
   padding: 0 !important;
   position: relative;
 }
@@ -109,7 +109,6 @@
   top: 50px;
   right: 0;
   height: 50px;
-  border: 5px solid red;
 }
 
 

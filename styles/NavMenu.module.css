@@ -1,3 +1,13 @@
+.animatedMenuRow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  z-index: 1000;
+}
+
 .menuRow {
   padding: 0 !important;
   position: fixed;
@@ -9,6 +19,22 @@
   z-index: 9999;
 }
 
+
 .navMenuItem::after, .navMenuItem::before {
   display: none;
 }
+
+/*
+.fadeIn {
+  animation: fadeIn 2s linear forwards;
+  animation-delay: 2s;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+*/
