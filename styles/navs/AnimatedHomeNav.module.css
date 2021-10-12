@@ -13,6 +13,12 @@
   width: 100px;
 }
 
+@media screen and (max-width: 1024px) {
+  .animatedHomeNavWrapper {
+    justify-content: center;
+  }
+}
+
 @media screen and (max-width: 480px) {
   .buttonDiv {
     width: 80px;

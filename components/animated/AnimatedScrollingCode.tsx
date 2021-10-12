@@ -66,7 +66,7 @@ export const AnimatedScrollingCode: React.FunctionComponent<IAdnimatedScrollingC
   }, [ contextRef ])
 
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative", border: "5px solid green", background: 'url("/backgrounds/header_bg1.jpg")' }}>
+    <div style={{ width: "100%", height: "100%", position: "relative", background: 'url("/backgrounds/header_bg1.jpg")' }}>
       <canvas style={{ width: "100%", height: "100%" }} ref={ contextRef }>
         { children }
       </canvas>
