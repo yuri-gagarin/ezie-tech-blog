@@ -9,8 +9,8 @@ import { wrapper } from '@/redux/store';
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // home splash components //
 import { HomeLanding } from '@/components/home/HomeLanding';
-import { HomeAbout } from '@/components/home/HomeAbout';
 import { HomeLatestBlog } from '@/components/home/HomeLatestBlog';
+import { HomeNews } from '@/components/home/HomeNews';
 import { HomeTech } from '@/components/home/HomeTech';
 import { HomeProjects } from "@/components/home/HomeProjects";
 // styles //
@@ -64,10 +64,10 @@ export default function Home(): JSX.Element {
         <meta name="keywords" content="programming web development nodej typescript react javascript express"></meta>
       </Head>
       <HomeLanding handleSeeMore={ handleSeeMore } />
-      <HomeAbout />
       <HomeTech 
         ref={ latestTechRef }
       />
+      <HomeNews />
       <HomeLatestBlog 
         ref={ latestBlogRef }
         blogPostsArr={ blogPostsState.blogPosts }

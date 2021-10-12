@@ -12,7 +12,7 @@ interface IHomeTechProps {
 export const HomeTech = React.forwardRef<HTMLDivElement>((props, ref) => {
 
   return (
-    <Grid.Row className={ homeTechStyle.homeTechRow } centered> 
+    <Grid.Row className={ homeTechStyle.homeTechRow }> 
       <Grid.Column>
         <div className={ homeTechStyle.techTitleDiv } ref={ ref }>
           Our Tech

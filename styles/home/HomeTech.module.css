@@ -1,8 +1,8 @@
 .homeTechRow {
   background: white;
-  border-top: 10px solid white;
   flex-direction: column !important;
   align-items: center !important;
+  padding: 0 !important;
 }
 .techTitleDiv, .techDescDiv {
   display: flex;
@@ -14,6 +14,7 @@
   font-size: 2em;
   color: white;
   padding: 0.5em 1em;
+  margin: 0 -1rem;
   font-family: 'Monoton', cursive;
 }
 .techDescDiv {
