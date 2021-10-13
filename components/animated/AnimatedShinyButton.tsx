@@ -3,12 +3,13 @@ import styles from "@/styles/animated/AnimatedShinyButton.module.css";
 
 interface IAnimatedShinyButtonProps {
   content: string;
-  onClick?(e: React.MouseEvent<HTMLDivElement>): void; 
+  onClick?(e: React.MouseEvent<HTMLDivElement>, { value }: { value?: string }): void; 
+  value?: string;
 }
 
-export const AnimatedShinyButton: React.FunctionComponent<IAnimatedShinyButtonProps> = ({ content, onClick }): JSX.Element => {
+export const AnimatedShinyButton: React.FunctionComponent<IAnimatedShinyButtonProps> = ({ content, onClick, value }): JSX.Element => {
   return (
-    <div className={ styles.shinyButton } onClick={ onClick }>
+    <div className={ styles.shinyButton } onClick={ (e) => onClick(e, { value }) }>
       { content }
     </div>
   );

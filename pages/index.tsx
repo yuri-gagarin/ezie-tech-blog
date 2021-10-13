@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from "semantic-ui-react";
+import { Grid, Ref } from "semantic-ui-react";
 // next js imports //
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -40,8 +40,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
 export default function Home(): JSX.Element {
   // local state and refs //
-  const latestTechRef = React.createRef<HTMLDivElement>();
-  const latestBlogRef = React.createRef<HTMLDivElement>();
   // next hooks //
   const router = useRouter();
   // redux hooks //
@@ -77,8 +75,11 @@ export default function Home(): JSX.Element {
   };
   
   const handleSeeMore = (): void => {
-    if (latestTechRef.current) latestTechRef.current.scrollIntoView({ behavior: "smooth" });
+    const elem = document.getElementById("homeTechRow");
+    if (elem) elem.scrollIntoView({ behavior: "smooth" });
   };
+  
+
   const handleGoToSection = (e: React.MouseEvent<HTMLButtonElement>): void => {
     const target = e.currentTarget.dataset["value"]
     if (target) {
@@ -95,12 +96,9 @@ export default function Home(): JSX.Element {
         <meta name="keywords" content="programming web development nodej typescript react javascript express"></meta>
       </Head>
       <HomeLanding handleSeeMore={ handleSeeMore } />
-      <HomeTech 
-        ref={ latestTechRef }
-      />
+      <HomeTech />
       <HomeNews handleGoToSpecificFeed={ handleGoToSpecificFeed } />
       <HomeLatestBlog 
-        ref={ latestBlogRef }
         blogPostsArr={ blogPostsState.blogPosts }
         navigateToBlogPost={ navigateToBlogPost }
         handleGoToSection={ handleGoToSection }

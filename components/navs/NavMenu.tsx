@@ -57,6 +57,37 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
   const handleErrorModalClose = (): void => {
     AuthActions.dismissAuthError(dispatch);
   };
+  const handleScrollToContent = (e: React.MouseEvent<HTMLDivElement>, data: { value?: string }): void => {
+    const { value } = data;
+    if (!value) return;
+
+    enum ElemId { news = "homeNewsRow", blog = "homeLatestBlogRow", project = "homeProjectsRow" };
+    let elementId: string;
+
+    switch(value) {
+      case "news": {
+        elementId = ElemId.news;
+        break;
+      }
+      case "blog": {
+        elementId = ElemId.blog;
+        break;
+      }
+      case "project": {
+        elementId = ElemId.project;
+        break;
+      }
+      default: {
+        elementId = "";
+      }
+    }
+
+    const element = document.getElementById(elementId);
+    console.log(element)
+    console.log(elementId)
+    if (element) element.scrollIntoView({ behavior: "smooth" });
+
+  }
 
   // lifecycle hooks //
   React.useEffect(() => {
@@ -102,7 +133,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
       animMenuState.show
       ?
       <div className={ navMenuStyle.animatedMenuRow } style={{ transform: `translateY(${animMenuState.transformY})`}}>
-        <AnimatedHomeNav />
+        <AnimatedHomeNav handleScrollToContent={ handleScrollToContent } />
       </div>
       :
       <Grid.Row className={ `${navMenuStyle.menuRow} ${navMenuStyle.fadeIn} ` }>

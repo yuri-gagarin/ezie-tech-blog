@@ -9,12 +9,12 @@ interface IHomeTechProps {
 
 }
 
-export const HomeTech = React.forwardRef<HTMLDivElement>((props, ref) => {
+export const HomeTech: React.FunctionComponent<IHomeTechProps> = (props): JSX.Element => {
 
   return (
-    <Grid.Row className={ homeTechStyle.homeTechRow }> 
+    <Grid.Row id="homeTechRow" className={ homeTechStyle.homeTechRow }> 
       <Grid.Column>
-        <h4 className={ homeTechStyle.techTitleDiv } ref={ ref }>
+        <h4 className={ homeTechStyle.techTitleDiv }>
           Our Tech
         </h4>
         <div className={ homeTechStyle.techDescDiv }>
@@ -71,7 +71,4 @@ export const HomeTech = React.forwardRef<HTMLDivElement>((props, ref) => {
       </Grid.Column>
     </Grid.Row>
   );
-});
-
-HomeTech.displayName = "HomeTech";
-
+};

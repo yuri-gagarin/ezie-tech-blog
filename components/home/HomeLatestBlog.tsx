@@ -13,14 +13,14 @@ interface IHomeLatestBlogProps {
   handleGoToSection: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export const HomeLatestBlog = React.forwardRef<HTMLDivElement, IHomeLatestBlogProps>(({ blogPostsArr, navigateToBlogPost, handleGoToSection }, ref) => {
+export const HomeLatestBlog: React.FunctionComponent<IHomeLatestBlogProps> = ({ blogPostsArr, navigateToBlogPost, handleGoToSection }): JSX.Element => {
   return (
     <>
-      <Grid.Row>
+      <Grid.Row id="homeLatestBlogRow">
         <h4 className={ styles.homeBlogTitleRow }>Our Blog</h4>
       </Grid.Row>
       <Grid.Row className={ styles.latestBlogRow }>
-        <div className={ styles.latestBlogWrapper } ref={ ref }>
+        <div className={ styles.latestBlogWrapper }>
           <BlogBottomView 
             blogPosts={ blogPostsArr }
             navigateToBlogPost={ navigateToBlogPost }
@@ -36,7 +36,6 @@ export const HomeLatestBlog = React.forwardRef<HTMLDivElement, IHomeLatestBlogPr
       </Grid.Row>
     </>
   );
-});
-HomeLatestBlog.displayName = 'HomeLatesBlog';
+};
 
 
