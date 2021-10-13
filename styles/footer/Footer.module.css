@@ -1,5 +1,5 @@
 .footerWrapper {
   width: 100%;
-  height: auto;
   background-color: #1b1c1d;
+  padding: 0 !important;
 }

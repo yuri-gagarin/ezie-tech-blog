@@ -1,3 +1,13 @@
+.homeBlogTitleRow  {
+  width: 100%;
+  background-color: purple;
+  font-size: 2em;
+  color: white;
+  padding: 0.5em 1em;
+  font-family: 'Monoton', cursive;
+  text-align: center;
+}
+
 .latestBlogRow {
   display: flex !important;
   justify-content: center !important;

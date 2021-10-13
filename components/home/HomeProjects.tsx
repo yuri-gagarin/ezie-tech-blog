@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Button, Grid } from 'semantic-ui-react';
 //
-import projectsHomeStyles from "../../styles/home/HomeProjects.module.css";
+import projectsHomeStyles from "@/styles/home/HomeProjects.module.css";
 
 interface IProjectsHomeProps {
+  handleGoToSection: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export const HomeProjects: React.FunctionComponent<IProjectsHomeProps> = (props): JSX.Element => {
+export const HomeProjects: React.FunctionComponent<IProjectsHomeProps> = ({ handleGoToSection }): JSX.Element => {
   return (
     <Grid.Row className={ projectsHomeStyles.projectsWrapper }> 
       <div className={ projectsHomeStyles.projectsTitle } >
@@ -24,7 +25,7 @@ export const HomeProjects: React.FunctionComponent<IProjectsHomeProps> = (props)
             <p>What we&apos;re working on</p>
           </div>
           <div className={ projectsHomeStyles.projectsMoreBtn }>
-            <Button color="purple" content={"See More"} />
+            <Button color="purple" content={"See More"} onClick={ handleGoToSection } data-value="projects" />
 
           </div>
         </div>

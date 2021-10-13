@@ -115,7 +115,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
         try {
           const optsData: FetchRSSOptions = { option: "reddit" };
           //const optsDataO: FetchRSSOptions = { option: "medium" };
-          await RssActions.getRSSFeed({ dispatch, optsData });
+          // await RssActions.getRSSFeed({ dispatch, optsData });
           if (loggedIn && JWTToken) await RssActions.handleGetReadingList({ dispatch, JWTToken });
           //await RssActions.getRSSFeed({ dispatch, optsData: { option: "medium" } })
         } catch (error) {

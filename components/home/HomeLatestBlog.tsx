@@ -10,12 +10,15 @@ import styles from "@/styles/home/HomeLatestBlog.module.css";
 interface IHomeLatestBlogProps {
   blogPostsArr: BlogPostData[];
   navigateToBlogPost(blogPostId: string): void;
-  navigateToBlogsPage(): void;
+  handleGoToSection: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export const HomeLatestBlog = React.forwardRef<HTMLDivElement, IHomeLatestBlogProps>(({ blogPostsArr, navigateToBlogPost, navigateToBlogsPage }, ref) => {
+export const HomeLatestBlog = React.forwardRef<HTMLDivElement, IHomeLatestBlogProps>(({ blogPostsArr, navigateToBlogPost, handleGoToSection }, ref) => {
   return (
     <>
+      <Grid.Row>
+        <h4 className={ styles.homeBlogTitleRow }>Our Blog</h4>
+      </Grid.Row>
       <Grid.Row className={ styles.latestBlogRow }>
         <div className={ styles.latestBlogWrapper } ref={ ref }>
           <BlogBottomView 
@@ -27,7 +30,7 @@ export const HomeLatestBlog = React.forwardRef<HTMLDivElement, IHomeLatestBlogPr
       <Grid.Row>
         <div className={ styles.techBlogBtnOuter }>
           <div className={ styles.techBlogBtnInner }>
-            <Button fluid color="purple" content="All Blog Posts" onClick={ navigateToBlogsPage } />
+            <Button fluid color="purple" content="All Blog Posts" data-value="blog" onClick={ handleGoToSection } />
           </div>
         </div>  
       </Grid.Row>

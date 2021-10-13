@@ -13,7 +13,6 @@
   font-size: 2em;
   color: white;
   padding: 0.5em 1em;
-  margin: 0 -1rem;
   font-family: 'Monoton', cursive;
 }
 
@@ -31,11 +30,13 @@
   margin: 0 auto;
 }
 .newsLogoItem {
+  flex: 1;
   flex-direction: column;
   align-items: center;
   border: 1px solid purple;
   border-radius: 5px;
   cursor: pointer;
+  padding: 1em;
 }
 .newsLogoItem:hover {
   background: rgba(128, 0, 128, 0.05);

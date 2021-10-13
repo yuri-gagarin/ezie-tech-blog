@@ -7,17 +7,18 @@ import styles from "@/styles/home/HomeNews.module.css";
 
 
 interface IHomeNewsProps {
+  handleGoToSpecificFeed: React.MouseEventHandler<HTMLDivElement>;
 }
 
-export const HomeNews: React.FunctionComponent<IHomeNewsProps> = (props): JSX.Element => {
+export const HomeNews: React.FunctionComponent<IHomeNewsProps> = ({ handleGoToSpecificFeed }): JSX.Element => {
   return (
     <Grid.Row className={ styles.homeNewsRow }>
-      <div className={ styles.newsTitleDiv }>News Feeds</div>
+      <h4 className={ styles.newsTitleDiv }>News Feeds</h4>
         <div className={ styles.newsDescription }>
           <h4>Read about current news and events in tech in our sourced RSS feeds from the hottest tech news sources today</h4>
         </div>
         <div className={ styles.newsLogosWrapper } >
-          <div className={ styles.newsLogoItem }>
+          <div className={ styles.newsLogoItem } data-value="reddit" onClick={ handleGoToSpecificFeed }>
             <div className={ styles.newsLogo }> 
               <NextImage src="/logos/rss_logos/reddit_logo.svg" height={75} width={75} />
             </div>
@@ -25,7 +26,7 @@ export const HomeNews: React.FunctionComponent<IHomeNewsProps> = (props): JSX.El
               Check out the Reddit tech RSS feed for up to date current news
             </div>
           </div>
-          <div className={ styles.newsLogoItem }>
+          <div className={ styles.newsLogoItem } data-value="medium" onClick={ handleGoToSpecificFeed }>
             <div className={ styles.newsLogo }> 
               <NextImage src="/logos/rss_logos/medium_logo.svg" height={75} width={75} />
             </div>
@@ -33,7 +34,7 @@ export const HomeNews: React.FunctionComponent<IHomeNewsProps> = (props): JSX.El
               Medium RSS feed with new tech news and reviews
             </div>
           </div>
-          <div className={ styles.newsLogoItem }>
+          <div className={ styles.newsLogoItem } data-value="cnet" onClick={ handleGoToSpecificFeed }>
             <div className={ styles.newsLogo }> 
               <NextImage src="/logos/rss_logos/cnet_logo.svg" height={75} width={75} />
             </div>

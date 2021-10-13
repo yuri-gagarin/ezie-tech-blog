@@ -14,9 +14,9 @@ export const HomeTech = React.forwardRef<HTMLDivElement>((props, ref) => {
   return (
     <Grid.Row className={ homeTechStyle.homeTechRow }> 
       <Grid.Column>
-        <div className={ homeTechStyle.techTitleDiv } ref={ ref }>
+        <h4 className={ homeTechStyle.techTitleDiv } ref={ ref }>
           Our Tech
-        </div>
+        </h4>
         <div className={ homeTechStyle.techDescDiv }>
           We include latest popular languages and libraries including but not limited to:
         </div>
@@ -42,10 +42,10 @@ export const HomeTech = React.forwardRef<HTMLDivElement>((props, ref) => {
             <NextImage src="/logos/tech_logos/typescript.svg" height="100%" width="100%" objectFit="contain" />
           </div>
           <div className={ homeTechStyle.logoImg }>
-            <NextImage src="/logos/tech_logos/css3.svg" height="100%" width="100%" objectFit="contain" />
+            <NextImage src="/logos/tech_logos/python.svg" height="100%" width="100%" objectFit="contain" />
           </div>
           <div className={ homeTechStyle.logoImg }>
-            <NextImage src="/logos/tech_logos/html5.svg" height="100%" width="100%" objectFit="contain" />
+            <NextImage src="/logos/tech_logos/swift.svg" height="100%" width="100%" objectFit="contain" />
           </div>
         </div>
         <div className={ homeTechStyle.techLogoDiv }>

@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { wrapper } from '@/redux/store';
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
+import { RssActions } from "@/redux/actions/rssActions";
 // home splash components //
 import { HomeLanding } from '@/components/home/HomeLanding';
 import { HomeLatestBlog } from '@/components/home/HomeLatestBlog';
@@ -21,6 +22,8 @@ import type { Dispatch } from "redux";
 import type { IGeneralState } from '@/redux/_types/generalTypes';
 import type { BlogPostData } from "@/redux/_types/blog_posts/dataTypes";
 import type { BlogPostAction } from '@/redux/_types/blog_posts/actionTypes';
+import type { RSSSources } from "@/redux/_types/rss/dataTypes";
+import { RSSAction } from '@/redux/_types/rss/actionTypes';
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
 
@@ -42,19 +45,47 @@ export default function Home(): JSX.Element {
   // next hooks //
   const router = useRouter();
   // redux hooks //
-  const dispatch = useDispatch<Dispatch<BlogPostAction>>();
+  const dispatch = useDispatch<Dispatch<BlogPostAction | RSSAction>>();
   const { blogPostsState } = useSelector((state: IGeneralState) => state);
   // action handlers //
   const navigateToBlogPost = (blogPostId: string) => {
     const currentPost: BlogPostData = BlogPostActions.handleSetCurrentBlogPost(dispatch, blogPostId, blogPostsState);
     router.push(`/blog/${currentPost.slug}`);
   };
-  const navigateToBlogsPage = (): void => {
-    router.push("/blog");
+  const handleGoToSpecificFeed = async (e: React.MouseEvent<HTMLDivElement>): Promise<any> => {
+    const feedSource = (e.currentTarget.dataset['value']) as RSSSources;
+    try {
+      switch (feedSource) {
+        case "reddit": {
+          await RssActions.getRSSFeed({ dispatch, optsData: { option: "reddit", getOpts: { limit: 10,} } });
+          break;
+        }
+        case "medium": {
+          await RssActions.getRSSFeed({ dispatch, optsData: { option: "medium" } });
+          break;
+        }
+        case "cnet": {
+          await RssActions.getRSSFeed({ dispatch, optsData: { option: "cnet" } });
+          break;
+        }
+        default: return; // have a notifier for a wrong input later //
+      }
+      return router.push("/news");
+    } catch (error) {
+      return RssActions.handleRssFeedError(error, dispatch);
+    }
   };
+  
   const handleSeeMore = (): void => {
     if (latestTechRef.current) latestTechRef.current.scrollIntoView({ behavior: "smooth" });
   };
+  const handleGoToSection = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    const target = e.currentTarget.dataset["value"]
+    if (target) {
+      router.push(`/${target}`);
+    }
+  }
+  
 
   return ( 
     <Grid className={ styles.mainLandingGrid }>
@@ -67,14 +98,16 @@ export default function Home(): JSX.Element {
       <HomeTech 
         ref={ latestTechRef }
       />
-      <HomeNews />
+      <HomeNews handleGoToSpecificFeed={ handleGoToSpecificFeed } />
       <HomeLatestBlog 
         ref={ latestBlogRef }
         blogPostsArr={ blogPostsState.blogPosts }
         navigateToBlogPost={ navigateToBlogPost }
-        navigateToBlogsPage={ navigateToBlogsPage }
+        handleGoToSection={ handleGoToSection }
       />
-      <HomeProjects />
+      <HomeProjects 
+        handleGoToSection={ handleGoToSection }
+      />
     </Grid>
   );
 };

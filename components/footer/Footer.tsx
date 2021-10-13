@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Menu } from "semantic-ui-react";
+import { Grid, Icon, Menu } from "semantic-ui-react";
 // styles //
 import footerStyles from "@/styles/footer/Footer.module.css";
 
@@ -13,7 +13,7 @@ const Footer: React.FunctionComponent<IFooterProps> = (props): JSX.Element => {
   };
 
   return (
-    <div className={ footerStyles.footerWrapper }>
+    <Grid.Row className={ footerStyles.footerWrapper }>
       <Menu inverted fluid>
         <Menu.Menu position="left">
           <Menu.Item
@@ -42,7 +42,7 @@ const Footer: React.FunctionComponent<IFooterProps> = (props): JSX.Element => {
           /> 
         </Menu.Menu>
       </Menu>  
-    </div>
+    </Grid.Row>
   )
 };
 
