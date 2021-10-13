@@ -19,9 +19,14 @@ a {
   box-sizing: border-box;
 }
 
+:root {
+  --header-purple-bg: #a333c8;
+}
+
 :global(.dimmed.dimmable > .ui.modals.dimmer.visible) {
   display: flex !important;
 }
 .dimmed.dimmable > .ui.modals.dimmer.visible {
   display: flex !important;
 }
+

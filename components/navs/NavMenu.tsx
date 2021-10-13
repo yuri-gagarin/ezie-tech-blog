@@ -57,7 +57,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
   const handleErrorModalClose = (): void => {
     AuthActions.dismissAuthError(dispatch);
   };
-  const handleScrollToContent = (e: React.MouseEvent<HTMLDivElement>, data: { value?: string }): void => {
+  const handleScrollToContent = async (e: React.MouseEvent<HTMLDivElement>, data: { value?: string }): Promise<any> => {
     const { value } = data;
     if (!value) return;
 
@@ -77,25 +77,25 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
         elementId = ElemId.project;
         break;
       }
+      case "about": {
+        return router.push("/about");
+      }
       default: {
         elementId = "";
       }
     }
-
     const element = document.getElementById(elementId);
-    console.log(element)
-    console.log(elementId)
     if (element) element.scrollIntoView({ behavior: "smooth" });
 
-  }
+  };
 
   // lifecycle hooks //
   React.useEffect(() => {
     if (router.route === "/" && navState.activeItem !== "home") setNavState({ activeItem: "home", showSearchBar: false });
-    else if (router.route === "/blog" && navState.activeItem !== "blog") setNavState({  activeItem: "blog", showSearchBar: true });
-    else if (router.route === "/news" && navState.activeItem !== "news") setNavState({ activeItem: "news", showSearchBar: false });
-    else if (router.route === "/projects" && navState.activeItem !== "projects") setNavState({ activeItem: "projects", showSearchBar: false });
-    else if (router.route === "/about" && navState.activeItem !== "about") setNavState({ activeItem: "about", showSearchBar: false });
+    else if (router.route.includes("/blog") && navState.activeItem !== "blog") setNavState({  activeItem: "blog", showSearchBar: true });
+    else if (router.route.includes("/news") && navState.activeItem !== "news") setNavState({ activeItem: "news", showSearchBar: false });
+    else if (router.route.includes("/projects") && navState.activeItem !== "projects") setNavState({ activeItem: "projects", showSearchBar: false });
+    else if (router.route.includes("/about") && navState.activeItem !== "about") setNavState({ activeItem: "about", showSearchBar: false });
     //else setNavState({ activeItem: "home", showSearchBar: false });
   }, [ router.route, navState.activeItem ]);
 
@@ -173,6 +173,13 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             onClick={ handleNavClick }
             color="purple"
           />
+          <Menu.Item
+              className={ navMenuStyle.navMenuItem }
+              name='about'
+              active={ navState.activeItem === "about" }
+              onClick={ handleNavClick }
+              color="purple"
+          />
           <Menu.Menu position='right'>
             {
               navState.showSearchBar 
@@ -183,6 +190,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
               :
               null
             }
+           
             <Menu.Item>
               { 
                 loggedIn && currentUser 

@@ -1,6 +1,10 @@
 .aboutPageGrid {
-  min-height: calc(100vh - 90px);
+  min-height: 100vh;
   border: 3px solid red;
+}
+.aboutHeaderRow {
+  min-height: 50px;
+  background-color: var(--header-purple-bg);
 }
 @media screen and (max-width: 480px) {
   .aboutPageGrid {
