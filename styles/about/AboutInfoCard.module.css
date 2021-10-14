@@ -4,7 +4,10 @@
   padding: 1em;
   border-radius: 5px;
   -webkit-box-shadow: 0px 0px 3px 2px #D4D4D4; 
-  box-shadow: 0px 0px 3px 2px #D4D4D4;  
+  box-shadow: 0px 0px 3px 2px #D4D4D4; 
+  margin-bottom: 1em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .avatarContainer {
@@ -38,7 +41,6 @@
   .aboutInfoCardContainer {
     flex-direction: row;
     width: 85%;
-    margin: 0 auto;
   }
   .infoWrapper > h3, .infoWrapper > span  {
     text-align: left;

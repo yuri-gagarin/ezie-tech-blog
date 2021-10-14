@@ -12,7 +12,7 @@ export const AboutInfoCard: React.FunctionComponent<IAboutInfoCardProps> = (prop
     <div className={ styles.aboutInfoCardContainer }>
       <div className={ styles.avatarContainer }>
         <div className={ styles.avatarPicWrapper }>
-          <NextImage src="/images/defaults/programming_stock_4.jpg" layout="fill" />
+          <NextImage src="/images/defaults/programming_stock_4.jpg" layout="fill" objectFit="cover" />
         </div>
       </div>
       <div className={ styles.infoWrapper }>

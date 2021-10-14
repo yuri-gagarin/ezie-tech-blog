@@ -21,6 +21,8 @@ a {
 
 :root {
   --header-purple-bg: #a333c8;
+  --header-blue-hue: #4A00E0;
+  --header-purple-hue: #8E2DE2;
 }
 
 :global(.dimmed.dimmable > .ui.modals.dimmer.visible) {

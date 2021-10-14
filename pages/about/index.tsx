@@ -12,12 +12,12 @@ const AboutPage: React.FunctionComponent<IAboutPageProps> = (props) => {
   return (
     <Grid className={ styles.aboutPageGrid }>
       <Grid.Row className={ styles.aboutHeaderRow }>
-        <Grid.Column>
-          <h1>About</h1>
-        </Grid.Column>
+        <h1>We are...</h1>
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
+          <AboutInfoCard />
+          <AboutInfoCard />
           <AboutInfoCard />
         </Grid.Column>
       </Grid.Row>

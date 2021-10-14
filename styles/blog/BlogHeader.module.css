@@ -2,9 +2,9 @@
   height: 200px;
   flex-direction: column !important;
   justify-content: center !important;
-  background: #8E2DE2;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #4A00E0, #8E2DE2);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #4A00E0, #8E2DE2); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: var(--header-purple-hue);  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, var(--header-blue-hue), var(--header-purple-hue));  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, var(--header-blue-hue), var(--header-purple-hue)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 .headerSegment, .descSegment {
