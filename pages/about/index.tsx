@@ -16,6 +16,11 @@ const AboutPage: React.FunctionComponent<IAboutPageProps> = (props) => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
+          <p className={ styles.statementParagraph }>A short mission statement here about the general idea of the project.</p>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column>
           <AboutInfoCard />
           <AboutInfoCard />
           <AboutInfoCard />

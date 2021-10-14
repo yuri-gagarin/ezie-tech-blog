@@ -109,22 +109,20 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   // lifecycle hooks //
   React.useEffect(() => {
     const { loggedIn, authToken: JWTToken } = authState;
+    const { source } = rssState;
     let loaded = true;
     if (loaded) {
       (async function(): Promise<any> {
         try {
-          const optsData: FetchRSSOptions = { option: "reddit" };
-          //const optsDataO: FetchRSSOptions = { option: "medium" };
-          // await RssActions.getRSSFeed({ dispatch, optsData });
+          if (!source) await RssActions.getRSSFeed({ dispatch, optsData: { option: "reddit" } });
           if (loggedIn && JWTToken) await RssActions.handleGetReadingList({ dispatch, JWTToken });
-          //await RssActions.getRSSFeed({ dispatch, optsData: { option: "medium" } })
         } catch (error) {
           RssActions.handleRssFeedError(error, dispatch)
         }
       })();
     }
     return () => { loaded = false };
-  }, [ dispatch, authState ]);
+  }, [ dispatch, authState, rssState ]);
   // clear info modal if open //
   React.useEffect(() => {
     if (infoModalState.open) {
@@ -135,7 +133,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   }, [ infoModalState ]);
 
   return (
-    <Grid stackable divided className={ styles.newsMainPageGrid } style={{ border: "4px solid green"}}>
+    <Grid divided className={ styles.newsMainPageGrid } style={{ border: "4px solid green"}}>
       <NeedLoginModal modalOpen={ needLoginModalOpen } handleCloseModal={ handleCloseNeedLoginModal } />
       <GenInfoModal 
         position="fixed-top"
@@ -145,7 +143,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
       <Grid.Row className={ styles.headerRow } >
         <h1>RSS News</h1>
       </Grid.Row>
-      <Grid.Row centered className={ styles.feedRow } style={{ width: "100%"}}>
+      <Grid.Row className={ styles.feedRow } >
         <Grid.Column mobile={16} computer={10}>
           <Container>
             <NewsControls 

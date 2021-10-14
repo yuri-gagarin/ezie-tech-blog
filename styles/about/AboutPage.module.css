@@ -14,8 +14,25 @@
   font-size: 3em;
   color: white;
 }
+
+.statementParagraph {
+  font-size: 1.25em;
+  text-align: center;
+  margin: 0 auto;
+}
 @media screen and (max-width: 480px) {
   .aboutPageGrid {
     margin: 0 !important;
+  }
+}
+@media screen and (min-width: 768px) {
+  .statementParagraph {
+    width: 85%;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .statementParagraph {
+    width: 66%;
   }
 }
