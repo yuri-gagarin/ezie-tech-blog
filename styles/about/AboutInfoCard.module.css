@@ -11,6 +11,7 @@
 }
 
 .avatarContainer {
+  position: relative;
   display: flex;
   align-self: center;
 }
@@ -37,13 +38,26 @@
   border-top: 2px solid rgb(212, 212, 212);
 }
 
+.infoControls {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding: 0 0.5em;
+}
+
 @media screen and (min-width: 768px) {
   .aboutInfoCardContainer {
     flex-direction: row;
+    flex-wrap: wrap;
     width: 85%;
   }
   .infoWrapper > h3, .infoWrapper > span  {
     text-align: left;
+  }
+  .infoControls {
+    margin-top: 1em;
+    width: 100%;
+    justify-content: flex-end;
   }
 }
 
