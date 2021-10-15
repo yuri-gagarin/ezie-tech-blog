@@ -143,7 +143,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
       <Grid.Row className={ styles.headerRow } >
         <h1>RSS News</h1>
       </Grid.Row>
-      <Grid.Row className={ styles.feedRow } >
+      <Grid.Row className={ styles.feedRow } centered >
         <Grid.Column mobile={16} computer={10}>
           <Container>
             <NewsControls 

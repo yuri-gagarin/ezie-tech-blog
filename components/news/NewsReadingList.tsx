@@ -18,31 +18,41 @@ interface IFeedReadingListProps {
 export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState, readingList, handleRemoveFromReadingList }): JSX.Element => {
   const { loggedIn, authToken  } = authState;
   // local state and refs //
-  const [ elementFixed, setElementFixed ] = React.useState<boolean>(false);
+  const [ positionState, setPositionState ] = React.useState<{ fixed: boolean; top: number; left: number; }>({ fixed: false, top: 0, left: 0 });
   const readingListRef = React.useRef<HTMLDivElement>();
   
   // lifecycle hooks //
   React.useEffect(() => {
-    const intersectionCallback = (entries: IntersectionObserverEntry[]): void => {
-      const [ entry ] = entries;
-      if (entry.boundingClientRect.top < 60) {
-        if (!elementFixed) setElementFixed(true);
-      } else {
-        if (elementFixed) setElementFixed(false);
+    let initPositionTop: number;
+    let scrollListener: () => void;
+
+    if (readingListRef.current) {
+      initPositionTop = readingListRef.current.getBoundingClientRect().top;
+      scrollListener = () => {
+        if (initPositionTop - 55 <= window.scrollY) {
+          if (!positionState.fixed) {
+            const { y, x } = readingListRef.current.getBoundingClientRect();
+            setPositionState({ fixed: true, top: y, left: x });
+          }
+        }
+        if (window.scrollY < 150 && positionState.fixed) {
+          setPositionState({ fixed: false, top: 0, left: 0 });
+        }
       }
-    };
-    const { current } = readingListRef;
-    const readingListObserver = new IntersectionObserver(intersectionCallback, { root: null, rootMargin: "0px", threshold: 1.0 });
-    if (current) readingListObserver.observe(current);
-    return () => {
-      if (current) readingListObserver.unobserve(current);
+      window.addEventListener("scroll", scrollListener);
     }
-  }, [ readingListRef, elementFixed ]);
+   
+
+
+    return () => {
+      window.removeEventListener("scroll", scrollListener);
+    }
+  }, [ readingListRef, positionState ]);
 
   return (
-    loggedIn && authToken
+    loggedIn && authToken 
     ?
-    <div className={ `${styles.newsReadingListSegment} ${elementFixed ? styles.fixed : "" }` } ref={ readingListRef }>
+    <div className={ `${styles.newsReadingListSegment}` } ref={ readingListRef } style={ positionState.fixed ? { position: "fixed", top: positionState.top, left: positionState.left } : null }>
       <div className={ styles.headerDiv }>
         <h3>My Reading List</h3>
       </div>
@@ -78,7 +88,7 @@ export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState, re
       </Item.Group>
     </div>
     :
-    <div className={ `${styles.newsReadingListLogin} ${elementFixed ? styles.fixed : "" }`} ref={ readingListRef } >
+    <div className={ `${styles.newsReadingListLogin}`} ref={ readingListRef } style={ positionState.fixed ? { position: "fixed", top: positionState.top, left: positionState.left } : null }>
       <Icon size="huge" color="blue" name="book"  />
       <Header textAlign="center">Log in to view your reading list</Header>
     </div>

@@ -1,6 +1,7 @@
 .newsReadingListSegment, .newsReadingListLogin {
   display: flex;
   height: calc(100vh - 200px);
+  width: 300px;
   border: 2px solid lightgray;
   border-radius: 5px; 
 }
