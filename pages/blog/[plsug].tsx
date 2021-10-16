@@ -107,7 +107,7 @@ const BlogPostPage: React.FunctionComponent<IPostPageProps> = ({ }): JSX.Element
       <div className={ styles.blogPostPageMeta }>
         <div className={ styles.blogPostAuthorAndTimeStamps }>
           <div className={ styles.blogPostAuthorDiv }>
-            <Label color="teal" content="Author: " icon="user" /><span>{ author }</span>
+            <Label color="teal" content="Author: " icon="user" /><span>{ author.name }</span>
           </div>
           <div className={ styles.blogPostTimeStampsDiv }>
             <Label color="grey" content="Posted at:" icon="calendar" /><span>{ formatTimeString(createdAt, { yearOnly: true }) }</span>

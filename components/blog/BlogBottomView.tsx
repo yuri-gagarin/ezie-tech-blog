@@ -30,7 +30,7 @@ export const BlogBottomView: React.FunctionComponent<IBlogBottomViewProps> = ({ 
               </Card.Meta>
               <Card.Description>
                 <Label color="purple" content={` Author:`} icon="user" />
-                <span className={ styles.authorSpan }>{ postData.author }</span>
+                <span className={ styles.authorSpan }>{ postData.author.name }</span>
               </Card.Description>
                 <Label className={ styles.categoryLabel } content={ capitalizeString(postData.category) } icon="tag" />
               <Card.Description>

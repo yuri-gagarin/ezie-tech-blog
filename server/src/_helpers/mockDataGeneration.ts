@@ -27,13 +27,16 @@ export const generateMockBlogPosts = async (num?: number) => {
     try {
       await BlogPost.create({ 
         title: faker.lorem.words(),
-        author: faker.name.firstName(),
+        author: {
+          authorId: new mongoose.Types.ObjectId(),
+          name: faker.name.firstName()
+        },
         content: faker.lorem.paragraphs(ranNum === 0 ? 1 : ranNum),
         likes: [],
         numOfLikes: 0,
         keywords: pullRandomValsFromArray<string>(keywords),
         category: categories[randomIntFromInterval(0, categories.length - 1)],
-        live: true
+        published: randomIntFromInterval(0, 1) ? true : false
       });
     } catch (error) {
       console.log(error);

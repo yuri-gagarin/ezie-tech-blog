@@ -24,7 +24,12 @@ export default class BlogPostsController extends BasicController implements ICRU
         });
       } else {
         // return only published blog posts //
+        console.log(27);
+        console.log(category)
         blogPosts = await BlogPost.find({}).byPublishedStatus("published").byCategory(category).sort({ createdAt }).limit(limit);
+        return res.status(200).json({
+          responseMsg: `Fetched all posts`, blogPosts
+        });
       }
     } catch (error) {
       console.log(error);
@@ -71,31 +76,32 @@ export default class BlogPostsController extends BasicController implements ICRU
     }
     
   }
-  create(req: Request, res: Response<CreateBlogPostRes>): Promise<Response<CreateBlogPostRes>> {
+  create = async (req: Request, res: Response<CreateBlogPostRes>): Promise<Response<CreateBlogPostRes>> => {
+    const user = req.user as (IAdmin | IUser);
+    const { _id: authorId } = user;
     const blogPostData = req.body.blogPostData as BlogPostClientData;
-    const { title, author, content, keywords = [], live } = blogPostData;
+    const { title, author, content, keywords = []  } = blogPostData;
     // tihs will need to be validated later //
-    return (
-      BlogPost.create({
-        title, author, content, keywords, live, editedAt: new Date(Date.now()), createdAt: new Date(Date.now())
-      })
-    )
-    .then((createdBlogPost) => {
-      return res.status(200).json({
-        responseMsg: "Created post", createdBlogPost
+
+    try {
+      const createdBlogPost = await BlogPost.create({
+        title, author: { authorId, name: author }, content, keywords, published: false, editedAt: new Date(), createdAt: new Date()
       });
-    }) 
-    .catch((error) => {
+      return res.status(200).json({
+        responseMsg: "Created a blog post", createdBlogPost
+      });
+    } catch (error) {
       return this.generalErrorResponse(res, { status: 500, error });
-    })
+    }
   }
   edit(req: Request, res: Response<EditBlogPostRes>): Promise<Response<EditBlogPostRes>> {
+    const user = req.user as (IAdmin | IUser);
     const blogPostData = req.body.blogPostData as BlogPostClientData;
-    const { title, author, content, keywords = [], live } = blogPostData;
+    const { title, content, keywords = [], published } = blogPostData;
     // tihs will need to be validated later //
     return (
       BlogPost.findOneAndUpdate({
-        title, author, content, keywords, live, editedAt: new Date(Date.now())
+        title, content, keywords, published, editedAt: new Date()
       })
     )
     .then((editedBlogPost) => {

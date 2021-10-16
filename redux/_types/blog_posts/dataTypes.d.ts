@@ -1,7 +1,10 @@
 export type BlogPostData = {
   _id: string;
   title: string;
-  author: string;
+  author: {
+    authorId: string;
+    name: string;
+  }
   content: string;
   category: "informational" | "beginner" | "intermediate" | "advanced" | "";
   likes: string[];
@@ -15,7 +18,10 @@ export type BlogPostData = {
 export type BlogPostFormData = {
   _id?: string;
   title?: string;
-  author?: string;
+  author?: {
+    authorId?: string;
+    name?: string;
+  };
   content?: string;
   category?: "informational" | "beginner" | "intermediate" | "advanced" | string;
   slug?: string;

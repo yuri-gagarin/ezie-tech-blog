@@ -42,7 +42,7 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, currentU
                 { blogPosts[0].title }
               </Card.Header>
               <Label ribbon="right" content={ ` ${capitalizeString(blogPosts[0].category)}` } icon="tag" color="pink" />
-              <Label attached="top right" color="purple" content={`Author: ${ blogPosts[0].author }`} icon="user" />
+              <Label attached="top right" color="purple" content={`Author: ${ blogPosts[0].author.name }`} icon="user" />
               <Card.Description>
               </Card.Description>
               <Card.Meta style={{ marginTop: "5px" }}>

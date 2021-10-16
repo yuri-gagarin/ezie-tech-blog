@@ -40,7 +40,7 @@ export const BlogSideView: React.FC<IBlogViewProps> = ({ blogPosts, currentUserD
                     <Item.Description>{ trimStringToSpecificLength(blogPost.content, (width < 768 ? 400 : 50) )}</Item.Description>
                     <Item.Extra>
                       <Label className={ styles.infoLabel } icon="tag" content={ capitalizeString(blogPost.category) } />
-                      <Label className={ styles.infoLabel } icon="user" color="purple" content={ `Author: ${blogPost.author}` } />   
+                      <Label className={ styles.infoLabel } icon="user" color="purple" content={ `Author: ${blogPost.author.name}` } />   
                     </Item.Extra>
                     <Item.Extra>
                       <Button size="small"  basic onClick={ () => navigateToBlogPost(blogPost._id) } color="pink" content="Read" />

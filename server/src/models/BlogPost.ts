@@ -10,7 +10,10 @@ export type LikeData = {
 }
 export interface IBlogPost extends Document  {
   title: string;
-  author: mongoose.Types.ObjectId;
+  author: {
+    name: string;
+    authorId: mongoose.Types.ObjectId;
+  };
   content: string;
   category: "informational" | "beginner" | "intermediate" | "advanced";
   keywords: string[];
@@ -44,7 +47,10 @@ const blogPostSchema = new Schema<IBlogPost>({
     },
     required: true 
   },
-  author: { type: Schema.Types.ObjectId, required: true },
+  author: { 
+    authorId: { type: Schema.Types.ObjectId, required: true },
+    name: { type: String, default: "" }
+  },
   content: { type: String, required: true },
   category: { type: String, required: true, default: "informational" },
   keywords: { type: [ String ], required: false, default: [] },
@@ -76,8 +82,14 @@ blogPostSchema.query.byCategory = function(category: "informational" | "beginner
   }
 };
 
-blogPostSchema.query.byPublishedStatus = function(published: "published" | "unpublished" | "all"): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers {
-  return this.find({ published });
+blogPostSchema.query.byPublishedStatus = function(publishQuery: "published" | "unpublished" | "all"): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers {
+  if (publishQuery === "published") {
+    return this.find({ published: true });
+  } else if (publishQuery === "unpublished") {
+    return this.find({ published: false });
+  } else {
+    return this;
+  }
 };
 
 export default mongoose.model<IBlogPost, Model<IBlogPost, IBlogPostQueryHelpers>>("BlogPost", blogPostSchema);
