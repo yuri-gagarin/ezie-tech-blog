@@ -41,9 +41,6 @@ export const NewsReadingList: React.FC<IFeedReadingListProps> = ({ authState, re
       }
       window.addEventListener("scroll", scrollListener);
     }
-   
-
-
     return () => {
       window.removeEventListener("scroll", scrollListener);
     }

@@ -37,22 +37,21 @@
 
 .authorSpan {
   top: 10px;
-  border: 3px solid red;
 }
 
-@media only screen and (max-width: 550px) {
+@media only screen and (max-width: 450px) {
   .infoLabel {
     width: calc(50% - 0.5rem) !important;
   }
 }
 
-@media only screen and (max-width: 720px) {
+@media only screen and (max-width: 768px) {
   .cardGroupWrapper {
     padding-left: 1em;
     padding-right: 1em;
   }
 }
-@media only screen and (max-width: 990px) {
+@media only screen and (max-width: 1024px) {
   .gridColumn {
     padding: 0.5em 1em !important;
   }

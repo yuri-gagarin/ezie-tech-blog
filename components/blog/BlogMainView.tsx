@@ -1,5 +1,7 @@
 import React from "react";
-import { Button, Card, Grid, Image, Label } from "semantic-ui-react";
+import { Button, Card, Grid, Label } from "semantic-ui-react";
+// next imports //
+import NextImage from "next/image";
 // additional components //
 import { GeneralLoadingSegement } from "@/components/loaders/GeneralLoadingSegment";
 import { BlogPostLikes } from "./BlogPostLikes";
@@ -9,7 +11,6 @@ import styles from "@/styles/blog/BlogMainView.module.css";
 import type { AdminData, UserData } from "@/redux/_types/users/dataTypes";
 import type { BlogPostData } from "@/redux/_types/blog_posts/dataTypes";
 // helpers //
-import { useWindowSize } from "../_helpers/monitorWindowSize";
 import { formatTimeString, trimStringToSpecificLength, capitalizeString } from "../_helpers/displayHelpers";
 
 interface IBlogMainViewProps {
@@ -21,22 +22,21 @@ interface IBlogMainViewProps {
 export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, currentUserData, navigateToBlogPost, handleBlogPostLike }): JSX.Element | null => {
   // local state and hooks //
   // custom hooks //
-  const { width, height } = useWindowSize();
   // lifecycle hooks //
-  /*
-  React.useEffect(() => {
-    if (blogPosts.length > 0) setDefaultBlogPostData(setDefaultBlogPosts(blogPosts));
-  }, [ blogPosts ]);
-  */
   
-  if (width > 767) {
-    return (
-      blogPosts.length > 0 
-      ?
-      <Grid.Column className={ styles.blogEntryColumn } computer={ 9 } tablet= { 8 } mobile= { 16 }>
-        <Card.Group className={ styles.cardGroup }>
-          <Card className={ styles.mainCard } fluid={ width > 600 ? true : false }>
-            <Image src="/images/blog1.jpg" size={ height > 768 ? "large" : "small"} alt="image" />
+  return (
+    <Grid.Column className={ styles.blogEntryColumn } computer={ 9 } tablet= { 8 } mobile= { 16 }>
+      <div className={ styles.mainWrapper } >
+        <div className={ styles.imagesOuter }>
+          <div className={ styles.cardImgWrapper }>
+            <NextImage src="/images/blog1.jpg" layout="fill" objectFit="cover" />
+          </div>
+          <div className={ styles.cardImgWrapper }>
+            <NextImage src="/images/blog1.jpg" layout="fill" objectFit="cover" />
+          </div>
+        </div>
+        <div className={ styles.itemOuter }>
+          <Card className={ styles.mainItem }>
             <Card.Content>
               <Card.Header>
                 { blogPosts[0].title }
@@ -49,7 +49,7 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, currentU
                 <Label color="teal" content={ ` Posted at: ` } icon="clock" />
                 <span className={ styles.dateSpan }>{formatTimeString(blogPosts[0].createdAt, { yearMonth: true })}</span>
               </Card.Meta>
-              <Card.Description>{ trimStringToSpecificLength(blogPosts[0].content, 500) }</Card.Description>
+              <Card.Description>{ trimStringToSpecificLength(blogPosts[0].content, 300) }</Card.Description>
             </Card.Content>
             <Card.Content className={ styles.bottomContent }>
               <Button className={ styles.readMoreBtn } size="small" basic color="pink" onClick={ () => navigateToBlogPost(blogPosts[0]._id) } content="Read more" />
@@ -62,12 +62,8 @@ export const BlogMainView: React.FC<IBlogMainViewProps> = ({ blogPosts, currentU
               </div>
             </Card.Content>
           </Card>
-        </Card.Group>
-      </Grid.Column>
-      :
-      <GeneralLoadingSegement />
-    );
-  } else {
-    return null
-  } 
+        </div>
+      </div>
+    </Grid.Column>
+  );
 };

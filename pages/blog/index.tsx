@@ -97,12 +97,18 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
           handleBlogPostSort={ handleBlogPostSort }
           handleBlogPostLike={ handleBlogPostLike }
         />
-        <BlogMainView 
-          blogPosts={ blogPosts }
-          currentUserData={ currentUser }
-          navigateToBlogPost={ navigateToBlogPost }
-          handleBlogPostLike={ handleBlogPostLike }
-        />
+        {
+          width > 768 
+          ?
+          <BlogMainView 
+            blogPosts={ blogPosts }
+            currentUserData={ currentUser }
+            navigateToBlogPost={ navigateToBlogPost }
+            handleBlogPostLike={ handleBlogPostLike }
+          />
+          :
+          null
+        }
       </Grid.Row>
       {
         width > 768 

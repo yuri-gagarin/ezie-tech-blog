@@ -1,5 +1,4 @@
 .blogPageRow {
-  height: calc(100vh - 200px);
   overflow: hidden;
   border-top: 2px solid grey;
 }
@@ -12,7 +11,12 @@
   font-size: 2em !important;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (min-width: 451px) and (max-width: 1023px) {
+  .blogPageRow {
+    height: 50vh;
+  }
+}
+@media screen and (min-width: 1024px) {
   .blogPageRow {
     height: calc(100vh - 150px);
   }
