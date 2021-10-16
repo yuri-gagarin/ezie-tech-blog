@@ -40,6 +40,9 @@
 }
 
 @media only screen and (max-width: 450px) {
+  .gridColumn {
+    height: calc(100vh - 300px);
+  }
   .infoLabel {
     width: calc(50% - 0.5rem) !important;
   }

@@ -30,7 +30,7 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handle
             onClick={ handleSeeMore }
           />
         </div>
-        <div className={ styles.rightDescription }>
+        <div className={ styles.landingDescription }>
           <span>Read</span>
           <span>Learn</span>
           <span>Plan</span>
@@ -40,34 +40,3 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handle
     </Grid.Row>
   );
 };
-/*
-<div className={ styles.logoDiv }>
-  <div>Eezie</div>
-  <div>Tech</div>
-</div>
-*/
-
-/*
-  <div className={ styles.rowLeft }> 
-    <MainTitle />
-   
-  </div>
-  <div className={ styles.rowRight }>   
-    <AnimatedScrollingCode />
-   
-    <div className={ styles.rightSocial }>
-    </div>
-    <div className={ styles.rightDescription }>
-      <span>Read</span>
-      <span>Learn</span>
-      <span>Plan</span>
-      <span>Relax</span>
-    </div>
-    <div className={ styles.topRight }>
-      <span>Today&apos;s</span>
-      <span>tech</span> 
-      <span>made</span>
-      <span>easy</span>
-    </div>
-  </div>
-*/
