@@ -1,23 +1,31 @@
 import mongoose, { Schema } from "mongoose";
-import type { Document, ObjectId } from "mongoose";
+// types //
+import type { Document, Model, Query } from "mongoose";
 import type { NextFunction } from "express";
+import type { IAdmin } from "./Admin";
+import type { IUser } from "./User";
 
 export type LikeData = {
   userId: mongoose.Types.ObjectId;
 }
 export interface IBlogPost extends Document  {
   title: string;
-  author: string;
+  author: mongoose.Types.ObjectId;
   content: string;
   category: "informational" | "beginner" | "intermediate" | "advanced";
   keywords: string[];
   slug: string;
-  live: boolean;
   likes: mongoose.Types.ObjectId[];
   numOflikes: number;
+  published: boolean;
   editedAt: Date;
   createdAt: Date;
 };
+
+interface IBlogPostQueryHelpers {
+  byCategory(category: "informational" | "beginner" | "intermediate" | "advanced" | "all"): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers;
+  byPublishedStatus(published: "published" | "unpublished" | "all"): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers;
+} 
 
 const blogPostSchema = new Schema<IBlogPost>({
   title: { 
@@ -36,14 +44,14 @@ const blogPostSchema = new Schema<IBlogPost>({
     },
     required: true 
   },
-  author: { type: String, required: true },
+  author: { type: Schema.Types.ObjectId, required: true },
   content: { type: String, required: true },
   category: { type: String, required: true, default: "informational" },
   keywords: { type: [ String ], required: false, default: [] },
   likes: [ Schema.Types.ObjectId ],
   numOflikes: { type: Number, required: false, default: 0 },
   slug: { type: String },
-  live: { type: Boolean, required: true, default: false },
+  published: { type: Boolean, default: false },
   editedAt: { type: Date, required: true, default: new Date(Date.now()) },
   createdAt: { type: Date, required: true, default: new Date(Date.now()) }
 });
@@ -52,5 +60,24 @@ blogPostSchema.pre("save", async function (next: NextFunction) {
   const slug = this.title.toLowerCase().split(" ").join("_");
   this.slug = slug;
   next();
-})
-export default mongoose.model<IBlogPost>("BlogPost", blogPostSchema);
+});
+
+blogPostSchema.query.createdByUser = function(user: IUser | IAdmin): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers {
+  return this.find({ author: user._id });
+};
+
+blogPostSchema.query.byCategory = function(category: "informational" | "beginner" | "intermediate" | "advanced" | "all"): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers {
+  if (category === "all") {
+    return this.find({});
+  } else if (category === "informational" || category === "beginner" || category === "intermediate" || category === "advanced") {
+    return this.find({ category });
+  } else {
+    return this.find({});
+  }
+};
+
+blogPostSchema.query.byPublishedStatus = function(published: "published" | "unpublished" | "all"): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers {
+  return this.find({ published });
+};
+
+export default mongoose.model<IBlogPost, Model<IBlogPost, IBlogPostQueryHelpers>>("BlogPost", blogPostSchema);

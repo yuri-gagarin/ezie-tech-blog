@@ -10,31 +10,29 @@ import type { IAdmin } from "../models/Admin";
 
 export default class BlogPostsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
-    const { limit = 10, category, createdAt = "asc" } = req.query as FetchBlogPostsOpts;
+    const { limit = 10, category = "all", createdAt = "asc", byUser } = req.query as FetchBlogPostsOpts;
+    // check for a user and admin //
+    const isAdmin = this.isAdminOrOwner(req.user as (IAdmin | IUser));
     let blogPosts: IBlogPost[];
-    if (category) {
-      try {
-        blogPosts = await BlogPost.find(( category === "all" ? {} : { category })).limit(limit).sort({ createdAt }).exec();
-        return res.status(200).json({
-          responseMsg: `Fetched all posts with category ${category.toUpperCase()}.`, blogPosts
-        });
-      } catch (error) {
-        return await this.generalErrorResponse(res, { error });
-      }
-    } else {
-      try {
-        blogPosts = await BlogPost.find({}).limit(limit).sort({ createdAt }).exec();
+
+    try {
+      if (isAdmin) {
+        // can see both published and unpublished posts //
+        blogPosts = await BlogPost.find({}).byCategory(category).sort({ createdAt }).limit(limit).exec();
         return res.status(200).json({
           responseMsg: `Fetched all posts`, blogPosts
         });
-      } catch (error) {
-        return await this.generalErrorResponse(res, { error });
+      } else {
+        // return only published blog posts //
+        blogPosts = await BlogPost.find({}).byPublishedStatus("published").byCategory(category).sort({ createdAt }).limit(limit);
       }
+    } catch (error) {
+      console.log(error);
+      return await this.generalErrorResponse(res, { error, errorMessages: [ "Error fetching blog posts" ] });
     }
   }
   getOne = async (req: Request, res: Response<OneBlogPostRes>): Promise<Response<OneBlogPostRes>> => {
     const { post_id } = req.params;
-    console.log(req.query)
     let blogPost: IBlogPost;
   
     if (!post_id) {
@@ -151,4 +149,18 @@ export default class BlogPostsController extends BasicController implements ICRU
     }
   }
 
+  // helpers //
+  private authorizeBlogPost = (res: Response) => {
+
+  }
+
+  private isAdminOrOwner = (user: IAdmin | IUser | undefined): boolean => {
+    if (!user) return false;
+    if (user.hasOwnProperty("role")) {
+      const { role } = user as IAdmin;
+      return role === "admin" || role === "owner";
+    } else {
+    return false;
+    }
+  };
 }
