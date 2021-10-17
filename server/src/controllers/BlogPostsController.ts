@@ -24,8 +24,6 @@ export default class BlogPostsController extends BasicController implements ICRU
         });
       } else {
         // return only published blog posts //
-        console.log(27);
-        console.log(category)
         blogPosts = await BlogPost.find({}).byPublishedStatus("published").byCategory(category).sort({ createdAt }).limit(limit);
         return res.status(200).json({
           responseMsg: `Fetched all posts`, blogPosts
@@ -94,24 +92,21 @@ export default class BlogPostsController extends BasicController implements ICRU
       return this.generalErrorResponse(res, { status: 500, error });
     }
   }
-  edit(req: Request, res: Response<EditBlogPostRes>): Promise<Response<EditBlogPostRes>> {
+  edit = async (req: Request, res: Response<EditBlogPostRes>): Promise<Response<EditBlogPostRes>> => {
     const user = req.user as (IAdmin | IUser);
     const blogPostData = req.body.blogPostData as BlogPostClientData;
     const { title, content, keywords = [], published } = blogPostData;
     // tihs will need to be validated later //
-    return (
-      BlogPost.findOneAndUpdate({
+    try {
+      const editedBlogPost: IBlogPost | null = await BlogPost.findOneAndUpdate({
         title, content, keywords, published, editedAt: new Date()
       })
-    )
-    .then((editedBlogPost) => {
       return res.status(200).json({
         responseMsg: "Created post", editedBlogPost
       });
-    }) 
-    .catch((error) => {
+    } catch (error) {
       return this.generalErrorResponse(res, { status: 500, error });
-    })
+    }
   }
   delete(req: Request, res: Response): Promise<Response<DeleteBlogPostRes>> {
     const { post_id } = req.params;

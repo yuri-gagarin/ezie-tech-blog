@@ -69,7 +69,12 @@ blogPostSchema.pre("save", async function (next: NextFunction) {
 });
 
 blogPostSchema.query.createdByUser = function(user: IUser | IAdmin): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers {
-  return this.find({ author: user._id });
+  if (user.hasOwnProperty("role")) {
+    // is admin can see all //
+    return this;
+  } else {
+    return this.find({ author: { userId: user._id } });
+  }
 };
 
 blogPostSchema.query.byCategory = function(category: "informational" | "beginner" | "intermediate" | "advanced" | "all"): Query<any, Document<IBlogPost>> & IBlogPostQueryHelpers {
