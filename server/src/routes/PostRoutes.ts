@@ -1,6 +1,8 @@
 import { PassportContInstance } from "../server";
 import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
 import { StrategyNames } from "../controllers/PassportController";
+// custom middleware //
+import { verifyUserModelAndPostId, verifyBlogPostModelAccess } from "../controllers/_helpers/blogPostControllerHelpers";
 // types //
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
@@ -33,12 +35,16 @@ export default class PostRoutes extends CRUDRoutesController {
   }
   protected edit(route: string): void {
     super.edit(route, [ 
-      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false })
+      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
+      verifyUserModelAndPostId,
+      verifyBlogPostModelAccess
     ]);
   } 
   protected delete(route: string): void {
     super.delete(route, [ 
-      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false })
+      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
+      verifyUserModelAndPostId,
+      verifyBlogPostModelAccess
     ]);
   }
 

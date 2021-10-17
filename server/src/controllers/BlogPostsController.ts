@@ -1,6 +1,7 @@
 import BlogPost from "../models/BlogPost";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // types //
+import type { ObjectId } from "mongoose";
 import type { Request, Response } from "express";
 import type { IBlogPost } from "../models/BlogPost";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
@@ -10,30 +11,83 @@ import type { IAdmin } from "../models/Admin";
 
 export default class BlogPostsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
-    const { limit = 10, category = "all", createdAt = "asc", byUser } = req.query as FetchBlogPostsOpts;
+    const { limit = 10, category = "all", createdAt = "asc", publishedStatus = "published", byUser, userId } = req.query as FetchBlogPostsOpts;
     // check for a user and admin //
-    const isAdmin = this.isAdminOrOwner(req.user as (IAdmin | IUser));
+    const { isAdmin, loggedIn  } = this.checkLogin(req.user as (IAdmin | IUser));
     let blogPosts: IBlogPost[];
 
+    // TODO //
+    // implement helper methods to cut down on repetiteveness //
     try {
-      if (isAdmin) {
-        // can see both published and unpublished posts //
-        blogPosts = await BlogPost.find({}).byCategory(category).sort({ createdAt }).limit(limit).exec();
-        return res.status(200).json({
-          responseMsg: `Fetched all posts`, blogPosts
-        });
+      if (loggedIn) {
+        if (isAdmin) {
+          // admin or higher is logged in, additional privileges apply //
+          if (byUser && userId) {
+            // can see both published and unpublished posts belonging to any user //
+            blogPosts = await BlogPost
+              .find({ "author.authorId": userId })
+              .byPublishedStatus(publishedStatus).byCategory(category)
+              .sort({ createdAt }).limit(limit)
+              .exec();
+          } else {
+            blogPosts = await BlogPost
+              .find({})
+              .byPublishedStatus(publishedStatus).byCategory(category)
+              .sort({ createdAt }).limit(limit)
+              .exec();
+          }
+        } else {
+          // logged in but not admin //
+          // can only see published posts //
+          // unless the post belongs to the logged in user //
+          const { _id: loggedInUserId } = req.user as IUser;
+          if (byUser && userId) {
+            if (loggedInUserId.equals(userId)) {
+              // own posts - can see both published and unpublished //
+              blogPosts = await BlogPost
+                .find({ "author.authorId": userId })
+                .byPublishedStatus(publishedStatus).byCategory(category)
+                .sort({ createdAt }).limit(limit)
+                .exec();
+            } else {
+              // not own posts can only see published //
+              blogPosts = await BlogPost
+                .find({ "author.authorId": userId })
+                .byPublishedStatus('published').byCategory(category)
+                .sort({ createdAt }).limit(limit)
+                .exec();
+            }
+          } else {
+            // can see all published //
+            blogPosts = await BlogPost
+              .find({})
+              .byPublishedStatus("published").byCategory(category)
+              .sort({ createdAt }).limit(limit)
+              .exec()
+          }
+        }
       } else {
-        // return only published blog posts //
-        blogPosts = await BlogPost.find({}).byPublishedStatus("published").byCategory(category).sort({ createdAt }).limit(limit);
-        return res.status(200).json({
-          responseMsg: `Fetched all posts`, blogPosts
-        });
+        // not logged in can only see unpublished posts //
+        if (byUser && userId) {
+          blogPosts = await BlogPost
+            .find({ "author.authorId": userId })
+            .byPublishedStatus("published").byCategory(category)
+            .sort({ createdAt }).limit(limit)
+            .exec();
+        } else {
+          blogPosts = await BlogPost
+            .find({})
+            .byPublishedStatus("published").byCategory(category)
+            .sort({ createdAt }).limit(limit)
+            .exec();
+        }
       }
     } catch (error) {
       console.log(error);
       return await this.generalErrorResponse(res, { error, errorMessages: [ "Error fetching blog posts" ] });
     }
   }
+
   getOne = async (req: Request, res: Response<OneBlogPostRes>): Promise<Response<OneBlogPostRes>> => {
     const { post_id } = req.params;
     let blogPost: IBlogPost;
@@ -92,33 +146,46 @@ export default class BlogPostsController extends BasicController implements ICRU
       return this.generalErrorResponse(res, { status: 500, error });
     }
   }
+
+  // middleware to check post_id and user permissions runs before controller method //
   edit = async (req: Request, res: Response<EditBlogPostRes>): Promise<Response<EditBlogPostRes>> => {
-    const user = req.user as (IAdmin | IUser);
+    const { post_id } = req.params;
     const blogPostData = req.body.blogPostData as BlogPostClientData;
     const { title, content, keywords = [], published } = blogPostData;
     // tihs will need to be validated later //
     try {
-      const editedBlogPost: IBlogPost | null = await BlogPost.findOneAndUpdate({
-        title, content, keywords, published, editedAt: new Date()
-      })
-      return res.status(200).json({
-        responseMsg: "Created post", editedBlogPost
-      });
+      const editedBlogPost: IBlogPost | null = await BlogPost.findOneAndUpdate(
+        { _id: post_id },
+        { title, content, keywords, published, editedAt: new Date() },
+        { new: true }
+      ).exec();
+      if (editedBlogPost) {
+        return res.status(200).json({
+          responseMsg: "Created post", editedBlogPost
+        });
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Blog Post to update could not be found" ]);
+      }
     } catch (error) {
       return this.generalErrorResponse(res, { status: 500, error });
     }
   }
-  delete(req: Request, res: Response): Promise<Response<DeleteBlogPostRes>> {
+  // middleware to check post_id and user permissions runs before controller method //
+  delete = async(req: Request, res: Response<DeleteBlogPostRes>): Promise<Response<DeleteBlogPostRes>> => {
     const { post_id } = req.params;
-    if (!post_id) return this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve blog post to delete") });
 
-    return BlogPost.findOneAndDelete({ _id: post_id }).exec()
-      .then((deletedBlogPost) => {
+    try {
+      const deletedBlogPost: IBlogPost | null = await BlogPost.findOneAndDelete({ _id: post_id }).exec();
+      if (deletedBlogPost) {
         return res.status(200).json({
           responseMsg: "Blog post deleted", deletedBlogPost
         });
-      })
-      .catch((error) => this.generalErrorResponse(res, { error }) );
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Blog Post to delete could not be found" ]);
+      }
+    } catch (error) {
+      return await this.generalErrorResponse(res, { error });
+    }
   }
 
   toggleLikeBlogPost = async (req: Request, res: Response<LikeBlogPostRes | BlogPostErrRes>): Promise<Response<LikeBlogPostRes | BlogPostErrRes>> => {
@@ -155,13 +222,13 @@ export default class BlogPostsController extends BasicController implements ICRU
 
   }
 
-  private isAdminOrOwner = (user: IAdmin | IUser | undefined): boolean => {
-    if (!user) return false;
-    if (user.hasOwnProperty("role")) {
-      const { role } = user as IAdmin;
-      return role === "admin" || role === "owner";
+  private checkLogin = (user: IAdmin | IUser | undefined): { loggedIn: boolean; isAdmin: boolean; } => {
+    if (!user) return { loggedIn: false, isAdmin: false };
+    if (user && user.hasOwnProperty("role")) {
+      // admin user present //
+      return { loggedIn: true, isAdmin: true }; 
     } else {
-    return false;
+      return { loggedIn: true, isAdmin: false };
     }
   };
 }

@@ -4,6 +4,7 @@ import type { Document } from "mongoose";
 import type { NextFunction } from "express";
 
 export interface IUser extends Document  {
+  _id: mongoose.Types.ObjectId;
   firstName: string;
   lastName: string;
   email: string;

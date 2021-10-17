@@ -8,7 +8,7 @@ import type { IBlogPost } from "../../models/BlogPost";
 import type { BlogPostErrRes } from "../../_types/blog_posts/blogPostTypes";
 
 
-export const verifyCorrectBlogPostInput = async (req: Request, res: Response<BlogPostErrRes>, next: NextFunction): Promise<any> => {
+export const verifyUserModelAndPostId = async (req: Request, res: Response<BlogPostErrRes>, next: NextFunction): Promise<any> => {
   const user = req.user as IUser | IAdmin;
   const { blog_post_id } = req.params;
   if (!blog_post_id) {
@@ -26,7 +26,8 @@ export const verifyCorrectBlogPostInput = async (req: Request, res: Response<Blo
     });
   }
   return next();
-}
+};
+
 export const verifyBlogPostModelAccess = async (req: Request, res: Response<BlogPostErrRes>, next: NextFunction): Promise<Response| void> => {
   const user = req.user as (IAdmin | IUser);
   const { _id: userId } = user;
@@ -64,4 +65,4 @@ export const verifyBlogPostModelAccess = async (req: Request, res: Response<Blog
       });
     }
   }
-} 
+};
