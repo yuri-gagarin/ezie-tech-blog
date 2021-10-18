@@ -21,6 +21,30 @@ export const passportLoginMiddleware = (req: Request, res: Response, next: NextF
   })(req, res, next);
 };
 
+/**
+ * Checks for a login, assigns a user object if logged in otherwise req.user === null. Does NOT protect an API route 
+ */
+export const checkforLogin = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.headers.authorization) {
+    // process //
+    PassportContInstance.authenticate(StrategyNames.CheckUserStrategy, { session: false }, (err, user: IAdmin | IUser | null) => {
+      if (err) {
+        next(err);
+      }
+      if (!user) {
+        req.user = null;
+        next();
+      } else {
+        req.user = user;
+        next();
+      }
+    })(req, res, next);
+  } else {
+    req.user = null;
+    next();
+  }
+};
+
 /*
 
 */

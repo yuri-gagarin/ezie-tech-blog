@@ -66,3 +66,12 @@ export const verifyBlogPostModelAccess = async (req: Request, res: Response<Blog
     }
   }
 };
+
+
+// error instances //
+export class BlogPostNotAllowedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "Blog Post Not Allowed Error";
+  };
+};

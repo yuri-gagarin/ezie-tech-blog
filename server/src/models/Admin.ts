@@ -1,9 +1,10 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import type { Document } from "mongoose";
 import type { NextFunction } from "express";
 
 export interface IAdmin extends Document  {
+  _id: Types.ObjectId;
   firstName: string;
   lastName: string;
   email: string;

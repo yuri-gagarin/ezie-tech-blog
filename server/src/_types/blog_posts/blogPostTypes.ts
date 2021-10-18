@@ -79,3 +79,7 @@ export type FetchBlogPostsOpts = {
   byUser?: boolean;
   userId?: string;
 }
+
+export type FetchOneBlogPostOpts = {
+  
+}

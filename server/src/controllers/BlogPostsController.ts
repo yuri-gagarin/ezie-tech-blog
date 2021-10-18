@@ -1,13 +1,16 @@
 import BlogPost from "../models/BlogPost";
+import Admin from "../models/Admin";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // types //
-import type { ObjectId } from "mongoose";
 import type { Request, Response } from "express";
 import type { IBlogPost } from "../models/BlogPost";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import type { BlogPostClientData, IndexBlogPostRes, OneBlogPostRes, CreateBlogPostRes, EditBlogPostRes, DeleteBlogPostRes, FetchBlogPostsOpts, LikeBlogPostRes, BlogPostErrRes } from "../_types/blog_posts/blogPostTypes";
 import type { IUser } from "../models/User";
 import type { IAdmin } from "../models/Admin";
+// helpers //
+import { BlogPostNotAllowedError } from "./_helpers/blogPostControllerHelpers";
+//
 
 export default class BlogPostsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
@@ -15,9 +18,10 @@ export default class BlogPostsController extends BasicController implements ICRU
     // check for a user and admin //
     const { isAdmin, loggedIn  } = this.checkLogin(req.user as (IAdmin | IUser));
     let blogPosts: IBlogPost[];
-
     // TODO //
     // implement helper methods to cut down on repetiteveness //
+    console.log(20)
+    console.log(isAdmin, loggedIn)
     try {
       if (loggedIn) {
         if (isAdmin) {
@@ -30,6 +34,7 @@ export default class BlogPostsController extends BasicController implements ICRU
               .sort({ createdAt }).limit(limit)
               .exec();
           } else {
+            console.log(34)
             blogPosts = await BlogPost
               .find({})
               .byPublishedStatus(publishedStatus).byCategory(category)
@@ -82,6 +87,9 @@ export default class BlogPostsController extends BasicController implements ICRU
             .exec();
         }
       }
+      return res.status(200).json({
+        responseMsg: "Fetched blog posts", blogPosts
+      });
     } catch (error) {
       console.log(error);
       return await this.generalErrorResponse(res, { error, errorMessages: [ "Error fetching blog posts" ] });
@@ -90,43 +98,51 @@ export default class BlogPostsController extends BasicController implements ICRU
 
   getOne = async (req: Request, res: Response<OneBlogPostRes>): Promise<Response<OneBlogPostRes>> => {
     const { post_id } = req.params;
+    const { searchBySlug } = req.query;
+    const user = req.user as IAdmin | IUser | null;
+    // check login //
     let blogPost: IBlogPost;
   
     if (!post_id) {
       return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve post") });
     }
 
-    if (req.query) {
-      // custom options to get a post //
-      if (req.query.searchBySlug) {
-        // the post_id is actually a slug //
-        try {
-          const blogPost = await BlogPost.findOne({ slug: post_id }).exec();
-          if (blogPost) {
-            return res.status(200).json({
-              responseMsg: `Retrieved post: ${blogPost.title}`, blogPost
-            });
-          } else {
-            return await this.notFoundErrorResponse(res, [ "Blog Post was not found" ]);
-          }
-        } catch (error) {
-          return await this.generalErrorResponse(res, { errorMessages: [ "Something went wrong retrieving the post" ] });
+    if (searchBySlug) {
+      // the post_id is actually a slug //
+      try {
+        blogPost = await BlogPost.findOne({ slug: post_id }).exec();
+      } catch (error) {
+        return await this.generalErrorResponse(res, { errorMessages: [ "Something went wrong retrieving the post" ] });
+      }
+    } else {
+    // general response to get it by id //
+      try {
+        blogPost = await BlogPost.findOne({ _id: post_id }).exec()
+      } catch (error) {
+        return await this.generalErrorResponse(res, { error });
+      }
+    }
+
+    console.log(29);
+    console.log(blogPost)
+    if (blogPost) {
+      // make sure client is authorized to see the post //
+      try { 
+        if (this.authorizeBlogPostGet({ blogPost, user })) {
+          return res.status(200).json({
+            responseMsg: "Fetched blog post", blogPost
+          });
+        } else {
+          return this.notAllowedErrorResponse(res, [ "Not authorized to view post" ]);
         }
       }
-    };
-
-    // general response to get it by id //
-    try {
-      blogPost = await BlogPost.findOne({ _id: post_id }).exec()
-      if (blogPost) {
-        return res.status(200).json({ responseMsg: "Fetched blog post", blogPost });
-      } else {
-        return await this.generalErrorResponse(res, { status: 404, error: new Error("Could not find post") });
+      catch (error) {
+        return this.generalErrorResponse(res, { error });
       }
-    } catch (error) {
-      return await this.generalErrorResponse(res, { error });
+    } else {
+      return this.notFoundErrorResponse(res, [ "Blog Post not found"]);
     }
-    
+    // blog post should be
   }
   create = async (req: Request, res: Response<CreateBlogPostRes>): Promise<Response<CreateBlogPostRes>> => {
     const user = req.user as (IAdmin | IUser);
@@ -218,17 +234,40 @@ export default class BlogPostsController extends BasicController implements ICRU
   }
 
   // helpers //
-  private authorizeBlogPost = (res: Response) => {
-
+  private authorizeBlogPostGet = ({ blogPost, user }: { blogPost: IBlogPost, user: IAdmin | IUser | null }): boolean => {
+    if (blogPost.published) {
+      // anyone can see a published post //
+      return true;
+    } else {
+      if (user) {
+        const { isAdmin } = this.checkLogin(user);
+        if (isAdmin) {
+          // can see all with current settings //
+          return true;
+        } else {
+          const { _id: currentUserId } = user;
+          const { authorId } = blogPost.author;
+          if (currentUserId.equals(authorId)) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      } else {
+        // can only see published posts //
+        return false;
+      }
+    }
   }
 
-  private checkLogin = (user: IAdmin | IUser | undefined): { loggedIn: boolean; isAdmin: boolean; } => {
+  private checkLogin = (user: IAdmin | IUser | null): { loggedIn: boolean; isAdmin: boolean; } => {
     if (!user) return { loggedIn: false, isAdmin: false };
-    if (user && user.hasOwnProperty("role")) {
+    if (user && user instanceof Admin) {
       // admin user present //
       return { loggedIn: true, isAdmin: true }; 
     } else {
       return { loggedIn: true, isAdmin: false };
     }
   };
+
 }

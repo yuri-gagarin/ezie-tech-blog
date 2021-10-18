@@ -48,7 +48,7 @@ export default class AuthController {
           responseMsg: "Logged in",
           success: true,
           isAdmin,
-          userData: { _id, email, firstName, lastName, createdAt, editedAt },
+          userData: { _id: _id.toHexString(), email, firstName, lastName, createdAt, editedAt },
           jwtToken: {
             token, expires
           },
@@ -78,7 +78,7 @@ export default class AuthController {
         .json({
           responseMsg: "Registration success",
           userData: { 
-            _id: userData._id, 
+            _id: userData._id.toHexString(), 
             email: userData.email, 
             firstName: userData.firstName, 
             lastName: userData.lastName, 

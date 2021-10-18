@@ -13,10 +13,11 @@ import type { IAdmin } from "../models/Admin";
 export enum StrategyNames {
   AuthStrategy = "AuthStrategy",
   AdminAuthStrategy = "AdminAuthStrategy",
-  LoginAuthStrategy = "LoginAuthStrategy"
+  LoginAuthStrategy = "LoginAuthStrategy",
+  CheckUserStrategy = "CheckUserStrategy"
 };
 
-export const issueJWT = (user: IUser): { token: string; expires: string } => {
+export const issueJWT = (user: IUser | IAdmin): { token: string; expires: string } => {
   const { _id } = user;
   const secretKey = process.env.JWT_SECRET;
   const expiresIn = "12h";
@@ -63,7 +64,6 @@ export default class PassportController {
     }));
     this.passport.use(StrategyNames.AdminAuthStrategy, new JWTStrategy(this.opts, async (jwtPayload, done) => {
       try { 
-        console.log(66)
         const admin: IAdmin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
         console.log(admin);
         if (admin) return done(null, admin);
@@ -100,6 +100,26 @@ export default class PassportController {
         return done(error);
       }
     }));
+
+    this.passport.use(StrategyNames.CheckUserStrategy, new JWTStrategy(this.opts, async (jwtPayload, done) => {
+      try {
+        const admin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
+        if (admin) {
+          return done(null, admin);
+        } else {
+          const user = await User.findOne({ _id: jwtPayload.sub }).exec();
+          if (user) {
+            return done(null, user);
+          } else {
+            return done(null, false);
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        return done(err);
+      }
+    }));
+
     
 
     return this.passport;

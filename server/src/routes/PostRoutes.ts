@@ -2,6 +2,7 @@ import { PassportContInstance } from "../server";
 import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
 import { StrategyNames } from "../controllers/PassportController";
 // custom middleware //
+import { checkforLogin } from "../controllers/_helpers/authHelpers"
 import { verifyUserModelAndPostId, verifyBlogPostModelAccess } from "../controllers/_helpers/blogPostControllerHelpers";
 // types //
 import type { Router  } from "express";
@@ -23,10 +24,14 @@ export default class PostRoutes extends CRUDRoutesController {
   }
 
   protected index(route: string): void {
-    super.index(route);
+    super.index(route, [
+      checkforLogin // checks if user is logged in - does NOT protect the route //
+    ]);
   }
   protected getOne(route: string): void {
-    super.getOne(route);
+    super.getOne(route, [
+      checkforLogin // checks if user is logged in - does NOT protect the route //
+    ]);
   }
   protected create(route: string): void {
     super.create(route, [ 
