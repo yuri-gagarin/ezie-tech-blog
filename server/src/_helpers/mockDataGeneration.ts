@@ -89,7 +89,7 @@ export const generateMockAdmins = async (num?: number): Promise<void> => {
   for (let i = 0; i < numToGenerate; i++) {
     const admin = new Admin({
       firstName: faker.name.firstName(),
-      lastName: faker.name.lastName,
+      lastName: faker.name.lastName(),
       email: `admin_${i}@email.com`,
       password: "password",
       role: randomIntFromInterval(0, 1) ? "admin" : "owner",
@@ -108,8 +108,8 @@ export const generateMockUsers = async (num?: number): Promise<void> => {
   for (let i = 0; i < numToGenerate; i++) {
     const admin = new User({
       firstName: faker.name.firstName(),
-      lastName: faker.name.lastName,
-      email: `admin_${i}@email.com`,
+      lastName: faker.name.lastName(),
+      email: `user_${i}@email.com`,
       password: "password",
       confirmed: randomIntFromInterval(0, 1) ? true : false
     });

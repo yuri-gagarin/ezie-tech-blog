@@ -32,6 +32,18 @@ UserSchema.pre("save", async function(next: NextFunction) {
   next();
 });
 
+UserSchema.pre("save", async function(next: NextFunction) {
+  const self = this;
+  try {
+    const model = await mongoose.models["User"].findOne({ email: self.email }).exec()
+    if (model) {
+      self.invalidate("email", "email must be unique");
+      next(new Error("Email already exists"));
+    }
+  } catch (error) {
+    next(error)
+  }
+});
 UserSchema.methods.validPassword = async function(password: string): Promise<boolean> {
   return await bcrypt.compare(password, this.password);
 }

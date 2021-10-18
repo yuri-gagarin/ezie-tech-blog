@@ -1,13 +1,20 @@
 import readline from "readline";
 import mongoSetup from "../database/mongoSetup";
-import { generateMockBlogPosts, generateMockProjects } from "./mockDataGeneration";
+import { generateMockAdmins, generateMockBlogPosts, generateMockProjects, generateMockUsers } from "./mockDataGeneration";
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-const options = `1: Seed Blog Posts\n2: Seed Blog Post Comments\n3: Seed Projects\n4: Exit`;
+const options = `
+  1: Seed Blog Posts
+  2: Seed Blog Post Comments
+  3: Seed Projects
+  4: Seed Users
+  5: Seed Admins
+  0: Exit
+`;
 
 
 
@@ -45,43 +52,81 @@ const processCreateProjects = async (data: string): Promise<void> => {
     throw error;
   }
 };
+const processCreateUserModels = async (data: string): Promise<void> => {
+  try {
+    const num = parseInt(data, 10);
+    await generateMockUsers(num);
+  } catch (error) {
+    throw error;
+  }
+};
+const processCreateAdminModels = async (data: string): Promise<void> => {
+  try {
+    const num = parseInt(data, 10);
+    await generateMockAdmins(num);
+  } catch (error) {
+    throw error;
+  }
+};
 
 const processOption = async (data: any): Promise<void> => {
   try {
     const num = parseInt(data, 10);
     switch (num) {
       case (1): {
-        return (
-          rl.question("How many blog posts would you like to create?\n", async (data) => {
-            try {
-              await processCreateBlogPosts(data);
-              return showMainScreen();
-            } catch (error) {
-              console.log(error);
-              process.exit(0);
-            }
-          })
-        );
+        rl.question("How many blog posts would you like to create?\n", async (data) => {
+          try {
+            await processCreateBlogPosts(data);
+            return showMainScreen();
+          } catch (error) {
+            console.log(error);
+            process.exit(0);
+          }
+        });
+        break;
       }
       case (2): {
         console.log("Comments are not implemented yet.\n");
         return showMainScreen();
       }
       case (3): {
-        return (
-          rl.question("How many mock projects would you like to create?\n", async (data) => {
-            try {
-              await processCreateProjects(data);
-              return showMainScreen();
-            } catch (error) {
-              console.log(error);
-              process.exit(0);
-            }
-          })
-        )
+        rl.question("How many mock projects would you like to create?\n", async (data) => {
+          try {
+            await processCreateProjects(data);
+            return showMainScreen();
+          } catch (error) {
+            console.log(error);
+            process.exit(0);
+          }
+        });
+        break;
       }
       case (4): {
-        console.log("Good bye!\n");
+        rl.question("How many regular mock <User> models would you like to create?\n", async (data) => {
+          try {
+            await processCreateUserModels(data);
+            return showMainScreen();
+          } catch (error) {
+            console.log(error);
+            process.exit(1);
+          }
+        });
+        break;
+      }
+      case (5): {
+        rl.question("How many mock <Admin> models would you like to create?\n", async (data) => {
+          try {
+            await processCreateAdminModels(data);
+            return showMainScreen();
+          } catch (error) {
+            console.log(error);
+            process.exit(1);
+          }
+        });
+        break;
+      }
+      case (0): {
+        console.log("Good Bye!\n");
         process.exit(0);
       }
       default: {
