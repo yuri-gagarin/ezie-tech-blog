@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 import faker from "faker";
+// models //
+import Admin from "../models/Admin";
+import User from "../models/User";
 import BlogPost from "../models/BlogPost";
 import Project from "../models/Project";
+// helpers //
 import { randomIntFromInterval, setRandBoolean } from "./generalHelpers";
 // types //
 import type { IProject } from "../models/Project";
@@ -79,4 +83,43 @@ export const generateMockProjects = async (num?: number): Promise<number> => {
   }
   return numToGenerate;
 };
+
+export const generateMockAdmins = async (num?: number): Promise<void> => {
+  const numToGenerate: number = num ? num : 10;
+  for (let i = 0; i < numToGenerate; i++) {
+    const admin = new Admin({
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName,
+      email: `admin_${i}@email.com`,
+      password: "password",
+      role: randomIntFromInterval(0, 1) ? "admin" : "owner",
+      confirmed: randomIntFromInterval(0, 1) ? true : false
+    });
+    try {
+      await admin.save();
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
+  } 
+}
+export const generateMockUsers = async (num?: number): Promise<void> => {
+  const numToGenerate: number = num ? num : 10;
+  for (let i = 0; i < numToGenerate; i++) {
+    const admin = new User({
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName,
+      email: `admin_${i}@email.com`,
+      password: "password",
+      confirmed: randomIntFromInterval(0, 1) ? true : false
+    });
+    try {
+      await admin.save();
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
+  } 
+}
+
 

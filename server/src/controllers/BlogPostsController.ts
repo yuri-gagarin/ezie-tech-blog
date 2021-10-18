@@ -123,8 +123,6 @@ export default class BlogPostsController extends BasicController implements ICRU
       }
     }
 
-    console.log(29);
-    console.log(blogPost)
     if (blogPost) {
       // make sure client is authorized to see the post //
       try { 
@@ -142,11 +140,12 @@ export default class BlogPostsController extends BasicController implements ICRU
     } else {
       return this.notFoundErrorResponse(res, [ "Blog Post not found"]);
     }
-    // blog post should be
   }
+
   create = async (req: Request, res: Response<CreateBlogPostRes>): Promise<Response<CreateBlogPostRes>> => {
     const user = req.user as (IAdmin | IUser);
     const { _id: authorId } = user;
+
     const blogPostData = req.body.blogPostData as BlogPostClientData;
     const { title, author, content, keywords = []  } = blogPostData;
     // tihs will need to be validated later //
@@ -163,7 +162,7 @@ export default class BlogPostsController extends BasicController implements ICRU
     }
   }
 
-  // middleware to check post_id and user permissions runs before controller method //
+  // middleware to check post_id and user permissions should be run before controller method //
   edit = async (req: Request, res: Response<EditBlogPostRes>): Promise<Response<EditBlogPostRes>> => {
     const { post_id } = req.params;
     const blogPostData = req.body.blogPostData as BlogPostClientData;
