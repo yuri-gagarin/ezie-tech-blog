@@ -9,6 +9,8 @@ import Project from "../models/Project";
 import { randomIntFromInterval, setRandBoolean } from "./generalHelpers";
 // types //
 import type { IProject } from "../models/Project";
+import type { IUser } from "../models/User";
+
 
 const pullRandomValsFromArray = <T>(array: T[]): T[] => {
   let returnArr: T[] = array
@@ -29,19 +31,21 @@ export const generateMockBlogPosts = async (num?: number) => {
     let keywords = ["programming", "tech", "help", "javascript", "typescript", "nodejs", "html", "css", "react", "react-native", "mobile", "desktop", "ruby", "python", "next", "gatsby", "mongodb", "sql" ];
     const ranNum: number = randomIntFromInterval(1, 20);
     try {
-      await BlogPost.create({ 
-        title: faker.lorem.words(),
-        author: {
-          authorId: new mongoose.Types.ObjectId(),
-          name: faker.name.firstName()
-        },
-        content: faker.lorem.paragraphs(ranNum === 0 ? 1 : ranNum),
-        likes: [],
-        numOfLikes: 0,
-        keywords: pullRandomValsFromArray<string>(keywords),
-        category: categories[randomIntFromInterval(0, categories.length - 1)],
-        published: randomIntFromInterval(0, 1) ? true : false
-      });
+      const randomUser: IUser[] = await User.find({}).limit(1);
+      if (!randomUser[0]) throw new Error("No user model was found to tie the blog post to");
+      else {
+        const { _id: authorId, firstName: name } = randomUser[0];
+        await BlogPost.create({ 
+          title: faker.lorem.words(),
+          author: { authorId, name },
+          content: faker.lorem.paragraphs(ranNum),
+          likes: [],
+          numOfLikes: 0,
+          keywords: pullRandomValsFromArray<string>(keywords),
+          category: categories[randomIntFromInterval(0, categories.length - 1)],
+          published: randomIntFromInterval(0, 1) ? true : false
+        });
+      }
     } catch (error) {
       console.log(error);
       process.exit(1);
@@ -87,10 +91,13 @@ export const generateMockProjects = async (num?: number): Promise<number> => {
 export const generateMockAdmins = async (num?: number): Promise<void> => {
   const numToGenerate: number = num ? num : 10;
   for (let i = 0; i < numToGenerate; i++) {
+    const firstName = faker.name.firstName();
+    const lastName = faker.name.lastName();
+    const email = `${firstName}_${lastName}@mail.com`;
     const admin = new Admin({
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      email: `admin_${i}@email.com`,
+      firstName,
+      lastName,
+      email,
       password: "password",
       role: randomIntFromInterval(0, 1) ? "admin" : "owner",
       confirmed: randomIntFromInterval(0, 1) ? true : false
@@ -106,10 +113,13 @@ export const generateMockAdmins = async (num?: number): Promise<void> => {
 export const generateMockUsers = async (num?: number): Promise<void> => {
   const numToGenerate: number = num ? num : 10;
   for (let i = 0; i < numToGenerate; i++) {
+    const firstName = faker.name.firstName();
+    const lastName = faker.name.lastName();
+    const email = `${firstName}_${lastName}@mail.com`;
     const admin = new User({
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      email: `user_${i}@email.com`,
+      firstName,
+      lastName,
+      email,
       password: "password",
       confirmed: randomIntFromInterval(0, 1) ? true : false
     });
