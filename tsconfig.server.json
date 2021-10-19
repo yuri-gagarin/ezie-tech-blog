@@ -5,5 +5,5 @@
     "outDir": "server/build",
     "noEmit": false
   },
-  "include": ["server/src"]
+  "include": ["server/src" ]
 }

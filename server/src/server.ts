@@ -56,7 +56,6 @@ combineRoutes(router);
   }
 })();
 */
-
 class Server {
   private server: Express;
   private app: NextServer;
@@ -74,7 +73,7 @@ class Server {
     this.launchFirebaseAdmin();
   }
 
-  public async init(): Promise<any> {
+  public async init(): Promise<Express> {
     try {
       await this.configureDB();
       await this.app.prepare();
@@ -82,6 +81,7 @@ class Server {
         if (err) throw err;
         console.log(`> Ready on localhost:${this.PORT} - env ${process.env.NODE_ENV}`);
       });
+      return this.server;
     } catch (error) {
       console.log(error);
       process.exit(1);
@@ -92,7 +92,6 @@ class Server {
     this.app = next({ dev: this.dev });
     this.handle = this.app.getRequestHandler();
   }
-  
   private configureServer(): void {
     this.server = express();
     this.server.use(express.json());
@@ -123,5 +122,7 @@ class Server {
   }
 };
 
-new Server().init()
+export default new Server().init();
+
+
 
