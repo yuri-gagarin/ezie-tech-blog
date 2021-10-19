@@ -11,7 +11,7 @@ export type BlogPostData = {
   numOflikes: number;
   slug: string;
   keywords: string[];
-  live: boolean;
+  published: boolean;
   editedAt: string;
   createdAt: string;
 };
@@ -26,7 +26,7 @@ export type BlogPostFormData = {
   category?: "informational" | "beginner" | "intermediate" | "advanced" | string;
   slug?: string;
   keywords?: string[];
-  live?: boolean;
+  published?: boolean;
   editedAt?: string;
   createdAt?: string;
 };
@@ -70,6 +70,11 @@ export type DeleteBlogPostRes = {
   deletedBlogPost: BlogPostData;
   error?: any;
   errorMessages?: string[];
+};
+export type ErrorBlogPostRes = {
+  responseMsg: string;
+  error: any;
+  errorMessages: string[];
 };
 export type FetchBlogPostsOpts = {
   category?: "all" | "informational" | "beginner" | "intermediate" | "advanced";

@@ -20,8 +20,6 @@ export default class BlogPostsController extends BasicController implements ICRU
     let blogPosts: IBlogPost[];
     // TODO //
     // implement helper methods to cut down on repetiteveness //
-    console.log(20)
-    console.log(isAdmin, loggedIn)
     try {
       if (loggedIn) {
         if (isAdmin) {

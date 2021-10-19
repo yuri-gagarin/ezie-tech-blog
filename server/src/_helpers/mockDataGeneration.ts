@@ -23,16 +23,20 @@ const pullRandomValsFromArray = <T>(array: T[]): T[] => {
   return returnArr;
 };
 
-export const generateMockBlogPosts = async (num?: number) => {
-  console.log("Generating mock Blog Posts");
-  const numOfBlogPosts = num ? num : 10;
+export const generateMockBlogPosts = async ({ number, publishedStatus }: { number?: number; publishedStatus?: "published" | "unpublished" }) => {
+  const numOfBlogPosts = number ? number : 10;
   for (let i = 0; i < numOfBlogPosts; i++) {
     const categories = ["informational", "beginner", "intermediate", "advanced"];
     let keywords = ["programming", "tech", "help", "javascript", "typescript", "nodejs", "html", "css", "react", "react-native", "mobile", "desktop", "ruby", "python", "next", "gatsby", "mongodb", "sql" ];
     const ranNum: number = randomIntFromInterval(1, 20);
     try {
       const randomUser: IUser[] = await User.find({}).limit(1);
+      let published: boolean;
+      if (publishedStatus) published = publishedStatus === "published" ? true : false;
+      else published = randomIntFromInterval(0, 1) ? true : false
+
       if (!randomUser[0]) throw new Error("No user model was found to tie the blog post to");
+     
       else {
         const { _id: authorId, firstName: name } = randomUser[0];
         await BlogPost.create({ 
@@ -43,7 +47,7 @@ export const generateMockBlogPosts = async (num?: number) => {
           numOfLikes: 0,
           keywords: pullRandomValsFromArray<string>(keywords),
           category: categories[randomIntFromInterval(0, categories.length - 1)],
-          published: randomIntFromInterval(0, 1) ? true : false
+          published
         });
       }
     } catch (error) {
@@ -51,7 +55,6 @@ export const generateMockBlogPosts = async (num?: number) => {
       process.exit(1);
     }
   }
-  console.log("Done generating mock Blog Posts");
 };
 
 export const generateMockProjects = async (num?: number): Promise<number> => {

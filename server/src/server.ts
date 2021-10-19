@@ -56,7 +56,7 @@ combineRoutes(router);
   }
 })();
 */
-class Server {
+export class Server {
   private server: Express;
   private app: NextServer;
   private handle: any;
@@ -70,22 +70,26 @@ class Server {
     this.configureNextApp();
     this.configureServer();
     this.configureRouter();
-    this.launchFirebaseAdmin();
+    process.env.NODE_ENV !== "test" ?? this.launchFirebaseAdmin();
   }
 
-  public async init(): Promise<Express> {
+  public async init(): Promise<this> {
     try {
       await this.configureDB();
-      await this.app.prepare();
+      //await this.app.prepare();
       this.server.listen(this.PORT, (err?: any) => {
         if (err) throw err;
-        console.log(`> Ready on localhost:${this.PORT} - env ${process.env.NODE_ENV}`);
+        console.log(`Ready on localhost:${this.PORT} - env ${process.env.NODE_ENV}`);
       });
-      return this.server;
+      return this;
     } catch (error) {
       console.log(error);
       process.exit(1);
     }
+  }
+
+  public getExpressServer() {
+    return this.server;
   }
 
   private configureNextApp(): void {
@@ -113,6 +117,7 @@ class Server {
     return await mongoSetup();
   }
   private launchFirebaseAdmin(): void {
+    console.log("called")
     try {
       new FirebaseServerController();
     } catch (error) {
