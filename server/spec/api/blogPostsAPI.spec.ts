@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 // 
-import chai, { expect, should } from "chai";
+import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 import BlogPost, { IBlogPost } from "../../src/models/BlogPost";
 // server //
@@ -35,8 +35,8 @@ describe("BlogPost API tests", function() {
   context("Guest Client / No Login", () => {
     before(async() => {
       try {
-        await generateMockBlogPosts({ number: 10, publishedStatus: "published" });
-        await generateMockBlogPosts({ number: 10, publishedStatus: "unpublished" });
+        await generateMockBlogPosts({ number: 30, publishedStatus: "published" });
+        await generateMockBlogPosts({ number: 30, publishedStatus: "unpublished" });
         numberOfPosts = await BlogPost.countDocuments();
       } catch (error) {
         console.log(error);
@@ -82,6 +82,66 @@ describe("BlogPost API tests", function() {
             const { blogPosts } = res.body as IndexBlogPostRes;
             for (const post of blogPosts) {
               expect(post.published).to.equal(true);
+            }
+            done();
+          });
+      });
+      it("Should get Blog Posts by CATEGORY=INFORMATIONAL option", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ category: "informational" })
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res.status).to.equal(200);
+            const { blogPosts } = res.body as IndexBlogPostRes;
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+              expect(post.category).to.equal("informational");
+            }
+            done();
+          });
+      });
+      it("Should get Blog Posts by CATEGORY=BEGINNER option", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ category: "beginner" })
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res.status).to.equal(200);
+            const { blogPosts } = res.body as IndexBlogPostRes;
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+              expect(post.category).to.equal("beginner");
+            }
+            done();
+          });
+      });
+      it("Should get Blog Posts by CATEGORY=INTERMEDIATE option", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ category: "intermediate" })
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res.status).to.equal(200);
+            const { blogPosts } = res.body as IndexBlogPostRes;
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+              expect(post.category).to.equal("intermediate");
+            }
+            done();
+          });
+      });
+      it("Should get Blog Posts by CATEGORY=ADVANCED option", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ category: "advanced" })
+          .end((err, res) => {
+            if (err) done(err);
+            expect(res.status).to.equal(200);
+            const { blogPosts } = res.body as IndexBlogPostRes;
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+              expect(post.category).to.equal("advanced");
             }
             done();
           });
