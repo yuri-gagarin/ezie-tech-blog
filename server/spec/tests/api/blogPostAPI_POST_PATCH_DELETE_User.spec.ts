@@ -17,7 +17,7 @@ import type { Server } from "@/server/src/server";
 import type { IBlogPost } from "@/server/src/models/BlogPost"
 import type { IUser } from "@/server/src/models/User";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
-import type { CreateBlogPostRes, BlogPostData, EditBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
+import type { CreateBlogPostRes, BlogPostData, EditBlogPostRes, DeleteBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
 
 chai.use(chaiHTTP);
 
@@ -126,7 +126,7 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
         });
       });
       // END POST tests //
-
+      // PATCH Tests //
       describe("PATCH /api/posts/:post_id", () => {
         let blogPostId: string;
         let mockPostData: BlogPostClientData;
@@ -178,7 +178,54 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
             throw error;
           }
         });
-      })
+      });
+      // END PATCH Tests //
+      // DELETE TESTS //
+      describe("DELETE /api/posts/:post_id", () => {
+        let blogPostId: string;
+        before(async () => {
+          try {
+            const { _id: userId, firstName } = firstUser;
+            const blogPost = await BlogPost.findOne({ "author:authorId": userId });
+            //
+            blogPostId = blogPost._id.toHexString();
+          } catch (err) {
+            throw err;
+          }
+        });
+
+        it("Should correctly DELETE an existing <BlogPost> model and send back correct response", (done) => {
+          chai.request(server)
+            .delete("/api/posts/" + blogPostId)
+            .set({ Authorization: firstUserToken })
+            .end((error, response) => {
+              if (error) done(error);
+              const { responseMsg, deletedBlogPost } = response.body as DeleteBlogPostRes;
+              expect(response.status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(deletedBlogPost).to.be.an("object");
+              //
+              done();
+            });
+        });
+        it("Should remove the <BlogPost> model with queried _id from the database", async () => {
+          try {
+            const deletedBlogPost = await BlogPost.findById(blogPostId);
+            expect(deletedBlogPost).to.be.null;
+          } catch (error) {
+            throw error;
+          }
+        });
+        it("Should decrease the number of <BlogPost> models by 1", async () => {
+          try {
+            const updatedNumOfBlogPosts: number = await countBlogPosts({});
+            expect(updatedNumOfBlogPosts).to.equal(numberOfPosts - 1);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+      // END DELETE TESTS //
 
     })
     // END CONTEXT Tests with valid data //
