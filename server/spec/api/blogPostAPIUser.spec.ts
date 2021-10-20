@@ -314,6 +314,54 @@ describe("BlogPost User API tests GET requests", function() {
           });
       });
     });
+    // END GET /api/posts //
+
+    // GET /api/posts/:postId //
+    describe("GET /api/posts/:post_id", () => {
+      let usersPublishedPost: IBlogPost;
+      let usersUnpublishedPost: IBlogPost;
+
+      before( async () => {
+        try {
+          usersPublishedPost = await BlogPost.findOne({ "author.authorId": firstUser._id }).where({ published: true });
+          usersUnpublishedPost = await BlogPost.findOne({ "author.authorId": firstUser._id }).where({ published: false });
+        } catch (error) {
+          console.log(error);
+        }
+      });
+
+      it("Should be able to access OWN PUBLISHED post", (done) => {
+        const postId = usersPublishedPost._id.toHexString();
+        chai.request(server)
+          .get("/api/posts/" + postId)
+          .set({ "Authorization": firstUserToken })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPost } = res.body as OneBlogPostRes;
+            expect(res.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(blogPost).to.be.an("object");
+            expect(blogPost.published).to.equal(true);
+            done();
+          });
+      });
+      it("Should able to access OWN UNPUBLISHED post", (done) => {
+        const postId = usersUnpublishedPost._id.toHexString();
+        chai.request(server)
+          .get("/api/posts/" + postId)
+          .set({ "Authorization": firstUserToken })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPost } = res.body as OneBlogPostRes;
+            expect(res.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(blogPost).to.be.an("object");
+            expect(blogPost.published).to.equal(false);
+            done();
+          });
+      });
+    });
+    // END GET /api/posts/:postId //
   });
   // END CONTEXT User logged in accessing own blog posts //
 
@@ -543,7 +591,57 @@ describe("BlogPost User API tests GET requests", function() {
           });
       });
     });
+    // END GET /api/posts //
+
+    // GET /api/posts/:postId //
+    describe("GET /api/posts/:post_id", () => {
+      let otherUsersPublishedPost: IBlogPost;
+      let otherUsersUnpublishedPost: IBlogPost;
+
+      before( async () => {
+        try {
+          otherUsersPublishedPost = await BlogPost.findOne({ "author.authorId": secondUser._id }).where({ published: true });
+          otherUsersUnpublishedPost = await BlogPost.findOne({ "author.authorId": secondUser._id }).where({ published: false });
+        } catch (error) {
+          console.log(error);
+        }
+      });
+
+      it("Should be able to access other users PUBLISHED post", (done) => {
+        const postId = otherUsersPublishedPost._id.toHexString();
+        chai.request(server)
+          .get("/api/posts/" + postId)
+          .set({ "Authorization": firstUserToken })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPost } = res.body as OneBlogPostRes;
+            expect(res.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(blogPost).to.be.an("object");
+            expect(blogPost.published).to.equal(true);
+            done();
+          });
+      });
+      it("Should NOT able to access other users UNPUBLISHED post", (done) => {
+        const postId = otherUsersUnpublishedPost._id.toHexString();
+        chai.request(server)
+          .get("/api/posts/" + postId)
+          .set({ "Authorization": firstUserToken })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = res.body as OneBlogPostRes;
+            expect(res.status).to.equal(401);
+            expect(res.body.blogPost).to.be.undefined;
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+    });
+    // END GET /api/posts/:postId //
   });
+  // END CONTEXT //
   
   after(async () => {
     try {

@@ -9,6 +9,7 @@ export type LikeData = {
   userId: mongoose.Types.ObjectId;
 }
 export interface IBlogPost extends Document  {
+  _id: mongoose.Types.ObjectId;
   title: string;
   author: {
     name: string;
