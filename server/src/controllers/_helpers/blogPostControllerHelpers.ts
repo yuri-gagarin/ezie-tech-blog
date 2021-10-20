@@ -10,8 +10,8 @@ import type { BlogPostErrRes } from "../../_types/blog_posts/blogPostTypes";
 
 export const verifyUserModelAndPostId = async (req: Request, res: Response<BlogPostErrRes>, next: NextFunction): Promise<any> => {
   const user = req.user as IUser | IAdmin;
-  const { blog_post_id } = req.params;
-  if (!blog_post_id) {
+  const { post_id } = req.params;
+  if (!post_id) {
     return res.status(400).json({
       responseMsg: "Input error",
       error: new Error("Client error"),
@@ -31,7 +31,7 @@ export const verifyUserModelAndPostId = async (req: Request, res: Response<BlogP
 export const verifyBlogPostModelAccess = async (req: Request, res: Response<BlogPostErrRes>, next: NextFunction): Promise<Response| void> => {
   const user = req.user as (IAdmin | IUser);
   const { _id: userId } = user;
-  const { blog_post_id } = req.params;
+  const { post_id } = req.params;
 
   if (user.hasOwnProperty("role")) {
     if ((user as IAdmin).role === "owner" || (user as IAdmin).role === "admin") {
@@ -39,7 +39,7 @@ export const verifyBlogPostModelAccess = async (req: Request, res: Response<Blog
     }
   } else {
     try {
-      const blogPost: IBlogPost | null = await BlogPost.findById(blog_post_id);
+      const blogPost: IBlogPost | null = await BlogPost.findById(post_id);
       if (blogPost) {
         if (blogPost.author.authorId.equals(userId)) {
           return next();

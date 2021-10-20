@@ -40,7 +40,7 @@ export const countBlogPosts = async ({ all, published, unpublished, specificUser
       }
     } else if (published && !specificUserId) {
       totalNumber = await BlogPost.countDocuments({}).where({ published: true });
-    } else if (!published && !specificUserId) {
+    } else if (unpublished && !specificUserId) {
       totalNumber = await BlogPost.countDocuments({}).where({ published: false });
     } else {
       // count all //

@@ -8,7 +8,7 @@ export type BlogPostData = {
     name: string;
   };
   content: string;
-  category: string;
+  category:  "informational" | "beginner" | "intermediate" | "advanced";
   keywords: string[];
   slug: string;
   published: boolean;
@@ -22,7 +22,7 @@ export type BlogPostClientData = {
     authorId?: string;
     name?: string;
   };
-  category?: string;
+  category?: "informational" | "beginner" | "intermediate" | "advanced";
   content?: string;
   keywords?: string[];
   published?: boolean;
