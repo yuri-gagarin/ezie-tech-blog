@@ -236,6 +236,137 @@ describe("BlogPost User API tests", function() {
           });
       });
     });
+  });
+  // CONTEXT User logged in accessing own blog posts //
+
+  // CONTEXT User logged in accessing other users blog posts //
+  context("User logged in accessing other users blog posts", () => {
+    
+    // GET /api/posts //
+    describe("GET /api/posts", () => {
+      it("Should be able to access other users PUBLISHED posts", (done) => {
+        const userId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .set({ "Authorization": firstUserToken })
+          .query({ byUser: true, limit: numberOfPosts, userId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(blogPosts).to.be.an("array");
+            expect(blogPosts.length).to.equal(numOfSecondUserPublishedPosts);
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+            }
+            done();
+          });
+      });
+      it("Should NOT be able to get other users UNPUBLISHED blog posts", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .set({ "Authorization": firstUserToken })
+          .query({ byUser: true, publishedStatus: "unpublished", limit: numberOfPosts,  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes; 
+            expect(res.status).to.equal(401);
+            /*
+            expect(responseMsg).to.be.a("string");
+            expect(blogPosts).to.be.an("array");
+            expect(blogPosts.length).to.be.at.most(10);       
+            for (const post of blogPosts) {
+              expect(otherUserId).to.equal(post.author.authorId);
+              expect(post.published).to.equal(true);
+            }
+            done();
+            */
+          });
+      })
+      it("Should be able get other users PUBLISHED Blog Posts by CATEGORY=INFORMATIONAL option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "informational",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(blogPosts).to.be.an("array");
+            expect(blogPosts.length).to.be.at.most(10);       
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+              expect(post.category).to.equal("informational");
+              expect(post.author.authorId).to.equal(otherUserId)
+            }
+            done();
+          });
+      });
+      it("Should get Blog Posts by CATEGORY=BEGINNER option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "beginner",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes
+            expect(res.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(blogPosts).to.be.an("array");    
+            expect(blogPosts.length).to.be.at.most(10);       
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+              expect(post.category).to.equal("beginner");
+              expect(post.author.authorId).to.equal(otherUserId)
+            }
+            done();
+          });
+      });
+      it("Should get Blog Posts by CATEGORY=INTERMEDIATE option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "intermediate",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(blogPosts).to.be.an("array");    
+            expect(blogPosts.length).to.be.at.most(10);       
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+              expect(post.category).to.equal("intermediate");
+              expect(post.author.authorId).to.equal(otherUserId)
+            }
+            done();
+          });
+      });
+      it("Should get Blog Posts by CATEGORY=ADVANCED option", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ category: "advanced" })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(blogPosts).to.be.an("array");    
+            expect(blogPosts.length).to.be.at.most(10);       
+            for (const post of blogPosts) {
+              expect(post.published).to.equal(true);
+              expect(post.category).to.equal("advanced");
+            }
+            done();
+          });
+      });
+    });
+  });
+
+
     // END GET /api/posts //
     // GET /api/posts/:post_id //
     /*
@@ -398,7 +529,6 @@ describe("BlogPost User API tests", function() {
     // END DELETE /api/posts/:post_id //
     */
 
-  });
   // END CONTEXT Guest Client / No Login //
   after(async () => {
     try {
