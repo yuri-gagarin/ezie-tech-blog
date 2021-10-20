@@ -87,19 +87,21 @@ export default class BlogPostsController extends BasicController implements ICRU
   create = async (req: Request, res: Response<CreateBlogPostRes>): Promise<Response<CreateBlogPostRes>> => {
     const user = req.user as (IAdmin | IUser);
     const { _id: authorId } = user;
-
     const blogPostData = req.body.blogPostData as BlogPostClientData;
+  
+    if (!blogPostData) return this.userInputErrorResponse(res, ["Could not resolve new Blog Post data" ]);
     const { title, author, content, keywords = []  } = blogPostData;
     // tihs will need to be validated later //
 
     try {
       const createdBlogPost = await BlogPost.create({
-        title, author: { authorId, name: author }, content, keywords, published: false, editedAt: new Date(), createdAt: new Date()
+        title, author: { authorId, name: author.name }, content, keywords, published: false, editedAt: new Date(), createdAt: new Date()
       });
       return res.status(200).json({
         responseMsg: "Created a blog post", createdBlogPost
       });
     } catch (error) {
+      console.log(error)
       return this.generalErrorResponse(res, { status: 500, error });
     }
   }

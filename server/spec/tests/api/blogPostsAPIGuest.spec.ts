@@ -2,14 +2,15 @@ import mongoose from "mongoose";
 // 
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
-import BlogPost, { IBlogPost } from "../../src/models/BlogPost";
+import BlogPost from "../../../src/models/BlogPost";
 // server //
-import ServerPromise from "../../src/server";
-// helpers //
+import ServerPromise from "../../../src/server";
 // types //
-import type { Server } from "../../src/server";
-import type { IndexBlogPostRes, OneBlogPostRes, ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
-import { generateMockBlogPosts, generateMockUsers } from "../../src/_helpers/mockDataGeneration";
+import type { Server } from "../../../src/server";
+import type { IBlogPost } from "../../../src/models/BlogPost";
+import type { IndexBlogPostRes, OneBlogPostRes, BlogPostErrRes } from "server/src/_types/blog_posts/blogPostTypes";
+// helpers //
+import { generateMockBlogPosts, generateMockUsers } from "../../../src/_helpers/mockDataGeneration";
  
 chai.use(chaiHTTP);
 
@@ -71,18 +72,17 @@ describe("BlogPost Guest API tests", function() {
             done();
           });
       });
-      // NEED TO REWRITE CONTROLLER to return 401 //
       it("Should NOT get any UNPUBLISHED Blog Posts", (done) => {
         chai.request(server)
           .get("/api/posts")
           .query({ publishedStatus: "unpublished" })
           .end((err, res) => {
             if (err) done(err);
-            expect(res.status).to.equal(200);
-            const { blogPosts } = res.body as IndexBlogPostRes;
-            for (const post of blogPosts) {
-              expect(post.published).to.equal(true);
-            }
+            const { responseMsg, error, errorMessages } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
             done();
           });
       });
@@ -180,7 +180,7 @@ describe("BlogPost Guest API tests", function() {
           .get("/api/posts/" + _id)
           .end((err, res) => {
             if (err) done(err);
-            const { responseMsg, error, errorMessages } = res.body as ErrorBlogPostRes;
+            const { responseMsg, error, errorMessages } = res.body as OneBlogPostRes;
             expect(res.status).to.equal(401);
             expect(responseMsg).to.be.a("string")
             expect(error).to.be.an("object");
@@ -316,7 +316,6 @@ describe("BlogPost Guest API tests", function() {
       process.exit(0);
     } catch (error) {
       console.log(error);
-      process.exit(1);
     }
   });
 });

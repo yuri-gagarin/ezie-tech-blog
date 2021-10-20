@@ -4,7 +4,8 @@
     "paths": {
       "@/styles/*": ["styles/*"],
       "@/components/*": ["components/*"],
-      "@/redux/*": ["redux/*"]
+      "@/redux/*": ["redux/*"],
+      "@/server/*": ["server/*"]
     },
     "target": "es5",
     "lib": [

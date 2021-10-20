@@ -22,6 +22,7 @@ export type BlogPostClientData = {
     authorId?: string;
     name?: string;
   };
+  category?: string;
   content?: string;
   keywords?: string[];
   published?: boolean;

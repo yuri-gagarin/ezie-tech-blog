@@ -2,18 +2,18 @@ import mongoose from "mongoose";
 // 
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
-import BlogPost, { IBlogPost } from "../../src/models/BlogPost";
+import BlogPost, { IBlogPost } from "../../../src/models/BlogPost";
 // server //
-import ServerPromise from "../../src/server";
+import ServerPromise from "../../../src/server";
 // models //
-import User from "../../src/models/User";
+import User from "../../../src/models/User";
 // helpers //
-import { generateMockBlogPosts, generateMockUsers } from "../../src/_helpers/mockDataGeneration";
+import { generateMockBlogPosts, generateMockUsers } from "../../../src/_helpers/mockDataGeneration";
 // types //
 import type { Express } from "express";
-import type { Server } from "../../src/server";
+import type { Server } from "../../../src/server";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
-import type { IUser } from "../../src/models/User";
+import type { IUser } from "../../../src/models/User";
 import type { IndexBlogPostRes, OneBlogPostRes, BlogPostErrRes } from "server/src/_types/blog_posts/blogPostTypes";
  
 chai.use(chaiHTTP);
