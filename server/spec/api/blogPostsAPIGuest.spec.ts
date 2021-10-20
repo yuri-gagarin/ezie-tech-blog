@@ -13,7 +13,7 @@ import { generateMockBlogPosts, generateMockUsers } from "../../src/_helpers/moc
  
 chai.use(chaiHTTP);
 
-describe("BlogPost API tests", function() {
+describe("BlogPost Guest API tests", function() {
   this.timeout(10000);
   let serverInstance: Server;
   let server: any;

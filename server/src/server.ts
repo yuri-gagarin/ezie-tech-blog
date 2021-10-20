@@ -91,6 +91,9 @@ export class Server {
   public getExpressServer() {
     return this.server;
   }
+  public get nextAppServer() {
+    return this.app;
+  }
 
   private configureNextApp(): void {
     this.app = next({ dev: this.dev });

@@ -9,6 +9,7 @@ import Project from "../models/Project";
 import { randomIntFromInterval, setRandBoolean } from "./generalHelpers";
 // types //
 import type { IProject } from "../models/Project";
+import type { IAdmin } from "../models/Admin";
 import type { IUser } from "../models/User";
 
 
@@ -23,22 +24,22 @@ const pullRandomValsFromArray = <T>(array: T[]): T[] => {
   return returnArr;
 };
 
-export const generateMockBlogPosts = async ({ number, publishedStatus }: { number?: number; publishedStatus?: "published" | "unpublished" }) => {
+export const generateMockBlogPosts = async ({ number, publishedStatus, user }: { number?: number; publishedStatus?: "published" | "unpublished"; user?: (IUser | IAdmin ); }) => {
   const numOfBlogPosts = number ? number : 10;
   for (let i = 0; i < numOfBlogPosts; i++) {
     const categories = ["informational", "beginner", "intermediate", "advanced"];
     let keywords = ["programming", "tech", "help", "javascript", "typescript", "nodejs", "html", "css", "react", "react-native", "mobile", "desktop", "ruby", "python", "next", "gatsby", "mongodb", "sql" ];
     const ranNum: number = randomIntFromInterval(1, 20);
     try {
-      const randomUser: IUser[] = await User.find({}).limit(1);
+      const randomUser: IUser | IAdmin = user ? user : await User.findOne({}).limit(1);
       let published: boolean;
       if (publishedStatus) published = publishedStatus === "published" ? true : false;
       else published = randomIntFromInterval(0, 1) ? true : false
 
-      if (!randomUser[0]) throw new Error("No user model was found to tie the blog post to");
+      if (!randomUser) throw new Error("No user model was found to tie the blog post to");
      
       else {
-        const { _id: authorId, firstName: name } = randomUser[0];
+        const { _id: authorId, firstName: name } = randomUser;
         await BlogPost.create({ 
           title: faker.lorem.words(),
           author: { authorId, name },
