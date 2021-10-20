@@ -85,10 +85,10 @@ describe("BlogPost User API tests", function() {
   });
 
   // CONTEXT User logged in accessing own blog posts //
+  /*
   context("User logged in - Accessing own posts", () => {
     
     // GET /api/posts //
-    
     describe("GET /api/posts", () => {
       it("Should get the default blog post response with only PUBLISHED posts", (done) => {
         chai.request(server)
@@ -107,7 +107,7 @@ describe("BlogPost User API tests", function() {
             done();
           });
       });
-      it("Should be able to access ALL of OWN UNPUBLSIHED blog posts", (done) => {
+      it("Should be able to access ALL of OWN UNPUBLISHED blog posts", (done) => {
         const userId = firstUser._id.toHexString();
         chai.request(server)
           .get("/api/posts")
@@ -142,27 +142,7 @@ describe("BlogPost User API tests", function() {
             expect(blogPosts.length).to.equal(numOfFirstUserPosts);
             done();
           });
-      })
-      it("Should NOT be able to accesss other users unpublished blog posts", (done) => {
-        const otherUserId = secondUser._id.toHexString();
-        chai.request(server)
-          .get("/api/posts")
-          .set({ "Authorization": firstUserToken })
-          .query({ byUser: true, publishedStatus: "unpublished",  userId: otherUserId })
-          .end((err, res) => {
-            if (err) done(err);
-            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes; 
-            expect(res.status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(blogPosts).to.be.an("array");
-            expect(blogPosts.length).to.be.at.most(10);       
-            for (const post of blogPosts) {
-              expect(otherUserId).to.equal(post.author.authorId);
-              expect(post.published).to.equal(true);
-            }
-            done();
-          });
-      })
+      });
       it("Should get Blog Posts by CATEGORY=INFORMATIONAL option", (done) => {
         chai.request(server)
           .get("/api/posts")
@@ -237,13 +217,15 @@ describe("BlogPost User API tests", function() {
       });
     });
   });
-  // CONTEXT User logged in accessing own blog posts //
+  */
+  // END CONTEXT User logged in accessing own blog posts //
 
   // CONTEXT User logged in accessing other users blog posts //
   context("User logged in accessing other users blog posts", () => {
     
     // GET /api/posts //
     describe("GET /api/posts", () => {
+
       it("Should be able to access other users PUBLISHED posts", (done) => {
         const userId = secondUser._id.toHexString();
         chai.request(server)
@@ -271,20 +253,33 @@ describe("BlogPost User API tests", function() {
           .query({ byUser: true, publishedStatus: "unpublished", limit: numberOfPosts,  userId: otherUserId })
           .end((err, res) => {
             if (err) done(err);
-            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes; 
+            const { responseMsg, error, errorMessages } = res.body as IndexBlogPostRes; 
             expect(res.status).to.equal(401);
-            /*
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      })
+      it("Should be able get other users PUBLISHED Blog Posts by CATEGORY=ALL option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "all",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(200);
             expect(responseMsg).to.be.a("string");
             expect(blogPosts).to.be.an("array");
             expect(blogPosts.length).to.be.at.most(10);       
             for (const post of blogPosts) {
-              expect(otherUserId).to.equal(post.author.authorId);
               expect(post.published).to.equal(true);
+              expect(post.author.authorId).to.equal(otherUserId)
             }
             done();
-            */
           });
-      })
+      });
       it("Should be able get other users PUBLISHED Blog Posts by CATEGORY=INFORMATIONAL option", (done) => {
         const otherUserId = secondUser._id.toHexString();
         chai.request(server)
@@ -305,17 +300,17 @@ describe("BlogPost User API tests", function() {
             done();
           });
       });
-      it("Should get Blog Posts by CATEGORY=BEGINNER option", (done) => {
+      it("Should be able get other users PUBLISHED Blog Posts by CATEGORY=BEGINNER option", (done) => {
         const otherUserId = secondUser._id.toHexString();
         chai.request(server)
           .get("/api/posts")
           .query({ byUser: true, category: "beginner",  userId: otherUserId })
           .end((err, res) => {
             if (err) done(err);
-            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes
+            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;
             expect(res.status).to.equal(200);
             expect(responseMsg).to.be.a("string");
-            expect(blogPosts).to.be.an("array");    
+            expect(blogPosts).to.be.an("array");
             expect(blogPosts.length).to.be.at.most(10);       
             for (const post of blogPosts) {
               expect(post.published).to.equal(true);
@@ -325,7 +320,7 @@ describe("BlogPost User API tests", function() {
             done();
           });
       });
-      it("Should get Blog Posts by CATEGORY=INTERMEDIATE option", (done) => {
+      it("Should be able get other users PUBLISHED Blog Posts by CATEGORY=INTERMEDIATE option", (done) => {
         const otherUserId = secondUser._id.toHexString();
         chai.request(server)
           .get("/api/posts")
@@ -335,7 +330,7 @@ describe("BlogPost User API tests", function() {
             const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;
             expect(res.status).to.equal(200);
             expect(responseMsg).to.be.a("string");
-            expect(blogPosts).to.be.an("array");    
+            expect(blogPosts).to.be.an("array");
             expect(blogPosts.length).to.be.at.most(10);       
             for (const post of blogPosts) {
               expect(post.published).to.equal(true);
@@ -345,21 +340,98 @@ describe("BlogPost User API tests", function() {
             done();
           });
       });
-      it("Should get Blog Posts by CATEGORY=ADVANCED option", (done) => {
+      it("Should be able get other users PUBLISHED Blog Posts by CATEGORY=ADVANCED option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
         chai.request(server)
           .get("/api/posts")
-          .query({ category: "advanced" })
+          .query({ byUser: true, category: "advanced",  userId: otherUserId })
           .end((err, res) => {
             if (err) done(err);
             const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;
             expect(res.status).to.equal(200);
             expect(responseMsg).to.be.a("string");
-            expect(blogPosts).to.be.an("array");    
+            expect(blogPosts).to.be.an("array");
             expect(blogPosts.length).to.be.at.most(10);       
             for (const post of blogPosts) {
               expect(post.published).to.equal(true);
               expect(post.category).to.equal("advanced");
+              expect(post.author.authorId).to.equal(otherUserId)
             }
+            done();
+          });
+      });
+      it("Should NOT be able get other users UNPPUBLISHED Blog Posts by CATEGORY=ALL option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "all", publishedStatus: "unpublished",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.a("array");
+            done();
+          });
+      });
+      it("Should NOT be able get other users UNPPUBLISHED Blog Posts by CATEGORY=INFORMATIONAL option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "informational", publishedStatus: "unpublished",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.a("array");
+            done();
+          });
+      });
+      it("Should NOT be able get other users UNPPUBLISHED Blog Posts by CATEGORY=BEGINNER option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "beginner", publishedStatus: "unpublished",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.a("array");
+            done();
+          });
+      });
+      it("Should NOT be able get other users UNPPUBLISHED Blog Posts by CATEGORY=INTERMEDIATE option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "intermediate", publishedStatus: "unpublished",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.a("array");
+            done();
+          });
+      });
+      it("Should NOT be able get other users UNPPUBLISHED Blog Posts by CATEGORY=ADVANCED option", (done) => {
+        const otherUserId = secondUser._id.toHexString();
+        chai.request(server)
+          .get("/api/posts")
+          .query({ byUser: true, category: "advanced", publishedStatus: "unpublished",  userId: otherUserId })
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = res.body as IndexBlogPostRes;
+            expect(res.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.a("array");
             done();
           });
       });

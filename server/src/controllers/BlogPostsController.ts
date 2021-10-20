@@ -1,5 +1,7 @@
+// models //
 import BlogPost from "../models/BlogPost";
 import Admin from "../models/Admin";
+import User from "../models/User";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // types //
 import type { Request, Response } from "express";
@@ -10,89 +12,30 @@ import type { IUser } from "../models/User";
 import type { IAdmin } from "../models/Admin";
 // helpers //
 import { BlogPostNotAllowedError } from "./_helpers/blogPostControllerHelpers";
+import {  objectIsEmtpy } from "./_helpers/generalHepers";
 //
 
 export default class BlogPostsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
-    const { limit = 10, category = "all", createdAt = "asc", publishedStatus = "published", byUser, userId } = req.query as FetchBlogPostsOpts;
+    const { limit = 10, category = "all", createdAt = "asc", publishedStatus = "published", byUser = false, userId = "" } = req.query as FetchBlogPostsOpts;
+    const user = req.user as IUser | IAdmin | null;
     // check for a user and admin //
-    const { isAdmin, loggedIn  } = this.checkLogin(req.user as (IAdmin | IUser));
     let blogPosts: IBlogPost[];
-    // TODO //
-    // implement helper methods to cut down on repetiteveness //
-    
+
     try {
-      if (loggedIn) {
-        if (isAdmin) {
-          // admin or higher is logged in, additional privileges apply //
-          if (byUser && userId) {
-            // can see both published and unpublished posts belonging to any user //
-            blogPosts = await BlogPost
-              .find({ "author.authorId": userId })
-              .byPublishedStatus(publishedStatus).byCategory(category)
-              .sort({ createdAt }).limit(limit)
-              .exec();
-          } else {
-            console.log(34)
-            blogPosts = await BlogPost
-              .find({})
-              .byPublishedStatus(publishedStatus).byCategory(category)
-              .sort({ createdAt }).limit(limit)
-              .exec();
-          }
-        } else {
-          // logged in but not admin //
-          // can only see published posts //
-          // unless the post belongs to the logged in user //
-          const { _id: loggedInUserId } = req.user as IUser;
-          if (byUser && userId) {
-            if (loggedInUserId.equals(userId)) {
-              // own posts - can see both published and unpublished //
-              blogPosts = await BlogPost
-                .find({ "author.authorId": userId })
-                .byPublishedStatus(publishedStatus).byCategory(category)
-                .sort({ createdAt }).limit(limit)
-                .exec();
-            } else {
-              // not own posts can only see published //
-              blogPosts = await BlogPost
-                .find({ "author.authorId": userId })
-                .byPublishedStatus('published').byCategory(category)
-                .sort({ createdAt }).limit(limit)
-                .exec();
-            }
-          } else {
-            // can see all published //
-            blogPosts = await BlogPost
-              .find({})
-              .byPublishedStatus("published").byCategory(category)
-              .sort({ createdAt }).limit(limit)
-              .exec()
-          }
-        }
-      } else {
-        // not logged in can only see unpublished posts //
-        if (byUser && userId) {
-          blogPosts = await BlogPost
-            .find({ "author.authorId": userId })
-            .byPublishedStatus("published").byCategory(category)
-            .sort({ createdAt }).limit(limit)
-            .exec();
-        } else {
-          blogPosts = await BlogPost
-            .find({})
-            .byPublishedStatus("published").byCategory(category)
-            .sort({ createdAt }).limit(limit)
-            .exec();
-        }
+      if (objectIsEmtpy(req.query)) {
+        return this.processGetAllDefault(res);
       }
-      return res.status(200).json({
-        responseMsg: "Fetched blog posts", blogPosts
-      });
+      else if (byUser && userId) {
+        return this.processGetAllByUser(req, res);
+      }
+      else {
+        return this.processGetAllWithOptions(req, res);
+      }
     } catch (error) {
-      console.log(error);
-      return await this.generalErrorResponse(res, { error, errorMessages: [ "Error fetching blog posts" ] });
+      return this.generalErrorResponse(res, { error });
     }
+ 
   }
 
   getOne = async (req: Request, res: Response<OneBlogPostRes>): Promise<Response<OneBlogPostRes>> => {
@@ -258,13 +201,104 @@ export default class BlogPostsController extends BasicController implements ICRU
     }
   }
 
-  private checkLogin = (user: IAdmin | IUser | null): { loggedIn: boolean; isAdmin: boolean; } => {
+  private processGetAllDefault = async (res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
+    try {
+      const blogPosts = await BlogPost.find({}).byPublishedStatus("published").sort({ createdAt: - 1 }).limit(10)
+      return res.status(200).json({
+        responseMsg: "Fetched posts", blogPosts
+      })
+    } catch (error) {
+      throw error;
+    }
+  }
+  private processGetAllWithOptions = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
+    const { limit = 10, category = "all", createdAt = "asc", publishedStatus = "published" } = req.query as FetchBlogPostsOpts;
+    const user = req.user as IAdmin | IUser | null;
+    let blogPosts: IBlogPost[];
+
+    const { loggedIn, isAdmin } = this.checkLogin(user);
+
+    if (loggedIn && isAdmin) {
+      blogPosts = await BlogPost.find({}).byPublishedStatus(publishedStatus).byCategory(category).sort({ createdAt }).limit(limit);
+    } else {
+      // can only see published posts //
+      if (publishedStatus === "published") {
+        blogPosts = await BlogPost.find({}).byPublishedStatus(publishedStatus).byCategory(category).sort({ createdAt }).limit(limit);
+      } else {
+        return this.notAllowedErrorResponse(res, [ "Not allowed to fetch this Blog Post query" ]);
+      }
+    }
+
+    return res.status(200).json({
+      responseMsg: "Fetched blog posts", blogPosts
+    });
+  } 
+  private processGetAllByUser = async (req: Request, res: Response<IndexBlogPostRes>):  Promise<Response<IndexBlogPostRes>> => {
+    const { limit = 10, category = "all", createdAt = "asc", publishedStatus = "published", userId } = req.query as FetchBlogPostsOpts;
+    const user = req.user as IAdmin | IUser | null;
+    let blogPosts: IBlogPost[];
+
+    const { loggedIn, isAdmin } = this.checkLogin(user);
+  
+    if (loggedIn && isAdmin) {
+      // access to all blog posts //
+      blogPosts = await (
+        BlogPost
+          .find({"author.authorId": userId })
+          .byPublishedStatus(publishedStatus).byCategory(category)
+          .sort({ createdAt }).limit(limit)
+      );
+    } else if (loggedIn && !isAdmin) {
+      const { _id: loggedInUserId } = user._id
+      if (loggedInUserId.equals(userId)) {
+        // fetching own posts, can see all //
+        blogPosts = await (
+          BlogPost
+            .find({"author.authorId": userId })
+            .byPublishedStatus(publishedStatus).byCategory(category)
+            .sort({ createdAt }).limit(limit)
+        );
+      } else {
+        // not fetching own posts, can only see published //
+        if (publishedStatus === "published" || publishedStatus === "all") {
+          blogPosts = await (
+            BlogPost
+              .find({"author.authorId": userId })
+              .byPublishedStatus(publishedStatus).byCategory(category)
+              .sort({ createdAt }).limit(limit)
+          );
+        } else {
+          return this.notAllowedErrorResponse(res, [ "Not authorized to fetch this query" ]);
+        }
+      }
+    } else {
+      // not logged in can only see published //
+      if (publishedStatus === "published" || publishedStatus === "all") {
+        blogPosts = await (
+          BlogPost
+            .find({"author.authorId": userId })
+            .byPublishedStatus(publishedStatus).byCategory(category)
+            .sort({ createdAt }).limit(limit)
+        );
+      } else {
+        return this.notAllowedErrorResponse(res, [ "Not authorized to fetch this query" ]);
+      }
+    }
+
+    return res.status(200).json({
+      responseMsg: "Fetched posts", blogPosts
+    });
+  }
+
+  private checkLogin = (user: any): { loggedIn: boolean; isAdmin: boolean; } => {
     if (!user) return { loggedIn: false, isAdmin: false };
     if (user && user instanceof Admin) {
       // admin user present //
       return { loggedIn: true, isAdmin: true }; 
-    } else {
+    } else if ( user && user instanceof User) {
       return { loggedIn: true, isAdmin: false };
+    } else {
+      return { loggedIn: false, isAdmin: false };
     }
   };
 
