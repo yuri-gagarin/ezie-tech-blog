@@ -105,7 +105,6 @@ export default class BlogPostsController extends BasicController implements ICRU
         responseMsg: "Created a blog post", createdBlogPost
       });
     } catch (error) {
-      console.log(error)
       return this.generalErrorResponse(res, { status: 500, error });
     }
   }

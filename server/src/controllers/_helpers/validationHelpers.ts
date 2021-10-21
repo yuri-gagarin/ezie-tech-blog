@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+// type imports //
 import type { BlogPostFormData } from "@/redux/_types/blog_posts/dataTypes";
 import type { ValidationResponse } from "../../../../components/_helpers/validators";
 
@@ -46,18 +48,49 @@ export const validateBlogPostModelData = (data: BlogPostFormData): ValidationRes
   if (!data.category) {
     errorMessages.push("Blog Post category is required");
   }
-  if (data.category) {
-    if (!allowedCategories.some((val) => val === data.category)) {
-      errorMessages.push("Blog Post incompatible category selected");
-    }
-  }
   if (!data.keywords) {
     errorMessages.push("No keywords selected");
   }
-  if (data.keywords && data.keywords.length === 0) {
-    errorMessages.push("Select at least one keyword");
-  }
 
+  // ensure correct types //
+  if (data.title && typeof data.title !== "string") {
+    errorMessages.push("Invalid data type for the Post title");
+  }
+  if (data.author) {
+    if (data.author.authorId) {
+      if (!Types.ObjectId.isValid(data.author.authorId)) {
+        errorMessages.push("Invalid author id for the Post")
+      }
+    }
+    if (data.author.name) {
+      if (typeof data.author.name !== "string") {
+        errorMessages.push("Invalid data type for the Post author name");
+      }
+    }
+    if (data.content) {
+      if (typeof data.content !== "string") {
+        errorMessages.push("Invalid data type for the Post content");
+      }
+    }
+    if (data.category) {
+      if (typeof data.category !== "string") {
+        errorMessages.push("Invalid data type for the Post category");
+      }
+      if (!allowedCategories.some((val) => val === data.category)) {
+        errorMessages.push("Blog Post incompatible category selected");
+      }
+    }
+    if (data.keywords) {
+      if (Array.isArray(data.keywords)) {
+        if (data.keywords.length === 0) {
+          errorMessages.push("At least one keyword for Blog Post is required");
+        }
+      } else {
+        errorMessages.push("Invalid data type for the Post keywords");
+      }
+
+    }
+  }
   return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
 };
 

@@ -241,7 +241,7 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
       });
       // invalid title field //
       describe("POST /api/posts - invalid <BlogPost.title>", () => {
-        it("Should NOT create a new <BlogPost> model with invalid <tittle> field and return a correct response", (done) => {
+        it("Should NOT create a new <BlogPost> model without a <title> field and return a correct response", (done) => {
           chai.request(server)
             .post("/api/posts")
             .set({ Authorization: firstUserToken })
@@ -257,10 +257,26 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
               done();
           });
         });
+        it("Should NOT create a new <BlogPost> model with an invalid <title> TYPE field and return a correct response", (done) => {
+          chai.request(server)
+            .post("/api/posts")
+            .set({ Authorization: firstUserToken })
+            .send({ blogPostData: { ...mockPostData, title: {} } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+              expect(response.status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              done();
+          });
+        });
       });
       // invalid author field //
       describe("POST /api/posts - invalid <BlogPost.author>", () => {
-        it("Should NOT create a new <BlogPost> model with invalid <author> field and return a correct response", (done) => {
+        it("Should NOT create a new <BlogPost> model without an <author> field and return a correct response", (done) => {
           chai.request(server)
             .post("/api/posts")
             .set({ Authorization: firstUserToken })
@@ -276,7 +292,7 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
               done();
           });
         });
-        it("Should NOT create a new <BlogPost> model with invalid <author.authorId> field and return a correct response", (done) => {
+        it("Should NOT create a new <BlogPost> model without an <author.authorId> field and return a correct response", (done) => {
           chai.request(server)
             .post("/api/posts")
             .set({ Authorization: firstUserToken })
@@ -292,7 +308,7 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
               done();
           });
         });
-        it("Should NOT create a new <BlogPost> model with invalid <author.name> field and return a correct response", (done) => {
+        it("Should NOT create a new <BlogPost> model without an <author.name> field and return a correct response", (done) => {
           chai.request(server)
             .post("/api/posts")
             .set({ Authorization: firstUserToken })
@@ -308,14 +324,78 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
               done();
           });
         });
+        it("Should NOT create a new <BlogPost> model with an INCORRECT <author> field TYPE and return a correct response", (done) => {
+          chai.request(server)
+            .post("/api/posts")
+            .set({ Authorization: firstUserToken })
+            .send({ blogPostData: { ...mockPostData, author: "author" } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+              expect(response.status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              done();
+          });
+        });
+        it("Should NOT create a new <BlogPost> model with an INCORRECT <author.authorId> field TYPE and return a correct response", (done) => {
+          chai.request(server)
+            .post("/api/posts")
+            .set({ Authorization: firstUserToken })
+            .send({ blogPostData: { ...mockPostData, author: { authorId: "bbllleaf", name: "name" } } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+              expect(response.status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              done();
+          });
+        });
+        it("Should NOT create a new <BlogPost> model wit an INCORRECT <author.name> field TYPE and return a correct response", (done) => {
+          chai.request(server)
+            .post("/api/posts")
+            .set({ Authorization: firstUserToken })
+            .send({ blogPostData: { ...mockPostData, author: { authorId: "id", name: {} } } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+              expect(response.status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              done();
+          });
+        });
       });
       // invalid content field
       describe("POST /api/posts - invalid <BlogPost.content>", () => {
-        it("Should NOT create a new <BlogPost> model with invalid <tittle> field and return a correct response", (done) => {
+        it("Should NOT create a new <BlogPost> model without a <content> field and return a correct response", (done) => {
           chai.request(server)
             .post("/api/posts")
             .set({ Authorization: firstUserToken })
             .send({ blogPostData: { ...mockPostData, content: "" } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+              expect(response.status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              done();
+          });
+        });
+        it("Should NOT create a new <BlogPost> model with an INCORRECT <content> field and return a correct response", (done) => {
+          chai.request(server)
+            .post("/api/posts")
+            .set({ Authorization: firstUserToken })
+            .send({ blogPostData: { ...mockPostData, content: {} } })
             .end((err, response) => {
               if (err) done(err);
               const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
