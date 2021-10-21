@@ -1,4 +1,5 @@
-import { ValidationResponse } from "../../../../components/_helpers/validators";
+import type { BlogPostFormData } from "@/redux/_types/blog_posts/dataTypes";
+import type { ValidationResponse } from "../../../../components/_helpers/validators";
 
 export type ValidationRes = {
   valid: boolean;
@@ -26,6 +27,38 @@ export const validateRegistrationData = (data: { email?: string; password?: stri
     }
   }
   return res;
+};
+
+// blog post model validators //
+export const validateBlogPostModelData = (data: BlogPostFormData): ValidationRes => {
+  const errorMessages: string[] = [];
+  const allowedCategories: string[] = ["informational", "beginner", "intermediate", "advanced" ];
+
+  if (!data.title) {
+    errorMessages.push("Blog Post title is required");
+  }
+  if (!data.author || !data.author.authorId || !data.author.name) {
+    errorMessages.push("Could not resolve Blog Post author data");
+  }
+  if (!data.content) {
+    errorMessages.push("Blog Post content is required");
+  }
+  if (!data.category) {
+    errorMessages.push("Blog Post category is required");
+  }
+  if (data.category) {
+    if (!allowedCategories.some((val) => val === data.category)) {
+      errorMessages.push("Blog Post incompatible category selected");
+    }
+  }
+  if (!data.keywords) {
+    errorMessages.push("No keywords selected");
+  }
+  if (data.keywords && data.keywords.length === 0) {
+    errorMessages.push("Select at least one keyword");
+  }
+
+  return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
 };
 
 // Project model validators //

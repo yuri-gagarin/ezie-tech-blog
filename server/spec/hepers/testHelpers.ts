@@ -57,7 +57,7 @@ export const generateMockPostData = ({ authorId, name }: { authorId: string; nam
     title: faker.lorem.word(),
     author: { authorId, name },
     content: faker.lorem.paragraphs(),
-    keywords: [],
+    keywords: ["keyword"],
     category: "beginner",
     published: false,
   }

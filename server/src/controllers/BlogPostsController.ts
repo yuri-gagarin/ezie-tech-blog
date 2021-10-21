@@ -13,6 +13,7 @@ import type { IAdmin } from "../models/Admin";
 // helpers //
 import { BlogPostNotAllowedError } from "./_helpers/blogPostControllerHelpers";
 import {  objectIsEmtpy } from "./_helpers/generalHepers";
+import { validateBlogPostModelData } from "./_helpers/validationHelpers";
 //
 
 export default class BlogPostsController extends BasicController implements ICRUDController {
@@ -90,10 +91,13 @@ export default class BlogPostsController extends BasicController implements ICRU
     const blogPostData = req.body.blogPostData as BlogPostClientData;
   
     if (!blogPostData) return this.userInputErrorResponse(res, ["Could not resolve new Blog Post data" ]);
-    const { title, author, content, category, keywords = []  } = blogPostData;
-    // tihs will need to be validated later //
+    // validate  incoming data //
+    const { valid, errorMessages } = validateBlogPostModelData(blogPostData);
+    if (!valid) return this.userInputErrorResponse(res, errorMessages);
 
+    // assuming everything got validated //
     try {
+      const { title, author, content, category, keywords = []  } = blogPostData;
       const createdBlogPost = await BlogPost.create({
         title, author: { authorId, name: author.name }, content, category, keywords, published: false, editedAt: new Date(), createdAt: new Date()
       });
