@@ -2,15 +2,15 @@ import mongoose from "mongoose";
 // 
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
-import BlogPost from "../../../src/models/BlogPost";
+import BlogPost from "../../../../src/models/BlogPost";
 // server //
-import ServerPromise from "../../../src/server";
+import ServerPromise from "../../../../src/server";
 // types //
-import type { Server } from "../../../src/server";
-import type { IBlogPost } from "../../../src/models/BlogPost";
+import type { Server } from "../../../../src/server";
+import type { IBlogPost } from "../../../../src/models/BlogPost";
 import type { IndexBlogPostRes, OneBlogPostRes, BlogPostErrRes } from "server/src/_types/blog_posts/blogPostTypes";
 // helpers //
-import { generateMockBlogPosts, generateMockUsers } from "../../../src/_helpers/mockDataGeneration";
+import { generateMockBlogPosts, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
  
 chai.use(chaiHTTP);
 

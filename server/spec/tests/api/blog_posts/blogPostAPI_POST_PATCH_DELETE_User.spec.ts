@@ -3,14 +3,14 @@ import mongoose from "mongoose";
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // models //
-import BlogPost from "../../../src/models/BlogPost";
+import BlogPost from "../../../../src/models/BlogPost";
 // server //
-import ServerPromise from "../../../src/server";
+import ServerPromise from "../../../../src/server";
 // models //
-import User from "../../../src/models/User";
+import User from "../../../../src/models/User";
 // helpers //
-import { generateMockBlogPosts, generateMockUsers } from "../../../src/_helpers/mockDataGeneration";
-import { loginUser, countBlogPosts, generateMockPostData } from "../../hepers/testHelpers";
+import { generateMockBlogPosts, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
+import { loginUser, countBlogPosts, generateMockPostData } from "../../../hepers/testHelpers";
 // types //
 import type { Express } from "express";
 import type { Server } from "@/server/src/server";
