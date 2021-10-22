@@ -1,4 +1,4 @@
-// models //
+6// models //
 import BlogPost from "../models/BlogPost";
 import Admin from "../models/Admin";
 import User from "../models/User";
@@ -113,9 +113,15 @@ export default class BlogPostsController extends BasicController implements ICRU
   edit = async (req: Request, res: Response<EditBlogPostRes>): Promise<Response<EditBlogPostRes>> => {
     const { post_id } = req.params;
     const blogPostData = req.body.blogPostData as BlogPostClientData;
-    const { title, content, keywords = [], category = "informational", published } = blogPostData;
+    if (!blogPostData) return this.userInputErrorResponse(res, ["Could not resolve new Blog Post data" ]);
+
     // tihs will need to be validated later //
+    // validate  incoming data //
+    const { valid, errorMessages } = validateBlogPostModelData(blogPostData);
+    if (!valid) return this.userInputErrorResponse(res, errorMessages);
+    //
     try {
+      const { title, content, keywords = [], category = "informational", published } = blogPostData;
       const editedBlogPost: IBlogPost | null = await BlogPost.findOneAndUpdate(
         { _id: post_id },
         { title, content, keywords, category, published, editedAt: new Date() },
