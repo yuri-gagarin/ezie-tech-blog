@@ -124,6 +124,16 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
             throw error;
           }
         });
+        it("Should correctly increment the number of USERS <BlogPost> model by 1", async () => {
+          try {
+            const updatedNumOfFirstUserPosts: number = await countBlogPosts({ specificUserId: firstUser._id.toHexString() });
+            expect(updatedNumOfFirstUserPosts).to.equal(numOfFirstUserPosts + 1);
+            //
+            numOfFirstUserPosts = updatedNumOfFirstUserPosts;
+          } catch (error) {
+            throw error;
+          }
+        });
       });
       // END POST tests //
       // PATCH Tests //
@@ -509,10 +519,9 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
               done();
           });
         });
-        //
-        
       });
-    })
+      // 
+    });
   });
   // END CONTEXT POST PATCH DELETE OWN Model //
 
