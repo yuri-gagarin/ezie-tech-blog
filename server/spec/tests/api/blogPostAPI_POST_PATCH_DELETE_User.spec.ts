@@ -73,7 +73,6 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
   // CONTEXT  POST, PATCH, DELETE OWN Model //
   context("POST, PATCH, DELETE <BlogPost> model belongs to user", () => {
     // CONTEXT  Tests with valid data  //
-    /*
     context("Tests with valid data", () => {
       // POST TESTS //
       describe("POST /api/posts", () => {
@@ -231,6 +230,8 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
           try {
             const updatedNumOfBlogPosts: number = await countBlogPosts({});
             expect(updatedNumOfBlogPosts).to.equal(numberOfPosts - 1);
+            //
+            numberOfPosts = updatedNumOfBlogPosts;
           } catch (error) {
             throw error;
           }
@@ -238,7 +239,6 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
       });
       // END DELETE TESTS //
     });
-    */
     // END CONTEXT Tests with valid data //
     // CONTEXT POST/PATCH with invalid data //
     context("Test POST/PATCH with invalid data", () => {
@@ -254,7 +254,6 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
         }
       });
       // CONTEXT POST /api/posts - invalid data //
-      /*
       context("POST /api/posts - invalid data", () =>  {
         // invalid title field //
         describe("POST /api/posts - invalid <BlogPost.title>", () => {
@@ -532,7 +531,6 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
         });
         // END invalid keywords field //
       });
-      */
       // END CONTEXT POST /api/posts with invalid data //
       context("PATCH /api/posts/:post_id - invalid data", () => {
         // PATCH /api/posts/:post_id ivalid title //
@@ -818,11 +816,105 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
       });
       // CONTEXT PATCH /api/posts/:blog_post with invalid data //
     });
-    
-
     // END CONTEXT PATCH /api/posts/:blog_post with invalid data //
   });
   // END CONTEXT POST PATCH DELETE OWN Model //
+
+  // CONTEXT POST PATCH DELETE Model does not belong to user //
+  context("PATCH, DELETE <BlogPost> model does NOT belong to user", () => {
+    context("Test PATCH/DELETE with valid data", () => {
+      let otherUsersBlogPost: IBlogPost;
+      let otherBlogPostId: string;
+      before( async () => {
+        try {
+          otherUsersBlogPost = await BlogPost.findOne({ "author.authorId": secondUser._id });
+          otherBlogPostId = otherUsersBlogPost._id.toHexString();
+        } catch (error) {
+          throw error;
+        }
+      });
+      // PATCH /api/posts/:post_id //
+      describe("PATCH /api/pots/:post_id", () => {
+        it("Should NOT update an existing <BlogPost> model and return a correct response", (done) => {
+          chai.request(server)
+            .patch("/api/posts/" + otherBlogPostId)
+            .set({ Authorization: firstUserToken })
+            .send({ blogPostData: { ...otherUsersBlogPost, title: "Changed" } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+              expect(response.status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              done();
+          });
+        });
+        it("Should NOT alter the queried <BlogPostModel> in any way", async () => {
+          try {
+            const queriedPost: IBlogPost = await BlogPost.findById(otherBlogPostId);
+            expect(queriedPost.title).to.equal(otherUsersBlogPost.title);
+            expect(queriedPost.author).to.eql(otherUsersBlogPost.author);
+            expect(queriedPost.content).to.equal(otherUsersBlogPost.content);
+            expect(queriedPost.category).to.equal(otherUsersBlogPost.category);
+            expect(queriedPost.keywords).to.eql(otherUsersBlogPost.keywords);
+          } catch (error) {
+            throw error;
+          }
+        });
+        it("Should NOT alter the number of <BlogPostModel> in any way", async () => {
+          try {
+            const numOfTotalPosts: number = await BlogPost.countDocuments();
+            expect(numberOfPosts).to.equal(numOfTotalPosts);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+      // END PATCH /api/posts/:post_id //
+      // DELETE /api/posts/:post_id //
+      describe("DELETE /api/pots/:post_id", () => {
+        it("Should NOT delete an existing <BlogPost> model and return a correct response", (done) => {
+          chai.request(server)
+            .delete("/api/posts/" + otherBlogPostId)
+            .set({ Authorization: firstUserToken })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+              expect(response.status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              done();
+          });
+        });
+        it("Should NOT alter the queried <BlogPostModel> in any way", async () => {
+          try {
+            const queriedPost: IBlogPost = await BlogPost.findById(otherBlogPostId);
+            expect(queriedPost.title).to.equal(otherUsersBlogPost.title);
+            expect(queriedPost.author).to.eql(otherUsersBlogPost.author);
+            expect(queriedPost.content).to.equal(otherUsersBlogPost.content);
+            expect(queriedPost.category).to.equal(otherUsersBlogPost.category);
+            expect(queriedPost.keywords).to.eql(otherUsersBlogPost.keywords);
+          } catch (error) {
+            throw error;
+          }
+        });
+        it("Should NOT alter the number of <BlogPostModel> in any way", async () => {
+          try {
+            const numOfTotalPosts: number = await BlogPost.countDocuments();
+            expect(numberOfPosts).to.equal(numOfTotalPosts);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+      // END DELETE /api/posts/:post_id //
+    });
+  });
+  // END CONTEXT POST PATCH DELETE Model does not belong to user //
 
   after(async () => {
     try {
