@@ -309,15 +309,6 @@ describe("BlogPost Guest API tests", function() {
 
   });
   // END CONTEXT Guest Client / No Login //
-  after(async () => {
-    try {
-      await BlogPost.deleteMany({});
-      await mongoose.disconnect();
-      process.exit(0);
-    } catch (error) {
-      console.log(error);
-    }
-  });
 });
 
 export {};

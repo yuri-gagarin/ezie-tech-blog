@@ -641,20 +641,7 @@ describe("BlogPost User API tests GET requests", function() {
     });
     // END GET /api/posts/:postId //
   });
-  // END CONTEXT //
-  
-  after(async () => {
-    try {
-      await BlogPost.deleteMany({});
-      await User.deleteMany({});
-      await mongoose.disconnect();
-      await serverInstance.nextAppServer.close();
-      //process.exit(0);
-    } catch (error) {
-      console.log(error);
-      process.exit(1);
-    }
-  });
+  // END CONTEXT //s
 });
 
 export {};

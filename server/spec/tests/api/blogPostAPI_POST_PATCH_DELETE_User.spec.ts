@@ -915,18 +915,6 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
     });
   });
   // END CONTEXT POST PATCH DELETE Model does not belong to user //
-
-  after(async () => {
-    try {
-      await BlogPost.deleteMany({});
-      await User.deleteMany({});
-      await mongoose.disconnect();
-      await serverInstance.nextAppServer.close();
-      //process.exit(0);
-    } catch (error) {
-      throw error;
-    }
-  });
 });
 
 
