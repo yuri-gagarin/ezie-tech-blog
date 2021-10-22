@@ -530,7 +530,7 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
             });
           });
         });
-        // 
+        // END invalid keywords field //
       });
       */
       // END CONTEXT POST /api/posts with invalid data //
@@ -712,7 +712,7 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
         });
         // END invalid content field //
         // invalid category field
-        describe("PATCH /api/posts - invalid <BlogPost.category>", () => {
+        describe("PATCH /api/posts/:post_id - invalid <BlogPost.category>", () => {
           it("Should NOT update an existing <BlogPost> model with an empty <category> field and return a correct response", (done) => {
             chai.request(server)
               .patch("/api/posts/" + postId)
@@ -763,7 +763,58 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
           });
         });
         // END invalid category field //
-
+        // invalid keywords field
+        describe("PATCH /api/posts/:post_id - invalid <BlogPost.keywords>", () => {
+          it("Should NOT update an existing <BlogPost> model with empty <keywords> field and return a correct response", (done) => {
+            chai.request(server)
+              .patch("/api/posts/" + postId)
+              .set({ Authorization: firstUserToken })
+              .send({ blogPostData: { ...mockPostData, keywords: "" } })
+              .end((err, response) => {
+                if (err) done(err);
+                const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+                expect(response.status).to.equal(400);
+                expect(responseMsg).to.be.a("string");
+                expect(error).to.be.an("object");
+                expect(errorMessages).to.be.an("array");
+                //
+                done();
+            });
+          });
+          it("Should NOT update an existing <BlogPost> model with an INCORRECT <keywords> field TYPE and return a correct response", (done) => {
+            chai.request(server)
+              .patch("/api/posts/" + postId)
+              .set({ Authorization: firstUserToken })
+              .send({ blogPostData: { ...mockPostData, category: {} } })
+              .end((err, response) => {
+                if (err) done(err);
+                const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+                expect(response.status).to.equal(400);
+                expect(responseMsg).to.be.a("string");
+                expect(error).to.be.an("object");
+                expect(errorMessages).to.be.an("array");
+                //
+                done();
+            });
+          });
+          it("Should NOT update an existing <BlogPost> model with an EMPTY <keywords> ARRAY and return a correct response", (done) => {
+            chai.request(server)
+              .patch("/api/posts/" + postId)
+              .set({ Authorization: firstUserToken })
+              .send({ blogPostData: { ...mockPostData, category: [] } })
+              .end((err, response) => {
+                if (err) done(err);
+                const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+                expect(response.status).to.equal(400);
+                expect(responseMsg).to.be.a("string");
+                expect(error).to.be.an("object");
+                expect(errorMessages).to.be.an("array");
+                //
+                done();
+            });
+          });
+        });
+        // END invalid keywords field //
       });
       // CONTEXT PATCH /api/posts/:blog_post with invalid data //
     });
