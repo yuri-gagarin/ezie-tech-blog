@@ -70,7 +70,7 @@ export class Server {
     this.configureNextApp();
     this.configureServer();
     this.configureRouter();
-    process.env.NODE_ENV !== "test" ?? this.launchFirebaseAdmin();
+    this.launchFirebaseAdmin();
   }
 
   public async init(): Promise<this> {
