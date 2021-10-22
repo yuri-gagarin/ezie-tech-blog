@@ -426,6 +426,7 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
             });
           });
         });
+        // END invalid content field //
         // invalid category field
         describe("POST /api/posts - invalid <BlogPost.category>", () => {
           it("Should NOT create a new <BlogPost> model with an empty <category> field and return a correct response", (done) => {
@@ -477,7 +478,8 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
             });
           });
         });
-        // invalid keyowrds field
+        // END invalid category field //
+        // invalid keywords field
         describe("POST /api/posts - invalid <BlogPost.keywords>", () => {
           it("Should NOT create a new <BlogPost> model with empty <keywords> field and return a correct response", (done) => {
             chai.request(server)
@@ -672,6 +674,95 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
             });
           });
         });
+        // END invalid author field //
+        // invalid content field
+        describe("PATCH /api/posts/:post_id - invalid <BlogPost.content>", () => {
+          it("Should NOT update an existing <BlogPost> model without a <content> field and return a correct response", (done) => {
+            chai.request(server)
+              .patch("/api/posts/" + postId)
+              .set({ Authorization: firstUserToken })
+              .send({ blogPostData: { ...mockPostData, content: "" } })
+              .end((err, response) => {
+                if (err) done(err);
+                const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+                expect(response.status).to.equal(400);
+                expect(responseMsg).to.be.a("string");
+                expect(error).to.be.an("object");
+                expect(errorMessages).to.be.an("array");
+                //
+                done();
+            });
+          });
+          it("Should NOT update an existing <BlogPost> model with an INCORRECT <content> field and return a correct response", (done) => {
+            chai.request(server)
+              .patch("/api/posts/" + postId)
+              .set({ Authorization: firstUserToken })
+              .send({ blogPostData: { ...mockPostData, content: {} } })
+              .end((err, response) => {
+                if (err) done(err);
+                const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+                expect(response.status).to.equal(400);
+                expect(responseMsg).to.be.a("string");
+                expect(error).to.be.an("object");
+                expect(errorMessages).to.be.an("array");
+                //
+                done();
+            });
+          });
+        });
+        // END invalid content field //
+        // invalid category field
+        describe("PATCH /api/posts - invalid <BlogPost.category>", () => {
+          it("Should NOT update an existing <BlogPost> model with an empty <category> field and return a correct response", (done) => {
+            chai.request(server)
+              .patch("/api/posts/" + postId)
+              .set({ Authorization: firstUserToken })
+              .send({ blogPostData: { ...mockPostData, category: "" } })
+              .end((err, response) => {
+                if (err) done(err);
+                const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+                expect(response.status).to.equal(400);
+                expect(responseMsg).to.be.a("string");
+                expect(error).to.be.an("object");
+                expect(errorMessages).to.be.an("array");
+                //
+                done();
+            });
+          });
+          it("Should NOT update an existing <BlogPost> model with a non approved <category> field and return a correct response", (done) => {
+            chai.request(server)
+              .patch("/api/posts/" + postId)
+              .set({ Authorization: firstUserToken })
+              .send({ blogPostData: { ...mockPostData, category: "thisisnotvalid" } })
+              .end((err, response) => {
+                if (err) done(err);
+                const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+                expect(response.status).to.equal(400);
+                expect(responseMsg).to.be.a("string");
+                expect(error).to.be.an("object");
+                expect(errorMessages).to.be.an("array");
+                //
+                done();
+            });
+          });
+          it("Should NOT update an existing <BlogPost> model with an INCORRECT <category> field TYPE and return a correct response", (done) => {
+            chai.request(server)
+              .patch("/api/posts/" + postId)
+              .set({ Authorization: firstUserToken })
+              .send({ blogPostData: { ...mockPostData, category: [] } })
+              .end((err, response) => {
+                if (err) done(err);
+                const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes;
+                expect(response.status).to.equal(400);
+                expect(responseMsg).to.be.a("string");
+                expect(error).to.be.an("object");
+                expect(errorMessages).to.be.an("array");
+                //
+                done();
+            });
+          });
+        });
+        // END invalid category field //
 
       });
       // CONTEXT PATCH /api/posts/:blog_post with invalid data //
