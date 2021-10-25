@@ -124,10 +124,40 @@ describe("Admin Login API tests", () => {
           });
       });
     });
-    // END User Registration invalid PASSWORD field //
   });
-  // END Context User Registration with invalid fields //
-  
+  // END Context Admin Login with invalid fields //
+  // CONTEXT Admin Login with valid fields //
+  context("Admin Login VALID fields", () => {
+    describe("POST /api/login -- valid <email>, <password> fields", () => {
+      it("Should be able to correctly login and receive back the correct response", (done) => {
+        chai.request(server)
+          .post("/api/login")
+          .send({ email: adminUser.email, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, userData, success, isAdmin, jwtToken, adminFirebaseAuth, error, errorMessages } = response.body as LoginRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(userData).to.be.an("object");
+            expect(userData._id).to.be.a("string");
+            expect(userData.email).to.equal(adminUser.email);
+            expect(userData.createdAt).to.be.a("string");
+            expect(userData.editedAt).to.be.a("string");
+            expect(success).to.equal(true);
+            expect(isAdmin).to.equal(true);
+            expect(jwtToken).to.be.an("object");
+            expect(jwtToken.token).to.be.a("string");
+            expect(jwtToken.expires).to.be.a("string");
+            expect(adminFirebaseAuth).to.be.an("object");
+            expect(adminFirebaseAuth.adminFirebaseToken).to.be.a("string");
+            expect(adminFirebaseAuth.expires).to.be.a("number");
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+    });
+  });
 
   after(async () => {
     try {

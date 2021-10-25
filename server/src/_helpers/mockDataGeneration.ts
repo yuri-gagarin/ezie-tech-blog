@@ -120,7 +120,7 @@ export const generateMockUsers = async (num?: number): Promise<void> => {
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
     const email = `${firstName}_${lastName}@mail.com`;
-    const admin = new User({
+    const user = new User({
       firstName,
       lastName,
       email,
@@ -128,7 +128,7 @@ export const generateMockUsers = async (num?: number): Promise<void> => {
       confirmed: randomIntFromInterval(0, 1) ? true : false
     });
     try {
-      await admin.save();
+      await user.save();
     } catch (error) {
       console.log(error);
       process.exit(1);

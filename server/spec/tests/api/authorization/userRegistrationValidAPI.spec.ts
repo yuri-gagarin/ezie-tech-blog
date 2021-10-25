@@ -23,8 +23,8 @@ describe("User Registration API tests", () => {
   before(async () => {
     try {
       server = ServerInstance.getExpressServer();
-      await generateMockAdmins(2);
-      await generateMockUsers(2);
+      await generateMockAdmins(1);
+      await generateMockUsers(1);
       adminUser = await Admin.findOne({});
       regUser = await User.findOne({});
     } catch (error) {
