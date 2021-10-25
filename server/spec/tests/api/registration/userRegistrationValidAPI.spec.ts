@@ -41,6 +41,7 @@ describe("User Registration API tests", () => {
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -50,10 +51,11 @@ describe("User Registration API tests", () => {
       it("Should NOT register a new User with a WRONG type of EMAIL field and return a correct response", (done) => {
         chai.request(server)
           .post("/api/register")
-          .send({ email: "", password: "password", confirmPassword: "password" })
+          .send({ email: {}, password: "password", confirmPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -68,6 +70,7 @@ describe("User Registration API tests", () => {
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -75,11 +78,80 @@ describe("User Registration API tests", () => {
           });
       });
     });
-    /*
+    
     describe("User Registration with an INVALID PASSWORD field", () => {
-
+      it("Should NOT register a new User with an EMPTY PASSWORD field and return a correct response", (done) => {
+        chai.request(server)
+          .post("/api/register")
+          .send({ email: "mail@mail.com", password: "", confirmPassword: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      })
+      it("Should NOT register a new User with a WRONG type of PASSWORD field and return a correct response", (done) => {
+        chai.request(server)
+          .post("/api/register")
+          .send({ email: "mail@mail.com", password: {}, confirmPassword: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT register a new User with an EMPTY PASSWORD CONFIRM field and return a correct response", (done) => {
+        chai.request(server)
+          .post("/api/register")
+          .send({ email: "mail@mail.com", password: "password", confirmPassword: "" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      })
+      it("Should NOT register a new User with a WRONG type of PASSWORD CONFIRM field and return a correct response", (done) => {
+        chai.request(server)
+          .post("/api/register")
+          .send({ email: "mail@mail.com", password: "password", confirmPassword: {} })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT register a new User with non matching PASSWORD and PASSWORD CONFIRM fields and return a correct response", (done) => {
+        const duplicateEmail = regUser.email;
+        chai.request(server)
+          .post("/api/register")
+          .send({ email: "mail@mail.com", password: "password", confirmPassword: "password1" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
     });
-    */
     /*
     describe("User Registration with an INVALID PASSWORD CONFIRM field", () => {
 

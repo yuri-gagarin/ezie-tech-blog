@@ -11,6 +11,7 @@ import type { IUser } from "../models/User";
 import type { RegisterReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
 // helpers //
 import { validateRegistrationData } from "./_helpers/validationHelpers";
+import { trimRegistrationData } from "./_helpers/authControllerHelperts";
 
 enum LoginCookies {
   JWTToken = "JWTToken"
@@ -62,14 +63,16 @@ export default class AuthController {
     const { valid, errorMessages } = validateRegistrationData({ email, password, confirmPassword });
     if (!valid) return await this.sendErrorRes(res, { status: 400, error: new Error("User Input Error"), errorMessages });
     // validate unique email next //
-    const { exists, message } = await this.validateUniqueEmail(email);
+    const { exists, message } = await this.validateUniqueEmail(email.trim());
     if (exists) return await this.sendErrorRes(res, { status: 400, error: new Error("User Input Error"), errorMessages: [ message ] });
     // assuming all is well ... //
+    const trimmedData = trimRegistrationData({ email, password, confirmPassword });
+    //
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
     const cookieOpts: CookieOptions = { maxAge: 3600000, httpOnly: true, domain, signed: true, sameSite: "strict" };
 
     try {
-      const userData = await User.create({ email, password, confirmed: false, createdAt: new Date(), editedAt: new Date() });
+      const userData = await User.create({ email: trimmedData.email, password: trimmedData.password, confirmed: false, createdAt: new Date(), editedAt: new Date() });
       const { token, expires } = issueJWT(userData);
       return (
         res

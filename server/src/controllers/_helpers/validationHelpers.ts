@@ -9,26 +9,34 @@ export type ValidationRes = {
 };
 
 export const validateRegistrationData = (data: { email?: string; password?: string; confirmPassword?: string; }): ValidationResponse => {
-  const res: ValidationRes = { valid: true, errorMessages: [] };
+  const errorMessages = [];
   if (!data.email) {
-    res.errorMessages.push("Email is required");
-    res.valid = false;
+    errorMessages.push("Email is required");
   }
   if (!data.password) {
-    res.errorMessages.push("Password is required");
-    res.valid = false;
+    errorMessages.push("Password is required");
   }
   if (!data.confirmPassword) {
-    res.errorMessages.push("Password confirmation is required");
-    res.valid = false;
+    errorMessages.push("Password confirmation is required");
+  }
+
+  if (data.email) {
+    if (typeof data.email !== "string") {
+      errorMessages.push("Wrong input for email");
+    }
+  }
+  if (data.password && typeof data.password !== "string") {
+    errorMessages.push("Wrong input for password");
+  }
+  if (data.confirmPassword && typeof data.confirmPassword !== "string") {
+    errorMessages.push("Wrong input for password confirm");
   }
   if (data.password && data.confirmPassword) {
     if (data.password !== data.confirmPassword) {
-      res.errorMessages.push("Passwords do not match");
-      res.valid = false;
+      errorMessages.push("Passwords do not match");
     }
   }
-  return res;
+  return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
 };
 
 // blog post model validators //
