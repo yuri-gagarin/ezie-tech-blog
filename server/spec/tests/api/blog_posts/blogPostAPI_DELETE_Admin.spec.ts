@@ -24,8 +24,8 @@ chai.use(chaiHTTP);
 
 describe("BlogPost Admin logged in API tests DELETE tests", function() {
   this.timeout(10000);
-  let serverInstance: Server;
   let server: Express;
+  let serverInstance: Server;
   let numberOfPosts: number; 
   let numberOfAdminPosts: number;
   let numberOfOtherUserPosts: number;

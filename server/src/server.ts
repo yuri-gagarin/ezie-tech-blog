@@ -113,6 +113,7 @@ export class Server {
     combineRoutes(this.router);
     this.server.use(this.router);
     this.server.all("*", (req: Request, res: Response) => {
+      console.log(req)
       return this.handle(req, res);
     });
   }

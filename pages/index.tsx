@@ -25,6 +25,7 @@ import type { BlogPostAction } from '@/redux/_types/blog_posts/actionTypes';
 import type { RSSSources } from "@/redux/_types/rss/dataTypes";
 import { RSSAction } from '@/redux/_types/rss/actionTypes';
 
+/*
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
 
   const dispatch: Dispatch<BlogPostAction> = store.dispatch;
@@ -37,6 +38,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     props: {} 
   }
 })
+*/
 
 export default function Home(): JSX.Element {
   // local state and refs //
