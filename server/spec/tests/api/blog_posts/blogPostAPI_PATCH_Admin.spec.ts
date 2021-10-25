@@ -6,13 +6,15 @@ import chaiHTTP from "chai-http";
 import ServerPromise from "../../../../src/server";
 // models //
 import Admin from "../../../../src/models/Admin";
+import User from "../../../../src/models/User";
 import BlogPost from "../../../../src/models/BlogPost";
 // helpers //
-import { generateMockBlogPosts, generateMockAdmins } from "../../../../src/_helpers/mockDataGeneration";
+import { generateMockBlogPosts, generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser, countBlogPosts, generateMockPostData } from "../../../hepers/testHelpers";
 // types //
 import type { Express } from "express";
 import type { Server } from "@/server/src/server";
+import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
 import type { IBlogPost } from "@/server/src/models/BlogPost";
@@ -25,19 +27,23 @@ describe("BlogPost Admin logged in API tests PATCH tests", function() {
   let serverInstance: Server;
   let server: Express;
   let numberOfPosts: number; 
-  let adminUser: IUser; 
+  let adminUser: IAdmin;
   let adminUserToken: string;
+  let otherUser: IUser;
   //
   let mockBlogPostData: BlogPostClientData;
   let adminUsersPost: IBlogPost;
+  let otherUsersPost: IBlogPost;
 
   // set up server, DB and create admins //
   before(async () => {
     try {
       serverInstance = await ServerPromise;
       server = serverInstance.getExpressServer();
-      await generateMockAdmins(1)
+      await generateMockAdmins(1);
+      await generateMockUsers(1);
       adminUser = await Admin.findOne({});
+      otherUser = await User.findOne({});
       //await generateMockBlogPosts(10);
     } catch (error) {
       throw(error);
@@ -47,9 +53,12 @@ describe("BlogPost Admin logged in API tests PATCH tests", function() {
   before(async() => {
     try {
       const adminId: string = adminUser._id.toHexString();
+      const otherUserId: string = otherUser._id.toHexString();
       // generate mock data //
       await generateMockBlogPosts({ number: 10, user: adminUser });
+      await generateMockBlogPosts({ number: 10, user: otherUser });
       adminUsersPost = await BlogPost.findOne({ "author.authorId": adminId });
+      otherUsersPost = await BlogPost.findOne({ "author.authorId": otherUserId });
       //
       mockBlogPostData = generateMockPostData({ authorId: adminId, name: adminUser.firstName });
       // get model counts //
@@ -69,6 +78,100 @@ describe("BlogPost Admin logged in API tests PATCH tests", function() {
       throw error;
     }
   });
+
+  // CONTEXT PATCH valid data //
+  context("PATCH /api/posts/:post_id - valid data", () => {
+    // CONTEXT PATCH own Blog Post model //
+    context("PATCH /api/posts/:post_id - own <BlogPost> model", () => {
+      describe("PATCH /api/posts/:post_id", () => {
+        let _editedBlogPost: BlogPostData;
+
+        it("Should correctly UPDATE an existing <BlogPost> model and send back correct response", (done) => {
+          const blogPostId = adminUsersPost._id.toHexString();
+          chai.request(server)
+            .patch("/api/posts/" + blogPostId)
+            .set({ Authorization: adminUserToken })
+            .send({ blogPostData: mockBlogPostData })
+            .end((error, response) => {
+              if (error) done(error);
+              const { responseMsg, editedBlogPost } = response.body as EditBlogPostRes;
+              expect(response.status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(editedBlogPost).to.be.an("object");
+              //
+              _editedBlogPost = editedBlogPost;
+              done();
+            });
+        });
+        it("Should correctly set the fields on an edited <BlogPost> model", () => {
+          expect(_editedBlogPost.title).to.equal(mockBlogPostData.title);
+          expect(_editedBlogPost.author.authorId).to.equal(adminUser._id.toHexString());
+          expect(_editedBlogPost.author.name).to.equal(adminUser.firstName);
+          expect(_editedBlogPost.content).to.equal(mockBlogPostData.content)
+          expect(_editedBlogPost.published).to.equal(false);
+          expect(_editedBlogPost.keywords).to.eql(mockBlogPostData.keywords);
+          expect(_editedBlogPost.category).to.equal(mockBlogPostData.category);
+          expect(_editedBlogPost.createdAt).to.be.a("string");
+          expect(_editedBlogPost.editedAt).to.be.a("string");
+        });
+        it("Should NOT change the number of <BlogPost> models", async () => {
+          try {
+            const updatedNumOfBlogPosts: number = await countBlogPosts({});
+            expect(updatedNumOfBlogPosts).to.equal(numberOfPosts);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+    });
+    // END CONTEXT PATCH own Blog Post model //
+
+    // CONTEXT PATCH other Users Blog Post model //
+    context("PATCH /api/posts/:post_id - other users <BlogPost> model", () => {
+      describe("PATCH /api/posts/:post_id", () => {
+        let _editedBlogPost: BlogPostData;
+
+        it("Should correctly UPDATE an existing <BlogPost> model and send back correct response", (done) => {
+          const blogPostId = otherUsersPost._id.toHexString();
+          chai.request(server)
+            .patch("/api/posts/" + blogPostId)
+            .set({ Authorization: adminUserToken })
+            .send({ blogPostData: mockBlogPostData })
+            .end((error, response) => {
+              if (error) done(error);
+              const { responseMsg, editedBlogPost } = response.body as EditBlogPostRes;
+              expect(response.status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(editedBlogPost).to.be.an("object");
+              //
+              _editedBlogPost = editedBlogPost;
+              done();
+            });
+        });
+        it("Should correctly set the fields on an edited <BlogPost> model", () => {
+          expect(_editedBlogPost.title).to.equal(mockBlogPostData.title);
+          expect(_editedBlogPost.author.authorId).to.equal(otherUser._id.toHexString());
+          expect(_editedBlogPost.author.name).to.equal(otherUser.firstName);
+          expect(_editedBlogPost.content).to.equal(mockBlogPostData.content)
+          expect(_editedBlogPost.published).to.equal(false);
+          expect(_editedBlogPost.keywords).to.eql(mockBlogPostData.keywords);
+          expect(_editedBlogPost.category).to.equal(mockBlogPostData.category);
+          expect(_editedBlogPost.createdAt).to.be.a("string");
+          expect(_editedBlogPost.editedAt).to.be.a("string");
+        });
+        it("Should NOT change the number of <BlogPost> models", async () => {
+          try {
+            const updatedNumOfBlogPosts: number = await countBlogPosts({});
+            expect(updatedNumOfBlogPosts).to.equal(numberOfPosts);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+    });
+  });
+  // END CONTEXT PATCH valid data //
+  // CONTEXT PATCH invalid data //
   context("PATCH /api/posts/:post_id - invalid data", () => {
     // PATCH /api/posts/:post_id ivalid title //
     let postId: string;

@@ -33,9 +33,17 @@ export const verifyBlogPostModelAccess = async (req: Request, res: Response<Blog
   const { _id: userId } = user;
   const { post_id } = req.params;
 
-  if (user.hasOwnProperty("role")) {
-    if ((user as IAdmin).role === "owner" || (user as IAdmin).role === "admin") {
+  
+  if ((user as IAdmin).role ) {
+    // user is admin, can access //
+    if((user as IAdmin).role === "admin" || (user as IAdmin).role === "owner") {
       return next();
+    } else {
+      return res.status(401).json({
+        responseMsg: "Edit not allowed",
+        error: new Error("Not Allowed Error"),
+        errorMessages: [ "Not allowed to edit Blog Post not belonging to this user" ]
+      });
     }
   } else {
     try {
