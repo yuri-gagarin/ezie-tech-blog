@@ -39,6 +39,8 @@ export type RegisterRes = {
     token: string;
     expires: string;
   };
+  readonly error?: any;
+  readonly errorMessages?: string[];
 };
 
 export type LogoutRes = {
