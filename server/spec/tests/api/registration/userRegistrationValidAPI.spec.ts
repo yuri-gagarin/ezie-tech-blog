@@ -10,7 +10,7 @@ import User from "../../../../src/models/Admin";
 import type { Express } from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { RegisterRes } from "@/redux/_types/auth/dataTypes";
+import type { LoginRes, RegisterRes } from "@/redux/_types/auth/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 
@@ -32,8 +32,9 @@ describe("User Registration API tests", () => {
     }
   });
 
+  // CONTEXT User registration invalid data //
   context("User Registration - invalid data", () => {
-    describe("User Registration with an INVALID EMAIL field", () => {
+    describe(" POST /api/register - User Registration with an INVALID EMAIL field", () => {
       it("Should NOT register a new User with an EMPTY EMAIL field and return a correct response", (done) => {
         chai.request(server)
           .post("/api/register")
@@ -78,8 +79,8 @@ describe("User Registration API tests", () => {
           });
       });
     });
-    
-    describe("User Registration with an INVALID PASSWORD field", () => {
+    // User Registration Invalid password field //
+    describe(" POST /api/register - User Registration with an INVALID PASSWORD field", () => {
       it("Should NOT register a new User with an EMPTY PASSWORD field and return a correct response", (done) => {
         chai.request(server)
           .post("/api/register")
@@ -152,11 +153,59 @@ describe("User Registration API tests", () => {
           });
       });
     });
-    /*
-    describe("User Registration with an INVALID PASSWORD CONFIRM field", () => {
-
+    // END User Registration invalid PASSWORD field //
+  });
+  // END Context User Registration with invalid fields //
+  context("User Registration VALID fields", () => {
+    describe("POST /api/register -- valid <email>, <password>, <confirmPassword> fields", () => {
+      it("Should correctly register a new User and send back the correct response", (done) => {
+        chai.request(server)
+          .post("/api/register")
+          .send({ email: "mail@mail.com", password: "password", confirmPassword: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, userData, isAdmin, jwtToken, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(userData).to.be.an("object");
+            expect(userData._id).to.be.a("string");
+            expect(userData.email).to.equal("mail@mail.com");
+            expect(userData.createdAt).to.be.a("string");
+            expect(userData.editedAt).to.be.a("string");
+            expect(isAdmin).to.equal(false);
+            expect(jwtToken).to.be.an("object");
+            expect(jwtToken.token).to.be.a("string");
+            expect(jwtToken.expires).to.be.a("string");
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+      it("Should be able to correctly login and receive back the correct response", (done) => {
+        chai.request(server)
+          .post("/api/login")
+          .send({ email: "mail@mail.com", password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, userData, success, isAdmin, jwtToken, error, errorMessages } = response.body as LoginRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(userData).to.be.an("object");
+            expect(userData._id).to.be.a("string");
+            expect(userData.email).to.equal("mail@mail.com");
+            expect(userData.createdAt).to.be.a("string");
+            expect(userData.editedAt).to.be.a("string");
+            expect(success).to.equal(true);
+            expect(isAdmin).to.equal(false);
+            expect(jwtToken).to.be.an("object");
+            expect(jwtToken.token).to.be.a("string");
+            expect(jwtToken.expires).to.be.a("string");
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      })
     });
-    */
   });
 
   after(async () => {
