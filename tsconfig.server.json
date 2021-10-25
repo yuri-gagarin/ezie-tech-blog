@@ -5,8 +5,6 @@
     "outDir": "server/build",
     "noEmit": false
   },
-  "include": ["server/src" ],
-  "exclude": [
-    "server/spec/**/*.spec.ts"
-  ]
+  "target": "es6",
+  "include": ["server/src" ]
 }

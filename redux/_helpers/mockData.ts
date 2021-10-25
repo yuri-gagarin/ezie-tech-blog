@@ -3,18 +3,19 @@ import type { IBlogPostState, IUserState } from "../_types/generalTypes";
 import type { IAuthState } from "../_types/auth/dataTypes";
 import type { IProjectState } from "../_types/projects/dataTypes";
 import type { UserData } from "../_types/users/dataTypes";
+import type { IRSSState } from "../_types/rss/dataTypes";
 
 export const generateEmptyBlogPost = (): BlogPostData => {
   return {
     _id: "",
     title: "",
-    author: "",
+    author: { authorId: "", name: "" },
     category: "",
     keywords: [],
     content: "",
     likes: [],
     numOflikes: 0,
-    live: false,
+    published: false,
     slug: "",
     createdAt: "",
     editedAt: ""
@@ -38,20 +39,7 @@ export const generateEmptyPostState = (): IBlogPostState => {
     status: null,
     responseMsg: "",
     loading: false,
-    currentBlogPost: {
-      _id: "",
-      title: "",
-      author: "",
-      content: "",
-      live: false,
-      keywords: [],
-      category: "",
-      numOflikes: 0,
-      likes: [],
-      slug: "",
-      editedAt: "",
-      createdAt: "",
-    },
+    currentBlogPost: generateEmptyBlogPost(),
     blogPosts: [],
     error: null,
     errorMessages: null
@@ -103,3 +91,20 @@ export const generateEmptyProjectsState = (): IProjectState => {
   };
 };
 
+
+export const generateEmptyRssState = (): IRSSState => {
+  return {
+    status: null,
+    loading: false,
+    responseMsg: "",
+    source: "",
+    logoURL: "",
+    title: "",
+    lastItemId: "",
+    currentPage: 0,
+    rssFeed: [],
+    readingList: [],
+    error: null,
+    errorMessages: null
+  }
+}

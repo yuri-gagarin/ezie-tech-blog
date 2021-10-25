@@ -39,7 +39,7 @@ const setUpDB = async (): Promise<void> => {
 const processCreateBlogPosts = async (data: string): Promise<void> => {
   try {
     const num = parseInt(data, 10);
-    await generateMockBlogPosts(num);
+    await generateMockBlogPosts({ number: num });
   } catch (error) {
     throw error;
   }

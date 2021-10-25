@@ -22,7 +22,7 @@ interface IAdminNewViewProps {
 }
 export type PostFormState = {
   postTitle: string;
-  postAuthor: string;
+  postAuthor: { authorId?: string; name?: string; };
   postKeywords: string;
   postCategory: string;
   postContent: string;
@@ -30,7 +30,7 @@ export type PostFormState = {
 
 const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.Element => {
   // local component hooks and state //
-  const [ postFormState, setPostFormState ] = React.useState<PostFormState>({ postTitle: "", postAuthor: "", postKeywords: "", postCategory: "", postContent: "" });
+  const [ postFormState, setPostFormState ] = React.useState<PostFormState>({ postTitle: "", postAuthor: { authorId: "", name: "" }, postKeywords: "", postCategory: "", postContent: "" });
   // next hooks //
   const router = useRouter();
   // redux hooks and state  //
@@ -63,7 +63,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     setPostFormState({ ...postFormState, postTitle });
   };
   const updateAuthor = (postAuthor: string): void => {
-    setPostFormState({ ...postFormState, postAuthor });
+    setPostFormState({ ...postFormState, postAuthor: { authorId: "", name: "" } });
   };
   const updateKeywords = (postKeywords: string): void => {
     setPostFormState({ ...postFormState, postKeywords });

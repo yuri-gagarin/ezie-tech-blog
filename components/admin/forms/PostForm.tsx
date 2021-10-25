@@ -51,7 +51,7 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
       </Form.Field>
       <Form.Field>
         <label>Author</label>
-        <input value={ postFormState.postAuthor } placeholder="value..." onChange={ handleAuthorChange } />
+        <input value={ postFormState.postAuthor.name } placeholder="value..." onChange={ handleAuthorChange } />
       </Form.Field>
       <Form.Field>
         <label>Keywords</label>

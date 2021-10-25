@@ -7,7 +7,7 @@ import combinedReducer from './reducers/combinedReducer';
 // types //
 import type { IGeneralAppAction, IGeneralState } from "./_types/generalTypes";
 // helpers //
-import { generateEmptyAuthState, generateEmptyPostState, generateEmptyProjectsState, generateEmptyUserState } from "./_helpers/mockData";
+import { generateEmptyAuthState, generateEmptyPostState, generateEmptyProjectsState, generateEmptyRssState, generateEmptyUserState } from "./_helpers/mockData";
 //import { checkEmptyObjVals } from './_helpers/dataHelpers';
 
 const initialState: IGeneralState = {
@@ -15,6 +15,7 @@ const initialState: IGeneralState = {
   usersState: generateEmptyUserState(),
   blogPostsState: generateEmptyPostState(),
   projectsState: generateEmptyProjectsState(),
+  rssState: generateEmptyRssState()
 };
 
 //const isClient = typeof window !== 'undefined';

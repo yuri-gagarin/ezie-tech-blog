@@ -76,7 +76,7 @@ export class Server {
   public async init(): Promise<this> {
     try {
       await this.configureDB();
-      //await this.app.prepare();
+      await this.app.prepare();
       this.server.listen(this.PORT, (err?: any) => {
         if (err) throw err;
         console.log(`Ready on localhost:${this.PORT} - env ${process.env.NODE_ENV}`);
@@ -87,16 +87,14 @@ export class Server {
       process.exit(1);
     }
   }
-
   public getExpressServer() {
     return this.server;
   }
   public get nextAppServer() {
     return this.app;
   }
-
   private configureNextApp(): void {
-    this.app = next({ dev: this.dev });
+    this.app = next({ dev: true });
     this.handle = this.app.getRequestHandler();
   }
   private configureServer(): void {
@@ -113,8 +111,11 @@ export class Server {
     combineRoutes(this.router);
     this.server.use(this.router);
     this.server.all("*", (req: Request, res: Response) => {
-      console.log(req)
-      return this.handle(req, res);
+      try {
+        return this.handle(req, res);
+      } catch (error) {
+        process.exit(1);
+      }
     });
   }
   private async configureDB(): Promise<any> {

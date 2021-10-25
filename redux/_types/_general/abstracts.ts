@@ -1,5 +1,6 @@
 import type { Dispatch } from "redux";
-import type { IAuthState, IBlogPostState, IUserState, IGeneralAppAction } from "../../_types/generalTypes";
+import type { IAuthState } from "@/redux/_types/auth/dataTypes";
+import type { IBlogPostState, IUserState, IGeneralAppAction } from "../../_types/generalTypes";
 import type { IProjectState, ProjectFormData } from "../../_types/projects/dataTypes";
 
 type AnyState = IAuthState | IBlogPostState | IProjectState | IUserState;

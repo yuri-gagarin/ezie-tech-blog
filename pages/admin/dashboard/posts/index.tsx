@@ -127,7 +127,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
                   </Card.Content>
                   <Card.Content>
                     <Card.Meta>
-                      Published: { blogPostData.live ? "Yes" : "No" }
+                      Published: { blogPostData.published ? "Yes" : "No" }
                     </Card.Meta>
                     <Button color="green" content="View" onClick={ () => toggleBlogPostModal(blogPostData._id) } />
                   </Card.Content>
