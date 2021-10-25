@@ -169,7 +169,10 @@ describe("User Registration API tests", () => {
             expect(responseMsg).to.be.a("string");
             expect(userData).to.be.an("object");
             expect(userData._id).to.be.a("string");
+            expect(userData.firstName).to.be.a("string");
+            expect(userData.lastName).to.be.a("string");
             expect(userData.email).to.equal("mail@mail.com");
+            expect(userData.confirmed).to.equal(false);
             expect(userData.createdAt).to.be.a("string");
             expect(userData.editedAt).to.be.a("string");
             expect(isAdmin).to.equal(false);

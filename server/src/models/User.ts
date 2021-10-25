@@ -16,11 +16,11 @@ export interface IUser extends Document  {
 };
 
 const UserSchema = new Schema<IUser>({
-  firstName: { type: String, required: false },
-  lastName: { type: String, required: false },
+  firstName: { type: String, default: "" },
+  lastName: { type: String, default: "" },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  confirmed: { type: Boolean, required: true, default: false },
+  confirmed: { type: Boolean, required: true },
   editedAt: { type: Date, required: true, default: new Date(Date.now()) },
   createdAt: { type: Date, required: true, default: new Date(Date.now()) }
 });

@@ -84,6 +84,7 @@ export default class AuthController {
             _id: userData._id.toHexString(), 
             email: userData.email, 
             firstName: userData.firstName, 
+            confirmed: userData.confirmed,
             lastName: userData.lastName, 
             editedAt: userData.editedAt,
             createdAt: userData.createdAt
