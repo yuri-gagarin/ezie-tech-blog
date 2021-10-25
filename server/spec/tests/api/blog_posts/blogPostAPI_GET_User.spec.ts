@@ -1,24 +1,24 @@
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
-import BlogPost, { IBlogPost } from "../../../../src/models/BlogPost";
 // server //
-import ServerPromise from "../../../../src/server";
+import { ServerInstance } from "../../../../src/server";
 // models //
 import User from "../../../../src/models/User";
+import BlogPost from "../../../../src/models/BlogPost";
+
 // helpers //
 import { generateMockBlogPosts, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 // types //
 import type { Express } from "express";
-import type { Server } from "../../../../src/server";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { IUser } from "../../../../src/models/User";
-import type { IndexBlogPostRes, OneBlogPostRes, BlogPostErrRes } from "server/src/_types/blog_posts/blogPostTypes";
+import type { IBlogPost } from "../../../../src/models/BlogPost";
+import type { IndexBlogPostRes, OneBlogPostRes } from "server/src/_types/blog_posts/blogPostTypes";
  
 chai.use(chaiHTTP);
 
 describe("BlogPost User API tests GET requests", function() {
   this.timeout(10000);
-  let serverInstance: Server;
   let server: Express;
   let numberOfPosts: number; let numOfFirstUserPosts: number; let numOfSecondUserPosts: number;
   let numOfFirstUserPublishedPosts: number; let numOfFirstUserUnpublishedPosts: number;
@@ -29,8 +29,7 @@ describe("BlogPost User API tests GET requests", function() {
   // set up server, DB and create users //
   before(async () => {
     try {
-      serverInstance = await ServerPromise;
-      server = serverInstance.getExpressServer();
+      server = ServerInstance.getExpressServer();
       await generateMockUsers(2);
       const users = await User.find({}).limit(2);
       ([ firstUser, secondUser ] = users);
@@ -640,6 +639,14 @@ describe("BlogPost User API tests GET requests", function() {
     // END GET /api/posts/:postId //
   });
   // END CONTEXT //s
+  after(async () => {
+    try {
+      await User.deleteMany({});
+      await BlogPost.deleteMany({});
+    } catch (error) {
+      console.log(error);
+    }
+  });
 });
 
 export {};

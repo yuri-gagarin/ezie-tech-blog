@@ -73,10 +73,11 @@ export class Server {
     this.launchFirebaseAdmin();
   }
 
-  public async init(): Promise<this> {
+  public async init({ testMode }: { testMode: boolean; }): Promise<this> {
     try {
       await this.configureDB();
-      await this.app.prepare();
+      if (!testMode) await this.app.prepare();
+      // 
       this.server.listen(this.PORT, (err?: any) => {
         if (err) throw err;
         console.log(`Ready on localhost:${this.PORT} - env ${process.env.NODE_ENV}`);
@@ -132,7 +133,8 @@ export class Server {
   }
 };
 
-export default new Server().init();
+export const ServerInstance = new Server();
 
+if (process.env.NODE_ENV !== "test") ServerInstance.init({ testMode: false });
 
 

@@ -3,24 +3,23 @@ import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // models //
 // server //
-import ServerPromise from "../../../../src/server";
+import { ServerInstance } from "../../../../src/server";
 // models //
 import Admin from "../../../../src/models/Admin";
+import BlogPost from "../../../../src/models/BlogPost";
 // helpers //
 import { generateMockBlogPosts, generateMockAdmins } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser, countBlogPosts, generateMockPostData } from "../../../hepers/testHelpers";
 // types //
 import type { Express } from "express";
-import type { Server } from "@/server/src/server";
 import type { IUser } from "@/server/src/models/User";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
-import type { CreateBlogPostRes, BlogPostData, EditBlogPostRes, DeleteBlogPostRes, ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
+import type { CreateBlogPostRes, BlogPostData, ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
 
 chai.use(chaiHTTP);
 
 describe("BlogPost Admin logged in API tests POST tests", function() {
   this.timeout(10000);
-  let serverInstance: Server;
   let server: Express;
   let numberOfPosts: number; 
   let numberOfAdminPosts: number;
@@ -33,11 +32,9 @@ describe("BlogPost Admin logged in API tests POST tests", function() {
   // set up server, DB and create admins //
   before(async () => {
     try {
-      serverInstance = await ServerPromise;
-      server = serverInstance.getExpressServer();
+      server = ServerInstance.getExpressServer();
       await generateMockAdmins(1)
       adminUser = await Admin.findOne({});
-      //await generateMockBlogPosts(10);
     } catch (error) {
       throw(error);
     }
@@ -402,4 +399,12 @@ describe("BlogPost Admin logged in API tests POST tests", function() {
     // END invalid keywords field //
   });
   // END CONTEXT POST API Tets with invalid data //
+  after(async () => {
+    try {
+      await Admin.deleteMany({});
+      await BlogPost.deleteMany({});
+    } catch (error) {
+      console.log(error);
+    }
+  });
 });

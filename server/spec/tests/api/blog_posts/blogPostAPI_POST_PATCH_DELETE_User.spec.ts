@@ -3,17 +3,15 @@ import mongoose from "mongoose";
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // models //
+import User from "../../../../src/models/User";
 import BlogPost from "../../../../src/models/BlogPost";
 // server //
-import ServerPromise from "../../../../src/server";
-// models //
-import User from "../../../../src/models/User";
+import { ServerInstance } from "../../../../src/server";
 // helpers //
 import { generateMockBlogPosts, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser, countBlogPosts, generateMockPostData } from "../../../hepers/testHelpers";
 // types //
 import type { Express } from "express";
-import type { Server } from "@/server/src/server";
 import type { IBlogPost } from "@/server/src/models/BlogPost"
 import type { IUser } from "@/server/src/models/User";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
@@ -23,7 +21,6 @@ chai.use(chaiHTTP);
 
 describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function() {
   this.timeout(10000);
-  let serverInstance: Server;
   let server: Express;
   let numberOfPosts: number; let numOfFirstUserPosts: number; let numOfSecondUserPosts: number;
   let firstUser: IUser; let secondUser: IUser;
@@ -32,8 +29,7 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
   // set up server, DB and create users //
   before(async () => {
     try {
-      serverInstance = await ServerPromise;
-      server = serverInstance.getExpressServer();
+      server = ServerInstance.getExpressServer();
       await generateMockUsers(2);
       const users = await User.find({}).limit(2);
       ([ firstUser, secondUser ] = users);
@@ -915,6 +911,15 @@ describe("BlogPost User logged in API tests POST, PATCH, DELETE tests", function
     });
   });
   // END CONTEXT POST PATCH DELETE Model does not belong to user //
+
+  after(async () => {
+    try {
+      await User.deleteMany({});
+      await BlogPost.deleteMany({});
+    } catch (error) {
+      console.log(error);
+    }
+  });
 });
 
 

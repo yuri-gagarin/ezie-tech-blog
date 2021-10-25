@@ -1,25 +1,25 @@
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
-import BlogPost, { IBlogPost } from "../../../../src/models/BlogPost";
 // server //
-import ServerPromise from "../../../../src/server";
+// import ServerPromise from "../../../../src/server";
+import { ServerInstance } from "../../../../src/server";
 // models //
 import User from "../../../../src/models/User";
 import Admin from "../../../../src/models/Admin";
+import BlogPost from "../../../../src/models/BlogPost";
 // helpers //
 import { generateMockAdmins, generateMockBlogPosts, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 // types //
 import type { Express } from "express";
-import type { Server } from "../../../../src/server";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { IUser } from "../../../../src/models/User";
-import type { IndexBlogPostRes, OneBlogPostRes, BlogPostErrRes } from "server/src/_types/blog_posts/blogPostTypes";
+import type { IBlogPost } from "../../../../src/models/BlogPost";
+import type { IndexBlogPostRes, OneBlogPostRes } from "server/src/_types/blog_posts/blogPostTypes";
  
 chai.use(chaiHTTP);
 
 describe("BlogPost ADMIN API tests GET requests", function() {
   this.timeout(10000);
-  let serverInstance: Server;
   let server: Express;
   let numberOfPosts: number; let numOfAdminUserPosts: number; let numOfOtherUserPosts: number;
   let numOfAdminUserPublishedPosts: number; let numOfAdminUserUnpublishedPosts: number;
@@ -30,8 +30,7 @@ describe("BlogPost ADMIN API tests GET requests", function() {
   // set up server, DB and create users //
   before(async () => {
     try {
-      serverInstance = await ServerPromise;
-      server = serverInstance.getExpressServer();
+      server = ServerInstance.getExpressServer();
       await generateMockUsers(1);
       await generateMockAdmins(1);
       //
@@ -668,6 +667,15 @@ describe("BlogPost ADMIN API tests GET requests", function() {
     // END GET /api/posts/:postId //
   });
   // END CONTEXT //s
+  after(async () => {
+    try {
+      await Admin.deleteMany({});
+      await User.deleteMany({});
+      await BlogPost.deleteMany({});
+    } catch (error) {
+      console.log(error);
+    }
+  });
 });
 
 export {};

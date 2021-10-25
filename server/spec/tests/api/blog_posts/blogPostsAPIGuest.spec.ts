@@ -2,13 +2,15 @@ import mongoose from "mongoose";
 // 
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
+// models //
+import User from "../../../../src/models/User";
 import BlogPost from "../../../../src/models/BlogPost";
 // server //
-import ServerPromise from "../../../../src/server";
+import { ServerInstance } from "../../../../src/server";
 // types //
 import type { Server } from "../../../../src/server";
 import type { IBlogPost } from "../../../../src/models/BlogPost";
-import type { IndexBlogPostRes, OneBlogPostRes, BlogPostErrRes } from "server/src/_types/blog_posts/blogPostTypes";
+import type { IndexBlogPostRes, OneBlogPostRes } from "server/src/_types/blog_posts/blogPostTypes";
 // helpers //
 import { generateMockBlogPosts, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
  
@@ -16,14 +18,12 @@ chai.use(chaiHTTP);
 
 describe("BlogPost Guest API tests", function() {
   this.timeout(10000);
-  let serverInstance: Server;
   let server: any;
   let numberOfPosts: number;
 
   before(async () => {
     try {
-      serverInstance = await ServerPromise;
-      server = serverInstance.getExpressServer();
+      server = ServerInstance.getExpressServer();
       await generateMockUsers(1);
       //await generateMockBlogPosts(10);
     } catch (error) {
@@ -309,6 +309,14 @@ describe("BlogPost Guest API tests", function() {
 
   });
   // END CONTEXT Guest Client / No Login //
+  after(async () => {
+    try {
+      await User.deleteMany({});
+      await BlogPost.deleteMany({});
+    } catch (error) {
+      console.log(error);
+    }
+  });
 });
 
 export {};

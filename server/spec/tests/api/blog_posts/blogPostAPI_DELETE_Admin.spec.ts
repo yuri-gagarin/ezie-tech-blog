@@ -3,7 +3,7 @@ import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // models //
 // server //
-import ServerPromise from "../../../../src/server";
+import { ServerInstance } from "../../../../src/server";
 // models //
 import Admin from "../../../../src/models/Admin";
 import User from "../../../../src/models/User";
@@ -13,11 +13,9 @@ import { generateMockBlogPosts, generateMockAdmins, generateMockUsers } from "..
 import { loginUser, countBlogPosts, generateMockPostData } from "../../../hepers/testHelpers";
 // types //
 import type { Express } from "express";
-import type { Server } from "@/server/src/server";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
-import type { CreateBlogPostRes, BlogPostData, DeleteBlogPostRes, ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
+import type { BlogPostData, DeleteBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
 import { IBlogPost } from "@/server/src/models/BlogPost";
 
 chai.use(chaiHTTP);
@@ -25,7 +23,6 @@ chai.use(chaiHTTP);
 describe("BlogPost Admin logged in API tests DELETE tests", function() {
   this.timeout(10000);
   let server: Express;
-  let serverInstance: Server;
   let numberOfPosts: number; 
   let numberOfAdminPosts: number;
   let numberOfOtherUserPosts: number;
@@ -40,8 +37,7 @@ describe("BlogPost Admin logged in API tests DELETE tests", function() {
   // set up server, DB and create admins //
   before(async () => {
     try {
-      serverInstance = await ServerPromise;
-      server = serverInstance.getExpressServer();
+      server = ServerInstance.getExpressServer();
       await generateMockAdmins(1);
       await generateMockUsers(1);
       adminUser = await Admin.findOne({});
@@ -246,4 +242,13 @@ describe("BlogPost Admin logged in API tests DELETE tests", function() {
     // DELETE INVALID 'post_id' param //
   });
   // END CONTEXT POST API Tets with invalid data //
+  after(async () => {
+    try {
+      await Admin.deleteMany({});
+      await User.deleteMany({});
+      await BlogPost.deleteMany({});
+    } catch (error) {
+      console.log(error);
+    }
+  });
 });
