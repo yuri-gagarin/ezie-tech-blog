@@ -80,6 +80,7 @@ describe("BlogPost Admin logged in API tests DELETE tests", function() {
       throw error;
     }
   });
+  
   // CONTEXT POST API Tests with valid data //
   context("DELETE API Tests with valid data", () => {
     // DELETE TESTS on own model //
@@ -129,57 +130,11 @@ describe("BlogPost Admin logged in API tests DELETE tests", function() {
       });
     });
     // END DELETE tests own model //
-    describe("DELETE /api/posts/:post_id --- own model" , () => {
-      it("Should correctly DELETE an existing <BlogPost> model and send back correct response", (done) => {
-        chai.request(server)
-          .delete("/api/posts/" + ( adminUserPost._id.toHexString() ))
-          .set({ Authorization: adminUserToken })
-          .end((error, response) => {
-            if (error) done(error);
-            const { responseMsg, deletedBlogPost } = response.body as DeleteBlogPostRes;
-            expect(response.status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(deletedBlogPost).to.be.an("object");
-            // 
-            _deletedBlogPost = deletedBlogPost;
-            done();
-          });
-      });
-      it("Should correctly remove the queried <BlogPost> model from the database", async () => {
-        try {
-          const deletedModel: IBlogPost | null = await BlogPost.findById(_deletedBlogPost._id);
-          expect(deletedModel).to.be.null;
-        } catch (error) {
-          throw error;
-        }
-      });
-      it("Should correctly decrement the number of Admins <BlogPost> model by 1", async () => {
-        try {
-          const updatedNumOfAdminPosts: number = await countBlogPosts({ specificUserId: adminUser._id.toHexString() });
-          expect(updatedNumOfAdminPosts).to.equal(numberOfAdminPosts -  1);
-          //
-          numberOfAdminPosts = updatedNumOfAdminPosts;
-        } catch (error) {
-          throw error;
-        }
-      });
-      it("Should correctly decrement the total number of <BlogPost> model by 1", async () => {
-        try {
-          const updatedNumOfTotalPosts: number = await countBlogPosts({});
-          expect(updatedNumOfTotalPosts).to.equal(numberOfPosts - 1);
-          //
-          numberOfPosts = updatedNumOfTotalPosts;
-        } catch (error) {
-          throw error;
-        }
-      });
-    });
-    // END DELETE tests own model //
     // DELETE Tests other Users model //
-    describe("DELETE /api/posts/:post_id --- own model" , () => {
+    describe("DELETE /api/posts/:post_id --- other users model" , () => {
       it("Should correctly DELETE an existing <BlogPost> model and send back correct response", (done) => {
         chai.request(server)
-          .delete("/api/posts/" + ( adminUserPost._id.toHexString() ))
+          .delete("/api/posts/" + ( otherUserPost._id.toHexString() ))
           .set({ Authorization: adminUserToken })
           .end((error, response) => {
             if (error) done(error);
@@ -202,10 +157,10 @@ describe("BlogPost Admin logged in API tests DELETE tests", function() {
       });
       it("Should correctly decrement the number of Admins <BlogPost> model by 1", async () => {
         try {
-          const updatedNumOfAdminPosts: number = await countBlogPosts({ specificUserId: adminUser._id.toHexString() });
-          expect(updatedNumOfAdminPosts).to.equal(numberOfAdminPosts -  1);
+          const updatedNumOfOtherUserPosts: number = await countBlogPosts({ specificUserId: otherUser._id.toHexString() });
+          expect(updatedNumOfOtherUserPosts).to.equal(numberOfOtherUserPosts -  1);
           //
-          numberOfAdminPosts = updatedNumOfAdminPosts;
+          numberOfOtherUserPosts = updatedNumOfOtherUserPosts;
         } catch (error) {
           throw error;
         }
@@ -223,11 +178,72 @@ describe("BlogPost Admin logged in API tests DELETE tests", function() {
     });
     // END DELETE tests other users model //
   });
-  // END CONTEXT POST API Tests with valid data //
+  // END CONTEXT DELETE API Tests with valid data //
 
   // CONTEXT POST API Tests with invalid data //
-  context("POST /api/posts - invalid data", () =>  {
-    
+  context("DELETE /api/posts/:post_id - invalid data", () =>  {
+    // DELETE no post_id param //
+    describe("DELETE /api/posts/:post_id --- no 'post_id' param present", () => {
+      it("Should NOT DELETE an existing <BlogPost> model and send back correct response", (done) => {
+        chai.request(server)
+          .delete("/api/posts/" + "" )
+          .set({ Authorization: adminUserToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as DeleteBlogPostRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            // 
+            expect(response.body.deletedBlogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT alter the number of <BlogPost> model in the database", async () => {
+        try {
+          const updatedNumOfTotalPosts: number = await countBlogPosts({});
+          const updatedNumOfAdminPosts: number = await countBlogPosts({ specificUserId: adminUser._id.toHexString() });
+          //
+          expect(updatedNumOfTotalPosts).to.equal(numberOfPosts);
+          expect(updatedNumOfAdminPosts).to.equal(numberOfAdminPosts);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END DELETE no post_id param //
+    // DELETE INVALID 'post_id' param //
+    describe("DELETE /api/posts/:post_id --- INVALID 'post_id' param type present", () => {
+      it("Should NOT DELETE an existing <BlogPost> model and send back correct response", (done) => {
+        chai.request(server)
+          .delete("/api/posts/" + "" )
+          .set({ Authorization: adminUserToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as DeleteBlogPostRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            // 
+            expect(response.body.deletedBlogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT alter the number of <BlogPost> model in the database", async () => {
+        try {
+          const updatedNumOfTotalPosts: number = await countBlogPosts({});
+          const updatedNumOfAdminPosts: number = await countBlogPosts({ specificUserId: adminUser._id.toHexString() });
+          //
+          expect(updatedNumOfTotalPosts).to.equal(numberOfPosts);
+          expect(updatedNumOfAdminPosts).to.equal(numberOfAdminPosts);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // DELETE INVALID 'post_id' param //
   });
   // END CONTEXT POST API Tets with invalid data //
 });

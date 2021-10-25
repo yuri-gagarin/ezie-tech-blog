@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+// models //
 import BlogPost from "../../models/BlogPost";
 // types //
 import type { Request, Response, NextFunction } from "express";
@@ -16,6 +18,13 @@ export const verifyUserModelAndPostId = async (req: Request, res: Response<BlogP
       responseMsg: "Input error",
       error: new Error("Client error"),
       errorMessages: [ "Could not resolve model id" ]
+    });
+  }
+  if (post_id &&! Types.ObjectId.isValid(post_id)) {
+    return res.status(400).json({
+      responseMsg: "Input error",
+      error: new Error("Client error"),
+      errorMessages: [ "Invalid model id type" ]
     });
   }
   if (!user) {
