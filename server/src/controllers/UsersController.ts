@@ -1,9 +1,13 @@
-import type { Request, Response } from "express";
+import { BasicController } from "../_types/abstracts/DefaultController";
+// models //
 import User, { IUser } from "../models/User";
 import Admin, { IAdmin } from "../models/Admin";
-import { BasicController } from "../_types/abstracts/DefaultController";
+// types //
+import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes } from "../_types/users/userTypes";
+import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes, ReqUserData } from "../_types/users/userTypes";
+// helpers validators //
+import { validateUserData, validateUniqueEmail } from "./_helpers/validationHelpers";
 
 export default class UsersController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<UsersIndexRes>): Promise<Response<UsersIndexRes>> => {
@@ -57,13 +61,37 @@ export default class UsersController extends BasicController implements ICRUDCon
   // only Admin level users should be able to create any new additional users in DB //
   // for now //
   create = async (req: Request, res: Response<UsersCreateRes>): Promise<Response> => {
-    const currentUser = req.user as IAdmin;
-    const { email, password } = req.body;
-
+    const userData = req.body.userData as ReqUserData;
+    // 
+    if (!userData) return await this.userInputErrorResponse(res, [ "Invalid client data to create new User" ]);
+    // validate new user data //
+    const { valid, errorMessages } = validateUserData(userData);
+    if (!valid) return await this.userInputErrorResponse(res, errorMessages);
+    // if valid data //
     try {
-      const createdUser = await User.create({ email, password });
+      // validate email and unique email //
+      const { exists, message } = await validateUniqueEmail(userData.email);
+      if (exists) return this.userInputErrorResponse(res, [ message ]);
+      const createdUser = await User.create({ 
+        email: userData.email, 
+        password: userData.password,
+        firstName: userData.firstName ? userData.firstName : "",
+        lastName: userData.lastName ? userData.lastName : "",
+        confirmed: false,
+        editedAt: new Date(),
+        createdAt: new Date()
+      })
       return res.status(200).json({
-        responseMsg: "User found", createdUser
+        responseMsg: "User found",
+        createdUser: {
+          _id: createdUser._id,
+          firstName: createdUser.firstName,
+          lastName: createdUser.lastName,
+          email: createdUser.email,
+          confirmed: createdUser.confirmed,
+          editedAt: createdUser.editedAt,
+          createdAt: createdUser.createdAt
+        }
       });
     } catch (error) {
       return await this.generalErrorResponse(res, { error });
@@ -141,4 +169,5 @@ export default class UsersController extends BasicController implements ICRUDCon
       return false;
     }
   }
+
 };

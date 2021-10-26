@@ -1,18 +1,18 @@
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // server //
-import { ServerInstance } from "../../../../src/server";
+import { ServerInstance } from "@/server/src/server";
 //
-import Admin from "../../../../src/models/Admin";
-import User from "../../../../src/models/User";
+import Admin from "@/server/src/models/Admin";
+import User from "@/server/src/models/User";
 // types //
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { GetAllUsersRes, GetOneUserRes, ErrorUserRes } from "@/redux/_types/users/dataTypes";
-import type { ResUserData } from "@/server/src/_types/users/userTypes";
+import type { CreateUserRes, ErrorUserRes, UserData } from "@/redux/_types/users/dataTypes";
+import type { ReqUserData } from "@/server/src/_types/users/userTypes";
 // helpers //
-import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
+import { generateMockAdmins, generateMockUsers } from "@/server/src/_helpers/mockDataGeneration";
 import { loginUser, generateMockUserData } from "../../../hepers/testHelpers";
 
 chai.use(chaiHTTP);
@@ -22,7 +22,7 @@ describe("UsersController:Create POST API Tests", () => {
   let adminUser: IAdmin;
   let confirmedRegUser: IUser;
   let unconfirmedRegUser: IUser;
-  let mockUserData: ResUserData;
+  let mockUserData: ReqUserData;
   // tokens //
   let adminJWTToken: string;
   let userJWTToken: string;
@@ -66,6 +66,7 @@ describe("UsersController:Create POST API Tests", () => {
     }
   })
   // CONTEXT GUEST User NO LOGIN //
+  /*
   context("Guest client - no Login", () => {
     describe("POST /api/users - default response - valid data", () => {
       it("Should NOT create a new User model and send back correct response", (done) => {
@@ -126,8 +127,10 @@ describe("UsersController:Create POST API Tests", () => {
       });
     });
   });
+  */
   // END CONTEXT GUEST User NO LOGIN //
   // CONTEXT User is logged in //
+  /*
   context("User present - User IS Logged in", () => {
     describe("POST /api/users - default response - valid data", () => {
       it("Should NOT create a new User model and send back correct response", (done) => {
@@ -189,6 +192,116 @@ describe("UsersController:Create POST API Tests", () => {
         }
       });
     });
+  });
+  */
+  // END CONTEXT User is logged in //
+  // CONTEXT Admin is logged in //
+  context("Admin present - ADMIN User IS Logged in", () => {
+    let _createdUser: UserData;
+    describe("POST /api/users - default response - valid data", () => {
+      it("Should create a new User model and send back correct response", (done) => {
+        chai.request(server)
+          .post("/api/users")
+          .set({ Authorization: adminJWTToken })
+          .send({ userData: mockUserData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, createdUser } = response.body as CreateUserRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(createdUser).to.be.an("object");
+            //
+            expect(response.body.error).to.be.undefined;
+            expect(response.body.errorMessages).to.be.undefined;
+            // 
+            _createdUser = createdUser;
+            done();
+          });
+      });
+      it("Should send back the correct User data in the response", () => {
+        expect(_createdUser._id).to.be.a("string");
+        expect(_createdUser.firstName).to.be.a("string");
+        expect(_createdUser.lastName).to.be.a("string");
+        expect(_createdUser.email).to.be.a("string");
+        expect(_createdUser.editedAt).to.be.a("string");
+        expect(_createdUser.createdAt).to.be.a("string");
+        // user should not be confirmed and password should not be sent back //
+        expect(_createdUser.confirmed).to.equal(false);
+        expect(_createdUser.password).to.be.undefined;
+      });
+      it("Should create a new User model and increment the number of User models by 1", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const updatedNumOfUsers: number = await User.countDocuments();
+          // 
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+          expect(updatedNumOfUsers).to.equal(numberOfUsers + 1);
+          // 
+          numberOfUsers = updatedNumOfUsers;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // POST /api/users Invalid data //
+    describe("POST /api/users - default response - invalid data", () => {
+      it("Should NOT create a NEW User model with an EMPTY email field", (done) => {
+        chai.request(server)
+          .post("/api/users")
+          .set({ Authorization: adminJWTToken })
+          .send({ userData: { ...mockUserData, email: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdPost).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT create a NEW User model with an INVALID email field type", (done) => {
+        chai.request(server)
+          .post("/api/users")
+          .set({ Authorization: adminJWTToken })
+          .send({ userData: { ...mockUserData, email: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdPost).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT create a NEW User model with a duplicate email field", (done) => {
+        chai.request(server)
+          .post("/api/users")
+          .set({ Authorization: adminJWTToken })
+          .send({ userData: { ...mockUserData, email: unconfirmedRegUser.email } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdPost).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      
+    });
+    // POST /api/users Invalid data //
   });
   // END CONTEXT User is logged in //
   after(async () => {

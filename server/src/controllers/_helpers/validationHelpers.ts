@@ -1,4 +1,7 @@
 import { Types } from "mongoose";
+// models //
+import Admin from "@/server/src/models/Admin";
+import User from "@/server/src/models/User";
 // type imports //
 import type { BlogPostFormData } from "@/redux/_types/blog_posts/dataTypes";
 import type { ValidationResponse } from "../../../../components/_helpers/validators";
@@ -35,6 +38,44 @@ export const validateRegistrationData = (data: { email?: string; password?: stri
     if (data.password !== data.confirmPassword) {
       errorMessages.push("Passwords do not match");
     }
+  }
+  return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
+};
+
+export const validateUserData = (data: { email?: string; password?: string; confirmPassword?: string; firstName?: string; lastName?: string; }): ValidationResponse => {
+  const errorMessages = [];
+  if (!data.email) {
+    errorMessages.push("Email is required");
+  }
+  if (!data.password) {
+    errorMessages.push("Password is required");
+  }
+  if (!data.confirmPassword) {
+    errorMessages.push("Password confirmation is required");
+  }
+
+  // validate correct types //
+  if (data.email) {
+    if (typeof data.email !== "string") {
+      errorMessages.push("Wrong input for email");
+    }
+  }
+  if (data.password && typeof data.password !== "string") {
+    errorMessages.push("Wrong input for password");
+  }
+  if (data.confirmPassword && typeof data.confirmPassword !== "string") {
+    errorMessages.push("Wrong input for password confirm");
+  }
+  if (data.password && data.confirmPassword) {
+    if (data.password !== data.confirmPassword) {
+      errorMessages.push("Passwords do not match");
+    }
+  }
+  if (data.firstName && typeof data.firstName !== "string") {
+    errorMessages.push("Wrong input type for first name field");
+  }
+  if (data.lastName && typeof data.lastName !== "string") {
+    errorMessages.push("Wrong input type for last name field");
   }
   return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
 };
@@ -156,5 +197,19 @@ export const validateProjectModelData = (data: { title?: string; description?: s
   }
   res.errorMessages.length > 0 ? res.valid = false : res.valid = true;
   return res;
-}
+};
+
+export const validateUniqueEmail = async (email: string): Promise<{ exists: boolean; message: string }> => {
+  try {
+    const admin = await Admin.findOne({ email: email }).exec();
+    if (admin) return { exists: true, message: "Email already exists" };
+    else {
+      const user = await User.findOne({ email: email }).exec();
+      if (user) return { exists: true, message: "Email already exists" };
+      else return { exists: false, message: "" };
+    }
+  } catch (error) {
+    throw error;
+  }
+};
   

@@ -1,10 +1,10 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Types, Schema } from "mongoose";
 import bcrypt from "bcrypt";
-import type { Document } from "mongoose";
+import type { Document, ObjectId } from "mongoose";
 import type { NextFunction } from "express";
 
 export interface IUser extends Document  {
-  _id: mongoose.Types.ObjectId;
+  _id: Types.ObjectId;
   firstName: string;
   lastName: string;
   email: string;
