@@ -1,6 +1,8 @@
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
+// helpers, middleware //
+import { checkforLogin } from "../controllers/_helpers/authHelpers"
 
 export default class UserRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -17,10 +19,14 @@ export default class UserRoutes extends CRUDRoutesController {
   }
 
   protected index(route: string): void {
-    super.index(route);
+    super.index(route, [
+      checkforLogin
+    ]);
   }
   protected getOne(route: string): void {
-    super.getOne(route);
+    super.getOne(route, [
+      checkforLogin
+    ]);
   }
   protected create(route: string): void {
     super.create(route);

@@ -1,18 +1,34 @@
 import type { Request, Response } from "express";
-import User from "../models/User";
+import User, { IUser } from "../models/User";
+import Admin, { IAdmin } from "../models/Admin";
 import { BasicController } from "../_types/abstracts/DefaultController";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes } from "../_types/users/userTypes";
 
 export default class UsersController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<UsersIndexRes>): Promise<Response<UsersIndexRes>> => {
-    try {
-      const users = await User.find({}).exec();
-      return res.status(200).json({
-        responseMsg: "Users returned", users
-      });
-    } catch (err) {
-      return await this.generalErrorResponse(res, { error: new Error("DB Error") });
+    const { limit = 10, confirmed } = req.query as { limit?: number; confirmed?: string; };
+    const user = req.user as IUser | IAdmin | null;
+    //
+    let users: IUser[];
+    const allowedQuery = this.getUsersIndexPermission({ query: { confirmed }, user });
+    if (allowedQuery) {
+      try {
+        if (confirmed && confirmed === "false") {
+          users = await User.find({ confirmed: false }).sort({ createdAt: "desc" }).limit(limit).exec();
+        } else if (confirmed && confirmed === "true") {
+          users = await User.find({ confirmed: true }).sort({ createdAt: "desc"}).limit(limit).exec();
+        } else {
+          users = await User.find({ confirmed: true }).sort({ createdAt: "desc"}).limit(limit).exec();
+        }
+        return res.status(200).json({
+          responseMsg: "Fetched users", users
+        });
+      } catch (err) {
+        return await this.generalErrorResponse(res, { error: new Error("DB Error") });
+      }
+    } else {
+      return this.notAllowedErrorResponse(res, [ "Action not allowed" ]);
     }
   }
   getOne = async (req: Request, res: Response<UsersGetOneRes>): Promise<Response<UsersGetOneRes>> => {
@@ -77,6 +93,19 @@ export default class UsersController extends BasicController implements ICRUDCon
       }
     } catch (error) { 
       return await this.generalErrorResponse(res, { error });
+    }
+  }
+
+  private getUsersIndexPermission = ({ query, user }: { query: any, user: IUser | IAdmin | null}) => {
+    if (query.confirmed && query.confirmed === "false") {
+      // only admin can see unconfirmed //
+      if (user && user instanceof Admin) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
     }
   }
 };
