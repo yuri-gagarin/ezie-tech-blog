@@ -59,3 +59,9 @@ export type DeleteUserRes = {
   deletedUser: UserData;
 };
 
+export type ErrorUserRes = {
+  responseMsg: string;
+  error: any;
+  errorMessages: string[];
+};
+

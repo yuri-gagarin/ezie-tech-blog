@@ -4,10 +4,12 @@ import chaiHTTP from "chai-http";
 import { ServerInstance } from "../../../../src/server";
 //
 import Admin from "../../../../src/models/Admin";
+import User from "../../../../src/models/User";
 // types //
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
-import type { GetAllUsersRes } from "@/redux/_types/users/dataTypes";
+import type { IUser } from "@/server/src/models/User";
+import type { GetAllUsersRes, ErrorUserRes } from "@/redux/_types/users/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser } from "../../../hepers/testHelpers";
@@ -16,15 +18,18 @@ chai.use(chaiHTTP);
 
 describe("UsersController GET API Tests", () => {
   let adminUser: IAdmin;
+  let regUser: IUser;
   let adminJWTToken: string;
+  let userJWTToken: string;
   let server: Express;
 
   before(async () => {
     try {
       await generateMockAdmins(1);
-      await generateMockUsers(20);
+      await generateMockUsers(1);
       // adminUser //
       adminUser = await Admin.findOne({});
+      regUser = await User.findOne({});
       //
       server = ServerInstance.getExpressServer();
     } catch (error) {
@@ -36,7 +41,9 @@ describe("UsersController GET API Tests", () => {
     try {
       const { email } = adminUser;
       const tokenData = await loginUser({ chai, email, server });
+      const regUserTokenData = await loginUser({ chai, server, email: regUser.email });
       adminJWTToken = tokenData.userJWTToken;
+      userJWTToken = regUserTokenData.userJWTToken;
     } catch (error) {
       throw (error);
     }
@@ -98,6 +105,68 @@ describe("UsersController GET API Tests", () => {
             for (const user of users) {
               expect(user.confirmed).to.equal(false);
             }
+            done();
+          });
+      });
+    });
+  });
+  // END CONTEXT LOGGED IN ADMIN //
+  // CONTEXT Logged in User /
+  context("Logged In User", () => {
+    describe("GET /api/users default response", () => {
+      it("Should be able to retreive User models and send back the correct response", (done) => {
+        chai.request(server)
+          .get("/api/users")
+          .set({ Authorization: userJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, users } = response.body as GetAllUsersRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(users).to.be.an("array");
+            expect(users.length).to.be.at.most(10);
+            for (const user of users) {
+              expect(user.confirmed).to.equal(true);
+            }
+            done();
+          });
+      });
+    });
+    describe("GET /api/users?confirmed=true  response", () => {
+      it("Should be able to retreive User models and send back the correct response", (done) => {
+        chai.request(server)
+          .get("/api/users")
+          .set({ Authorization: userJWTToken })
+          .query({ confirmed: true })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, users } = response.body as GetAllUsersRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(users).to.be.an("array");
+            expect(users.length).to.be.at.most(10);
+            for (const user of users) {
+              expect(user.confirmed).to.equal(true);
+            }
+            done();
+          });
+      });
+    });
+    describe("GET /api/users?confirmed=false  response", () => {
+      it("Should NOT be able to retreive User models and send back the correct response", (done) => {
+        chai.request(server)
+          .get("/api/users")
+          .set({ Authorization: userJWTToken })
+          .query({ confirmed: false })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.users).to.be.undefined;            
             done();
           });
       });
