@@ -66,7 +66,6 @@ describe("UsersController:Create POST API Tests", () => {
     }
   })
   // CONTEXT GUEST User NO LOGIN //
-  /*
   context("Guest client - no Login", () => {
     describe("POST /api/users - default response - valid data", () => {
       it("Should NOT create a new User model and send back correct response", (done) => {
@@ -127,10 +126,8 @@ describe("UsersController:Create POST API Tests", () => {
       });
     });
   });
-  */
   // END CONTEXT GUEST User NO LOGIN //
   // CONTEXT User is logged in //
-  /*
   context("User present - User IS Logged in", () => {
     describe("POST /api/users - default response - valid data", () => {
       it("Should NOT create a new User model and send back correct response", (done) => {
@@ -193,7 +190,6 @@ describe("UsersController:Create POST API Tests", () => {
       });
     });
   });
-  */
   // END CONTEXT User is logged in //
   // CONTEXT Admin is logged in //
   context("Admin present - ADMIN User IS Logged in", () => {
