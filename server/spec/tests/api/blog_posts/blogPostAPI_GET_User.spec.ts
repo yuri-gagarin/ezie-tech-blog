@@ -30,7 +30,7 @@ describe("BlogPost User API tests GET requests", function() {
   before(async () => {
     try {
       server = ServerInstance.getExpressServer();
-      await generateMockUsers(2);
+      await generateMockUsers({ number: 2, confirmed: true });
       const users = await User.find({}).limit(2);
       ([ firstUser, secondUser ] = users);
       //await generateMockBlogPosts(10);

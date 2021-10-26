@@ -33,19 +33,25 @@ export default class UsersController extends BasicController implements ICRUDCon
   }
   getOne = async (req: Request, res: Response<UsersGetOneRes>): Promise<Response<UsersGetOneRes>> => {
     const { user_id } = req.params;
-    if (!user_id) return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve user id") });
+    const currentUser = req.user as IAdmin | IUser | null;
 
+    if (!user_id) return await this.userInputErrorResponse(res, [ "Could not resolve User id" ]);
+    //
     try {
       const user = await User.findOne({ _id: user_id }).exec();
       if (user) {
-        return res.status(200).json({
-          responseMsg: "User found", user
-        });
+        if (this.getOneUserPermission({ user, currentUser })) {
+          return res.status(200).json({
+            responseMsg: "Retrieved queried User", user
+          });
+        } else {
+          return this.notAllowedErrorResponse(res, [ "Not allowed to get User data" ]);
+        }
       } else {
-        return await this.generalErrorResponse(res, { status: 404, error: new Error("User not found") });
+        return await this.notFoundErrorResponse(res, [ "Queried User not found" ]);
       }
     } catch (error) {
-      return await this.generalErrorResponse(res, { error: new Error("Database error") });
+      return await this.generalErrorResponse(res, { error });
     }
   }
   create = async (req: Request, res: Response<UsersCreateRes>): Promise<Response> => {
@@ -96,6 +102,7 @@ export default class UsersController extends BasicController implements ICRUDCon
     }
   }
 
+  // PRIVATE helper methods //
   private getUsersIndexPermission = ({ query, user }: { query: any, user: IUser | IAdmin | null}) => {
     if (query.confirmed && query.confirmed === "false") {
       // only admin can see unconfirmed //
@@ -106,6 +113,29 @@ export default class UsersController extends BasicController implements ICRUDCon
       }
     } else {
       return true;
+    }
+  }
+
+  private getOneUserPermission = ({ user, currentUser }: { user: IUser; currentUser: IAdmin | IUser | null }) => {
+    if (user.confirmed) {
+      // anynone can query <confirmed> User model //
+      return true;
+    } else {
+      if (this.isAdmin(currentUser)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  private isAdmin = (user: IAdmin | IUser | null) => {
+    if (user && user instanceof Admin) {
+      return true;
+    } else if (user && user instanceof User) {
+      return false;
+    } else {
+      return false;
     }
   }
 };

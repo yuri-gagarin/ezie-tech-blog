@@ -31,7 +31,7 @@ describe("BlogPost ADMIN API tests GET requests", function() {
   before(async () => {
     try {
       server = ServerInstance.getExpressServer();
-      await generateMockUsers(1);
+      await generateMockUsers({ number: 1, confirmed: true });
       await generateMockAdmins(1);
       //
       adminUser = await Admin.findOne({});

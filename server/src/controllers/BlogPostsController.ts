@@ -1,4 +1,4 @@
-6// models //
+// models //
 import BlogPost from "../models/BlogPost";
 import Admin from "../models/Admin";
 import User from "../models/User";

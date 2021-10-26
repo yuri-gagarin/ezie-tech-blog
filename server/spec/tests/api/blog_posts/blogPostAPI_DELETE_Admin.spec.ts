@@ -39,7 +39,7 @@ describe("BlogPost Admin logged in API tests DELETE tests", function() {
     try {
       server = ServerInstance.getExpressServer();
       await generateMockAdmins(1);
-      await generateMockUsers(1);
+      await generateMockUsers({ number: 1, confirmed: true });
       adminUser = await Admin.findOne({});
       otherUser = await User.findOne({});
     } catch (error) {

@@ -24,7 +24,7 @@ describe("BlogPost Guest API tests", function() {
   before(async () => {
     try {
       server = ServerInstance.getExpressServer();
-      await generateMockUsers(1);
+      await generateMockUsers({ number: 1, confirmed: true });
       //await generateMockBlogPosts(10);
     } catch (error) {
       console.log(error);

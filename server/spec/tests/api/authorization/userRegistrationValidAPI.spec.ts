@@ -24,7 +24,7 @@ describe("User Registration API tests", () => {
     try {
       server = ServerInstance.getExpressServer();
       await generateMockAdmins(1);
-      await generateMockUsers(1);
+      await generateMockUsers({ number: 1, confirmed: true });
       adminUser = await Admin.findOne({});
       regUser = await User.findOne({});
     } catch (error) {

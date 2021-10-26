@@ -24,7 +24,7 @@ describe("Admin Login API tests", () => {
     try {
       server = ServerInstance.getExpressServer();
       await generateMockAdmins(2);
-      await generateMockUsers(2);
+      await generateMockUsers({ number: 2, confirmed: true });
       adminUser = await Admin.findOne({});
       regUser = await User.findOne({});
     } catch (error) {
