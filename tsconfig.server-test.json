@@ -8,7 +8,14 @@
     "noImplicitAny": false,
     "removeComments": true,
     "inlineSourceMap": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@/styles/*": ["styles/*"],
+      "@/components/*": ["components/*"],
+      "@/redux/*": ["redux/*"],
+      "@/server/*": ["server/*"]
+    },
   },
   "include": [ "server/spec/**/*.spec.ts" ]
 }

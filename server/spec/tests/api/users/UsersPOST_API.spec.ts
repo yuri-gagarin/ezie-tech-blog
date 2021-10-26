@@ -74,6 +74,69 @@ describe("UsersController:Create POST API Tests", () => {
           .send({ userData: mockUserData })
           .end((err, response) => {
             if (err) done(err);
+            // const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(401);
+            //expect(responseMsg).to.be.a("string");
+            //expect(error).to.be.an("object");
+            //expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdUser).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT create a new User model and alter the database in any way", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const updatedNumOfUsers: number = await User.countDocuments();
+          // 
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+          expect(updatedNumOfUsers).to.equal(numberOfUsers);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    describe("POST /api/users - default response - invalid data", () => {
+      it("Should NOT create a new User model and send back correct response", (done) => {
+        chai.request(server)
+          .post("/api/users")
+          .send({ userData: {} })
+          .end((err, response) => {
+            if (err) done(err);
+            //const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(401);
+            //expect(responseMsg).to.be.a("string");
+            //expect(error).to.be.an("object");
+            //expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdUser).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT create a new User model and alter the database in any way", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const updatedNumOfUsers: number = await User.countDocuments();
+          // 
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+          expect(updatedNumOfUsers).to.equal(numberOfUsers);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+  // END CONTEXT GUEST User NO LOGIN //
+  // CONTEXT User is logged in //
+  context("User present - User IS Logged in", () => {
+    describe("POST /api/users - default response - valid data", () => {
+      it("Should NOT create a new User model and send back correct response", (done) => {
+        chai.request(server)
+          .post("/api/users")
+          .set({ Authorization: userJWTToken })
+          .send({ userData: mockUserData })
+          .end((err, response) => {
+            if (err) done(err);
             const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
             expect(response.status).to.equal(401);
             expect(responseMsg).to.be.a("string");
@@ -100,6 +163,7 @@ describe("UsersController:Create POST API Tests", () => {
       it("Should NOT create a new User model and send back correct response", (done) => {
         chai.request(server)
           .post("/api/users")
+          .set({ Authorization: userJWTToken })
           .send({ userData: {} })
           .end((err, response) => {
             if (err) done(err);
@@ -126,7 +190,7 @@ describe("UsersController:Create POST API Tests", () => {
       });
     });
   });
-  // END CONTEXT GUEST User NO LOGIN //
+  // END CONTEXT User is logged in //
   after(async () => {
     try {
       await Admin.deleteMany({});

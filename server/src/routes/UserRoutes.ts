@@ -1,8 +1,12 @@
-import type { Router  } from "express";
-import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
+
+import { PassportContInstance } from "@/server/src/server";
+import { CRUDRoutesController } from "@/server/src/_types/abstracts/RoutesTypes";
+import { StrategyNames } from "@/server/src/controllers/PassportController";
+// types //
+import type { Router } from "express";
+import type { ICRUDController } from "@/server/src/_types/abstracts/DefaultController";
 // helpers, middleware //
-import { checkforLogin } from "../controllers/_helpers/authHelpers"
+import { checkforLogin, verifyAdmin } from "@/server/src/controllers/_helpers/authHelpers"
 
 export default class UserRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -29,7 +33,10 @@ export default class UserRoutes extends CRUDRoutesController {
     ]);
   }
   protected create(route: string): void {
-    super.create(route);
+    super.create(route, [
+      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
+      verifyAdmin 
+    ]);
   }
   protected edit(route: string): void {
     super.edit(route);

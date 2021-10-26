@@ -54,7 +54,10 @@ export default class UsersController extends BasicController implements ICRUDCon
       return await this.generalErrorResponse(res, { error });
     }
   }
+  // only Admin level users should be able to create any new additional users in DB //
+  // for now //
   create = async (req: Request, res: Response<UsersCreateRes>): Promise<Response> => {
+    const currentUser = req.user as IAdmin;
     const { email, password } = req.body;
 
     try {

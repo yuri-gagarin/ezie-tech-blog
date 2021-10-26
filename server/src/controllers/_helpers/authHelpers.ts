@@ -69,4 +69,5 @@ export const verifyAdmin = async (req: Request, res: Response<ErrorResponse>, ne
       next();
     }
   }
-}
+};
+
