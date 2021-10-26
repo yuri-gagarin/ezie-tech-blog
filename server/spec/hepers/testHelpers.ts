@@ -4,7 +4,8 @@ import BlogPost from "../../src/models/BlogPost";
 // types //
 import type { Express} from "express";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
-import { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
+import type { ResUserData } from "@/server/src/_types/users/userTypes";
+import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
 
 export const processBlogPostTestError = () => {
 
@@ -61,4 +62,13 @@ export const generateMockPostData = ({ authorId, name }: { authorId: string; nam
     category: "beginner",
     published: false,
   }
-}
+};
+export const generateMockUserData = (): ResUserData => {
+  return {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: "password",
+    confirmPassword: "password",
+  };
+};

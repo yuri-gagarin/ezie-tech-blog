@@ -333,6 +333,15 @@ describe("UsersController GET API Tests", () => {
       });
     });
   });
-})
+  // END CONTEXT GUEST User NO LOGIN //
+  after(async () => {
+    try {
+      await Admin.deleteMany({});
+      await User.deleteMany({});
+    } catch (error) {
+      throw error;
+    }
+  });
+});
 
 export {}

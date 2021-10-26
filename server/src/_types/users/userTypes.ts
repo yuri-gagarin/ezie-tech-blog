@@ -6,6 +6,7 @@ export type ResUserData = {
   lastName?: string;
   email?: string;
   password?: string;
+  confirmPassword?: string;
   confirmed?: boolean;
   editedAt?: Date;
   createdAt?: Date;
