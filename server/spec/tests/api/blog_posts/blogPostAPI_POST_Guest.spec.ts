@@ -1,14 +1,14 @@
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // models //
-import BlogPost from "@/server/src/models/BlogPost";
+import BlogPost, { IBlogPost } from "@/server/src/models/BlogPost";
 import User from "@/server/src/models/User";
 // server //
 import { ServerInstance } from "../../../../src/server";
 // types //
 import type { Express } from "express";
 import type { IUser } from "@/server/src/models/User";
-import type { ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
+import type { BlogPostData, CreateBlogPostRes, ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
 // helpers //
 import { generateMockBlogPosts, generateMockUsers } from "@/server/src/_helpers/mockDataGeneration";
@@ -467,25 +467,47 @@ describe("BlogPostsController:Create POST API Tests", () => {
       });
     });
     describe("POST /api/uers - default response VALID data", () => {
-      it("Should NOT create a new <BlogPost> model and send back a correct response", (done) => {
+      let _createdBlogPost: BlogPostData;
+      it("Should CORRECTLY create a NEW <BlogPost> model and send back a correct response", (done) => {
         chai.request(server)
           .post("/api/posts")
-          .set({ Authorization: readerToken })
+          .set({ Authorization: contributorToken })
           .send({ blogPostData: mockBlogPostData })
-          .end((error, response) => {
-            if (error) done(error);
-            // response is at the moment general //
-            expect(response.status).to.equal(401);
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, createdBlogPost } = response.body as CreateBlogPostRes; 
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(createdBlogPost).to.be.an("object");
+            // 
+            expect(response.body.error).to.be.undefined;
+            expect(response.body.errorMessages).to.be.undefined;
             //
-            expect(response.body.createdBogPost).to.be.undefined;
+            _createdBlogPost = createdBlogPost;
             done();
-          })
+          });
       });
-      it("Should NOT alter the number of <BlogPost> models in the database", async () => {
+      it("Should correctly set the new <BlogPost> model fields", () => {
+        expect(_createdBlogPost._id).to.be.a("string");
+        expect(_createdBlogPost.title).to.equal(mockBlogPostData.title);
+        expect(_createdBlogPost.content).to.equal(mockBlogPostData.content);
+        expect(_createdBlogPost.author).to.eql(mockBlogPostData.author);
+        expect(_createdBlogPost.keywords).to.eql(mockBlogPostData.keywords);
+        expect(_createdBlogPost.category).to.equal(mockBlogPostData.category);
+        expect(_createdBlogPost.published).to.equal(false);
+        expect(_createdBlogPost.editedAt).to.be.a("string");
+        expect(_createdBlogPost.createdAt).to.be.a("string");       
+      })
+      it("Should insert <BlogPost> model in the database and increment the number of <BlogPost> by 1", async () => {
         try {
+          const createdBlogPost = await BlogPost.findOne({ _id: _createdBlogPost._id });
           const updatedNumOfBlogPosts: number = await BlogPost.countDocuments();
+          // assert //
+          expect(updatedNumOfBlogPosts).to.equal(numberOfBlogPosts + 1);
+          expect(createdBlogPost).to.not.be.null;
           //
-          expect(updatedNumOfBlogPosts).to.equal(numberOfBlogPosts);
+          numberOfBlogPosts = updatedNumOfBlogPosts;
         } catch (error) {
           throw error;
         }
