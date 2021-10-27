@@ -7,7 +7,7 @@ import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes, ReqUserData } from "../_types/users/userTypes";
 // helpers validators //
-import { validateUserData, validateUniqueEmail } from "./_helpers/validationHelpers";
+import { validateUserData, validateUniqueEmail, validateEditEmail } from "./_helpers/validationHelpers";
 
 export default class UsersController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<UsersIndexRes>): Promise<Response<UsersIndexRes>> => {
@@ -108,6 +108,9 @@ export default class UsersController extends BasicController implements ICRUDCon
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
     //
     try {
+      const { exists, message } = await validateEditEmail(userData.email, user_id);
+      if (exists) return await this.userInputErrorResponse(res, [ message ]);
+      // data is checked and fine //
       const editedUser = await User.findOneAndUpdate(
         { _id: user_id }, 
         { email: userData.email, firstName: userData.firstName, lastName: userData.lastName, editedAt: new Date() }, 

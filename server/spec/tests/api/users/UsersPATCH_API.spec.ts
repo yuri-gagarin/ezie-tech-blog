@@ -214,11 +214,65 @@ describe("UsersController:Edit PATCH API Tests", () => {
           expect(_editedUser.createdAt).to.be.a("string");
         });
       });
-      /*
+      
       describe("PATCH /api/users/:user_id - default response - invalid data", () => {
-        
+        it("Should NOT update an EXISTING User model with an EMPTY <email> field", (done) => {
+          chai.request(server)
+            .patch(`/api/users/${userId}`)
+            .set({ Authorization: adminJWTToken })
+            .send({ userData: { email: "", firstName: mockUserData.firstName, lastName: mockUserData.lastName } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+              expect(response.status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(response.body.createdPost).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT create a NEW User model with an INVALID <email> field type", (done) => {
+          chai.request(server)
+            .patch(`/api/users/${userId}`)
+            .set({ Authorization: adminJWTToken })
+            .send({ userData: { email: {}, firstName: mockUserData.firstName, lastName: mockUserData.lastName} })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+              expect(response.status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(response.body.createdPost).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT create a NEW User model with a duplicate <email> field", (done) => {
+          chai.request(server)
+            .patch(`/api/users/${userId}`)
+            .set({ Authorization: adminJWTToken })
+            .send({ userData: { email: adminUser.email, firstName: mockUserData.firstName, lastName: mockUserData.lastName } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+              expect(response.status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(response.body.createdPost).to.be.undefined;
+              // 
+              done();
+            });
+        });
       });
-      */
+      
+    
     });
     // END Context User editing own model //
   });

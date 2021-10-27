@@ -212,4 +212,20 @@ export const validateUniqueEmail = async (email: string): Promise<{ exists: bool
     throw error;
   }
 };
+
+export const validateEditEmail = async (email: string, userId: string): Promise<{ exists: boolean; message: string}> => {
+  try {
+    const admin  = await Admin.findOne({ email: email, _id: { $ne: userId } });
+    if (admin) {
+      // exists //
+      return { exists: true, message: "Email already exists for another user" };
+    } else {
+      const user = await User.findOne({ email: email, _id: { $ne: userId } });
+      if (user) return { exists: true, message: "Email already exists for another user" };
+      else return { exists: false, message: "" };
+    }
+  } catch (error) {
+    throw error;
+  }
+};
   
