@@ -66,7 +66,6 @@ describe("UsersController:Edit PATCH API Tests", () => {
     }
   })
   // CONTEXT GUEST User NO LOGIN //
-  /*
   context("Guest client - no Login", () => {
     let userId: string;
     before(() => {
@@ -163,15 +162,115 @@ describe("UsersController:Edit PATCH API Tests", () => {
       });
     });
   });
-  */
   // END CONTEXT GUEST User NO LOGIN //
   // CONTEXT User is logged in //
   context("User is logged in - Regular User", () => {
     let userId: string;
+    let unconfirmedUserId: string;
     let _editedUser: UserData; 
     before(() => {
       userId = confirmedRegUser._id.toHexString();
+      unconfirmedUserId = unconfirmedRegUser._id.toHexString();
     });
+
+    // CONTEXT User editing other users model //
+    context("User is editing OTHER User's model", () => {
+      describe("PATCH /api/users/:user_id - default response - valid data", () => {
+        it("Should NOT update a User model and send back correct response", (done) => {
+          chai.request(server)
+            .patch(`/api/users/${unconfirmedUserId}`)
+            .set({ Authorization: userJWTToken })
+            .send({ userData: mockUserData })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+              expect(response.status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(response.body.createdUser).to.be.undefined;
+              done();
+            });
+        });
+        it("Should NOT alter the number of Admin or User models in the database", async () => {
+          try {
+            const updatedNumOfAdmins: number = await Admin.countDocuments();
+            const updatedNumOfUsers: number = await User.countDocuments();
+            // 
+            expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+            expect(updatedNumOfUsers).to.equal(numberOfUsers);
+          } catch (error) {
+            throw error;
+          }
+        });
+        it("Should NOT alter the queried User model in any way", async () => {
+          try {
+            const queriedModel: IUser = await User.findById(userId);
+            // 
+            expect(queriedModel._id.toHexString()).to.equal(confirmedRegUser._id.toHexString());
+            expect(queriedModel.firstName).to.equal(confirmedRegUser.firstName);
+            expect(queriedModel.lastName).to.equal(confirmedRegUser.lastName);
+            expect(queriedModel.email).to.equal(confirmedRegUser.email);
+            expect(queriedModel.password).to.equal(confirmedRegUser.password);
+            expect(queriedModel.confirmed).to.equal(confirmedRegUser.confirmed);
+            expect(queriedModel.editedAt.toISOString()).to.equal(confirmedRegUser.editedAt.toISOString());
+            expect(queriedModel.createdAt.toISOString()).to.equal(confirmedRegUser.createdAt.toISOString());
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+      describe("PATCH /api/users/:user_id - default response - invalid data", () => {
+        it("Should NOT update a User model and send back correct response", (done) => {
+          chai.request(server)
+            .patch(`/api/users/${unconfirmedUserId}`)
+            .set({ Authorization: userJWTToken })
+            .send({ userData: {} })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+              expect(response.status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(response.body.createdUser).to.be.undefined;
+              done();
+            });
+        });
+        it("Should NOT alter the number of Admin or User models in the database", async () => {
+          try {
+            const updatedNumOfAdmins: number = await Admin.countDocuments();
+            const updatedNumOfUsers: number = await User.countDocuments();
+            // 
+            expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+            expect(updatedNumOfUsers).to.equal(numberOfUsers);
+          } catch (error) {
+            throw error;
+          }
+        });
+        it("Should NOT alter the queried User model in any way", async () => {
+          try {
+            const queriedModel: IUser = await User.findById(userId);
+            // 
+            expect(queriedModel._id.toHexString()).to.equal(confirmedRegUser._id.toHexString());
+            expect(queriedModel.firstName).to.equal(confirmedRegUser.firstName);
+            expect(queriedModel.lastName).to.equal(confirmedRegUser.lastName);
+            expect(queriedModel.email).to.equal(confirmedRegUser.email);
+            expect(queriedModel.password).to.equal(confirmedRegUser.password);
+            expect(queriedModel.confirmed).to.equal(confirmedRegUser.confirmed);
+            expect(queriedModel.editedAt.toISOString()).to.equal(confirmedRegUser.editedAt.toISOString());
+            expect(queriedModel.createdAt.toISOString()).to.equal(confirmedRegUser.createdAt.toISOString());
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+    });
+    // END CONTEXT User editing other users model //
+
+    // CONTEXT User is editing own model //
     context("User editing own model", () => {
       describe("PATCH /api/users/:user_id - default response - valid data", () => {
         it("Should correctly update a User model and send back correct response", (done) => {
@@ -271,8 +370,6 @@ describe("UsersController:Edit PATCH API Tests", () => {
             });
         });
       });
-      
-    
     });
     // END Context User editing own model //
   });
