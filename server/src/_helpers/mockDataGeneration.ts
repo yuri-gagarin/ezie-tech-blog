@@ -114,19 +114,21 @@ export const generateMockAdmins = async (num?: number): Promise<void> => {
     }
   } 
 }
-export const generateMockUsers = async ({ number, confirmed }: { number?: number; confirmed?: boolean }): Promise<void> => {
+export const generateMockUsers = async ({ number, confirmed, type }: { number?: number; confirmed?: boolean; type?: "READER" | "CONTRIBUTOR" }): Promise<void> => {
   const numToGenerate: number = number ? number : 10;
   for (let i = 0; i < numToGenerate; i++) {
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
     const email = `${firstName}_${lastName}@mail.com`;
+    const userType = type ? type : (randomIntFromInterval(0, 1) ? "READER" : "CONTRIBUTOR");
     let confirmedStatus: boolean = typeof confirmed === "boolean" ? confirmed : (randomIntFromInterval(0, 1) ? true : false);
     const user = new User({
       firstName,
       lastName,
       email,
       password: "password",
-      confirmed: confirmedStatus
+      confirmed: confirmedStatus,
+      userType
     });
     try {
       await user.save();

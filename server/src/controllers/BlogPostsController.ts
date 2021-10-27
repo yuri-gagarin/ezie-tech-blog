@@ -85,6 +85,8 @@ export default class BlogPostsController extends BasicController implements ICRU
     }
   }
 
+  // AT the moment only Admin level users and Users with CONTRIBUTOR status can create new Blog Posts //
+  // Relavant middleware to check permissions should be ran before method //
   create = async (req: Request, res: Response<CreateBlogPostRes>): Promise<Response<CreateBlogPostRes>> => {
     const user = req.user as (IAdmin | IUser);
     const { _id: authorId } = user;

@@ -3,7 +3,7 @@ import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
 import { StrategyNames } from "../controllers/PassportController";
 // custom middleware //
 import { checkforLogin } from "../controllers/_helpers/authHelpers"
-import { verifyUserModelAndPostId, verifyBlogPostModelAccess } from "../controllers/_helpers/blogPostControllerHelpers";
+import { verifyUserModelAndPostId, verifyBlogPostModelAccess, verifyUserLevel } from "../controllers/_helpers/blogPostControllerHelpers";
 // types //
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
@@ -35,7 +35,8 @@ export default class PostRoutes extends CRUDRoutesController {
   }
   protected create(route: string): void {
     super.create(route, [ 
-      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false })
+      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
+      verifyUserLevel
     ]);
   }
   protected edit(route: string): void {

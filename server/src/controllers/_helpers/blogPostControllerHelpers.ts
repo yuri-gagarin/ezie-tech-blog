@@ -1,13 +1,16 @@
 import { Types } from "mongoose";
 // models //
-import BlogPost from "../../models/BlogPost";
+import Admin from "@/server/src/models/Admin";
+import User from "@/server/src/models/User";
+import BlogPost from "@/server/src/models/BlogPost";
 // types //
 import type { Request, Response, NextFunction } from "express";
 import type { IAdmin } from "../../models/Admin";
 import type { IUser } from "../../models/User";
-// 
 import type { IBlogPost } from "../../models/BlogPost";
 import type { BlogPostErrRes } from "../../_types/blog_posts/blogPostTypes";
+// general helpers //
+import { respondWithNotAllowedError } from "./generalHelpers";
 
 
 export const verifyUserModelAndPostId = async (req: Request, res: Response<BlogPostErrRes>, next: NextFunction): Promise<any> => {
@@ -35,6 +38,24 @@ export const verifyUserModelAndPostId = async (req: Request, res: Response<BlogP
     });
   }
   return next();
+};
+
+export const verifyUserLevel = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+  const user = req.user as (IAdmin | IUser);
+  if (user instanceof Admin) {
+    // admin can create, edit, delete //
+    return next();
+  } else if (user instanceof User) {
+    if (user.userType === "CONTRIBUTOR") {
+      // contributor can CREATE, EDIT DELETE //
+      return next();
+    } else {
+      return respondWithNotAllowedError(res, [ "This action is not allowed" ]);
+    }
+  } else {
+    // should not be here but just in case ... //
+    return respondWithNotAllowedError(res, [ "This action is not allowed" ]);
+  }
 };
 
 export const verifyBlogPostModelAccess = async (req: Request, res: Response<BlogPostErrRes>, next: NextFunction): Promise<Response| void> => {

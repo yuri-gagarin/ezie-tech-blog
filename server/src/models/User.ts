@@ -36,7 +36,6 @@ UserSchema.pre("save", async function(next: NextFunction) {
   const salt = 10;
   const passwordHash = await bcrypt.hash(this.password, salt) // using default recommended 10 salt rounds //
   this.password = passwordHash;
-  this.userType = "READER";
   next();
 });
 

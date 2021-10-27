@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 // 
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
@@ -191,27 +190,7 @@ describe("BlogPost Guest API tests", function() {
       });
     });
     // END GET /api/posts/:post_id //
-    // POST /api/posts //
-    describe("POST /api/posts", () => {
-      it("Should not allow a guest client to create Blog Posts", (done) => {
-        chai.request(server)
-          .post("/api/posts")
-          .end((err, res) => {
-            if (err) done(err);
-            expect(res.status).to.equal(401);
-            done();
-          });
-      });
-      it("Should NOT alter the number of <BlogPost> models in the database", async () => {
-        try {
-          const updatedNum = await BlogPost.countDocuments();
-          expect(updatedNum).to.equal(numberOfPosts); 
-        } catch (error) {
-          console.log(error);
-          process.exit(1);
-        }
-      });
-    });
+    
     // END POST /api/posts //
     // PATCH /api/posts/:post_id //
     describe("PATCH /api/posts/:post_id", () => {
