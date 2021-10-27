@@ -217,4 +217,56 @@ describe("UsersController:Delete DELETE API Tests", () => {
     // END TEST Model belongs to User //
   });
   // END Context User is logged in //
+  // CONTEXT Admin User is logged in //
+  context("Admin Client - A VALID Admin is logged in", () => {
+    let otherUserId: string;
+    before(() => {
+      otherUserId = unconfirmedRegUser._id.toHexString();
+    });
+     // TEST model DOES not belong to logged in Admin //
+     describe("DELETE /api/users/:user_id - User model DOES NOT BELONG to logged in Admin", () => {
+      it ("Should delete an existing User model and send back the correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/users/${otherUserId}`)
+          .set({ Authorization: adminJWTToken})
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, deletedUser} = response.body as DeleteUserRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(deletedUser).to.be.an("object");
+            //
+            expect(deletedUser._id).to.be.a("string");
+            expect(deletedUser.email).to.be.a("string");
+            expect(deletedUser.firstName).to.be.a("string");
+            expect(deletedUser.lastName).to.be.a("string");
+            done();
+          })
+      });
+      it("Should REMOVE  the queried User model from the database", async () => {
+        try {
+          const queriedUser: IUser | null = await User.findOne({ _id: otherUserId });
+          // compare //
+          expect(queriedUser).to.be.null;
+        } catch (error) {
+          throw error;
+        }
+      });
+      it("Shoud decrement number of User models in the database by 1", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          // 
+          expect(updatedNumOfUsers).to.equal(numberOfUsers - 1);
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+          // 
+          numberOfUsers = updatedNumOfUsers;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST Model belongs to User //
+  });
+  // END CONTEXT Admin User is logged in //
 });
