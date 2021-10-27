@@ -9,7 +9,7 @@ import User from "@/server/src/models/User";
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { EditUserRes, ErrorUserRes, UserData } from "@/redux/_types/users/dataTypes";
+import type { DeleteUserRes, ErrorUserRes } from "@/redux/_types/users/dataTypes";
 import type { ReqUserData } from "@/server/src/_types/users/userTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "@/server/src/_helpers/mockDataGeneration";
@@ -70,7 +70,7 @@ describe("UsersController:Delete DELETE API Tests", () => {
     before(() => {
       userId = confirmedRegUser._id.toHexString();
     });
-    
+
     describe("DELETE /api/users/:user_id", () => {
       it ("Should NOT delete an existing User model and send back the correct response", (done) => {
         chai.request(server)
@@ -78,10 +78,12 @@ describe("UsersController:Delete DELETE API Tests", () => {
           .end((err, response) => {
             if (err) done(err);
             const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(401);
+            /*
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
-            //
+            */
             expect(response.body.deletedUser).to.be.undefined;
             done();
           })
@@ -115,5 +117,104 @@ describe("UsersController:Delete DELETE API Tests", () => {
     });
   });
   // END GUEST Client without login //
-
+  // Context User Logged in //
+  context("User Client - A VALID User is logged in", () => {
+    let userId: string;
+    let otherUserId: string;
+    before(() => {
+      userId = confirmedRegUser._id.toHexString();
+      otherUserId = unconfirmedRegUser._id.toHexString();
+    });
+    // TEST model does not belong to user //
+    describe("DELETE /api/users/:user_id - User model DOES NOT BELONG to logged in User", () => {
+      it ("Should NOT delete an existing User model and send back the correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/users/${otherUserId}`)
+          .set({ Authorization: userJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.deletedUser).to.be.undefined;
+            done();
+          })
+      });
+      it("Should NOT alter the queried User model the database in any way", async () => {
+        try {
+          const queriedUser = await User.findOne({ _id: otherUserId });
+          // compare //
+          expect(queriedUser.email).to.equal(unconfirmedRegUser.email);
+          expect(queriedUser.firstName).to.equal(unconfirmedRegUser.firstName);
+          expect(queriedUser.lastName).to.equal(unconfirmedRegUser.lastName);
+          expect(queriedUser.password).to.equal(unconfirmedRegUser.password);
+          expect(queriedUser.confirmed).to.equal(unconfirmedRegUser.confirmed);
+          expect(queriedUser.editedAt.toISOString()).to.equal(unconfirmedRegUser.editedAt.toISOString());
+          expect(queriedUser.createdAt.toISOString()).to.equal(unconfirmedRegUser.createdAt.toISOString());
+        } catch (error) {
+          throw error;
+        }
+      });
+      it("Shoud NOT alter the number of User or Admin models in the database in any way", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          // 
+          expect(updatedNumOfUsers).to.equal(numberOfUsers);
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST model does NOT belong to user //
+    // TEST model belongs to logged in user //
+    describe("DELETE /api/users/:user_id - User model DOES BELONG to logged in User", () => {
+      it ("Should delete an existing User model and send back the correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/users/${userId}`)
+          .set({ Authorization: userJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, deletedUser} = response.body as DeleteUserRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(deletedUser).to.be.an("object");
+            //
+            expect(deletedUser._id).to.be.a("string");
+            expect(deletedUser.email).to.be.a("string");
+            expect(deletedUser.firstName).to.be.a("string");
+            expect(deletedUser.lastName).to.be.a("string");
+            done();
+          })
+      });
+      it("Should REMOVE  the queried User model from the database", async () => {
+        try {
+          const queriedUser: IUser | null = await User.findOne({ _id: userId });
+          // compare //
+          expect(queriedUser).to.be.null;
+        } catch (error) {
+          throw error;
+        }
+      });
+      it("Shoud decrement number of User models in the database by 1", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          // 
+          expect(updatedNumOfUsers).to.equal(numberOfUsers - 1);
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+          // 
+          numberOfUsers = updatedNumOfUsers;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST Model belongs to User //
+  });
+  // END Context User is logged in //
 });

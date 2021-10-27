@@ -124,10 +124,10 @@ export default class UsersController extends BasicController implements ICRUDCon
       return await this.generalErrorResponse(res, { error });
     }
   }
+  // only Admis level users OR Users deleting own model should be able to delete //
+  // middleware to check edit rights run before controller action //
   delete = async (req: Request, res: Response<UsersDeleteRes>): Promise<Response> => {
     const { user_id } = req.params;
-
-    if (!user_id) return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve user id")});
 
     try {
       const deletedUser = await User.findOneAndDelete({ _id: user_id });

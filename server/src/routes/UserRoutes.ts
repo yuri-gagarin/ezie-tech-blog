@@ -46,6 +46,9 @@ export default class UserRoutes extends CRUDRoutesController {
     ]);
   } 
   protected delete(route: string): void {
-    super.delete(route);
+    super.delete(route, [
+      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
+      verifyUsersModelAccess
+    ]);
   }
 };
