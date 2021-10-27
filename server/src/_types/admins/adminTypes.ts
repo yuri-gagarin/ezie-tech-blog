@@ -1,7 +1,8 @@
+import { Types } from "mongoose";
 import type { IAdmin } from "../../models/Admin";
 
-export type ResAdminData = {
-  _id?: string;
+export type AdminData = {
+  _id?: Types.ObjectId;
   firstName?: string;
   lastName?: string;
   email?: string;

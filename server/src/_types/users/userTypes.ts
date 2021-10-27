@@ -9,6 +9,7 @@ export type ReqUserData = {
   password?: string;
   confirmPassword?: string;
   confirmed?: boolean;
+  userType?: "READER" | "CONTRIBUTOR";
   editedAt?: Date;
   createdAt?: Date;
 };
@@ -18,6 +19,7 @@ export type UserData = {
   lastName?: string;
   email?: string;
   password?: string;
+  userType?: "READER" | "CONTRIBUTOR";
   confirmed?: boolean;
   editedAt?: Date;
   createdAt?: Date;

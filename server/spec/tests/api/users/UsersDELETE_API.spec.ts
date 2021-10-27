@@ -269,4 +269,12 @@ describe("UsersController:Delete DELETE API Tests", () => {
     // END TEST Model belongs to User //
   });
   // END CONTEXT Admin User is logged in //
+  after(async () => {
+    try {
+      await Admin.deleteMany({});
+      await User.deleteMany({});
+    } catch (error) {
+      throw error;
+    }
+  });
 });

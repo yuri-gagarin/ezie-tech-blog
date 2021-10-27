@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // models //
-import User from "../../../../src/models/User";
-import BlogPost from "../../../../src/models/BlogPost";
+import User from "@/server/src/models/User";
+import BlogPost from "@/server/src/models/BlogPost";
 // server //
-import { ServerInstance } from "../../../../src/server";
+import { ServerInstance } from "@/server/src/server";
 // helpers //
-import { generateMockBlogPosts, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
+import { generateMockBlogPosts, generateMockUsers } from "@/server/src/_helpers/mockDataGeneration";
 import { loginUser, countBlogPosts, generateMockPostData } from "../../../hepers/testHelpers";
 // types //
 import type { Express } from "express";

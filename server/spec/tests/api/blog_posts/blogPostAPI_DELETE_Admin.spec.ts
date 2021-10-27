@@ -3,13 +3,13 @@ import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // models //
 // server //
-import { ServerInstance } from "../../../../src/server";
+import { ServerInstance } from "@/server/src/server";
 // models //
-import Admin from "../../../../src/models/Admin";
-import User from "../../../../src/models/User";
-import BlogPost from "../../../../src/models/BlogPost";
+import Admin from "@/server/src/models/Admin";
+import User from "@/server/src/models/User";
+import BlogPost from "@/server/src/models/BlogPost";
 // helpers //
-import { generateMockBlogPosts, generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
+import { generateMockBlogPosts, generateMockAdmins, generateMockUsers } from "@/server/src/_helpers/mockDataGeneration";
 import { loginUser, countBlogPosts, generateMockPostData } from "../../../hepers/testHelpers";
 // types //
 import type { Express } from "express";

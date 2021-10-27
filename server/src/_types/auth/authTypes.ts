@@ -1,5 +1,5 @@
-import type { ResAdminData } from '../admins/adminTypes';
-import type { ResUserData } from "../users/userTypes";
+import type { AdminData } from '../admins/adminTypes';
+import type { UserData } from "../users/userTypes";
 
 export type RegisterReqBody = {
   readonly email?: string;
@@ -10,7 +10,7 @@ export type LoginResponse = {
   readonly responseMsg: string;
   readonly success: boolean;
   readonly isAdmin: boolean;
-  readonly userData: ResUserData | ResAdminData;
+  readonly userData: UserData| AdminData;
   readonly jwtToken: { token: string; expires: string };
   readonly adminFirebaseAuth: { adminFirebaseToken: string; expires: number } | null;
 };
@@ -18,7 +18,7 @@ export type LoginResponse = {
 
 export type RegisterResponse = {
   readonly responseMsg: string;
-  readonly userData: ResUserData;
+  readonly userData: UserData;
   readonly isAdmin: boolean;
   readonly jwtToken: {
     token: string;

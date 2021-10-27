@@ -3,14 +3,16 @@ import chaiHTTP from "chai-http";
 // server //
 import { ServerInstance } from "../../../../src/server";
 // models //
-import Admin from "../../../../src/models/Admin";
-import User from "../../../../src/models/Admin";
+import Admin from "@/server/src/models/Admin";
+import User from "@/server/src/models/User";
 // server //
 // types //
 import type { Express } from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { LoginRes, RegisterRes } from "@/redux/_types/auth/dataTypes";
+import type { LoginRes } from "@/redux/_types/auth/dataTypes";
+import type { AdminData } from "@/redux/_types/generalTypes";
+import type { UserData } from "@/redux/_types/users/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 
@@ -64,7 +66,6 @@ describe("Admin Login API tests", () => {
           });
       });
       it("Should NOT Login an Admin with with a wrong EMAIL field and return a correct response", (done) => {
-        const duplicateEmail = regUser.email;
         chai.request(server)
           .post("/api/register")
           .send({ email: "wrong@mail.com", password: adminUser.password, })
@@ -135,14 +136,10 @@ describe("Admin Login API tests", () => {
           .send({ email: adminUser.email, password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, userData, success, isAdmin, jwtToken, adminFirebaseAuth, error, errorMessages } = response.body as LoginRes;
+            const { responseMsg, userData,  success, isAdmin, jwtToken, adminFirebaseAuth, error, errorMessages } = response.body as LoginRes;
             expect(response.status).to.equal(200);
             expect(responseMsg).to.be.a("string");
             expect(userData).to.be.an("object");
-            expect(userData._id).to.be.a("string");
-            expect(userData.email).to.equal(adminUser.email);
-            expect(userData.createdAt).to.be.a("string");
-            expect(userData.editedAt).to.be.a("string");
             expect(success).to.equal(true);
             expect(isAdmin).to.equal(true);
             expect(jwtToken).to.be.an("object");
@@ -153,6 +150,17 @@ describe("Admin Login API tests", () => {
             expect(adminFirebaseAuth.expires).to.be.a("number");
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
+            // check user data //
+            const { _id, firstName, lastName, email, password, role, editedAt, createdAt } = userData as AdminData;
+            expect(_id).to.be.a("string");
+            expect(firstName).to.be.a("string");
+            expect(lastName).to.be.a("string");
+            expect(email).to.be.a("string");
+            expect(role).to.be.a("string");
+            expect(editedAt).to.be.a("string");
+            expect(createdAt).to.be.a("string");
+            // password should not be sent //
+            expect(password).to.be.undefined;
             done();
           });
       });

@@ -3,8 +3,8 @@ import chaiHTTP from "chai-http";
 // server //
 import { ServerInstance } from "../../../../src/server";
 // models //
-import Admin from "../../../../src/models/Admin";
-import User from "../../../../src/models/Admin";
+import Admin from "@/server/src/models/Admin";
+import User from "@/server/src/models/User";
 // server //
 // types //
 import type { Express } from "express";
@@ -16,7 +16,7 @@ import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/
 
 chai.use(chaiHTTP);
 
-describe("User Registration API tests", () => {
+describe("AuthController:Register - User Registration API tests", () => {
   let server: Express;
   let adminUser: IAdmin;
   let regUser: IUser;
@@ -173,6 +173,7 @@ describe("User Registration API tests", () => {
             expect(userData.lastName).to.be.a("string");
             expect(userData.email).to.equal("mail@mail.com");
             expect(userData.confirmed).to.equal(false);
+            expect(userData.userType).to.equal("READER");
             expect(userData.createdAt).to.be.a("string");
             expect(userData.editedAt).to.be.a("string");
             expect(isAdmin).to.equal(false);

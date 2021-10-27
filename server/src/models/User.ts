@@ -10,6 +10,7 @@ export interface IUser extends Document  {
   email: string;
   password: string;
   confirmed: boolean;
+  userType: "READER" | "CONTRIBUTOR";
   editedAt: Date;
   createdAt: Date;
   validPassword: (password: string) => Promise<boolean>;
@@ -21,22 +22,30 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, required: true },
   password: { type: String, required: true },
   confirmed: { type: Boolean, required: true },
+  userType: {
+    type: String,
+    enum: [ "READER", "CONTRIBUTOR" ],
+    default: "READER"
+  },
   editedAt: { type: Date, required: true, default: new Date(Date.now()) },
   createdAt: { type: Date, required: true, default: new Date(Date.now()) }
 });
 
+// HASH password and set User type //
 UserSchema.pre("save", async function(next: NextFunction) {
   const salt = 10;
   const passwordHash = await bcrypt.hash(this.password, salt) // using default recommended 10 salt rounds //
   this.password = passwordHash;
+  this.userType = "READER";
   next();
 });
 
 UserSchema.pre("save", async function(next: NextFunction) {
   const self = this;
   try {
-    const model = await mongoose.models["User"].findOne({ email: self.email }).exec()
-    if (model) {
+    const model = await mongoose.models["User"].findOne({ email: self.email }).exec();
+    const adminModel = await mongoose.models["Admin"].findOne({ email: self.email }).exec();
+    if (model || adminModel) {
       self.invalidate("email", "email must be unique");
       next(new Error("Email already exists"));
     }

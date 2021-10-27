@@ -4,16 +4,17 @@ import chaiHTTP from "chai-http";
 // import ServerPromise from "../../../../src/server";
 import { ServerInstance } from "../../../../src/server";
 // models //
-import User from "../../../../src/models/User";
-import Admin from "../../../../src/models/Admin";
-import BlogPost from "../../../../src/models/BlogPost";
+import User from "@/server/src/models/User";
+import Admin from "@/server/src/models/Admin";
+import BlogPost from "@/server/src/models/BlogPost";
 // helpers //
-import { generateMockAdmins, generateMockBlogPosts, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
+import { generateMockAdmins, generateMockBlogPosts, generateMockUsers } from "@/server/src/_helpers/mockDataGeneration";
 // types //
 import type { Express } from "express";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
-import type { IUser } from "../../../../src/models/User";
-import type { IBlogPost } from "../../../../src/models/BlogPost";
+import type { IAdmin } from "@/server/src/models/Admin";
+import type { IUser } from "@/server/src/models/User";
+import type { IBlogPost } from "@/server/src/models/BlogPost";
 import type { IndexBlogPostRes, OneBlogPostRes } from "server/src/_types/blog_posts/blogPostTypes";
  
 chai.use(chaiHTTP);
@@ -24,7 +25,7 @@ describe("BlogPost ADMIN API tests GET requests", function() {
   let numberOfPosts: number; let numOfAdminUserPosts: number; let numOfOtherUserPosts: number;
   let numOfAdminUserPublishedPosts: number; let numOfAdminUserUnpublishedPosts: number;
   let numOfOtherUserPublishedPosts: number; let numOfOtherUserUnpublishedPosts: number;
-  let adminUser: IUser; let otherUser: IUser;
+  let adminUser: IAdmin; let otherUser: IUser;
   let adminUserToken: string;
 
   // set up server, DB and create users //

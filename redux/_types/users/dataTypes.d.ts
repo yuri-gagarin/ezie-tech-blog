@@ -3,6 +3,7 @@ export type UserData = {
   firstName: string;
   lastName: string;
   email: string;
+  userType: "READER" | "CONTRIBUTOR";
   password?: string;
   confirmed: boolean;
   editedAt: string;

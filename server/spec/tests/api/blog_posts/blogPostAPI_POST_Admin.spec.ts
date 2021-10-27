@@ -3,16 +3,16 @@ import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 // models //
 // server //
-import { ServerInstance } from "../../../../src/server";
+import { ServerInstance } from "@/server/src/server";
 // models //
-import Admin from "../../../../src/models/Admin";
-import BlogPost from "../../../../src/models/BlogPost";
+import Admin from "@/server/src/models/Admin";
+import BlogPost from "@/server/src/models/BlogPost";
 // helpers //
-import { generateMockBlogPosts, generateMockAdmins } from "../../../../src/_helpers/mockDataGeneration";
+import { generateMockBlogPosts, generateMockAdmins } from "@/server/src/_helpers/mockDataGeneration";
 import { loginUser, countBlogPosts, generateMockPostData } from "../../../hepers/testHelpers";
 // types //
 import type { Express } from "express";
-import type { IUser } from "@/server/src/models/User";
+import type { IAdmin } from "@/server/src/models/Admin";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
 import type { CreateBlogPostRes, BlogPostData, ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
 
@@ -23,7 +23,7 @@ describe("BlogPost Admin logged in API tests POST tests", function() {
   let server: Express;
   let numberOfPosts: number; 
   let numberOfAdminPosts: number;
-  let adminUser: IUser; 
+  let adminUser: IAdmin; 
   let adminUserToken: string;
   //
   let mockBlogPostData: BlogPostClientData;

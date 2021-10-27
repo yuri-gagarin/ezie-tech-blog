@@ -1,14 +1,16 @@
 import * as firebaseAdmin from "firebase-admin";
+// models //
 import User from "../models/User";
 import Admin from "../models/Admin";
-// additional //
+// additional for JWT //
 import { issueJWT } from "./PassportController";
 // types 
-import type { Types } from "mongoose";
 import type { Request, Response, CookieOptions } from "express";
 import type { IAdmin } from "../models/Admin";
 import type { IUser } from "../models/User";
 import type { RegisterReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
+import type { AdminData } from "../_types/admins/adminTypes";
+import type { UserData } from "../_types/users/userTypes";
 // helpers //
 import { validateRegistrationData } from "./_helpers/validationHelpers";
 import { trimRegistrationData } from "./_helpers/authControllerHelperts";
@@ -20,42 +22,45 @@ enum LoginCookies {
 export default class AuthController {
   login = async (req: Request, res: Response<LoginResponse | ErrorResponse>): Promise<Response> => {
     const user = req.user as (IUser | IAdmin);
-    let adminFirebaseToken: string;
+    // response variables depending on user or admin //
+    let userData: AdminData | UserData;
+    let isAdmin: boolean;
+    let adminFirebaseAuth: { adminFirebaseToken: string; expires: number } | null;
     // 
     if (!user) return await this.sendErrorRes(res);
     // 
-    const { token, expires } = issueJWT(user);
-    const { _id, email, firstName, lastName, createdAt, editedAt } = user;
-    const isAdmin: boolean = (("role" in user) && (user.role === "admin" || user.role === "owner")) ? true : false;
-    //
-    const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
-    const cookieOpts: CookieOptions = { maxAge: 3600 * 1000 * 12, httpOnly: true, domain, signed: true, sameSite: "strict" };
-    // generate firebase access token if isAdmin //
-    if (isAdmin) {
-      const userId = (user._id as Types.ObjectId).toHexString();
-      try {
-        adminFirebaseToken = await firebaseAdmin.auth().createCustomToken(userId);
-      } catch (error) {
-        console.log(error);
-        return this.sendErrorRes(res, { status: 500, error, errorMessages: [ "Firebase Error" ] });
+    try {
+      const { token, expires } = issueJWT(user);
+      //
+      const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
+      const cookieOpts: CookieOptions = { maxAge: 3600 * 1000 * 12, httpOnly: true, domain, signed: true, sameSite: "strict" };
+      // generate firebase access token if isAdmin //
+      if (this.checkUserLevel(user) === "ADMIN") {
+        // generate an admin response //
+        ({ userData, isAdmin, adminFirebaseAuth } = await this.setAdminLoginRes(user as IAdmin));
+      } else {
+        ({ userData, isAdmin, adminFirebaseAuth } = await this.setUserLoginRes(user as IUser));
       }
+      return (
+        res
+          .cookie(LoginCookies.JWTToken, token, cookieOpts)
+          .status(200)
+          .json({
+            responseMsg: "Logged in",
+            success: true,
+            isAdmin,
+            userData,
+            jwtToken: {
+              token, expires
+            },
+            adminFirebaseAuth
+          })
+      );
+    } catch (error) {
+      return res.status(500).json({
+        responseMsg: "Logged in", error, errorMessages: [ "Something went wrong on login" ]
+      })
     }
-
-    return (
-      res
-        .cookie(LoginCookies.JWTToken, token, cookieOpts)
-        .status(200)
-        .json({
-          responseMsg: "Logged in",
-          success: true,
-          isAdmin,
-          userData: { _id: _id.toHexString(), email, firstName, lastName, createdAt, editedAt },
-          jwtToken: {
-            token, expires
-          },
-          adminFirebaseAuth: isAdmin ? { adminFirebaseToken, expires: Date.now() + (3600 * 1000) } : null
-        })
-    );
   } 
   register = async (req: Request<any, any, RegisterReqBody>, res: Response<RegisterResponse | ErrorResponse>): Promise<Response> => {
     const { email, password, confirmPassword } = req.body;
@@ -81,10 +86,11 @@ export default class AuthController {
         .json({
           responseMsg: "Registration success",
           userData: { 
-            _id: userData._id.toHexString(), 
+            _id: userData._id, 
             email: userData.email, 
             firstName: userData.firstName, 
             confirmed: userData.confirmed,
+            userType: userData.userType,
             lastName: userData.lastName, 
             editedAt: userData.editedAt,
             createdAt: userData.createdAt
@@ -136,6 +142,36 @@ export default class AuthController {
         if (user) return { exists: true, message: "Email already exists" };
         else return { exists: false, message: "" };
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private checkUserLevel = (user: IAdmin | IUser): "ADMIN" | "USER" => {
+    return (user instanceof Admin) ? "ADMIN" : "USER";
+  }
+  private setAdminLoginRes = async (user: IAdmin): Promise<{ userData: AdminData; isAdmin: boolean; adminFirebaseAuth: { adminFirebaseToken: string; expires: number; } }> => {
+    try {
+      const { _id, firstName, lastName, email, role, editedAt, createdAt } = user;
+      const userData: AdminData = {
+        _id, firstName, lastName, email, role, editedAt, createdAt
+      };
+      const adminFirebaseAuth = {
+        adminFirebaseToken: await firebaseAdmin.auth().createCustomToken(_id.toHexString()),
+        expires: Date.now() + (3600 * 1000) // this is firebase default - can change maybe ?? //
+      };
+      return { userData, isAdmin: true, adminFirebaseAuth };
+    } catch (error) {
+      throw error;
+    }
+  }
+  private setUserLoginRes = async (user: IUser): Promise<{ userData: UserData; isAdmin: boolean; adminFirebaseAuth: null }> => {
+    try {
+      const { _id, firstName, lastName, email, userType, editedAt, createdAt } = user;
+      const userData: UserData = {
+        _id, firstName, lastName, email, userType, editedAt, createdAt 
+      };
+      return { userData, isAdmin: false, adminFirebaseAuth: null };
     } catch (error) {
       throw error;
     }
