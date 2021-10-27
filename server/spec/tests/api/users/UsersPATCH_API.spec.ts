@@ -64,7 +64,7 @@ describe("UsersController:Edit PATCH API Tests", () => {
     } catch (error) {
       throw (error);
     }
-  })
+  });
   // CONTEXT GUEST User NO LOGIN //
   context("Guest client - no Login", () => {
     let userId: string;
