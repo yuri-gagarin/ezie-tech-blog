@@ -42,15 +42,15 @@ export const validateRegistrationData = (data: { email?: string; password?: stri
   return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
 };
 
-export const validateUserData = (data: { email?: string; password?: string; confirmPassword?: string; firstName?: string; lastName?: string; }): ValidationResponse => {
+export const validateUserData = (data: { email?: string; password?: string; confirmPassword?: string; firstName?: string; lastName?: string; }, opts?: { existing?: boolean; }): ValidationResponse => {
   const errorMessages = [];
   if (!data.email) {
     errorMessages.push("Email is required");
   }
-  if (!data.password) {
+  if (!opts && !data.password) {
     errorMessages.push("Password is required");
   }
-  if (!data.confirmPassword) {
+  if (!opts && !data.confirmPassword) {
     errorMessages.push("Password confirmation is required");
   }
 

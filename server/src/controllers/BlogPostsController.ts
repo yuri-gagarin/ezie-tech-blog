@@ -12,7 +12,7 @@ import type { IUser } from "../models/User";
 import type { IAdmin } from "../models/Admin";
 // helpers //
 import { BlogPostNotAllowedError } from "./_helpers/blogPostControllerHelpers";
-import {  objectIsEmtpy } from "./_helpers/generalHepers";
+import {  objectIsEmtpy } from "./_helpers/generalHelpers";
 import { validateBlogPostModelData } from "./_helpers/validationHelpers";
 //
 

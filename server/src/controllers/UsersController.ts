@@ -97,18 +97,25 @@ export default class UsersController extends BasicController implements ICRUDCon
       return await this.generalErrorResponse(res, { error });
     }
   }
+  // only Admis level users OR Users editing own model should be able to edit //
+  // middleware to check edit rights run before controller action //
   edit = async (req: Request, res: Response<UsersEditRes>): Promise<Response> => {
     const { user_id } = req.params;
-    const { email, password, firstName, lastName } = req.body;
+    const userData = req.body.userData as ReqUserData;
   
-    if (!user_id) return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve user id")});
-
+    // validate input //
+    const { valid, errorMessages } = validateUserData(userData, { existing: true });
+    if (!valid) return await this.userInputErrorResponse(res, errorMessages);
+    //
     try {
-      const editedUser = await User.findOneAndUpdate({ _id: user_id }, { email, password, firstName, lastName }, { new: true }).exec();
+      const editedUser = await User.findOneAndUpdate(
+        { _id: user_id }, 
+        { email: userData.email, firstName: userData.firstName, lastName: userData.lastName, editedAt: new Date() }, 
+        { new: true }).exec();
       if (editedUser) {
         return res.status(200).json({ responseMsg: "Updated User model", editedUser });
       } else {
-        return await this.generalErrorResponse(res, { status: 404, error: new Error("User to edit not found" )});
+        return await this.notFoundErrorResponse(res, [ "Could not resolve queried User model to edit" ]);
       }
     } catch (error) {
       return await this.generalErrorResponse(res, { error });

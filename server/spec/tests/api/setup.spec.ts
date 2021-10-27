@@ -16,7 +16,7 @@ before(async function () {
     throw error;
   }
 });
-after(async () => {
+after(async function () {
   this.timeout(10000);
   try {
     await Admin.deleteMany({});

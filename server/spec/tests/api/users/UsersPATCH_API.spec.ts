@@ -9,7 +9,7 @@ import User from "@/server/src/models/User";
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { CreateUserRes, ErrorUserRes, UserData } from "@/redux/_types/users/dataTypes";
+import type { EditUserRes, ErrorUserRes, UserData } from "@/redux/_types/users/dataTypes";
 import type { ReqUserData } from "@/server/src/_types/users/userTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "@/server/src/_helpers/mockDataGeneration";
@@ -66,6 +66,7 @@ describe("UsersController:Edit PATCH API Tests", () => {
     }
   })
   // CONTEXT GUEST User NO LOGIN //
+  /*
   context("Guest client - no Login", () => {
     let userId: string;
     before(() => {
@@ -162,8 +163,65 @@ describe("UsersController:Edit PATCH API Tests", () => {
       });
     });
   });
+  */
   // END CONTEXT GUEST User NO LOGIN //
-  
+  // CONTEXT User is logged in //
+  context("User is logged in - Regular User", () => {
+    let userId: string;
+    let _editedUser: UserData; 
+    before(() => {
+      userId = confirmedRegUser._id.toHexString();
+    });
+    context("User editing own model", () => {
+      describe("PATCH /api/users/:user_id - default response - valid data", () => {
+        it("Should correctly update a User model and send back correct response", (done) => {
+          chai.request(server)
+            .patch(`/api/users/${userId}`)
+            .set({ Authorization: userJWTToken })
+            .send({ userData: { email: mockUserData.email, firstName: mockUserData.firstName, lastName: mockUserData.lastName } })
+            .end((err, response) => {
+              if (err) done(err);
+              const { responseMsg, editedUser } = response.body as EditUserRes;
+              expect(response.status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(editedUser).to.be.an("object");
+              //
+              expect(response.body.error).to.be.undefined;
+              expect(response.body.errorMessages).to.be.undefined;
+              //
+              _editedUser = editedUser;
+              done();
+            });
+        });
+        it("Should NOT alter the number of Admin or User models in the database", async () => {
+          try {
+            const updatedNumOfAdmins: number = await Admin.countDocuments();
+            const updatedNumOfUsers: number = await User.countDocuments();
+            // 
+            expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+            expect(updatedNumOfUsers).to.equal(numberOfUsers);
+          } catch (error) {
+            throw error;
+          }
+        });
+        it("Should correctly alter the queried User model", () => {
+            // 
+          expect(_editedUser._id).to.equal(confirmedRegUser._id.toHexString());
+          expect(_editedUser.firstName).to.equal(mockUserData.firstName);
+          expect(_editedUser.lastName).to.equal(mockUserData.lastName);
+          expect(_editedUser.email).to.equal(mockUserData.email);
+          expect(_editedUser.editedAt).to.be.a("string");
+          expect(_editedUser.createdAt).to.be.a("string");
+        });
+      });
+      /*
+      describe("PATCH /api/users/:user_id - default response - invalid data", () => {
+        
+      });
+      */
+    });
+    // END Context User editing own model //
+  });
   // END CONTEXT User is logged in //
   after(async () => {
     try {

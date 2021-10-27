@@ -7,6 +7,7 @@ import type { Router } from "express";
 import type { ICRUDController } from "@/server/src/_types/abstracts/DefaultController";
 // helpers, middleware //
 import { checkforLogin, verifyAdmin } from "@/server/src/controllers/_helpers/authHelpers"
+import { verifyUsersModelAccess } from "@/server/src/controllers/_helpers/usersControllerHelpers";
 
 export default class UserRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -41,7 +42,7 @@ export default class UserRoutes extends CRUDRoutesController {
   protected edit(route: string): void {
     super.edit(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
-      verifyAdmin
+      verifyUsersModelAccess
     ]);
   } 
   protected delete(route: string): void {
