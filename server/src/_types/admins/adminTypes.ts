@@ -7,6 +7,7 @@ export type AdminData = {
   lastName?: string;
   email?: string;
   password?: string;
+  confirmPassword?: string;
   confirmed?: boolean;
   role?: "admin" | "owner";
   editedAt?: Date;

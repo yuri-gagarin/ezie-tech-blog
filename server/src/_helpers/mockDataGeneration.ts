@@ -92,7 +92,7 @@ export const generateMockProjects = async (num?: number): Promise<number> => {
   return numToGenerate;
 };
 
-export const generateMockAdmins = async (num?: number): Promise<void> => {
+export const generateMockAdmins = async (num?: number, role?: "admin" | "owner"): Promise<void> => {
   const numToGenerate: number = num ? num : 10;
   for (let i = 0; i < numToGenerate; i++) {
     const firstName = faker.name.firstName();
@@ -103,7 +103,7 @@ export const generateMockAdmins = async (num?: number): Promise<void> => {
       lastName,
       email,
       password: "password",
-      role: randomIntFromInterval(0, 1) ? "admin" : "owner",
+      role: role ? role : (randomIntFromInterval(0, 1) ? "admin" : "owner"),
       confirmed: randomIntFromInterval(0, 1) ? true : false
     });
     try {
