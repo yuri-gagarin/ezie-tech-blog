@@ -10,33 +10,20 @@ import type { IUser } from "../../models/User";
 import type { IBlogPost } from "../../models/BlogPost";
 import type { BlogPostErrRes } from "../../_types/blog_posts/blogPostTypes";
 // general helpers //
-import { respondWithNotAllowedError } from "./generalHelpers";
+import { respondWithNotAllowedError, respondWithNoModelIdError } from "./generalHelpers";
 
 
 export const verifyUserModelAndPostId = async (req: Request, res: Response<BlogPostErrRes>, next: NextFunction): Promise<any> => {
   const user = req.user as IUser | IAdmin;
   const { post_id } = req.params;
-  if (!post_id) {
-    return res.status(400).json({
-      responseMsg: "Input error",
-      error: new Error("Client error"),
-      errorMessages: [ "Could not resolve model id" ]
-    });
-  }
+  if (!post_id) respondWithNoModelIdError(res, [ "Could not resolve Blog Post id" ]);
+  //
   if (post_id &&! Types.ObjectId.isValid(post_id)) {
-    return res.status(400).json({
-      responseMsg: "Input error",
-      error: new Error("Client error"),
-      errorMessages: [ "Invalid model id type" ]
-    });
+    return respondWithNoModelIdError(res, [ "Invalid type for Blog Post id" ]);
   }
-  if (!user) {
-    return res.status(401).json({
-      responseMsg: "Not allowed",
-      error: new Error("User error"),
-      errorMessages: [ "Could not resolve user" ]
-    });
-  }
+  //
+  if (!user) respondWithNotAllowedError(res, [ "Could not resolve current User" ]);
+  // all is fine //
   return next();
 };
 

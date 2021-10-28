@@ -43,6 +43,7 @@ export default class PostRoutes extends CRUDRoutesController {
     super.edit(route, [ 
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
       verifyUserModelAndPostId,
+      verifyUserLevel,
       verifyBlogPostModelAccess
     ]);
   } 
