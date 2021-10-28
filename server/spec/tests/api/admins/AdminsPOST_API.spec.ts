@@ -181,5 +181,64 @@ describe("AdminsController:Create POST API tests", function() {
       });
     });
   });
-  // END CONTEXT client no Login //
+  // END CONTEXT User client READER logged in //
+
+  // CONTEXT User client CONTRIBUTOR logged in //
+  context(("User Client - CONTRIBUTOR -  Logged in"), function() {
+    describe("POST /api/admins - valid data - default response", function() {
+      it("Should NOT create a NEW Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .post("/api/admins")
+          .set({ Authorization: contributorUserJWTToken })
+          .send({ adminData: mockAdminData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+    });
+    describe("POST /api/admins - invalid data - default response", function() {
+      it("Should NOT create a NEW Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .post("/api/admins")
+          .set({ Authorization: readerUserJWTToken })
+          .send({ adminData: {} })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+    });
+  });
+  // END CONTEXT User client Contributor Logged in //
 })
