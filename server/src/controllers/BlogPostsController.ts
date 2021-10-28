@@ -163,8 +163,6 @@ export default class BlogPostsController extends BasicController implements ICRU
     const user = req.user as IUser | IAdmin;
     let editedBlogPost: IBlogPost;
     // validate correct data first //
-    if (!post_id) return await this.userInputErrorResponse(res, [ "Could not resolve blog post id" ]);
-    if (!user) return await this.generalErrorResponse(res, { status: 401, errorMessages: [ "Could not resolve user" ] });
 
     try {
       const { _id: userId } = user;
