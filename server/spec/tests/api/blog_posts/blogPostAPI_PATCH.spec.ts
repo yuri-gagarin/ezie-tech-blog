@@ -92,13 +92,12 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
   });
 
   // CONTEXT Guest client no login //
-  /*
   context("Guest client - no Login", () => {
     let firstUsersPostId: string;
     before(() => {
       firstUsersPostId = firstUsersBlogPost._id.toHexString();
     });
-    describe("PATCH /api/users/:blog_post_id - default response INVALID data", () => {
+    describe("PATCH /api/users/:post_id - default response INVALID data", () => {
       it("Should NOT update an existing <BlogPost> model and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${firstUsersPostId}`)
@@ -122,7 +121,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
         }
       });
     });
-    describe("PATCH /api/users - default response VALID data", () => {
+    describe("PATCH /api/users/:post_id - default response VALID data", () => {
       it("Should NOT update an existing <BlogPost> model and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${firstUsersPostId}`)
@@ -147,11 +146,9 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
       });
     });
   });
-  */
   // END CONTEXT Guest client no login //
 
   // CONTEXT User logged in READER account //
-  /*
   context("User client - READER account", () => {
     let firstUsersPostId: string;
     before(() => {
@@ -216,11 +213,9 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
       });
     });
   });
-  */
   // END CONTEXT Logged in READER account //
 
   // CONTEXT User Logged in CONTRIBUTOR account //
-  /*
   context('User client - CONTRIBUTOR account', () => {
     let firstUsersPostId: string;
     let secondUsersPostId: string;
@@ -229,7 +224,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
       secondUsersPostId = secondUsersBlogPost._id.toHexString();
     });
     // TEST OWN Blog Post, invalid data //
-    describe("PATCH /api/users/:post_id - own BlogPost - INVALID data", () => {
+    describe("PATCH /api/users/:post_id - own BlogPost - default response INVALID data", () => {
       it("Should NOT update an existing <BlogPost> model with an EMPTY TITLE field and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${firstUsersPostId}`)
@@ -494,21 +489,22 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
     });
     // END OTHER USers Blog post valid data //
   });
-  */
   // END CONTEXT User Logged in CONTRIBUTOR account //
 
   // CONTEXT Admin Logged in //
   context('Admin client - ADMIN Account', () => {
     let adminUsersPostId: string;
     let secondUsersPostId: string;
-    let mockBlogPostData: BlogPostClientData;
     before(() => {
       adminUsersPostId = adminUsersBlogPost._id.toHexString();
       secondUsersPostId = secondUsersBlogPost._id.toHexString();
-      mockBlogPostData = generateMockPostData({ authorId: adminUser._id.toHexString(), name: adminUser.firstName });
     });
     // TEST OWN Blog Post, invalid data //
-    describe("PATCH /api/users/:post_id - own BlogPost - INVALID data", () => {
+    describe("PATCH /api/users/:post_id - own BlogPost - default response INVALID data", () => {
+      let mockBlogPostData: BlogPostClientData;
+      before(() => {
+        mockBlogPostData = generateMockPostData({ authorId: adminUser._id.toHexString(), name: adminUser.firstName });
+      });
       it("Should NOT update an existing <BlogPost> model with an EMPTY TITLE field and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${adminUsersPostId}`)
@@ -700,13 +696,14 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
         expect(_editedBlogPost._id).to.be.a("string");
         expect(_editedBlogPost.title).to.equal(mockBlogPostData.title);
         expect(_editedBlogPost.content).to.equal(mockBlogPostData.content);
-        expect(_editedBlogPost.author).to.eql(mockBlogPostData.author);
+        expect(_editedBlogPost.author.authorId).to.equal(adminUsersBlogPost.author.authorId.toHexString());
+        expect(_editedBlogPost.author.name).to.equal(adminUsersBlogPost.author.name);
         expect(_editedBlogPost.keywords).to.eql(mockBlogPostData.keywords);
         expect(_editedBlogPost.category).to.equal(mockBlogPostData.category);
         expect(_editedBlogPost.editedAt).to.be.a("string");
         expect(_editedBlogPost.createdAt).to.be.a("string");       
       })
-      it("Should NOT alter the number <BlogPost> model in the database", async () => {
+      it("Should NOT alter the number <BlogPost> models in the database", async () => {
         try {
           const editedBlogPost = await BlogPost.findOne({ _id: _editedBlogPost._id });
           const updatedNumOfBlogPosts: number = await BlogPost.countDocuments();
@@ -719,6 +716,226 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
         }
       });
     });
+    // END TEST OWN Blog Post //
+    
+    // TEST other Users Blog Post //
+    describe("PATCH /api/users/:post_id - other users BlogPost - default response INVALID data", () => {
+      let mockBlogPostData: BlogPostClientData;
+      before(() => {
+        mockBlogPostData = generateMockPostData({ authorId: otherContributorUser._id.toHexString(), name: otherContributorUser.firstName });
+      });
+      it("Should NOT update an existing <BlogPost> model with an EMPTY TITLE field and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, title: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model with an INVALID TITLE field TYPE and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, title: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model with an EMPTY CONTENT field and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, content: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model with an INVALID CONTENT field TYPE and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, content: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model with an EMPTY KEYWORDS field and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, keywords: [] } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model with an INVALID KEYWORDS field TYPE and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, keywords: "invalid" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model with an EMPTY CATEGORY field and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, category: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model with an INVALID CATEGORY field TYPE and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, category: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model with a NON APPROVED CATEGORY field  and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: { ...mockBlogPostData, category: "notavalidcategory" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+    });
+    // END TEST OTHER Users Blog Blog Post, invalid data //
+    // TEST OTHER Users Blog Post, valid data //
+    describe("PATCH /api/posts/:post_id - other User's Blog Post - default response VALID data", () => {
+      let _editedBlogPost: BlogPostData;
+      it("Should CORRECTLY update an existing <BlogPost> model and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .send({ blogPostData: mockBlogPostData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, editedBlogPost } = response.body as EditBlogPostRes; 
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(editedBlogPost).to.be.an("object");
+            // 
+            expect(response.body.error).to.be.undefined;
+            expect(response.body.errorMessages).to.be.undefined;
+            //
+            _editedBlogPost = editedBlogPost;
+            done();
+          });
+      });
+      it("Should correctly set the new <BlogPost> model fields", () => {
+        expect(_editedBlogPost._id).to.be.a("string");
+        expect(_editedBlogPost.title).to.equal(mockBlogPostData.title);
+        expect(_editedBlogPost.content).to.equal(mockBlogPostData.content);
+        expect(_editedBlogPost.author.name).to.equal(secondUsersBlogPost.author.name);
+        expect(_editedBlogPost.author.authorId).to.equal(secondUsersBlogPost.author.authorId.toHexString());
+        expect(_editedBlogPost.keywords).to.eql(mockBlogPostData.keywords);
+        expect(_editedBlogPost.category).to.equal(mockBlogPostData.category);
+        expect(_editedBlogPost.editedAt).to.be.a("string");
+        expect(_editedBlogPost.createdAt).to.be.a("string");       
+      })
+      it("Should NOT alter the number <BlogPost> models in the database", async () => {
+        try {
+          const editedBlogPost = await BlogPost.findOne({ _id: _editedBlogPost._id });
+          const updatedNumOfBlogPosts: number = await BlogPost.countDocuments();
+          // assert //
+          expect(updatedNumOfBlogPosts).to.equal(numberOfBlogPosts);
+          expect(editedBlogPost).to.not.be.null;
+          //
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST Other Users Blog Post //
   });
   // END CONTEXT Admin logged in //
   after(async () => {
