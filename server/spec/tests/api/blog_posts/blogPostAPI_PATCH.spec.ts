@@ -219,8 +219,10 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
   // CONTEXT User Logged in CONTRIBUTOR account //
   context('User client - CONTRIBUTOR account', () => {
     let firstUsersPostId: string;
+    let secondUsersPostId: string;
     before(() => {
       firstUsersPostId = firstUsersBlogPost._id.toHexString();
+      secondUsersPostId = secondUsersBlogPost._id.toHexString();
     });
     // TEST OWN Blog Post, invalid data //
     describe("PATCH /api/users/:post_id - own BlogPost - INVALID data", () => {
@@ -421,7 +423,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
         expect(_editedBlogPost.editedAt).to.be.a("string");
         expect(_editedBlogPost.createdAt).to.be.a("string");       
       })
-      it("Should alter the number <BlogPost> model in the database", async () => {
+      it("Should NOT alter the number <BlogPost> model in the database", async () => {
         try {
           const editedBlogPost = await BlogPost.findOne({ _id: _editedBlogPost._id });
           const updatedNumOfBlogPosts: number = await BlogPost.countDocuments();
@@ -429,15 +431,69 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
           expect(updatedNumOfBlogPosts).to.equal(numberOfBlogPosts);
           expect(editedBlogPost).to.not.be.null;
           //
-          numberOfBlogPosts = updatedNumOfBlogPosts;
         } catch (error) {
           throw error;
         }
       });
     });
     // END TEST OWN Blog Post, valid data //
+    // TEST OTHER Users Blog post valid data //
+    describe("PATCH /api/posts/:post_id - other users Blog Post - default response VALID data", () => {
+      let _editedBlogPost: BlogPostData;
+      it("Should NOT  update an existing <BlogPost> model and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${secondUsersPostId}`)
+          .set({ Authorization: contributorToken })
+          .send({ blogPostData: mockBlogPostData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            // 
+            expect(response.body.editedBlogPost).to.be.undefined;
+            //
+            done();
+          });
+      });
+      it("Should NOT alter the other User's <BlogPost> model fields", async () => {
+        try {
+          const queriedBlogPost = await BlogPost.findOne({ _id: secondUsersBlogPost._id });
+          //
+          expect(queriedBlogPost._id.toHexString()).to.equal(secondUsersBlogPost._id.toHexString());
+          expect(queriedBlogPost.title).to.equal(secondUsersBlogPost.title);
+          expect(queriedBlogPost.content).to.equal(secondUsersBlogPost.content);
+          expect(queriedBlogPost.category).to.equal(secondUsersBlogPost.category);
+          expect(queriedBlogPost.author).to.eql(secondUsersBlogPost.author);
+          expect(queriedBlogPost.keywords).to.eql(secondUsersBlogPost.keywords);
+          expect(queriedBlogPost.editedAt.toISOString()).to.equal(secondUsersBlogPost.editedAt.toISOString());
+          expect(queriedBlogPost.createdAt.toISOString()).to.equal(secondUsersBlogPost.createdAt.toISOString());
+        } catch (error) {
+          throw error;
+        }
+      })
+      it("Should NOT alter the number <BlogPost> model in the database", async () => {
+        try {
+          const queriedBlogPost = await BlogPost.findOne({ _id: secondUsersBlogPost._id });
+          const updatedNumOfBlogPosts: number = await BlogPost.countDocuments();
+          // assert //
+          expect(updatedNumOfBlogPosts).to.equal(numberOfBlogPosts);
+          expect(queriedBlogPost).to.not.be.null;
+          //
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END OTHER USers Blog post valid data //
   });
   // END CONTEXT User Logged in CONTRIBUTOR account //
+
+  // CONTEXT Admin Logged in //
+  // END CONTEXT Admin logged in //
   after(async () => {
     try {
       await Admin.deleteMany({});
