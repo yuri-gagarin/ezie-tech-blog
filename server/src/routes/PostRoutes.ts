@@ -20,7 +20,7 @@ export default class PostRoutes extends CRUDRoutesController {
     this.create("/api/posts");
     this.toggleLike("/api/posts/toggle_like/:post_id");
     this.edit("/api/posts/:post_id");
-    this.delete("/api/posts/:post_id?");
+    this.delete("/api/posts/:post_id");
   }
 
   protected index(route: string): void {
@@ -60,7 +60,10 @@ export default class PostRoutes extends CRUDRoutesController {
     this.router
       .route(route)
       .patch(
-        [ PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }) ],
+        [ 
+          PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
+          verifyUserModelAndPostId
+        ],
         this.controller.toggleLikeBlogPost
       );
   }

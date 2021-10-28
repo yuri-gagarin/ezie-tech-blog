@@ -97,7 +97,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
     before(() => {
       firstUsersPostId = firstUsersBlogPost._id.toHexString();
     });
-    describe("PATCH /api/users/:post_id - default response INVALID data", () => {
+    describe("PATCH /api/posts/:post_id - default response INVALID data", () => {
       it("Should NOT update an existing <BlogPost> model and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${firstUsersPostId}`)
@@ -121,7 +121,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
         }
       });
     });
-    describe("PATCH /api/users/:post_id - default response VALID data", () => {
+    describe("PATCH /api/posts/:post_id - default response VALID data", () => {
       it("Should NOT update an existing <BlogPost> model and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${firstUsersPostId}`)
@@ -154,7 +154,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
     before(() => {
       firstUsersPostId = firstUsersBlogPost._id.toHexString();
     });
-    describe("PATCH /api/users/:post_id - default response INVALID data", () => {
+    describe("PATCH /api/posts/:post_id - default response INVALID data", () => {
       it("Should NOT update an existing <BlogPost> model and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${firstUsersPostId}`)
@@ -183,7 +183,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
         }
       });
     });
-    describe("PATCH /api/users/:post_id - default response VALID data", () => {
+    describe("PATCH /api/posts/:post_id - default response VALID data", () => {
       it("Should NOT update an existing <BlogPost> model and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${firstUsersPostId}`)
@@ -224,7 +224,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
       secondUsersPostId = secondUsersBlogPost._id.toHexString();
     });
     // TEST OWN Blog Post, invalid data //
-    describe("PATCH /api/users/:post_id - own BlogPost - default response INVALID data", () => {
+    describe("PATCH /api/posts/:post_id - own BlogPost - default response INVALID data", () => {
       it("Should NOT update an existing <BlogPost> model with an EMPTY TITLE field and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/posts/${firstUsersPostId}`)
