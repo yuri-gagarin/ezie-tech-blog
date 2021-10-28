@@ -51,6 +51,7 @@ export default class PostRoutes extends CRUDRoutesController {
     super.delete(route, [ 
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
       verifyUserModelAndPostId,
+      verifyUserLevel,
       verifyBlogPostModelAccess
     ]);
   }
