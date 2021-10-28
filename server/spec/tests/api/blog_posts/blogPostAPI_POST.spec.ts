@@ -474,7 +474,7 @@ describe("BlogPostsController:Create POST API Tests", () => {
         }
       });
     });
-    describe("POST /api/uers - default response VALID data", () => {
+    describe("POST /api/posts - default response VALID data", () => {
       let _createdBlogPost: BlogPostData;
       it("Should CORRECTLY create a NEW <BlogPost> model and send back a correct response", (done) => {
         chai.request(server)
