@@ -34,9 +34,7 @@ describe("BlogPostsController:ToggleLike PATCH - TOGGLE Like API Tests", () => {
   let otherContributorUser: IUser;
   let readerUser: IUser;
   // blog post models //
-  let adminUsersBlogPost: IBlogPost;
   let firstUsersBlogPost: IBlogPost;
-  let secondUsersBlogPost: IBlogPost;
   // login tokens //
   let adminToken: string;
   let contributorToken: string;
@@ -61,13 +59,9 @@ describe("BlogPostsController:ToggleLike PATCH - TOGGLE Like API Tests", () => {
       const contributorUsers: IUser[] = await User.find({ userType: "CONTRIBUTOR" });
       ([ contributorUser, otherContributorUser ] = contributorUsers);
       //
-      await generateMockBlogPosts({ number: 10, user: adminUser });
       await generateMockBlogPosts({ number: 10, user: contributorUser });
-      await generateMockBlogPosts({ number: 10, user: otherContributorUser });
       //
-      adminUsersBlogPost = await BlogPost.findOne({ "author.authorId": adminUser._id });
       firstUsersBlogPost = await BlogPost.findOne({ "author.authorId": contributorUser._id });
-      secondUsersBlogPost = await BlogPost.findOne({ "author.authorId": otherContributorUser._id });
       numberOfBlogPosts = await BlogPost.countDocuments();
     } catch (error) {
       throw error;
@@ -363,6 +357,120 @@ describe("BlogPostsController:ToggleLike PATCH - TOGGLE Like API Tests", () => {
     });
   });
   // END Test User Client CONTRIBUTOR account //
+
+  // TEST Admin Client ADMIN privileges //
+  context("Admin client - Logged in - ADMIN account", () => {
+    let firstUsersPostId: string;
+    let _editedBlogPost: BlogPostData;
+    before(() => {
+      firstUsersPostId = firstUsersBlogPost._id.toHexString();
+    });
+    // TEST LIKE BLOGPOST //
+    describe("PATCH /api/posts/toggle_like/:post_id - Logged in - LIKE response", () => {
+      it("Should update an existing <BlogPost> model, ADD LIKE and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/toggle_like/${firstUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, editedBlogPost, error, errorMessages } = response.body as EditBlogPostRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(editedBlogPost).to.be.an("object");
+            // 
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            //
+            _editedBlogPost = editedBlogPost;
+            done();
+          })
+      });
+      it("Should alter the queried <BlogPost> model and ONLY add a LIKE", async () => {
+        try {
+          // what stayed the same //
+          expect(_editedBlogPost._id).to.equal(firstUsersBlogPost._id.toHexString());
+          expect(_editedBlogPost.title).to.equal(firstUsersBlogPost.title);
+          expect(_editedBlogPost.content).to.equal(firstUsersBlogPost.content);
+          expect(_editedBlogPost.keywords).to.eql(firstUsersBlogPost.keywords);
+          expect(_editedBlogPost.author.authorId).to.equal(firstUsersBlogPost.author.authorId.toHexString());
+          expect(_editedBlogPost.author.name).to.equal(firstUsersBlogPost.author.name);
+          // changes //
+          expect(_editedBlogPost.likes.length).to.eql(firstUsersBlogPost.likes.length + 1);
+          expect(_editedBlogPost.numOflikes).to.equal(firstUsersBlogPost.numOflikes + 1);
+          expect(_editedBlogPost.likes.some((userId) => adminUser._id.equals(userId))).to.equal(true);
+        } catch (error) {
+          throw error;
+        }
+      });
+      it("Should NOT alter the number of <BlogPost> models in the database", async () => {
+        try {
+          const updatedNumOfBlogPosts: number = await BlogPost.countDocuments();
+          const updatedFirstUsersBlogPost: IBlogPost = await BlogPost.findOne({ _id: firstUsersPostId });
+          //
+          expect(updatedNumOfBlogPosts).to.equal(numberOfBlogPosts);
+          //
+          firstUsersBlogPost = updatedFirstUsersBlogPost;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST LIKE BLOGPOST //
+
+    // TEST Remove BlogPost LIKE //
+    describe("PATCH /api/posts/toggle_like/:post_id - Logged in - UNLIKE response", () => {
+      it("Should update an existing <BlogPost> model, REMOVE LIKE and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/toggle_like/${firstUsersPostId}`)
+          .set({ Authorization: adminToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, editedBlogPost, error, errorMessages } = response.body as EditBlogPostRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(editedBlogPost).to.be.an("object");
+            // 
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            //
+            _editedBlogPost = editedBlogPost;
+            done();
+          })
+      });
+      it("Should alter the queried <BlogPost> model and ONLY remove a LIKE", async () => {
+        try {
+          // what stayed the same //
+          expect(_editedBlogPost._id).to.equal(firstUsersBlogPost._id.toHexString());
+          expect(_editedBlogPost.title).to.equal(firstUsersBlogPost.title);
+          expect(_editedBlogPost.content).to.equal(firstUsersBlogPost.content);
+          expect(_editedBlogPost.keywords).to.eql(firstUsersBlogPost.keywords);
+          expect(_editedBlogPost.author.authorId).to.equal(firstUsersBlogPost.author.authorId.toHexString());
+          expect(_editedBlogPost.author.name).to.equal(firstUsersBlogPost.author.name);
+          // changes //
+          expect(_editedBlogPost.likes.length).to.eql(firstUsersBlogPost.likes.length - 1);
+          expect(_editedBlogPost.numOflikes).to.equal(firstUsersBlogPost.numOflikes - 1);
+          expect(_editedBlogPost.likes.some((userId) => adminUser._id.equals(userId))).to.equal(false);
+        } catch (error) {
+          throw error;
+        }
+      });
+      it("Should NOT alter the number of <BlogPost> models in the database", async () => {
+        try {
+          const updatedNumOfBlogPosts: number = await BlogPost.countDocuments();
+          const updatedFirstUsersBlogPost: IBlogPost = await BlogPost.findOne({ _id: firstUsersPostId });
+          //
+          expect(updatedNumOfBlogPosts).to.equal(numberOfBlogPosts);
+          //
+          firstUsersBlogPost = updatedFirstUsersBlogPost;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+  // END Test Admin Client ADMIN privileges //
   after(async () => {
     try {
       await Admin.deleteMany({});
