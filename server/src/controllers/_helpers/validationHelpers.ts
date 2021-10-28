@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 // models //
-import Admin from "@/server/src/models/Admin";
-import User from "@/server/src/models/User";
+import Admin from "../../models/Admin";
+import User from "../../models/User";
 // type imports //
 import type { BlogPostFormData } from "@/redux/_types/blog_posts/dataTypes";
 import type { ValidationResponse } from "../../../../components/_helpers/validators";

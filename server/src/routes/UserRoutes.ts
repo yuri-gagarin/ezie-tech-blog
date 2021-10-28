@@ -1,13 +1,13 @@
 
-import { PassportContInstance } from "@/server/src/server";
-import { CRUDRoutesController } from "@/server/src/_types/abstracts/RoutesTypes";
-import { StrategyNames } from "@/server/src/controllers/PassportController";
+import { PassportContInstance } from "../server";
+import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
+import { StrategyNames } from "../controllers/PassportController";
 // types //
 import type { Router } from "express";
 import type { ICRUDController } from "@/server/src/_types/abstracts/DefaultController";
 // helpers, middleware //
-import { checkforLogin, verifyAdmin } from "@/server/src/controllers/_helpers/authHelpers"
-import { verifyUsersModelAccess } from "@/server/src/controllers/_helpers/usersControllerHelpers";
+import { checkforLogin, verifyAdmin } from "../controllers/_helpers/authHelpers"
+import { verifyUsersModelAccess } from "../controllers/_helpers/usersControllerHelpers";
 
 export default class UserRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {

@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 // models //
-import Admin from "@/server/src/models/Admin";
-import User from "@/server/src/models/User";
-import BlogPost from "@/server/src/models/BlogPost";
+import Admin from "../../models/Admin";
+import User from "../../models/User";
+import BlogPost from "../../models/BlogPost";
 // types //
 import type { Request, Response, NextFunction } from "express";
 import type { IAdmin } from "../../models/Admin";
