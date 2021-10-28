@@ -27,5 +27,7 @@ export const verifyUsersModelAccess = async (req: Request, res: Response, next: 
     } else {
       return respondWithNotAllowedError(res, [ "Could not resolve logged in Users data" ]);
     }
+  } else {
+    return respondWithNotAllowedError(res, [ "Could not resolve logged in Users data" ]);
   }
 };
