@@ -13,23 +13,28 @@ export type AdminData = {
   createdAt?: Date;
 };
 
+export type FetchAdminsOpts = {
+  limit?: number;
+  date?: "asc" | "desc";
+};
+
 export type AdminsIndexRes = {
   responseMsg: string;
-  admins: IAdmin[];
+  admins: AdminData[];
 };
 export type AdminsGetOneRes = {
   responseMsg: string;
-  admin: IAdmin;
+  admin: AdminData;
 };
 export type AdminsCreateRes = {
   responseMsg: string;
-  createdAdmin: IAdmin;
+  createdAdmin: AdminData;
 };
 export type AdminsEditRes = {
   responseMsg: string;
-  editedAdmin: IAdmin;
+  editedAdmin: AdminData;
 };
 export type AdminsDeleteRes = {
   responseMsg: string;
-  deletedAdmin: IAdmin;
+  deletedAdmin: AdminData;
 };

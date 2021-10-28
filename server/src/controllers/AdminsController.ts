@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // 
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes } from "../_types/admins/adminTypes";
+import type { FetchAdminsOpts, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes } from "../_types/admins/adminTypes";
 
 export default class AdminsController extends BasicController implements ICRUDController {
   constructor() {
@@ -11,8 +11,9 @@ export default class AdminsController extends BasicController implements ICRUDCo
     this.create = this.create.bind(this);
   }
   index = async (req: Request, res: Response<AdminsIndexRes>): Promise<Response<AdminsIndexRes>> => {
+    const { limit = 10 } = req.query as FetchAdminsOpts;
     try {
-      const admins = await Admin.find({}).exec();
+      const admins = await Admin.find({}).limit(limit).exec();
       return res.status(200).json({
         responseMsg: "Admins returned", admins
       });
