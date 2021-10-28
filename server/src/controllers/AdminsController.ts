@@ -13,7 +13,7 @@ export default class AdminsController extends BasicController implements ICRUDCo
   index = async (req: Request, res: Response<AdminsIndexRes>): Promise<Response<AdminsIndexRes>> => {
     const { limit = 10 } = req.query as FetchAdminsOpts;
     try {
-      const admins = await Admin.find({}).limit(limit).exec();
+      const admins = await Admin.find({}, { password: 0 }).limit(limit).exec();
       return res.status(200).json({
         responseMsg: "Admins returned", admins
       });
@@ -26,7 +26,7 @@ export default class AdminsController extends BasicController implements ICRUDCo
     if (!admin_id) return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve admin id") });
 
     try {
-      const admin = await Admin.findOne({ _id: admin_id }).exec();
+      const admin = await Admin.findOne({ _id: admin_id }, { password: 0 }).exec();
       if (admin) {
         return res.status(200).json({
           responseMsg: "Admin found", admin
