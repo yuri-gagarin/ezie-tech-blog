@@ -1,9 +1,10 @@
 import Admin from "../models/Admin";
-import type { Request, Response } from "express";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // 
+import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { FetchAdminsOpts, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes } from "../_types/admins/adminTypes";
+import type { FetchAdminsOpts, ReqAdminData, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes } from "../_types/admins/adminTypes";
+import { validateAdminData } from "./_helpers/validationHelpers";
 
 export default class AdminsController extends BasicController implements ICRUDController {
   constructor() {
@@ -39,15 +40,22 @@ export default class AdminsController extends BasicController implements ICRUDCo
     }
   }
   create = async (req: Request, res: Response<AdminsCreateRes>): Promise<Response> => {
-    const { email, password } = req.body;
+    const adminData = req.body.adminData as ReqAdminData;
     // validate input //
-    if (!email || !password) {
-      console.log(40);
-      console.log(this)
-      return await this.generalErrorResponse(res, { status: 400, error: new Error("Invalid input" )});
-    }
+    if (!adminData) return await this.userInputErrorResponse(res, [ "Could not resolve new Admin model data" ]);
+    // validate new admin model data //
+    const { valid, errorMessages } = validateAdminData(adminData);
+    if (!valid) return await this.userInputErrorResponse(res, errorMessages);
+    //
     try {
-      const createdAdmin = await Admin.create({ email, password, role: "admin", confirmed: false });
+      const { email, password, firstName = "", lastName = "" } = adminData;
+      const newAdmin = await Admin.create({ 
+        email, password, firstName, lastName, role: "admin", confirmed: true 
+      });
+      // remove the password field //
+      const createdAdmin = newAdmin.toObject();
+      delete createdAdmin.password;
+      //
       return res.status(200).json({
         responseMsg: "Admin created", createdAdmin
       });

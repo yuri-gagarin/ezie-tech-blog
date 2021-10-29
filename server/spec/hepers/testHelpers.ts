@@ -4,9 +4,9 @@ import BlogPost from "../../src/models/BlogPost";
 // types //
 import type { Express} from "express";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
+import type { ReqAdminData } from "@/server/src/_types/admins/adminTypes";
 import type { ReqUserData } from "@/server/src/_types/users/userTypes";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
-import { AdminData } from "@/server/src/_types/admins/adminTypes";
 
 export const processBlogPostTestError = () => {
 
@@ -73,7 +73,7 @@ export const generateMockUserData = (): ReqUserData => {
     confirmPassword: "password",
   };
 };
-export const generateMockAdminData = (): AdminData => {
+export const generateMockAdminData = (): ReqAdminData => {
   return {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),

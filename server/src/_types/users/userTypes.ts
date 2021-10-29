@@ -1,6 +1,5 @@
 import { Types } from "mongoose";
 // types //
-import type { IUser } from "../../models/User";
 export type ReqUserData = {
   _id?: string;
   firstName?: string;

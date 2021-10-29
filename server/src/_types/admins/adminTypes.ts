@@ -1,5 +1,4 @@
 import { Types } from "mongoose";
-import type { IAdmin } from "../../models/Admin";
 
 export type AdminData = {
   _id?: Types.ObjectId;
@@ -13,6 +12,19 @@ export type AdminData = {
   editedAt?: Date;
   createdAt?: Date;
 };
+
+export type ReqAdminData = {
+  _id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  confirmed?: boolean;
+  role?: "admin" | "owner";
+  editedAt?: string;
+  createdAt?: string;
+}
 
 export type FetchAdminsOpts = {
   limit?: number;

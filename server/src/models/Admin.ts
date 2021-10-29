@@ -17,11 +17,11 @@ export interface IAdmin extends Document  {
 };
 
 const AdminSchema = new Schema<IAdmin>({
-  firstName: { type: String, required: false },
-  lastName: { type: String, required: false },
+  firstName: { type: String, default: "" },
+  lastName: { type: String, default: "" },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  confirmed: { type: Boolean, required: true, default: false },
+  confirmed: { type: Boolean, required: true },
   role: { type: String, default: "admin" },
   editedAt: { type: Date, required: true, default: new Date(Date.now()) },
   createdAt: { type: Date, required: true, default: new Date(Date.now()) }
