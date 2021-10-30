@@ -384,6 +384,38 @@ describe("AdminsController:Edit PATCH API tests", function() {
             done();
           });
       });
+      it("Should NOT update an EXISTING Admin model witn an existing <email> field TYPE and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/${regAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ adminData: { ...mockAdminData, email: readerRegUser.email } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT update an EXISTING Admin model if <admin> level Admin is changing the <role> field and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/${regAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ adminData: { ...mockAdminData, role: "owner" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
       it("Should NOT alter the number of <Admin> models in the database", async () => {
         try {
           const updatedNumOfAdmins: number = await Admin.countDocuments();

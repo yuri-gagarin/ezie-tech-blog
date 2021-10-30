@@ -1,10 +1,11 @@
 import Admin from "../models/Admin";
 import { BasicController } from "../_types/abstracts/DefaultController";
-// 
+// types //
 import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import type { FetchAdminsOpts, ReqAdminData, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes, AdminData } from "../_types/admins/adminTypes";
-import { validateAdminData } from "./_helpers/validationHelpers";
+// helpers //
+import { validateAdminData, validateUniqueEmail, validateEditEmail } from "./_helpers/validationHelpers";
 
 export default class AdminsController extends BasicController implements ICRUDController {
   constructor() {
@@ -76,10 +77,14 @@ export default class AdminsController extends BasicController implements ICRUDCo
     // validate new admin model data //
     const { valid, errorMessages } = validateAdminData(adminData, { existing: true });
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
-    if (!admin_id) return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve admin id")});
+    
 
     try {
       const { email, firstName = "", lastName = "", role, confirmed } = adminData;
+      // validate duplicate email //
+      const { exists, message } = await validateEditEmail(email, admin_id);
+      if (exists) return await this.userInputErrorResponse(res, [ message ]);
+      //
       const editedAdminModel = await Admin.findOneAndUpdate(
         { _id: admin_id }, 
         { email, 

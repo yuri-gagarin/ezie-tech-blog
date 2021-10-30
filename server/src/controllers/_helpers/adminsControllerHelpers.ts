@@ -4,6 +4,7 @@ import { respondWithNoModelIdError, respondWithNotAllowedError } from "./general
 // types //
 import type { Request, Response, NextFunction } from "express";
 import type { IAdmin } from "../../models/Admin";
+import { ReqAdminData } from "../../_types/admins/adminTypes";
 
 export const verifyAdminModelPresent = (userModel: any): boolean => {
   return (userModel && userModel instanceof Admin);
@@ -33,9 +34,9 @@ export const verifyAdminModelAccess = (req: Request, res: Response, next: NextFu
 
 // only owner level admin can change <Admin.role> or <Admin.confirmed> //
 export const verifyAdminRoleOrConfirmationChange = (req: Request, res: Response, next: NextFunction) => {
-  const { role, confirmed } = req.query;
+  const adminData = req.body.adminData as ReqAdminData;
   const user = req.user as IAdmin
-  if (role || confirmed) {
+  if (adminData && (adminData.role || adminData.confirmed)) {
     return (verifyAdminModelPresent(user) && user.role === "owner") ? next() : respondWithNotAllowedError(res, [ "Insufficcient access level for action" ]);
   } else {
     // no role or confirmation changes //

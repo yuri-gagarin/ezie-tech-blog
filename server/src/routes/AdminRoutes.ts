@@ -5,7 +5,7 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 // helpers //
-import { verifyOwnerLevelAccess, verifyAdminModelAccess } from "../controllers/_helpers/adminsControllerHelpers";
+import { verifyOwnerLevelAccess, verifyAdminModelAccess, verifyAdminRoleOrConfirmationChange } from "../controllers/_helpers/adminsControllerHelpers";
 
 export default class AdminRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -31,7 +31,7 @@ export default class AdminRoutes extends CRUDRoutesController {
   protected create(route: string): void {
     super.create(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
-      verifyOwnerLevelAccess 
+      verifyOwnerLevelAccess  
     ]);
   }
   // Admins should be able to edit their OWN models //
@@ -39,7 +39,8 @@ export default class AdminRoutes extends CRUDRoutesController {
   protected edit(route: string): void {
     super.edit(route, [
       PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
-      verifyAdminModelAccess
+      verifyAdminRoleOrConfirmationChange,  // only <owner> level admin can change <Admin.role> or <Admin.confirmation> //
+      verifyAdminModelAccess,
     ]);
   } 
   protected delete(route: string): void {
