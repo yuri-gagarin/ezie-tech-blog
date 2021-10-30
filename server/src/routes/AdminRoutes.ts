@@ -34,8 +34,12 @@ export default class AdminRoutes extends CRUDRoutesController {
       verifyOwnerLevelAccess 
     ]);
   }
+  // Admins should be able to edit their OWN models //
+  // OWNER LEVEL admins should be able to edit all models //
   protected edit(route: string): void {
-    super.edit(route);
+    super.edit(route, [
+      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false })
+    ]);
   } 
   protected delete(route: string): void {
     super.delete(route);

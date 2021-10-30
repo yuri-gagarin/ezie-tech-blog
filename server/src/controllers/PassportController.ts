@@ -65,7 +65,6 @@ export default class PassportController {
     this.passport.use(StrategyNames.AdminAuthStrategy, new JWTStrategy(this.opts, async (jwtPayload, done) => {
       try { 
         const admin: IAdmin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
-        console.log(admin);
         if (admin) return done(null, admin);
         else return done(null, false);
       } catch (err) {

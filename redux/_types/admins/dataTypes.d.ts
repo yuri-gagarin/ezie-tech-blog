@@ -20,8 +20,9 @@ export type GetOneAdminOpts = {
   handle?: string;
 };
 export type AdminFormData = {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
   firstName?: string;
   lastName?: string;
   handle?: string;

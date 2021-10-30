@@ -79,7 +79,6 @@ describe("AdminsController:Create POST API tests", function() {
     }
   });
   // CONTEXT client no Login //
-  /*
   context(("Guest Client - NOT Logged in"), function() {
     describe("POST /api/admins - valid data - default response", function() {
       it("Should NOT create a NEW Admin model and send back a correct response", (done) => {
@@ -299,7 +298,6 @@ describe("AdminsController:Create POST API tests", function() {
       });
     });
   });
-  */
   // END CONTEXT Admin client ADMIN LEVEL <Admin> logged in //
   // CONTEXT Admin client ADMIN LEVEL <Owner> logged in //
   context(("Admin Client - level 'Owner' -  Logged in"), function() {
@@ -314,7 +312,6 @@ describe("AdminsController:Create POST API tests", function() {
             if (err) done(err);
             const { status, body } = response;
             const { responseMsg, createdAdmin } = body as CreateAdminRes;
-            console.log(response.body)
             expect(status).to.equal(200);
             expect(responseMsg).to.be.a("string");
             expect(createdAdmin).to.be.an("object");
@@ -349,7 +346,6 @@ describe("AdminsController:Create POST API tests", function() {
         }
       });
     });
-    /*
     describe("POST /api/admins - invalid data - default response", function() {
       it("Should NOT create a NEW Admin model and send back a correct response", (done) => {
         chai.request(server)
@@ -377,7 +373,6 @@ describe("AdminsController:Create POST API tests", function() {
         }
       });
     });
-    */
   });
   // END CONTEXT Admin client ADMIN LEVEL <Admin> logged in //
 });
