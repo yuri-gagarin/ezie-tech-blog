@@ -4,41 +4,41 @@ import { respondWithNoModelIdError, respondWithNotAllowedError } from "./general
 // types //
 import type { Request, Response, NextFunction } from "express";
 import type { IAdmin } from "../../models/Admin";
-import type { IUser } from "../../models/User";
 
+export const verifyAdminModelPresent = (userModel: any): boolean => {
+  return (userModel && userModel instanceof Admin);
+}
 export const verifyOwnerLevelAccess = (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as IAdmin | IUser;
-  if (user) {
-    if (user instanceof Admin) {
-      if (user.role === "owner") {
-        return next();
-      } else {
-        return respondWithNotAllowedError(res, [ "Insufficcient access level for action" ]);
-      }
-    } else {
-      return respondWithNotAllowedError(res, [ "Insufficcient access level for action" ]);
-    }
-  } else {
-    return respondWithNotAllowedError(res, [ "Could not resolve User login" ]);
-  }
+  const user = req.user as IAdmin;
+  return verifyAdminModelPresent(user) && user.role === "owner" ? next() : respondWithNotAllowedError(res, [ "Insufficcient access level for action" ]);
 };
 
 export const verifyAdminModelAccess = (req: Request, res: Response, next: NextFunction) => {
   const { admin_id } = req.params;
   const user = req.user as IAdmin;
-  if (user) {
-    if (user instanceof Admin && user.role === "owner") {
-      // can edit all //
-      return admin_id ? next() : respondWithNoModelIdError(res, [ "Can't resolve Admin model id" ])
-    } else if (user instanceof Admin && user.role === "admin") {
-      // regular admins admins can only edit their own models //
-      if (admin_id) {
-        return user._id.equals(admin_id) ? next() : respondWithNotAllowedError(res, [ "Not allowed to edit other Admins" ]);
-      }
+  if (verifyAdminModelPresent(user) && user.role === "owner") {
+    // can edit all //
+    return admin_id ? next() : respondWithNoModelIdError(res, [ "Can't resolve Admin model id" ])
+  } else if (verifyAdminModelPresent(user) && user.role === "admin") {
+    // regular admins admins can only edit their own models //
+    if (admin_id) {
+      return user._id.equals(admin_id) ? next() : respondWithNotAllowedError(res, [ "Not allowed to edit other Admins" ]);
     } else {
-      return respondWithNotAllowedError(res, [ "Insufficcient access level for action" ]);
-    }
+      return respondWithNoModelIdError(res, [ "Could not resolve Admin model id" ]);
+    } 
   } else {
-    return respondWithNotAllowedError(res, [ "Could not resolve User login" ]);
+    return respondWithNotAllowedError(res, [ "Action is not allowed" ]);
+  }
+};
+
+// only owner level admin can change <Admin.role> or <Admin.confirmed> //
+export const verifyAdminRoleOrConfirmationChange = (req: Request, res: Response, next: NextFunction) => {
+  const { role, confirmed } = req.query;
+  const user = req.user as IAdmin
+  if (role || confirmed) {
+    return (verifyAdminModelPresent(user) && user.role === "owner") ? next() : respondWithNotAllowedError(res, [ "Insufficcient access level for action" ]);
+  } else {
+    // no role or confirmation changes //
+    return next();
   }
 }

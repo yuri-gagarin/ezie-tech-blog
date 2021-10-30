@@ -3,7 +3,7 @@ import { BasicController } from "../_types/abstracts/DefaultController";
 // 
 import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { FetchAdminsOpts, ReqAdminData, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes } from "../_types/admins/adminTypes";
+import type { FetchAdminsOpts, ReqAdminData, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes, AdminData } from "../_types/admins/adminTypes";
 import { validateAdminData } from "./_helpers/validationHelpers";
 
 export default class AdminsController extends BasicController implements ICRUDController {
@@ -63,15 +63,34 @@ export default class AdminsController extends BasicController implements ICRUDCo
       return await this.generalErrorResponse(res, { error });
     }
   }
+  // middleware should be run before this action //
+  // middleware confirms login, admin access level //
+  // admins can own their own model, sans <confirmed> AND <role> fields //
+  // owners can edit all //
   edit = async (req: Request, res: Response<AdminsEditRes>): Promise<Response> => {
     const { admin_id } = req.params;
-    const { email, password, firstName, lastName } = req.body;
-  
+    const adminData = req.body.adminData as ReqAdminData;
+    let editedAdmin: AdminData;
+    // validate input //
+    if (!adminData) return await this.userInputErrorResponse(res, [ "Could not resolve new Admin model data" ]);
+    // validate new admin model data //
+    const { valid, errorMessages } = validateAdminData(adminData, { existing: true });
+    if (!valid) return await this.userInputErrorResponse(res, errorMessages);
     if (!admin_id) return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve admin id")});
 
     try {
-      const editedAdmin = await Admin.findOneAndUpdate({ _id: admin_id }, { email, password, firstName, lastName }, { new: true }).exec();
-      if (editedAdmin) {
+      const { email, firstName = "", lastName = "", role, confirmed } = adminData;
+      const editedAdminModel = await Admin.findOneAndUpdate(
+        { _id: admin_id }, 
+        { email, 
+          firstName, 
+          lastName, 
+          role: role ? role : "admin"
+        }, 
+        { new: true }).exec();
+      if (editedAdminModel) {
+        editedAdmin = editedAdminModel.toObject();
+        delete editedAdmin.password;
         return res.status(200).json({ responseMsg: "Updated Admin model", editedAdmin });
       } else {
         return await this.generalErrorResponse(res, { status: 404, error: new Error("Admin to edit not found" )});

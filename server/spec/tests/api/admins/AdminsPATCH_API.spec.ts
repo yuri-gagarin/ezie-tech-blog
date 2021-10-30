@@ -10,11 +10,12 @@ import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
 import type { ReqAdminData } from "@/server/src/_types/admins/adminTypes";
-import type { AdminData, CreateAdminRes, ErrorAdminRes } from "@/redux/_types/admins/dataTypes";
+import type { AdminData, CreateAdminRes, EditAdminRes, ErrorAdminRes } from "@/redux/_types/admins/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { generateMockAdminData } from "../../../hepers/testHelpers";
 import { loginUser } from "../../../hepers/testHelpers";
+import { exec } from "child_process";
 
 chai.use(chaiHTTP);
 
@@ -240,6 +241,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
   // END CONTEXT User client Contributor Logged in //
   
   // CONTEXT Admin logged in, admin level - editing other Admins account //
+  /*
   context(("Admin Client - ADMIN LEVEL - Logged in"), function() {
     let ownerAdminId: string;
     before(() => {
@@ -282,6 +284,100 @@ describe("AdminsController:Edit PATCH API tests", function() {
             const { status, body } = response;
             const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
             expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+    });
+  });
+  */
+  // END Admin logged in editing other Admins account //
+  // CONTEXT Admin logged in, admin level - editing OWN account //
+  context(("Admin Client - ADMIN LEVEL - Logged in - OWN Account"), function() {
+    let regAdminId: string;
+    let _editedAdmin: AdminData;
+    before(() => {
+      regAdminId = adminUser._id.toHexString();
+    });
+    describe("PATCH /api/admins/:admin_id - valid data - default response", function() {
+      it("Should update an EXISTING Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/${regAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ adminData: mockAdminData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin } = body as EditAdminRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(editedAdmin).to.be.an("object");
+            //
+            expect(body.error).to.be.undefined;
+            expect(body.errorMessages).to.be.undefined;
+            //
+            _editedAdmin = editedAdmin;
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+      it("Should correctly edit the queried <Admin> model", () => {
+        expect(_editedAdmin._id).to.equal(adminUser._id.toHexString());
+        expect(_editedAdmin.firstName).to.equal(mockAdminData.firstName);
+        expect(_editedAdmin.lastName).to.equal(mockAdminData.lastName);
+        expect(_editedAdmin.email).to.equal(mockAdminData.email);
+        expect(_editedAdmin.editedAt).to.be.a("string");
+        expect(_editedAdmin.createdAt).to.be.a("string");
+        // password should not be sent back, <Admin.role> should not change, <Admin.confirmer> should not change>
+        expect(_editedAdmin.role).to.equal("admin");
+        expect(_editedAdmin.confirmed).to.equal(adminUser.confirmed);
+        expect(_editedAdmin.password).to.be.undefined;
+      });
+    });
+    describe("PATCH /api/admins/:admin_id - invalid data - default response", function() {
+      it("Should NOT update an EXISTING Admin model witn an EMPTY <email> field and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/${regAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ adminData: { ...mockAdminData, email: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT update an EXISTING Admin model witn an INVALID <email> field TYPE and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/${regAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ adminData: { ...mockAdminData, email: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
