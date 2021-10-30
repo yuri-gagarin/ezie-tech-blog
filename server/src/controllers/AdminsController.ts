@@ -1,11 +1,11 @@
-import Admin from "../models/Admin";
+import Admin, { IAdmin } from "../models/Admin";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // types //
 import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { FetchAdminsOpts, ReqAdminData, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes, AdminData } from "../_types/admins/adminTypes";
+import type { FetchAdminsOpts, ReqAdminData, PasswordChangeData, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes, AdminData } from "../_types/admins/adminTypes";
 // helpers //
-import { validateAdminData, validateUniqueEmail, validateEditEmail } from "./_helpers/validationHelpers";
+import { validateAdminData, validateUniqueEmail, validateEditEmail, validatePasswordChangeData } from "./_helpers/validationHelpers";
 
 export default class AdminsController extends BasicController implements ICRUDController {
   constructor() {
@@ -71,7 +71,10 @@ export default class AdminsController extends BasicController implements ICRUDCo
   edit = async (req: Request, res: Response<AdminsEditRes>): Promise<Response> => {
     const { admin_id } = req.params;
     const adminData = req.body.adminData as ReqAdminData;
+    const passwordChangeData = req.body.passwordChangeData as PasswordChangeData;
     let editedAdmin: AdminData;
+    // process password change if applicable //
+    if (passwordChangeData) return await this.processPasswordChange(res, { adminId: admin_id, passwordChangeData });
     // validate input //
     if (!adminData) return await this.userInputErrorResponse(res, [ "Could not resolve new Admin model data" ]);
     // validate new admin model data //
@@ -119,6 +122,35 @@ export default class AdminsController extends BasicController implements ICRUDCo
         return await this.generalErrorResponse(res, { status: 400, error: new Error("Admin to delete not found") });
       }
     } catch (error) { 
+      return await this.generalErrorResponse(res, { error });
+    }
+  }
+
+  private processPasswordChange = async (res: Response<AdminsEditRes>, data: { adminId: string; passwordChangeData: PasswordChangeData }) => {
+    const { adminId, passwordChangeData } = data;
+    let editedAdmin: AdminData;
+    // validate password change data first //
+    const { valid, errorMessages } =  validatePasswordChangeData(passwordChangeData);
+    if (!valid) return this.userInputErrorResponse(res, errorMessages);
+    // attempt password change //
+    // first check if old password is valid //
+    try {
+      const { newPassword, oldPassword } = passwordChangeData;
+      const admin: IAdmin | null = await Admin.findOne({ _id: adminId });
+      if (admin) {
+        if (admin.validPassword(oldPassword)) {
+          const updatedAdminWithPass: IAdmin = await admin.hashNewPassword(newPassword);
+          console.log(updatedAdminWithPass);
+          editedAdmin = updatedAdminWithPass.toObject();
+          delete editedAdmin.password;
+          return res.status(200).json({ responseMsg: "Password changed", editedAdmin });
+        } else {
+          return this.notAllowedErrorResponse(res, [ "Seems like you entered a wrong current password" ]);
+        }
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Could not resolve queried Admin model" ]);
+      }
+    } catch (error) {
       return await this.generalErrorResponse(res, { error });
     }
   }

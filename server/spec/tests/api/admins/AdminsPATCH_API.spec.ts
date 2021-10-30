@@ -440,7 +440,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
         chai.request(server)
           .patch(`/api/admins/${regAdminId}`)
           .set({ Authorization: adminJWTToken })
-          .send({ passwordChange: { oldPassword: "password", password: "password1", confirmPassword: "password1" } })
+          .send({ passwordChangeData: { oldPassword: "password", password: "password1", confirmPassword: "password1" } })
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;

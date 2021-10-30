@@ -14,6 +14,7 @@ export interface IAdmin extends Document  {
   editedAt: Date;
   createdAt: Date;
   validPassword: (password: string) => Promise<boolean>;
+  hashNewPassword: (password: string) => Promise<IAdmin>;
 };
 
 const AdminSchema = new Schema<IAdmin>({
@@ -36,6 +37,10 @@ AdminSchema.pre("save", async function(next: NextFunction) {
 
 AdminSchema.methods.validPassword = async function(password: string): Promise<boolean> {
   return await bcrypt.compare(password, this.password);
+}
+AdminSchema.methods.hashNewPassword = async function(password: string): Promise<IAdmin> {
+  this.password = password;
+  return this.save();
 }
 
 export default mongoose.model<IAdmin>("Admin", AdminSchema);

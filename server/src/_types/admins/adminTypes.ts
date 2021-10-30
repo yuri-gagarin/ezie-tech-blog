@@ -24,7 +24,12 @@ export type ReqAdminData = {
   role?: "admin" | "owner";
   editedAt?: string;
   createdAt?: string;
-}
+};
+export type PasswordChangeData = {
+  oldPassword?: string;
+  newPassword?: string;
+  confirmNewPassword?: string;
+};
 
 export type FetchAdminsOpts = {
   limit?: number;
