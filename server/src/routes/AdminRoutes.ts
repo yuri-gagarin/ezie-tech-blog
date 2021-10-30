@@ -5,7 +5,7 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 // helpers //
-import { verifyOwnerLevelAccess } from "../controllers/_helpers/adminsControllerHelpers";
+import { verifyOwnerLevelAccess, verifyAdminModelAccess } from "../controllers/_helpers/adminsControllerHelpers";
 
 export default class AdminRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -38,7 +38,8 @@ export default class AdminRoutes extends CRUDRoutesController {
   // OWNER LEVEL admins should be able to edit all models //
   protected edit(route: string): void {
     super.edit(route, [
-      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false })
+      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
+      verifyAdminModelAccess
     ]);
   } 
   protected delete(route: string): void {

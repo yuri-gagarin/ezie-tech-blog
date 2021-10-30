@@ -82,6 +82,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
     }
   });
   // CONTEXT client no Login //
+  /*
   context(("Guest Client - NOT Logged in"), function() {
     let regAdminId: string;
     before(() => {
@@ -185,7 +186,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
   // END CONTEXT User client READER logged in //
 
   // CONTEXT User client CONTRIBUTOR logged in //
-  context(("User Client - READER - Logged in"), function() {
+  context(("User Client - CONTRIBUTOR - Logged in"), function() {
     let regAdminId: string;
     before(() => {
       regAdminId = adminUser._id.toHexString();
@@ -194,7 +195,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
       it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
         chai.request(server)
           .patch(`/api/admins/${regAdminId}`)
-          .set({ Authorization: readerUserJWTToken })
+          .set({ Authorization: contributorUserJWTToken })
           .send({ adminData: mockAdminData })
           .end((err, response) => {
             if (err) done(err);
@@ -235,6 +236,67 @@ describe("AdminsController:Edit PATCH API tests", function() {
       });
     });
   });
+  */
   // END CONTEXT User client Contributor Logged in //
   
+  // CONTEXT Admin logged in, admin level - editing other Admins account //
+  context(("Admin Client - ADMIN LEVEL - Logged in"), function() {
+    let ownerAdminId: string;
+    before(() => {
+      ownerAdminId = ownerUser._id.toHexString();
+    });
+    describe("PATCH /api/admins/:admin_id - valid data - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/${ownerAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ adminData: mockAdminData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+    });
+    describe("PATCH /api/admins/:admin_id - invalid data - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/${ownerAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ adminData: mockAdminData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+    });
+  });
+  // END Admin logged in editing other Admins account //
 });
