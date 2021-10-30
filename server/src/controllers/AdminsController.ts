@@ -138,9 +138,8 @@ export default class AdminsController extends BasicController implements ICRUDCo
       const { newPassword, oldPassword } = passwordChangeData;
       const admin: IAdmin | null = await Admin.findOne({ _id: adminId });
       if (admin) {
-        if (admin.validPassword(oldPassword)) {
+        if (await admin.validPassword(oldPassword)) {
           const updatedAdminWithPass: IAdmin = await admin.hashNewPassword(newPassword);
-          console.log(updatedAdminWithPass);
           editedAdmin = updatedAdminWithPass.toObject();
           delete editedAdmin.password;
           return res.status(200).json({ responseMsg: "Password changed", editedAdmin });
