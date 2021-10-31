@@ -10,7 +10,7 @@ import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
 import type { ReqAdminData } from "@/server/src/_types/admins/adminTypes";
-import type { AdminData, CreateAdminRes, EditAdminRes, ErrorAdminRes } from "@/redux/_types/admins/dataTypes";
+import type { AdminData, DeleteAdminRes } from "@/redux/_types/admins/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { generateMockAdminData } from "../../../hepers/testHelpers";
@@ -38,7 +38,6 @@ describe("AdminsController:Delete DELETE API tests", function() {
   let contributorRegUser: IUser;
   // login tokens //
   let adminJWTToken: string;
-  let otherAdminJWTToken: string;
   let ownerJWTToken: string;
   let readerUserJWTToken: string;
   let contributorUserJWTToken: string;
@@ -79,7 +78,6 @@ describe("AdminsController:Delete DELETE API tests", function() {
       const { email: contributorEmail } = contributorRegUser;
       //
       ({ userJWTToken: adminJWTToken  } = await loginUser({ chai, email: adminEmail, server }));
-      ({ userJWTToken: otherAdminJWTToken } = await loginUser({ chai, email: otherAdminEmail, server }));
       ({ userJWTToken: ownerJWTToken  } = await loginUser({ chai, email: ownerEmail, server }));
       ({ userJWTToken: readerUserJWTToken  } = await loginUser({ chai, email: readerEmail, server }));
       ({ userJWTToken: contributorUserJWTToken  } = await loginUser({ chai, email: contributorEmail, server }));
@@ -90,9 +88,11 @@ describe("AdminsController:Delete DELETE API tests", function() {
   // CONTEXT client no Login //
   context(("Guest Client - NOT Logged in"), function() {
     let regAdminId: string;
+
     before(() => {
       regAdminId = adminUser._id.toHexString();
     });
+
     describe("DELETE /api/admins/:admin_id", function() {
       it("Should NOT delete an EXISTING Admin model and send back a correct response", (done) => {
         chai.request(server)
@@ -128,14 +128,15 @@ describe("AdminsController:Delete DELETE API tests", function() {
 
   // CONTEXT User client logged in READER //
   context(("User Client - Logged in - READER User"), function() {
-    let regAdminId: string;
+    let adminId: string;
+
     before(() => {
-      regAdminId = adminUser._id.toHexString();
+      adminId = adminUser._id.toHexString();
     });
     describe("DELETE /api/admins/:admin_id", function() {
       it("Should NOT delete an EXISTING Admin model and send back a correct response", (done) => {
         chai.request(server)
-          .delete(`/api/admins/${regAdminId}`)
+          .delete(`/api/admins/${adminId}`)
           .set({ Authorization: readerUserJWTToken })
           .end((err, response) => {
             if (err) done(err);
@@ -154,7 +155,7 @@ describe("AdminsController:Delete DELETE API tests", function() {
       });
       it("Should NOT remove NOR alter the queried <Admin> model", async () => {
         try {
-          const queriedAdmin: IAdmin | null = await Admin.findOne({ id: regAdminId });
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ id: adminId });
           //
           expect(queriedAdmin).to.not.be.null;
           expect(queriedAdmin).to.eql(adminUser);
@@ -198,6 +199,95 @@ describe("AdminsController:Delete DELETE API tests", function() {
           //
           expect(queriedAdmin).to.not.be.null;
           expect(queriedAdmin).to.eql(adminUser);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+  // END CONTEXT client no Login //
+
+  // CONTEXT Admin client logged in ADMIN level  //
+  context(("Admin Client - Logged in - <admin> level Admin"), function() {
+    let regAdminId: string;
+    let otherRegAdminId: string;
+
+    before(() => {
+      regAdminId = adminUser._id.toHexString();
+      otherRegAdminId = otherAdminUser._id.toHexString();
+    });
+
+    describe("DELETE /api/admins/:admin_id - OTHER Admin's MODEL", function() {
+      it("Should NOT delete an EXISTING Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/admins/${otherRegAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, deletedAdmin, error, errorMessages } = body as DeleteAdminRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            // 
+            expect(deletedAdmin).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+      it("Should NOT remove NOR alter the queried <Admin> model", async () => {
+        try {
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ id: regAdminId });
+          //
+          expect(queriedAdmin).to.not.be.null;
+          expect(queriedAdmin).to.eql(adminUser);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+
+    describe("DELETE /api/admins/:admin_id - OWN Admin's MODEL", function() {
+      it("Should correctly delete OWN Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/admins/${regAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, deletedAdmin, error, errorMessages } = body as DeleteAdminRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(deletedAdmin).to.be.an("object");
+            // 
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+      it("Should DECREMENT the number of <Admin> models in the database by 1", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins - 1);
+          //
+          numberOfAdmins = updatedNumOfAdmins;
+        } catch (error) { 
+          throw error;
+        }
+      });
+      it("Should removed the queried <Admin> model from the database", async () => {
+        try {
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ _id: regAdminId });
+          //
+          expect(queriedAdmin).to.be.null;
         } catch (error) {
           throw error;
         }

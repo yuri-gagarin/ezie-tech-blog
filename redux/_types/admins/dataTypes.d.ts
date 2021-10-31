@@ -40,14 +40,16 @@ export type CreateAdminRes = {
   createdAdmin: AdminData;
 };
 export type EditAdminRes = {
-  responseMsg: string;
-  editedAdmin: AdminData;
+  responseMsg?: string;
+  editedAdmin?: AdminData;
   error?: any;
   errorMessages?: string[];
 };
 export type DeleteAdminRes = {
-  responseMsg: string;
-  deletedAdmin: AdminData;
+  responseMsg?: string;
+  deletedAdmin?: AdminData;
+  error?: any;
+  errorMessages?: string[];
 };
 
 export type ErrorAdminRes = {
