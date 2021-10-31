@@ -15,7 +15,6 @@ import type { AdminData, CreateAdminRes, EditAdminRes, ErrorAdminRes } from "@/r
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { generateMockAdminData } from "../../../hepers/testHelpers";
 import { loginUser } from "../../../hepers/testHelpers";
-import { exec } from "child_process";
 
 chai.use(chaiHTTP);
 
