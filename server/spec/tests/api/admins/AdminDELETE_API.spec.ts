@@ -24,7 +24,7 @@ chai.use(chaiHTTP);
 // Logged in Admin with <admin> role should ONLY be able to delete their OWN model //
 // Logged in Admin with <owner> role should ONLY be able to delete their ANY model //
 // 
-describe("AdminsController:Edit PATCH API tests", function() {
+describe("AdminsController:Delete DELETE API tests", function() {
   // custom timeout //
   this.timeout(10000);
   let server: Express;
@@ -87,4 +87,43 @@ describe("AdminsController:Edit PATCH API tests", function() {
       throw (error);
     }
   });
+  // CONTEXT client no Login //
+  context(("Guest Client - NOT Logged in"), function() {
+    let regAdminId: string;
+    before(() => {
+      regAdminId = adminUser._id.toHexString();
+    });
+    describe("DELETE /api/admins/:admin_id", function() {
+      it("Should NOT delete an EXISTING Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/admins/${regAdminId}`)
+          .end((err, response) => {
+            if (err) done(err);
+            // this should be a default response from Passport middleware for now //
+            expect(response.status).to.equal(401);
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+      it("Should NOT remove NOR alter the queried <Admin> model", async () => {
+        try {
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ id: regAdminId });
+          //
+          expect(queriedAdmin).to.not.be.null;
+          expect(queriedAdmin).to.eql(adminUser);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+  // END CONTEXT client no Login //
+
 });
