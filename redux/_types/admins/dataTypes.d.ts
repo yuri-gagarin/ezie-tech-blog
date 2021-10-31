@@ -42,6 +42,8 @@ export type CreateAdminRes = {
 export type EditAdminRes = {
   responseMsg: string;
   editedAdmin: AdminData;
+  error?: any;
+  errorMessages?: string[];
 };
 export type DeleteAdminRes = {
   responseMsg: string;
