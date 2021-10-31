@@ -126,4 +126,84 @@ describe("AdminsController:Delete DELETE API tests", function() {
   });
   // END CONTEXT client no Login //
 
+  // CONTEXT User client logged in READER //
+  context(("User Client - Logged in - READER User"), function() {
+    let regAdminId: string;
+    before(() => {
+      regAdminId = adminUser._id.toHexString();
+    });
+    describe("DELETE /api/admins/:admin_id", function() {
+      it("Should NOT delete an EXISTING Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/admins/${regAdminId}`)
+          .set({ Authorization: readerUserJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            // this should be a default response from Passport middleware for now //
+            expect(response.status).to.equal(401);
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+      it("Should NOT remove NOR alter the queried <Admin> model", async () => {
+        try {
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ id: regAdminId });
+          //
+          expect(queriedAdmin).to.not.be.null;
+          expect(queriedAdmin).to.eql(adminUser);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+  // END CONTEXT User client logged in READER //
+
+  // CONTEXT User client logged in CONTRIBUTOR //
+  context(("User Client - Logged in - CONTRIBUTOR User"), function() {
+    let regAdminId: string;
+    before(() => {
+      regAdminId = adminUser._id.toHexString();
+    });
+    describe("DELETE /api/admins/:admin_id", function() {
+      it("Should NOT delete an EXISTING Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/admins/${regAdminId}`)
+          .set({ Authorization: contributorUserJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            // this should be a default response from Passport middleware for now //
+            expect(response.status).to.equal(401);
+            done();
+          });
+      });
+      it("Should NOT alter the number of <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) { 
+          throw error;
+        }
+      });
+      it("Should NOT remove NOR alter the queried <Admin> model", async () => {
+        try {
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ id: regAdminId });
+          //
+          expect(queriedAdmin).to.not.be.null;
+          expect(queriedAdmin).to.eql(adminUser);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+  // END CONTEXT client no Login //
+
 });

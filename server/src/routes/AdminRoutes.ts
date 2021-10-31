@@ -43,7 +43,12 @@ export default class AdminRoutes extends CRUDRoutesController {
       verifyAdminModelAccess,
     ]);
   } 
+  // Admins should be able to delete their OWN models //
+  // OWNER LEVEL admins should be able to delete all models //
   protected delete(route: string): void {
-    super.delete(route);
+    super.delete(route, [
+      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
+      verifyAdminModelAccess
+    ]);
   }
 };
