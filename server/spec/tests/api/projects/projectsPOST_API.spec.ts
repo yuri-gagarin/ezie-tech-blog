@@ -567,4 +567,14 @@ describe("ProjectsController POST API tests", function () {
     
   });
   // END TEST CONTEXT ADmin Client LOGIN - OWNER //
+
+  after(async () => {
+    try {
+      await Admin.deleteMany();
+      await User.deleteMany();
+      await Project.deleteMany();
+    } catch (error) {
+      throw error;
+    }
+  });
 });
