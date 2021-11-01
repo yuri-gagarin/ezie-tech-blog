@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import faker from "faker";
 // 
 import BlogPost from "../../src/models/BlogPost";
@@ -7,6 +8,7 @@ import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { ReqAdminData } from "@/server/src/_types/admins/adminTypes";
 import type { ReqUserData } from "@/server/src/_types/users/userTypes";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
+import { ProjectData } from "@/server/src/_types/projects/projectTypes";
 
 export const processBlogPostTestError = () => {
 
@@ -80,5 +82,18 @@ export const generateMockAdminData = (): ReqAdminData => {
     email: faker.internet.email(),
     password: "password",
     confirmPassword: "password"
+  };
+};
+export const generateMockProjectData = (): ProjectData => {
+  return {
+    title: faker.lorem.words(),
+    creator: new Types.ObjectId().toHexString(),
+    description: faker.lorem.paragraph(),
+    challenges: faker.lorem.paragraph(),
+    solution: faker.lorem.paragraph(),
+    languages: {},
+    libraries: {},
+    frameworks: {},
+    images: []
   };
 };
