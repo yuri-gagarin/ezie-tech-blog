@@ -96,9 +96,7 @@ export default class ProjectsController extends BasicController implements ICRUD
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
 
     try {
-      console.log(req.body.projectData);
       const normalizedData = normalizeProjectOpsData({ languages, libraries, frameworks });
-      console.log(normalizedData);
       const editedProject: IProject | null = await Project.findOneAndUpdate(
         { _id: project_id },
         { title, description, challenges, solution, 

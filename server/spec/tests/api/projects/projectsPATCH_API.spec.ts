@@ -10,6 +10,7 @@ import Project from "@/server/src/models/Project";
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
+import type { IProject } from "@/server/src/models/Project";
 import type { CreateProjectRes } from "@/redux/_types/projects/dataTypes";
 import type { ProjectData } from "@/server/src/_types/projects/projectTypes";
 
@@ -21,7 +22,7 @@ import { loginUser } from "../../../hepers/testHelpers";
 chai.use(chaiHTTP);
 
 // At the moment only <owner> level admins should be able to PATCH any Project model //
-describe("ProjectsController POST API tests", function () {
+describe("ProjectsController PATCH API tests", function () {
   // custom timeout //
   this.timeout(5000);
   let mockProjectData: ProjectData;
@@ -31,6 +32,8 @@ describe("ProjectsController POST API tests", function () {
   //
   let readerRegUser: IUser;
   let contributorRegUser: IUser;
+  //
+  let project: IProject;
   //
   let adminJWTToken: string;
   let ownerJWTToken: string;
@@ -56,6 +59,8 @@ describe("ProjectsController POST API tests", function () {
       await generateMockProjects(5, { published: true, creator: ownerUser._id.toHexString() });
       await generateMockProjects(5, { published: false, creator: ownerUser._id.toHexString() });
       //
+      project = await Project.findOne({ published: true });
+      //
       numberOfProjects = await Project.countDocuments();
       mockProjectData = generateMockProjectData();
       server = ServerInstance.getExpressServer();
@@ -75,6 +80,512 @@ describe("ProjectsController POST API tests", function () {
       throw (error);
     }
   });
+
+  // TEST CONTEXT Guest Client NO LOGIN //
+  context("Guest CLient - NO LOGIN", function () {
+    let projectId: string;
+    
+    before(() => {
+      projectId = project._id.toHexString();
+    });
+    // TEST INVALID DATA //
+    describe("PATCH /api/projects/:project_id - default response - INVALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .send({ projectData: {} })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    // TEST VALID DATA //
+    describe("PATCH /api/projects/:project_id - default response - VALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // END CONTEXT GUEST Client NO LOGIN //
+
+  // TEST CONTEXT User Client LOGIN - READER //
+  context("User Client - LOGGED IN - READER User", function () {
+    let projectId: string;
+    
+    before(() => {
+      projectId = project._id.toHexString();
+    });
+    // TEST INVALID DATA //
+    describe("PATCH /api/projects/:project_id - default response - INVALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: readerJWTToken })
+          .send({ projectData: {} })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    // TEST VALID DATA //
+    describe("PATCH /api/projects/:project_id - default response - VALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: readerJWTToken })
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // END TEST CONTEXT User Client LOGIN - READER //
+
+  // TEST CONTEXT User Client LOGIN - CONTIBUTOR //
+  context("User Client - LOGGED IN - CONTRIBUTOR User", function () {
+    let projectId: string;
+    
+    before(() => {
+      projectId = project._id.toHexString();
+    });
+    // TEST INVALID DATA //
+    describe("PATCH /api/projects/:project_id - default response - INVALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: contributorJWTToken })
+          .send({ projectData: {} })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    // TEST VALID DATA //
+    describe("PATCH /api/projects/:project_id - default response - VALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: contributorJWTToken })
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // END TEST CONTEXT User Client LOGIN - CONTRIBUTOR //
+
+  // TEST CONTEXT Admin Client LOGIN - ADMIN Level //
+  context("Admin Client - LOGGED IN - <ADMIN> Level", function () {
+    let projectId: string;
+    
+    before(() => {
+      projectId = project._id.toHexString();
+    });
+    // TEST INVALID DATA //
+    describe("PATCH /api/projects/:project_id - default response - INVALID data", function () {
+      it ("Should NOT alter the <Project> model with EMPTY data fields and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ projectData: { ...mockProjectData, title: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    // TEST VALID DATA //
+    describe("PATCH /api/projects - default response - VALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // END TEST CONTEXT Admin Client LOGIN - ADMIN Level //
+
+  // TEST CONTEXT Admin Client LOGIN - OWNER Level //
+  context("Admin Client - LOGGED IN - <OWNER> Level", function () {
+    let projectId: string;
+    
+    before(() => {
+      projectId = project._id.toHexString();
+    });
+    // TEST INVALID DATA //
+    describe("PATCH /api/projects/:project_id - default response - INVALID data", function () {
+      it ("Should NOT alter the <Project> model with an EMPTY <title> field and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, title: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            console.log(305)
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT alter the <Project> model with an INVALID <title> field TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, title: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            console.log(305)
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT alter the <Project> model with an EMPTY <description> field and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, description: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            console.log(305)
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT alter the <Project> model with an INVALID <description> field TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, description: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            console.log(305)
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT alter the <Project> model with an EMPTY <challenges> field and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, challenges: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            console.log(305)
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT alter the <Project> model with an INVALID <challenges> field TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, challenges: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            console.log(305)
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT alter the <Project> model with an EMPTY <solutions> field and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, solution: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            console.log(305)
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT alter the <Project> model with an INVALID <solutions> field TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, solution: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            console.log(305)
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    // TEST VALID DATA //
+    describe("PATCH /api/projects - default response - VALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // END TEST CONTEXT Admin Client LOGIN - ADMIN Level //
 
 
 

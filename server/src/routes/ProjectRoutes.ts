@@ -39,9 +39,11 @@ export default class ProjectRoutes extends CRUDRoutesController {
       verifyOwnerLevelAccess 
     ]);
   }
+    // only owners should be allowed to edit projects for now //
   protected edit(route: string): void {
     super.edit(route, [ 
-      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false })
+      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
+      verifyOwnerLevelAccess
     ]);
   } 
   protected delete(route: string): void {

@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IProject extends mongoose.Document {
+  _id: mongoose.Types.ObjectId;
   title: string;
   creator: mongoose.Types.ObjectId;
   description: string;
