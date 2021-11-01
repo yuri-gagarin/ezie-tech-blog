@@ -9,13 +9,10 @@ import User from "@/server/src/models/User";
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { ReqAdminData } from "@/server/src/_types/admins/adminTypes";
 import type { AdminData, DeleteAdminRes } from "@/redux/_types/admins/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
-import { generateMockAdminData } from "../../../hepers/testHelpers";
 import { loginUser } from "../../../hepers/testHelpers";
-import { exec } from "child_process";
 
 chai.use(chaiHTTP);
 
@@ -72,7 +69,6 @@ describe("AdminsController:Delete DELETE API tests", function() {
   before(async () => {
     try {
       const { email: adminEmail } = adminUser;
-      const { email: otherAdminEmail } = otherAdminUser;
       const { email: ownerEmail } = ownerUser;
       const { email: readerEmail } = readerRegUser;
       const { email: contributorEmail } = contributorRegUser;

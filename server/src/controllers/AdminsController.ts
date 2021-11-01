@@ -50,6 +50,10 @@ export default class AdminsController extends BasicController implements ICRUDCo
     //
     try {
       const { email, password, firstName = "", lastName = "" } = adminData;
+      // validate duplicate email //
+      const { exists, message } = await validateUniqueEmail(email);
+      if (exists) return await this.userInputErrorResponse(res, [ message ]);
+      //
       const newAdmin = await Admin.create({ 
         email, password, firstName, lastName, role: "admin", confirmed: true 
       });
