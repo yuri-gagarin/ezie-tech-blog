@@ -1,6 +1,7 @@
 import type { IProject } from "../../models/Project";
 
 export type ProjectData = {
+  _id?: string;
   title?: string;
   creator?: mongoose.Types.ObjectId;
   description?: string;
@@ -18,7 +19,7 @@ export type ProjectData = {
   images?: string[];
   published?: boolean;
   createdAt?: string;
-  editedAd?: string;
+  editedAt?: string;
 };
 
 export type ProjectQueryParams = {

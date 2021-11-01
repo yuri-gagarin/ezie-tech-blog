@@ -75,7 +75,7 @@ export default class ProjectsController extends BasicController implements ICRUD
         images: [],
         published: false,
         createdAt: new Date(),
-        editedAd: new Date()
+        editedAt: new Date()
       });
       return res.status(200).json({
         responseMsg: "Project created", createdProject

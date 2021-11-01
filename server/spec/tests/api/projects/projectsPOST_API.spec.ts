@@ -508,6 +508,62 @@ describe("ProjectsController POST API tests", function () {
       });
     }); 
     // END TEST INVALID DATA //
+
+    // TEST VALID DATA //
+    describe("POST /api/projects - default response - VALID data", function () {
+      let _createdProject: ProjectData;
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(createdProject).to.be.an("object");
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            //
+            _createdProject = createdProject;
+            done();
+          });
+      });
+      it("Should correctly set all the new <Project> model fields", () => {
+        expect(_createdProject._id).to.be.a("string");
+        expect(_createdProject.title).to.equal(mockProjectData.title);
+        expect(_createdProject.description).to.equal(mockProjectData.description);
+        expect(_createdProject.challenges).to.equal(mockProjectData.challenges);
+        expect(_createdProject.solution).to.equal(mockProjectData.solution);
+        // still need more detailed checks here //
+        expect(_createdProject.languages).to.be.an("object");
+        expect(_createdProject.frameworks).to.be.an("object");
+        expect(_createdProject.libraries).to.be.an("object");
+        // should be unpublished by default //
+        expect(_createdProject.published).to.equal(false);
+        // images should be empty //
+        expect(_createdProject.images).to.be.an("array");
+        expect(_createdProject.images.length).to.equal(0);
+        // dates //
+        expect(_createdProject.editedAt).to.be.a("string");
+        expect(_createdProject.createdAt).to.be.a("string");
+      });
+      it("Should INCREMENT the number of <Project> models in the database by 1", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects + 1);
+          //
+          numberOfProjects = updatedNumOrProjects;
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
     
   });
   // END TEST CONTEXT ADmin Client LOGIN - OWNER //

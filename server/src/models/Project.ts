@@ -18,7 +18,7 @@ export interface IProject extends mongoose.Document {
   published: boolean;
   images: string[];
   createdAt: Date;
-  editedAd: Date;
+  editedAt: Date;
 };
 
 const projectSchema = new Schema({
