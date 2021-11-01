@@ -266,6 +266,19 @@ export const validateProjectModelData = (data: { title?: string; description?: s
   if (!data.solution) {
     res.errorMessages.push("Project solution field is required");
   }
+  // validate correct data type //
+  if (data.title && typeof data.title !== "string") {
+    res.errorMessages.push("Wrong data type for Project title");
+  }
+  if (data.description && typeof data.description !== "string") {
+    res.errorMessages.push("Wrong data type for Project description");
+  }
+  if (data.challenges && typeof data.challenges !== "string") {
+    res.errorMessages.push("Wrong data type for Project challenges");
+  }
+  if (data.solution && typeof data.solution !== "string") {
+    res.errorMessages.push("Wrong data type for Project solution");
+  }
   res.errorMessages.length > 0 ? res.valid = false : res.valid = true;
   return res;
 };

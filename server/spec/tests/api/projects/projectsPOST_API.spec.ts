@@ -358,6 +358,146 @@ describe("ProjectsController POST API tests", function () {
             done();
           });
       });
+      it ("Should NOT create a new <Project> model with an INCORRECT <title> field TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, title: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT create a new <Project> model with an EMPTY <description> field and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, description: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT create a new <Project> model with an INCORRECT <description> field TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, description: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT create a new <Project> model with an EMPTY <challenges> field and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, challenges: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT create a new <Project> model with an INCORRECT <solution> field TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, challenges: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT create a new <Project> model with an EMPTY <solution> field and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, challenges: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it ("Should NOT create a new <Project> model with an INCORRECT <challenges> field TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, challenges: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
       it("Should NOT alter the <Project> models in the database", async () => {
         try {
           const updatedNumOrProjects: number = await Project.countDocuments();
