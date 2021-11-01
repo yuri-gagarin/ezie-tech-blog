@@ -955,4 +955,12 @@ describe("AdminsController:Edit PATCH API tests", function() {
     // END TEST Own account invalid data //
   });
   // END CONTEXT Admin with OWNER privileges //
+  after(async () => {
+    try {
+      await Admin.deleteMany();
+      await User.deleteMany();
+    } catch (error) {
+      throw error;
+    }
+  });
 });
