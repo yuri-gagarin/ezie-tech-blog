@@ -19,7 +19,6 @@ export default class ProjectsController extends BasicController implements ICRUD
     const user = req.user as IAdmin | IUser | null;
     //
     let projects: IProject[];
-    console.log(req.query);
     try {
       if (published && this.verifyOwnerAdmin(user)) {
         // only owner level admins can see both published and unpublished projects //
