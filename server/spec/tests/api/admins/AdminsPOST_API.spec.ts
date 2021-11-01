@@ -415,6 +415,91 @@ describe("AdminsController:Create POST API tests", function() {
             done();
           });
       });
+      it("Should NOT create a NEW Admin model WITHOUT a <password> field and send back a correct response", (done) => {
+        chai.request(server)
+          .post("/api/admins")
+          .set({ Authorization: ownerJWTToken })
+          .send({ adminData: { ...generateMockAdminData(), password: "" } }) 
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            done();
+          });
+      });
+      it("Should NOT create a NEW Admin model WITH an INVALID <password> field and send back a correct response", (done) => {
+        chai.request(server)
+          .post("/api/admins")
+          .set({ Authorization: ownerJWTToken })
+          .send({ adminData: { ...generateMockAdminData(), password: {} } }) 
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            done();
+          });
+      });
+      it("Should NOT create a NEW Admin model WITHOUT a <confirmPassword> field and send back a correct response", (done) => {
+        chai.request(server)
+          .post("/api/admins")
+          .set({ Authorization: ownerJWTToken })
+          .send({ adminData: { ...generateMockAdminData(), confirmPassword: "" } }) 
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            done();
+          });
+      });
+      it("Should NOT create a NEW Admin model WITH an INVALID <confirmPassword> field and send back a correct response", (done) => {
+        chai.request(server)
+          .post("/api/admins")
+          .set({ Authorization: ownerJWTToken })
+          .send({ adminData: { ...generateMockAdminData(), confirmPassword: {} } }) 
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            done();
+          });
+      });
+      it("Should NOT create a NEW Admin model WITH MISMATCHING <password> and <confirmPassword> fields and send back a correct response", (done) => {
+        chai.request(server)
+          .post("/api/admins")
+          .set({ Authorization: ownerJWTToken })
+          .send({ adminData: { ...generateMockAdminData(), password: "password", confirmPassword: "notmatching" } }) 
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            done();
+          });
+      });
       it("Should NOT alter the number of <Admin> models in the database", async () => {
         try {
           const updatedNumOfAdmins: number = await Admin.countDocuments();
