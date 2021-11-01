@@ -136,4 +136,132 @@ describe("ProjectsController POST API tests", function () {
     // END TEST VALID DATA //
   });
   // END CONTEXT GUEST Client NO LOGIN //
+
+  // TEST CONTEXT User Client LOGIN - READER //
+  context("User Client - LOGGED IN - READER User", function () {
+    // TEST INVALID DATA //
+    describe("POST /api/projects - default response - INVALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: readerJWTToken })
+          .send({ projectData: {} })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            console.log(body);
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    // TEST VALID DATA //
+    describe("POST /api/projects - default response - VALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: readerJWTToken })
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // END TEST CONTEXT User Client LOGIN - READER //
+
+  // TEST CONTEXT User Client LOGIN - CONTIBUTOR //
+  context("User Client - LOGGED IN - CONTRIBUTOR User", function () {
+    // TEST INVALID DATA //
+    describe("POST /api/projects - default response - INVALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: contributorJWTToken })
+          .send({ projectData: {} })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            console.log(body);
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    // TEST VALID DATA //
+    describe("POST /api/projects - default response - VALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: contributorJWTToken })
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // END TEST CONTEXT User Client LOGIN - CONTRIBUTOR //
 });
