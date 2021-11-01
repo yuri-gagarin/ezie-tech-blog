@@ -5,6 +5,7 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 // helpers middleware //
+import { verifyOwnerLevelAccess } from "../controllers/_helpers/adminsControllerHelpers";
 import { checkforLogin } from "../controllers/_helpers/authHelpers";
 
 export default class ProjectRoutes extends CRUDRoutesController {
@@ -31,9 +32,11 @@ export default class ProjectRoutes extends CRUDRoutesController {
   protected getOne(route: string): void {
     super.getOne(route);
   }
+  // only owners should be allowed to create projects for now //
   protected create(route: string): void {
     super.create(route, [ 
-      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false })
+      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
+      verifyOwnerLevelAccess 
     ]);
   }
   protected edit(route: string): void {

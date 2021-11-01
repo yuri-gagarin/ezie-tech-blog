@@ -264,4 +264,111 @@ describe("ProjectsController POST API tests", function () {
     // END TEST VALID DATA //
   });
   // END TEST CONTEXT User Client LOGIN - CONTRIBUTOR //
+
+  // TEST CONTEXT Admin Client LOGIN - ADMIN Level //
+  context("Admin Client - LOGGED IN - <ADMIN> Level", function () {
+    // TEST INVALID DATA //
+    describe("POST /api/projects - default response - INVALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: adminJWTToken })
+          .send({ projectData: {} })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    // TEST VALID DATA //
+    describe("POST /api/projects - default response - VALID data", function () {
+      it ("Should correctly send back the reqested data with correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: adminJWTToken })
+          .send({ projectData: mockProjectData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // END TEST CONTEXT Admin Client LOGIN - ADMIN Level //
+
+  // TEST CONTEXT Admin Client LOGIN - OWNERLevel //
+  context("Admin Client - LOGGED IN - <OWNER> Level", function () {
+    // TEST INVALID DATA //
+    describe("POST /api/projects - default response - INVALID data", function () {
+      it ("Should NOT create a new <Project> model with an EMPTY <title> field and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .post("/api/projects")
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData, title: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(createdProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
+    
+  });
+  // END TEST CONTEXT ADmin Client LOGIN - OWNER //
 });

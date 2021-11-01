@@ -54,14 +54,17 @@ export default class ProjectsController extends BasicController implements ICRUD
     }
   }
   create = async (req: Request, res: Response<ProjectCreateRes>): Promise<Response<ProjectCreateRes>> => {
-    const { title, description, challenges, solution, languages = {},  libraries = {}, frameworks = {} } = req.body.projectData as ProjectData;
+    const projectData = req.body.projectData as ProjectData;
     const user: IAdmin = req.user as IAdmin;
-
-    if (!user) return await this.notFoundErrorResponse(res, [ "Could not resolve user account" ]);
+    // 
+    if (!projectData) return await this.userInputErrorResponse(res, [ "Invalid user input to create a Project" ]);
     // have to validate valid project data //
-    const { valid, errorMessages } = validateProjectModelData({ title, description, challenges, solution });
+    const { valid, errorMessages } = validateProjectModelData(projectData);
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
+    //
+
     try {
+      const { title, description, challenges, solution, languages = {}, libraries = {}, frameworks = {} } = projectData;
       const normalizedData = normalizeProjectOpsData({ languages, libraries, frameworks });
       const createdProject: IProject = await Project.create({
         creator: user._id,
