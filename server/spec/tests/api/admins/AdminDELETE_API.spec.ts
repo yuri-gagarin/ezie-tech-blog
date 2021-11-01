@@ -294,6 +294,104 @@ describe("AdminsController:Delete DELETE API tests", function() {
       });
     });
   });
-  // END CONTEXT client no Login //
+  // END CONTEXT Admin client logged in ADMIN level //
 
+  // CONTEXT Admin client logged in OWNER level //
+  context(("Admin Client - Logged in - <owner> level Admin"), function() {
+    let ownerAdminId: string;
+    let otherRegAdminId: string;
+
+    before(() => {
+      ownerAdminId = ownerUser._id.toHexString();
+      otherRegAdminId = otherAdminUser._id.toHexString();
+    });
+
+    describe("DELETE /api/admins/:admin_id - OTHER Admin's MODEL", function() {
+      it("Should correctly delete OTHER Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/admins/${otherRegAdminId}`)
+          .set({ Authorization: ownerJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, deletedAdmin, error, errorMessages } = body as DeleteAdminRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(deletedAdmin).to.be.an("object");
+            // 
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+      it("Should DECREMENT the number of <Admin> models in the database by 1", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins - 1);
+          //
+          numberOfAdmins = updatedNumOfAdmins;
+        } catch (error) { 
+          throw error;
+        }
+      });
+      it("Should remove the queried <Admin> model from the database", async () => {
+        try {
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ _id: otherRegAdminId });
+          //
+          expect(queriedAdmin).to.be.null;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+
+    describe("DELETE /api/admins/:admin_id - OWN Admin's MODEL", function() {
+      it("Should correctly delete OWN Admin model and send back a correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/admins/${ownerAdminId}`)
+          .set({ Authorization: ownerJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, deletedAdmin, error, errorMessages } = body as DeleteAdminRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(deletedAdmin).to.be.an("object");
+            // 
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+      it("Should DECREMENT the number of <Admin> models in the database by 1", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins - 1);
+          //
+          numberOfAdmins = updatedNumOfAdmins;
+        } catch (error) { 
+          throw error;
+        }
+      });
+      it("Should removed the queried <Admin> model from the database", async () => {
+        try {
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ _id: ownerAdminId });
+          //
+          expect(queriedAdmin).to.be.null;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+  // END CONTEXT Admin client logged in ADMIN level //
+
+  after(async () => {
+    try {
+      await Admin.deleteMany();
+      await User.deleteMany();
+    } catch (error) {
+      throw error;
+    }
+  })
 });
