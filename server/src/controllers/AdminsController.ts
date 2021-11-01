@@ -1,7 +1,8 @@
 import Admin, { IAdmin } from "../models/Admin";
 import { BasicController } from "../_types/abstracts/DefaultController";
+// data enums //
 // types //
-import type { Request, Response } from "express";
+import type { Request, Response, CookieOptions } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
 import type { FetchAdminsOpts, ReqAdminData, PasswordChangeData, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes, AdminData } from "../_types/admins/adminTypes";
 // helpers //
@@ -115,13 +116,15 @@ export default class AdminsController extends BasicController implements ICRUDCo
     const { admin_id } = req.params;
 
     if (!admin_id) return await this.generalErrorResponse(res, { status: 400, error: new Error("Could not resolve admin id")});
-
     try {
       const deletedAdmin = await Admin.findOneAndDelete({ _id: admin_id });
+      // set logout cookie //
       if (deletedAdmin) {
-        return res.status(200).json({
-          responseMsg: `Deleted Admin ${deletedAdmin.email}`, deletedAdmin
-        });
+        return (
+          res
+            .status(200)
+            .json({ responseMsg: `Deleted Admin ${deletedAdmin.email}`, deletedAdmin })
+        );
       } else {
         return await this.generalErrorResponse(res, { status: 400, error: new Error("Admin to delete not found") });
       }

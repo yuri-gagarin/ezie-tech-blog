@@ -15,7 +15,7 @@ import type { UserData } from "../_types/users/userTypes";
 import { validateRegistrationData } from "./_helpers/validationHelpers";
 import { trimRegistrationData } from "./_helpers/authControllerHelperts";
 
-enum LoginCookies {
+export enum LoginCookies {
   JWTToken = "JWTToken"
 };
 

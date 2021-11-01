@@ -1,17 +1,35 @@
-import Project from "../models/Project";
 import { BasicController } from "../_types/abstracts/DefaultController";
+// models //
+import Project from "../models/Project";
+import Admin from "../models/Admin";
 // types //
 import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { ProjectData, ProjectIndexRes, ProjectGetOneRes, ProjectCreateRes, ProjectEditRes, ProjectDeleteRes, ProjectImgRes } from "../_types/projects/projectTypes";
+import type { ProjectQueryParams, ProjectData, ProjectIndexRes, ProjectGetOneRes, ProjectCreateRes, ProjectEditRes, ProjectDeleteRes, ProjectImgRes } from "../_types/projects/projectTypes";
+import type { IAdmin } from "../models/Admin";
 import type { IProject } from "../models/Project";
-import { IAdmin } from "../models/Admin";
+import type { IUser } from "../models/User";
+// helpers //
 import { normalizeProjectOpsData, validateProjectModelData } from "./_helpers/validationHelpers";
+import { getBooleanFromString } from "./_helpers/generalHelpers";
 
 export default class ProjectsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<ProjectIndexRes>): Promise<Response<ProjectIndexRes>> => {
+    const { published, limit = "5" } = req.query as ProjectQueryParams;
+    const user = req.user as IAdmin | IUser | null;
+    //
+    let projects: IProject[];
+    console.log(req.query);
     try {
-      const projects: IProject[] = await Project.find({}).exec();
+      if (published && this.verifyOwnerAdmin(user)) {
+        // only owner level admins can see both published and unpublished projects //
+        let publishedStatus: boolean = getBooleanFromString(published);
+        projects = await Project.find({ published: publishedStatus }).limit(parseInt(limit)).exec();
+      } else if (published && !this.verifyOwnerAdmin(user)) {
+        return await this.notAllowedErrorResponse(res, [ "Insuficcient access level for this query" ]);
+      } else {
+        projects = await Project.find({ published: true }).limit(parseInt(limit)).exec();
+      }
       return res.status(200).json({
         responseMsg: "Loaded Projects", projects
       });
@@ -163,5 +181,13 @@ export default class ProjectsController extends BasicController implements ICRUD
     } catch (error) {
       return await this.generalErrorResponse(res, { error });
     } 
+  }
+
+  private verifyOwnerAdmin = (user: IAdmin | IUser | null): boolean => {
+    if (user) {
+      return (user instanceof Admin && user.role === "owner");
+    } else {
+      return false;
+    }
   }
 };

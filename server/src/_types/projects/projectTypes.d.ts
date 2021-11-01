@@ -21,6 +21,11 @@ export type ProjectData = {
   editedAd: string;
 };
 
+export type ProjectQueryParams = {
+  limit?: string;
+  published?: string;
+};
+
 export type ProjectIndexRes = {
   responseMsg: string;
   projects: IProject[];

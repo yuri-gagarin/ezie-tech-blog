@@ -17,3 +17,7 @@ export const respondWithNotAllowedError = (res: Response, customMessages?: strin
 export const objectIsEmtpy = (obj: any): boolean => {
   return obj && Object.keys(obj).length === 0  && Object.getPrototypeOf(obj) === Object.prototype;
 };
+export const getBooleanFromString = (string: string) => {
+  if (!string || typeof string !== "string") throw new Error("Wrong data type for conversion");
+  return (string === "true" || string === "TRUE" || string === "True") ? true : false; 
+}

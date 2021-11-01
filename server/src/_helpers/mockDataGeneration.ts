@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import faker from "faker";
 // models //
 import Admin from "../models/Admin";
@@ -58,13 +58,13 @@ export const generateMockBlogPosts = async ({ number, publishedStatus, user }: {
   }
 };
 
-export const generateMockProjects = async (num?: number): Promise<number> => {
+export const generateMockProjects = async (num?: number, opts?: { published?: boolean, creator?: string; }): Promise<number> => {
   const numToGenerate: number = num ? num : 1;
 
   for (let i = 0; i < num; i++) {
     const newProject: IProject = new Project({
       title: faker.lorem.words(randomIntFromInterval(1, 4)),
-      creator: new mongoose.Types.ObjectId(),
+      creator: opts && opts.creator ? opts.creator : new Types.ObjectId(),
       description: faker.lorem.paragraphs(randomIntFromInterval(1, 3)),
       challenges: faker.lorem.paragraphs(randomIntFromInterval(2, 4)),
       solution: faker.lorem.paragraphs(randomIntFromInterval(2, 4)),
@@ -78,7 +78,7 @@ export const generateMockProjects = async (num?: number): Promise<number> => {
         rails: setRandBoolean(), nextJS: setRandBoolean(), gatsbyJS: setRandBoolean(), django: setRandBoolean(), flask: setRandBoolean(), ASP: setRandBoolean()
       },
       images: [],
-      published: false,
+      published: opts && opts.published ? opts.published : (randomIntFromInterval(0, 1) ? true : false),
       createdAt: new Date(),
       editedAt: new Date()
     });

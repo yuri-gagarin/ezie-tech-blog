@@ -2,7 +2,7 @@ import Admin from "../../models/Admin";
 import { PassportContInstance } from "../../server";
 import { StrategyNames } from "../PassportController"; 
 // types //
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction, CookieOptions } from "express";
 import type { IAdmin } from "../../models/Admin";
 import type { IUser } from "../../models/User";
 import type { ErrorResponse } from "../../_types/auth/authTypes";
@@ -71,3 +71,7 @@ export const verifyAdmin = async (req: Request, res: Response<ErrorResponse>, ne
   }
 };
 
+export const setLogoutCookieOpts = (): CookieOptions => {
+  const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
+  return { maxAge: 0, httpOnly: true, domain, signed: true, sameSite: "strict" };
+};

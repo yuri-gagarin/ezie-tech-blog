@@ -4,6 +4,8 @@ import { StrategyNames } from "../controllers/PassportController";
 // types //
 import type { Router  } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
+// helpers middleware //
+import { checkforLogin } from "../controllers/_helpers/authHelpers";
 
 export default class ProjectRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -22,7 +24,9 @@ export default class ProjectRoutes extends CRUDRoutesController {
   }
 
   protected index(route: string): void {
-    super.index(route);
+    super.index(route, [
+      checkforLogin,
+    ]);
   }
   protected getOne(route: string): void {
     super.getOne(route);
