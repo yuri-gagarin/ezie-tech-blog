@@ -11,9 +11,8 @@ import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
 import type { IProject } from "@/server/src/models/Project";
-import type { CreateProjectRes } from "@/redux/_types/projects/dataTypes";
+import type { EditProjectRes } from "@/redux/_types/projects/dataTypes";
 import type { ProjectData } from "@/server/src/_types/projects/projectTypes";
-
 // helpers //
 import { generateMockAdmins, generateMockProjects, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { generateMockProjectData } from "../../../hepers/testHelpers";
@@ -80,7 +79,7 @@ describe("ProjectsController PATCH API tests", function () {
       throw (error);
     }
   });
-
+  /*
   // TEST CONTEXT Guest Client NO LOGIN //
   context("Guest CLient - NO LOGIN", function () {
     let projectId: string;
@@ -101,7 +100,7 @@ describe("ProjectsController PATCH API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.createdProject).to.be.undefined;
+            expect(body.editedProject).to.be.undefined;
             // 
             done();
           });
@@ -131,7 +130,7 @@ describe("ProjectsController PATCH API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.createdProject).to.be.undefined;
+            expect(body.editedProject).to.be.undefined;
             // 
             done();
           });
@@ -172,7 +171,7 @@ describe("ProjectsController PATCH API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.createdProject).to.be.undefined;
+            expect(body.editedProject).to.be.undefined;
             // 
             done();
           });
@@ -203,7 +202,7 @@ describe("ProjectsController PATCH API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.createdProject).to.be.undefined;
+            expect(body.editedProject).to.be.undefined;
             // 
             done();
           });
@@ -244,7 +243,7 @@ describe("ProjectsController PATCH API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.createdProject).to.be.undefined;
+            expect(body.editedProject).to.be.undefined;
             // 
             done();
           });
@@ -275,7 +274,7 @@ describe("ProjectsController PATCH API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.createdProject).to.be.undefined;
+            expect(body.editedProject).to.be.undefined;
             // 
             done();
           });
@@ -313,13 +312,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(401);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -347,13 +346,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(401);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -372,6 +371,7 @@ describe("ProjectsController PATCH API tests", function () {
     // END TEST VALID DATA //
   });
   // END TEST CONTEXT Admin Client LOGIN - ADMIN Level //
+  */
 
   // TEST CONTEXT Admin Client LOGIN - OWNER Level //
   context("Admin Client - LOGGED IN - <OWNER> Level", function () {
@@ -380,6 +380,7 @@ describe("ProjectsController PATCH API tests", function () {
     before(() => {
       projectId = project._id.toHexString();
     });
+    /*
     // TEST INVALID DATA //
     describe("PATCH /api/projects/:project_id - default response - INVALID data", function () {
       it ("Should NOT alter the <Project> model with an EMPTY <title> field and send back a correct response", (done) => {
@@ -391,13 +392,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -411,13 +412,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -431,13 +432,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -451,13 +452,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -471,13 +472,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -491,13 +492,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -511,13 +512,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -531,13 +532,13 @@ describe("ProjectsController PATCH API tests", function () {
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
-            const { responseMsg, createdProject, error, errorMessages } = body as CreateProjectRes;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(createdProject).to.be.undefined;
+            expect(editedProject).to.be.undefined;
             // 
             done();
           });
@@ -554,8 +555,53 @@ describe("ProjectsController PATCH API tests", function () {
       });
     }); 
     // END TEST INVALID DATA //
+    */
     // TEST VALID DATA //
-    
+    describe("PATCH /api/projects - default response - VALID data", function () {
+      let _editedProject: ProjectData;
+      it ("Should CORRECTLY alter the <Project> model and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
+            console.log(body);
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(editedProject).to.be.an("object");
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            // 
+            _editedProject = editedProject;
+            done();
+          });
+      });
+      it("Should CORRECTLY alter the <Project> models in the database", async () => {
+        try {
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          // changed fields //
+          expect(_editedProject.title).to.equal(mockProjectData.title);
+          expect(_editedProject.description).to.equal(mockProjectData.description);
+          expect(_editedProject.challenges).to.equal(mockProjectData.challenges);
+          expect(_editedProject.solution).to.equal(mockProjectData.solution);
+          expect(_editedProject.languages).to.eql(mockProjectData.languages);
+          expect(_editedProject.frameworks).to.eql(mockProjectData.frameworks);
+          expect(_editedProject.libraries).to.eql(mockProjectData.libraries);
+          expect(_editedProject.editedAt).to.be.a("string");
+          // fields which should remain the same //
+          expect(_editedProject._id).to.equal(project._id.toHexString());
+          expect(_editedProject.images).to.eql(project.images);
+          expect(_editedProject.createdAt).to.equal(project.createdAt.toISOString());
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
     // END TEST VALID DATA //
   });
   // END TEST CONTEXT Admin Client LOGIN - ADMIN Level //

@@ -8,11 +8,9 @@ import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { ReqAdminData } from "@/server/src/_types/admins/adminTypes";
 import type { ReqUserData } from "@/server/src/_types/users/userTypes";
 import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
-import { ProjectData } from "@/server/src/_types/projects/projectTypes";
-
-export const processBlogPostTestError = () => {
-
-};
+import type { ProjectData } from "@/server/src/_types/projects/projectTypes";
+// helpers //
+import { setRandBoolean } from "../../src/_helpers/generalHelpers";
 
 export const loginUser = async ({ chai, server, email}: { chai: Chai.ChaiStatic; server: Express; email: string }): Promise<{ userJWTToken: string; }> => {
   return new Promise((resolve, reject) => {
@@ -91,9 +89,15 @@ export const generateMockProjectData = (): ProjectData => {
     description: faker.lorem.paragraph(),
     challenges: faker.lorem.paragraph(),
     solution: faker.lorem.paragraph(),
-    languages: {},
-    libraries: {},
-    frameworks: {},
+    languages: {
+      js: setRandBoolean(), ts: setRandBoolean(), python: setRandBoolean(), ruby: setRandBoolean(), cSharp: setRandBoolean(), goLang: setRandBoolean()
+    },
+    libraries: {
+      bootstrap: setRandBoolean(), semanticUI: setRandBoolean(), materialUI: setRandBoolean(), jquery: setRandBoolean(), react: setRandBoolean(), reactNative: setRandBoolean(), redux: setRandBoolean(), socketIO: setRandBoolean()
+    },
+    frameworks: {
+      rails: setRandBoolean(), nextJS: setRandBoolean(), gatsbyJS: setRandBoolean(), django: setRandBoolean(), flask: setRandBoolean(), ASP: setRandBoolean()
+    },
     images: []
   };
 };

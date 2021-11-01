@@ -86,16 +86,14 @@ export default class ProjectsController extends BasicController implements ICRUD
   }
   edit = async (req: Request, res: Response<ProjectEditRes>): Promise<Response<ProjectEditRes>> => {
     const { project_id } = req.params;
-    const { title, description, challenges, solution, languages = {},  libraries = {}, frameworks = {} } = req.body.projectData as ProjectData;
     const user: IAdmin = req.user as IAdmin;
-    
-    if (!user) return await this.notAllowedErrorResponse(res, [ "Could not resolve user account" ]);
-    if (!project_id) return await this.userInputErrorResponse(res, [ "Could not resolve user id" ]);
+    const projectData = req.body.projectData as ProjectData;
     // validate correct input data //
-    const { valid, errorMessages } = validateProjectModelData({ title, description, challenges, solution });
+    const { valid, errorMessages } = validateProjectModelData(projectData);
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
-
+    //
     try {
+      const { title, description, challenges, solution, languages = {}, libraries = {}, frameworks = {} } = projectData;
       const normalizedData = normalizeProjectOpsData({ languages, libraries, frameworks });
       const editedProject: IProject | null = await Project.findOneAndUpdate(
         { _id: project_id },

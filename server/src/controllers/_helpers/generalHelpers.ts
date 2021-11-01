@@ -1,4 +1,4 @@
-import type { Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 export const respondWithNoModelIdError = (res: Response, customMessages?: string[]) => {
   return res.status(400).json({
@@ -20,4 +20,29 @@ export const objectIsEmtpy = (obj: any): boolean => {
 export const getBooleanFromString = (string: string) => {
   if (!string || typeof string !== "string") throw new Error("Wrong data type for conversion");
   return (string === "true" || string === "TRUE" || string === "True") ? true : false; 
-}
+};
+
+export const validateRequiredParams = (requiredParameters: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const errorMessages: string[] = [];
+    for (const requiredParam of requiredParameters) {
+      if (!req.params[requiredParam]) {
+        errorMessages.push(`Required parameter: ${requiredParameters} is missing from the Request`);
+      }
+    }
+
+    return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
+  }
+};
+export const validateRequiredDataFieds = (requiredDataFields: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const errorMessages: string[] = [];
+    for (const requiredField of requiredDataFields) {
+      if (!req.body[requiredField]) {
+        errorMessages.push(`Required data: ${requiredField} is missing from the Request`);
+      }
+    }
+
+    return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
+  }
+};
