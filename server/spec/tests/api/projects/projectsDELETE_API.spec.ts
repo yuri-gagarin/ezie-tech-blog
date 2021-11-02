@@ -11,7 +11,7 @@ import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
 import type { IProject } from "@/server/src/models/Project";
-import type { EditProjectRes } from "@/redux/_types/projects/dataTypes";
+import type { DeleteProjectRes } from "@/redux/_types/projects/dataTypes";
 import type { ProjectData } from "@/server/src/_types/projects/projectTypes";
 // helpers //
 import { generateMockAdmins, generateMockProjects, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
@@ -200,6 +200,95 @@ describe("ProjectsController DELETE API tests", function () {
     // END TEST VALID DATA //
   });
   // END TEST CONTEXT User Client LOGGED IN CONTRIBUTOR //
+
+  // TEST CONTEXT ADmin Client LOGGED IN ADMIN Level //
+  context("Admin CLient - LOGGED IN - ADMIN Level", function () {
+    let projectId: string;
+    
+    before(() => {
+      projectId = project._id.toHexString();
+    });
+    // TEST VALID DATA //
+    describe("DELETE /api/projects/:project_id - default response - VALID data", function () {
+      it("Should NOT alter the queried <Project> model and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .delete(`/api/projects/${projectId}`)
+          .set({ Authorization: adminJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, deletedProject, error, errorMessages  } = body as DeleteProjectRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(deletedProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const queriedProject: IProject = await Project.findById(projectId);
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(queriedProject).to.not.be.null;
+          expect(queriedProject.toObject()).to.eql(project.toObject());
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // TEST CONTEXT ADmin Client LOGGED IN ADMIN Level //
+
+  // TEST CONTEXT ADmin Client LOGGED IN OWNER Level //
+  context("Admin CLient - LOGGED IN - OWNER Level", function () {
+    let projectId: string;
+    
+    before(() => {
+      projectId = project._id.toHexString();
+    });
+    // TEST VALID DATA //
+    describe("DELETE /api/projects/:project_id - default response - VALID data", function () {
+      it("Should DELETE the queried <Project> model and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .delete(`/api/projects/${projectId}`)
+          .set({ Authorization: ownerJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, deletedProject, error, errorMessages  } = body as DeleteProjectRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(deletedProject).to.be.an("object")
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            //
+            done();
+          });
+      });
+      it("Should REMOVE the queried <Project> model from the database and DECREMENT <Project> models by 1", async () => {
+        try {
+          const queriedProject: IProject | null = await Project.findById(projectId);
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(queriedProject).to.be.null;
+          expect(updatedNumOrProjects).to.equal(numberOfProjects - 1);
+          //
+          numberOfProjects = updatedNumOrProjects;
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST VALID DATA //
+  });
+  // TEST CONTEXT ADmin Client LOGGED IN OWNER Level //
   after(async () => {
     try {
       await Admin.deleteMany();

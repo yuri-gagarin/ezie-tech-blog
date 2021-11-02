@@ -147,8 +147,8 @@ export type EditProjectRes = {
   errorMessages: string[];
 };
 export type DeleteProjectRes = {
-  responseMsg: string;
-  deletedProject: ProjectData;
+  responseMsg?: string;
+  deletedProject?: ProjectData;
   error?: any;
   errorMessages?: string[];
 };
