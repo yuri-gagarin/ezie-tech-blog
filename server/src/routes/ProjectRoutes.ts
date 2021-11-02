@@ -54,7 +54,10 @@ export default class ProjectRoutes extends CRUDRoutesController {
   } 
   protected delete(route: string): void {
     super.delete(route, [ 
-      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false })
+      PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
+      verifyOwnerLevelAccess,
+      validateRequiredParams([ "project_id" ])
+
     ]);
   }
   private addImage(route: string): void {
