@@ -78,7 +78,7 @@ export const generateMockProjects = async (num?: number, opts?: { published?: bo
         rails: setRandBoolean(), nextJS: setRandBoolean(), gatsbyJS: setRandBoolean(), django: setRandBoolean(), flask: setRandBoolean(), ASP: setRandBoolean()
       },
       images: [],
-      published: opts && opts.published ? opts.published : (randomIntFromInterval(0, 1) ? true : false),
+      published: opts && (typeof opts.published === "boolean") ? opts.published : (randomIntFromInterval(0, 1) ? true : false),
       createdAt: new Date(),
       editedAt: new Date()
     });

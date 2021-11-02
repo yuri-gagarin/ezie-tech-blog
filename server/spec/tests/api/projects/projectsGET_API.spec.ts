@@ -5,12 +5,12 @@ import { ServerInstance } from "../../../../src/server";
 //
 import Admin from "../../../../src/models/Admin";
 import User from "../../../../src/models/User";
-import Project from "@/server/src/models/Project";
+import Project, { IProject } from "@/server/src/models/Project";
 // types //
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { IndexProjectRes } from "@/redux/_types/projects/dataTypes";
+import type { IndexProjectRes, OneProjectRes } from "@/redux/_types/projects/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockProjects, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser } from "../../../hepers/testHelpers";
@@ -70,499 +70,607 @@ describe("ProjectsController GET API tests", function () {
       throw (error);
     }
   });
-  // TEST CONTEXT Guest Client NO LOGIN //
-  context("Guest CLient - NO LOGIN", function () {
+  // CONTEXT TEST GET /api/projects //
+  context("ProjectsController:Index action", function () {
+    // TEST CONTEXT Guest Client NO LOGIN //
+    context("Guest CLient - NO LOGIN", function () {
 
-    describe("GET /api/projects - default response", function () {
-      it ("Should correctly send back the reqested data with correct response", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(projects).to.be.an("array")
-            expect(projects.length).to.be.at.most(5);
-            //
-            for (const projectData of projects) {
-              expect(projectData.published).to.equal(true);
-            }
-            //
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // 
-            done();
-          });
+      describe("GET /api/projects - default response", function () {
+        it ("Should correctly send back the reqested data with correct response", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(projects).to.be.an("array")
+              expect(projects.length).to.be.at.most(5);
+              //
+              for (const projectData of projects) {
+                expect(projectData.published).to.equal(true);
+              }
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
       });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
+
+      describe("GET /api/projects -  response with CUSTOM QUERY", function () {
+        it ("Should NOT send back the reqested data with { published: true } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .query({ published: true, limit: 5 })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it ("Should NOT send back the reqested data with { published: false } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .query({ published: false, limit: 5 })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
       });
+
     });
+    // END TEST CONTEXT Guest Client NO LOGIN //
 
-    describe("GET /api/projects -  response with CUSTOM QUERY", function () {
-      it ("Should NOT send back the reqested data with { published: true } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .query({ published: true, limit: 5 })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(401);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            //
-            expect(projects).to.be.undefined;
-            // 
-            done();
-          });
+    // TEST CONTEXT User Client READER with LOGIN //
+    context("User CLient - READER - WITH LOGIN", function () {
+      describe("GET /api/projects - default response", function () {
+        it ("Should correctly send back the reqested data with correct response", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: readerJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(projects).to.be.an("array")
+              expect(projects.length).to.be.at.most(5);
+              //
+              for (const projectData of projects) {
+                expect(projectData.published).to.equal(true);
+              }
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
       });
-      it ("Should NOT send back the reqested data with { published: false } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .query({ published: false, limit: 5 })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(401);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            //
-            expect(projects).to.be.undefined;
-            // 
-            done();
-          });
+
+      describe("GET /api/projects -  response with CUSTOM QUERY", function () {
+        it ("Should NOT send back the reqested data with { published: true } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: readerJWTToken })
+            .query({ published: true, limit: 5 })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it ("Should NOT send back the reqested data with { published: false } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: readerJWTToken })
+            .query({ published: false, limit: 5 })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
       });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
+
     });
+    // END TEST CONTEXT User Client READER with LOGIN //
 
+    // TEST CONTEXT User Client CONTRIBUTOR with LOGIN //
+    context("User CLient - CONTRIBUTOR - WITH LOGIN", function () {
+      describe("GET /api/projects - default response", function () {
+        it ("Should correctly send back the reqested data with correct response", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: contributorJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(projects).to.be.an("array")
+              expect(projects.length).to.be.at.most(5);
+              //
+              for (const projectData of projects) {
+                expect(projectData.published).to.equal(true);
+              }
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+      describe("GET /api/projects -  response with CUSTOM QUERY", function () {
+        it ("Should NOT send back the reqested data with { published: true } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: contributorJWTToken })
+            .query({ published: true, limit: 5 })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it ("Should NOT send back the reqested data with { published: false } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: contributorJWTToken })
+            .query({ published: false, limit: 5 })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+    });
+    // END TEST CONTEXT User Client READER with LOGIN //
+
+    // TEST CONTEXT Admin Client ADMIN level with login //
+    context("Admin CLient - ADMIN Level - WITH LOGIN", function () {
+
+      describe("GET /api/projects - default response", function () {
+        it ("Should correctly send back the reqested data with correct response", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: adminJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(projects).to.be.an("array")
+              expect(projects.length).to.be.at.most(5);
+              //
+              for (const projectData of projects) {
+                expect(projectData.published).to.equal(true);
+              }
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+      describe("GET /api/projects -  response with CUSTOM QUERY", function () {
+        it ("Should NOT send back the reqested data with { published: true } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: adminJWTToken })
+            .query({ published: true, limit: 5 })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it ("Should NOT send back the reqested data with { published: false } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: adminJWTToken })
+            .query({ published: false, limit: 5 })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+    });
+    // TEST CONTEXT Admin Client ADMIN level with login //
+
+    // TEST CONTEXT Admin Client OWNER level with login //
+    context("Admin CLient - OWNER Level - WITH LOGIN", function () {
+
+      describe("GET /api/projects - default response", function () {
+        it ("Should correctly send back the reqested data with correct response", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: ownerJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(projects).to.be.an("array")
+              expect(projects.length).to.be.at.most(5);
+              //
+              for (const projectData of projects) {
+                expect(projectData.published).to.equal(true);
+              }
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+      describe("GET /api/projects -  response with CUSTOM QUERY", function () {
+        it("Should correctly send back the reqested data with { published: true } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: ownerJWTToken })
+            .query({ published: true })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(projects).to.be.an("array")
+              expect(projects.length).to.be.at.most(5);
+              //
+              for (const projectData of projects) {
+                expect(projectData.published).to.equal(true);
+              }
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should correctly send back the reqested data with { published: false } query", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .set({ Authorization: ownerJWTToken })
+            .query({ published: false })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(projects).to.be.an("array")
+              expect(projects.length).to.be.at.most(5);
+              //
+              for (const projectData of projects) {
+                expect(projectData.published).to.equal(false);
+              }
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+    });
+    // TEST CONTEXT Admin Client ADMIN level with login //
   });
-  // END TEST CONTEXT Guest Client NO LOGIN //
+  // END CONTEXT TEST GET /api/projects //
 
-  // TEST CONTEXT User Client READER with LOGIN //
-  context("User CLient - READER - WITH LOGIN", function () {
-    describe("GET /api/projects - default response", function () {
-      it ("Should correctly send back the reqested data with correct response", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: readerJWTToken })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(projects).to.be.an("array")
-            expect(projects.length).to.be.at.most(5);
-            //
-            for (const projectData of projects) {
-              expect(projectData.published).to.equal(true);
-            }
-            //
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
+  // CONTEXT TEST GET /api/projects/:projectId //
+  context("ProjectsController:GetOne action", function () {
+    let publishedProject: IProject;
+    let unpublishedProject: IProject;
+    //
+    let publishedProjectId: string;
+    let unpublishedProjectId: string;
+    before(async () => {
+      try {
+        publishedProject = await Project.findOne({ published: true });
+        unpublishedProject = await Project.findOne({ published: false });
+        //
+        publishedProjectId = publishedProject._id.toHexString();
+        unpublishedProjectId = unpublishedProject._id.toHexString();
+      } catch (error) {
+        throw error;
+      }
     });
 
-    describe("GET /api/projects -  response with CUSTOM QUERY", function () {
-      it ("Should NOT send back the reqested data with { published: true } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: readerJWTToken })
-          .query({ published: true, limit: 5 })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(401);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            //
-            expect(projects).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it ("Should NOT send back the reqested data with { published: false } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: readerJWTToken })
-          .query({ published: false, limit: 5 })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(401);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            //
-            expect(projects).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
-    });
+    // TEST CONTEXT Guest Client NO LOGIN //
+    context("Guest CLient - NO LOGIN", function () {
 
+      describe("GET /api/projects/:project_id - PUBLISHED Project - default response", function () {
+        it("Should correctly send back the reqested data with correct response", (done) => {
+          chai
+            .request(server)
+            .get(`/api/projects/${publishedProjectId}`)
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, project, error, errorMessages } = body as OneProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(project).to.be.an("object")
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models or its values in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            const queriedProject: IProject = await Project.findOne({ _id: publishedProjectId });
+            //
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+            expect(queriedProject.toObject()).to.eql(publishedProject.toObject());
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+      describe("GET /api/projects/:project_id - UNPUBLISHED Project - default response", function () {
+        it("Should NOT send back the reqested data and send a correct response", (done) => {
+          chai
+            .request(server)
+            .get(`/api/projects/${unpublishedProjectId}`)
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, project, error, errorMessages } = body as OneProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(project).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models or its values in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            const queriedProject: IProject = await Project.findOne({ _id: publishedProjectId });
+            //
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+            expect(queriedProject.toObject()).to.eql(publishedProject.toObject());
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+    });
+    // END TEST CONTEXT Guest Client NO LOGIN //
   });
-  // END TEST CONTEXT User Client READER with LOGIN //
+  // END CONTEXT TEST GET /api/projects/:projectId //
 
-  // TEST CONTEXT User Client CONTRIBUTOR with LOGIN //
-  context("User CLient - CONTRIBUTOR - WITH LOGIN", function () {
-    describe("GET /api/projects - default response", function () {
-      it ("Should correctly send back the reqested data with correct response", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: contributorJWTToken })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(projects).to.be.an("array")
-            expect(projects.length).to.be.at.most(5);
-            //
-            for (const projectData of projects) {
-              expect(projectData.published).to.equal(true);
-            }
-            //
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
-    });
-
-    describe("GET /api/projects -  response with CUSTOM QUERY", function () {
-      it ("Should NOT send back the reqested data with { published: true } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: contributorJWTToken })
-          .query({ published: true, limit: 5 })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(401);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            //
-            expect(projects).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it ("Should NOT send back the reqested data with { published: false } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: contributorJWTToken })
-          .query({ published: false, limit: 5 })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(401);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            //
-            expect(projects).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
-    });
-
+  after(async () => {
+    try {
+      await Admin.deleteMany();
+      await User.deleteMany();
+      await Project.deleteMany();
+    } catch (error) {
+      throw error;
+    }
   });
-  // END TEST CONTEXT User Client READER with LOGIN //
-
-  // TEST CONTEXT Admin Client ADMIN level with login //
-  context("Admin CLient - ADMIN Level - WITH LOGIN", function () {
-
-    describe("GET /api/projects - default response", function () {
-      it ("Should correctly send back the reqested data with correct response", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: adminJWTToken })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(projects).to.be.an("array")
-            expect(projects.length).to.be.at.most(5);
-            //
-            for (const projectData of projects) {
-              expect(projectData.published).to.equal(true);
-            }
-            //
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
-    });
-
-    describe("GET /api/projects -  response with CUSTOM QUERY", function () {
-      it ("Should NOT send back the reqested data with { published: true } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: adminJWTToken })
-          .query({ published: true, limit: 5 })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(401);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            //
-            expect(projects).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it ("Should NOT send back the reqested data with { published: false } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: adminJWTToken })
-          .query({ published: false, limit: 5 })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(401);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            //
-            expect(projects).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
-    });
-
-  });
-  // TEST CONTEXT Admin Client ADMIN level with login //
-
-  // TEST CONTEXT Admin Client OWNER level with login //
-  context("Admin CLient - OWNER Level - WITH LOGIN", function () {
-
-    describe("GET /api/projects - default response", function () {
-      it ("Should correctly send back the reqested data with correct response", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: ownerJWTToken })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(projects).to.be.an("array")
-            expect(projects.length).to.be.at.most(5);
-            //
-            for (const projectData of projects) {
-              expect(projectData.published).to.equal(true);
-            }
-            //
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
-    });
-
-    describe("GET /api/projects -  response with CUSTOM QUERY", function () {
-      it("Should correctly send back the reqested data with { published: true } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: ownerJWTToken })
-          .query({ published: true })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(projects).to.be.an("array")
-            expect(projects.length).to.be.at.most(5);
-            //
-            for (const projectData of projects) {
-              expect(projectData.published).to.equal(true);
-            }
-            //
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should correctly send back the reqested data with { published: false } query", (done) => {
-        chai
-          .request(server)
-          .get("/api/projects")
-          .set({ Authorization: ownerJWTToken })
-          .query({ published: false })
-          .end((err, response) => {
-            if (err) done(err);
-            //
-            const { status, body } = response;
-            const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
-            //
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(projects).to.be.an("array")
-            expect(projects.length).to.be.at.most(5);
-            //
-            for (const projectData of projects) {
-              expect(projectData.published).to.equal(false);
-            }
-            //
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // 
-            done();
-          });
-      });
-      it("Should NOT alter the <Project> models in the database", async () => {
-        try {
-          const updatedNumOrProjects: number = await Project.countDocuments();
-          expect(updatedNumOrProjects).to.equal(numberOfProjects);
-        } catch (error) {
-          throw error;
-        }
-      });
-    });
-
-  });
-  // TEST CONTEXT Admin Client ADMIN level with login //
-
 });

@@ -31,7 +31,10 @@ export default class ProjectRoutes extends CRUDRoutesController {
     ]);
   }
   protected getOne(route: string): void {
-    super.getOne(route);
+    super.getOne(route, [
+      checkforLogin,
+      validateRequiredParams([ "project_id" ])
+    ]);
   }
   // only owners should be allowed to create projects for now //
   protected create(route: string): void {

@@ -79,7 +79,7 @@ describe("ProjectsController PATCH API tests", function () {
       throw (error);
     }
   });
-  /*
+
   // TEST CONTEXT Guest Client NO LOGIN //
   context("Guest CLient - NO LOGIN", function () {
     let projectId: string;
@@ -371,7 +371,6 @@ describe("ProjectsController PATCH API tests", function () {
     // END TEST VALID DATA //
   });
   // END TEST CONTEXT Admin Client LOGIN - ADMIN Level //
-  */
 
   // TEST CONTEXT Admin Client LOGIN - OWNER Level //
   context("Admin Client - LOGGED IN - <OWNER> Level", function () {

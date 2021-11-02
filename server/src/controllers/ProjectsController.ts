@@ -38,14 +38,16 @@ export default class ProjectsController extends BasicController implements ICRUD
   }
   getOne = async (req: Request, res: Response<ProjectGetOneRes>): Promise<Response<ProjectGetOneRes>> => {
     const { project_id } = req.params;
-    if (!project_id) return this.userInputErrorResponse(res, [ "Could not resolve project id" ]);
+    const user = req.user as IAdmin | IUser | null;
 
     try {
       const project: IProject = await Project.findOne({ _id: project_id }).exec();
       if (project) {
-        return res.status(200).json({
-          responseMsg: "Retrieved project", project
-        });
+       if (this.verifyProjectModelPermission(project, user)) {
+         return res.status(200).json({ responseMsg: "Fetched project", project });
+       } else {
+         return await this.notAllowedErrorResponse(res, [ "Action not allowed for your access level" ]);
+       }
       } else {
         return await this.notFoundErrorResponse(res, [ "Project was not found" ]);
       }
@@ -187,5 +189,9 @@ export default class ProjectsController extends BasicController implements ICRUD
     } else {
       return false;
     }
+  }
+
+  private verifyProjectModelPermission = (project: IProject, user: IAdmin | IUser | null): boolean => {
+    return project.published ? true : this.verifyOwnerAdmin(user);
   }
 };
