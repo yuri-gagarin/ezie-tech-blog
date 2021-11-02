@@ -15,7 +15,6 @@ import type { DeleteProjectRes } from "@/redux/_types/projects/dataTypes";
 import type { ProjectData } from "@/server/src/_types/projects/projectTypes";
 // helpers //
 import { generateMockAdmins, generateMockProjects, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
-import { generateMockProjectData } from "../../../hepers/testHelpers";
 import { loginUser } from "../../../hepers/testHelpers";
 
 chai.use(chaiHTTP);
@@ -24,7 +23,6 @@ chai.use(chaiHTTP);
 describe("ProjectsController DELETE API tests", function () {
   // custom timeout //
   this.timeout(5000);
-  let mockProjectData: ProjectData;
   //
   let adminUser: IAdmin;
   let ownerUser: IAdmin;
@@ -41,6 +39,8 @@ describe("ProjectsController DELETE API tests", function () {
   //
   let server: Express;
   let numberOfProjects: number;
+
+  const notValidBSONId: string = "notvalidbsonid";
 
   // generate data, set server //
   before(async () => {
@@ -61,7 +61,6 @@ describe("ProjectsController DELETE API tests", function () {
       project = await Project.findOne({ published: true });
       //
       numberOfProjects = await Project.countDocuments();
-      mockProjectData = generateMockProjectData();
       server = ServerInstance.getExpressServer();
       //
     } catch (error) {
@@ -99,7 +98,7 @@ describe("ProjectsController DELETE API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.editedProject).to.be.undefined;
+            expect(body.deletedProject).to.be.undefined;
             // 
             done();
           });
@@ -116,6 +115,35 @@ describe("ProjectsController DELETE API tests", function () {
       });
     }); 
     // END TEST VALID DATA //
+    // TEST  INVALID DATA //
+    describe("DELETE /api/projects/:project_id - default response - INVALID data", function () {
+      it("Should NOT alter the queried <Project> WITH INVALID <project_id> PARAM model and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .delete(`/api/projects/${notValidBSONId}`)
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.deletedProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const queriedProject: IProject = await Project.findById(projectId);
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(queriedProject.toObject()).to.eql(project.toObject());
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
   });
   // END CONTEXT GUEST Client NO LOGIN //
 
@@ -139,7 +167,7 @@ describe("ProjectsController DELETE API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.editedProject).to.be.undefined;
+            expect(body.deletedProject).to.be.undefined;
             // 
             done();
           });
@@ -157,6 +185,36 @@ describe("ProjectsController DELETE API tests", function () {
       });
     }); 
     // END TEST VALID DATA //
+    // TEST  INVALID DATA //
+    describe("DELETE /api/projects/:project_id - default response - INVALID data", function () {
+      it("Should NOT alter the queried <Project> WITH INVALID <project_id> PARAM model and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .delete(`/api/projects/${notValidBSONId}`)
+          .set({ Authorization: readerJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.deletedProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const queriedProject: IProject = await Project.findById(projectId);
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(queriedProject.toObject()).to.eql(project.toObject());
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
   });
   // END TEST CONTEXT User Client LOGGED IN READER //
 
@@ -180,7 +238,7 @@ describe("ProjectsController DELETE API tests", function () {
             const { status, body } = response;
             expect(status).to.equal(401);
             //
-            expect(body.editedProject).to.be.undefined;
+            expect(body.deletedProject).to.be.undefined;
             // 
             done();
           });
@@ -198,6 +256,36 @@ describe("ProjectsController DELETE API tests", function () {
       });
     }); 
     // END TEST VALID DATA //
+    // TEST  INVALID DATA //
+    describe("DELETE /api/projects/:project_id - default response - INVALID data", function () {
+      it("Should NOT alter the queried <Project> WITH INVALID <project_id> PARAM model and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .delete(`/api/projects/${notValidBSONId}`)
+          .set({ Authorization: contributorJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.deletedProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const queriedProject: IProject = await Project.findById(projectId);
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(queriedProject.toObject()).to.eql(project.toObject());
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
   });
   // END TEST CONTEXT User Client LOGGED IN CONTRIBUTOR //
 
@@ -208,6 +296,36 @@ describe("ProjectsController DELETE API tests", function () {
     before(() => {
       projectId = project._id.toHexString();
     });
+    // TEST  INVALID DATA //
+    describe("DELETE /api/projects/:project_id - default response - INVALID data", function () {
+      it("Should NOT alter the queried <Project> WITH INVALID <project_id> PARAM model and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .delete(`/api/projects/${notValidBSONId}`)
+          .set({ Authorization: adminJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.deletedProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const queriedProject: IProject = await Project.findById(projectId);
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(queriedProject.toObject()).to.eql(project.toObject());
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
     // TEST VALID DATA //
     describe("DELETE /api/projects/:project_id - default response - VALID data", function () {
       it("Should NOT alter the queried <Project> model and send back a correct response", (done) => {
@@ -252,6 +370,36 @@ describe("ProjectsController DELETE API tests", function () {
     before(() => {
       projectId = project._id.toHexString();
     });
+    // TEST  INVALID DATA //
+    describe("DELETE /api/projects/:project_id - default response - INVALID data", function () {
+      it("Should NOT alter the queried <Project> WITH INVALID <project_id> PARAM model and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .delete(`/api/projects/${notValidBSONId}`)
+          .set({ Authorization: ownerJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            // this is default Passport middleware 401 response as of now //
+            const { status, body } = response;
+            expect(status).to.equal(401);
+            //
+            expect(body.deletedProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
+      it("Should NOT alter the <Project> models in the database", async () => {
+        try {
+          const queriedProject: IProject = await Project.findById(projectId);
+          const updatedNumOrProjects: number = await Project.countDocuments();
+          expect(queriedProject.toObject()).to.eql(project.toObject());
+          expect(updatedNumOrProjects).to.equal(numberOfProjects);
+        } catch (error) {
+          throw error;
+        }
+      });
+    }); 
+    // END TEST INVALID DATA //
     // TEST VALID DATA //
     describe("DELETE /api/projects/:project_id - default response - VALID data", function () {
       it("Should DELETE the queried <Project> model and send back a correct response", (done) => {
