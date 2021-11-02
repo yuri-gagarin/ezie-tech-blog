@@ -661,6 +661,159 @@ describe("ProjectsController GET API tests", function () {
 
     });
     // END TEST CONTEXT Guest Client NO LOGIN //
+
+    // TEST CONTEXT User Client Logged in READER //
+    context("User CLient - LOGGED IN - READER", function () {
+
+      describe("GET /api/projects/:project_id - PUBLISHED Project - default response", function () {
+        it("Should correctly send back the reqested data with correct response", (done) => {
+          chai
+            .request(server)
+            .get(`/api/projects/${publishedProjectId}`)
+            .set({ Authorization: readerJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, project, error, errorMessages } = body as OneProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(project).to.be.an("object")
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models or its values in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            const queriedProject: IProject = await Project.findOne({ _id: publishedProjectId });
+            //
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+            expect(queriedProject.toObject()).to.eql(publishedProject.toObject());
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+      describe("GET /api/projects/:project_id - UNPUBLISHED Project - default response", function () {
+        it("Should NOT send back the reqested data and send a correct response", (done) => {
+          chai
+            .request(server)
+            .get(`/api/projects/${unpublishedProjectId}`)
+            .set({ Authorization: readerJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, project, error, errorMessages } = body as OneProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(project).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models or its values in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            const queriedProject: IProject = await Project.findOne({ _id: publishedProjectId });
+            //
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+            expect(queriedProject.toObject()).to.eql(publishedProject.toObject());
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+    });
+    // END TEST CONTEXT User Client Logged in READER //
+
+    // TEST CONTEXT User Client Logged in CONTRIBUTOR //
+    context("User CLient - LOGGED IN - CONTRIBUTOR", function () {
+
+      describe("GET /api/projects/:project_id - PUBLISHED Project - default response", function () {
+        it("Should correctly send back the reqested data with correct response", (done) => {
+          chai
+            .request(server)
+            .get(`/api/projects/${publishedProjectId}`)
+            .set({ Authorization: contributorJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, project, error, errorMessages } = body as OneProjectRes;
+              //
+              expect(status).to.equal(200);
+              expect(responseMsg).to.be.a("string");
+              expect(project).to.be.an("object")
+              //
+              expect(error).to.be.undefined;
+              expect(errorMessages).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models or its values in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            const queriedProject: IProject = await Project.findOne({ _id: publishedProjectId });
+            //
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+            expect(queriedProject.toObject()).to.eql(publishedProject.toObject());
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+      describe("GET /api/projects/:project_id - UNPUBLISHED Project - default response", function () {
+        it("Should NOT send back the reqested data and send a correct response", (done) => {
+          chai
+            .request(server)
+            .get(`/api/projects/${unpublishedProjectId}`)
+            .set({ Authorization: contributorJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, project, error, errorMessages } = body as OneProjectRes;
+              //
+              expect(status).to.equal(401);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(project).to.be.undefined;
+              // 
+              done();
+            });
+        });
+        it("Should NOT alter the <Project> models or its values in the database", async () => {
+          try {
+            const updatedNumOrProjects: number = await Project.countDocuments();
+            const queriedProject: IProject = await Project.findOne({ _id: publishedProjectId });
+            //
+            expect(updatedNumOrProjects).to.equal(numberOfProjects);
+            expect(queriedProject.toObject()).to.eql(publishedProject.toObject());
+          } catch (error) {
+            throw error;
+          }
+        });
+      });
+
+    });
+    // END TEST CONTEXT User Client Logged in READER //
+
   });
   // END CONTEXT TEST GET /api/projects/:projectId //
 
