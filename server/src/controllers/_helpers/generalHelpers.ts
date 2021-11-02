@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import type { NextFunction, Request, Response } from "express";
 
 export const respondWithNoModelIdError = (res: Response, customMessages?: string[]) => {
@@ -46,3 +47,19 @@ export const validateRequiredDataFieds = (requiredDataFields: string[]) => {
     return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
   }
 };
+export const validateObjectIdParams = (requiredParams: string []) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const errorMessages: string[] = [];
+    for (const requiredParam of requiredParams) {
+      if (req.params[requiredParam]) {
+        if (!Types.ObjectId.isValid(req.params[requiredParam])) {
+          errorMessages.push(`Param '${requiredParam}' is not a valid ObjectId string'.`);
+        }   
+      } else {
+        errorMessages.push(`Required params: ${requiredParam} is missing from the Request`);
+      }
+      
+    }
+    return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
+  }
+}

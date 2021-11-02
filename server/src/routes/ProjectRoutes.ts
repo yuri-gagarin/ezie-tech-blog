@@ -7,7 +7,7 @@ import type { ICRUDController } from "../_types/abstracts/DefaultController";
 // helpers middleware //
 import { verifyOwnerLevelAccess } from "../controllers/_helpers/adminsControllerHelpers";
 import { checkforLogin } from "../controllers/_helpers/authHelpers";
-import { validateRequiredDataFieds, validateRequiredParams } from "../controllers/_helpers/generalHelpers";
+import { validateRequiredDataFieds, validateRequiredParams, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
 
 export default class ProjectRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -49,15 +49,14 @@ export default class ProjectRoutes extends CRUDRoutesController {
       PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
       verifyOwnerLevelAccess,
       validateRequiredDataFieds([ "projectData"]),
-      validateRequiredParams([ "project_id" ])
+      validateObjectIdParams([ "project_id" ])
     ]);
   } 
   protected delete(route: string): void {
     super.delete(route, [ 
       PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
       verifyOwnerLevelAccess,
-      validateRequiredParams([ "project_id" ])
-
+      validateObjectIdParams([ "project_id" ])
     ]);
   }
   private addImage(route: string): void {

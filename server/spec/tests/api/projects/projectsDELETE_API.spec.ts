@@ -381,9 +381,12 @@ describe("ProjectsController DELETE API tests", function () {
             if (err) done(err);
             // this is default Passport middleware 401 response as of now //
             const { status, body } = response;
-            expect(status).to.equal(401);
+            const { responseMsg, deletedProject, error, errorMessages } = body as DeleteProjectRes;
+            expect(status).to.equal(400);
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
             //
-            expect(body.deletedProject).to.be.undefined;
+            expect(deletedProject).to.be.undefined;
             // 
             done();
           });
