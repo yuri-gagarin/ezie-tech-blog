@@ -6,6 +6,7 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router } from "express";
 import type { ICRUDController } from "@/server/src/_types/abstracts/DefaultController";
 // helpers, middleware //
+import { validateRequiredDataFieds, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
 import { checkforLogin, verifyAdmin } from "../controllers/_helpers/authHelpers"
 import { verifyUsersModelAccess } from "../controllers/_helpers/usersControllerHelpers";
 
@@ -48,7 +49,8 @@ export default class UserRoutes extends CRUDRoutesController {
   protected delete(route: string): void {
     super.delete(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
-      verifyUsersModelAccess
+      verifyUsersModelAccess,
+      validateObjectIdParams([ "user_id" ])
     ]);
   }
 };

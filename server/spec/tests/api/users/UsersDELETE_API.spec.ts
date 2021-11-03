@@ -30,6 +30,8 @@ describe("UsersController:Delete DELETE API Tests", () => {
   let numberOfAdmins: number;
   //
   let server: Express;
+  //
+  const notValidObjectId = "notavalidbsonobjectid";
 
   before(() => {
     server = ServerInstance.getExpressServer();
@@ -121,12 +123,55 @@ describe("UsersController:Delete DELETE API Tests", () => {
   context("User Client - A VALID User is logged in", () => {
     let userId: string;
     let otherUserId: string;
+
     before(() => {
       userId = confirmedRegUser._id.toHexString();
       otherUserId = unconfirmedRegUser._id.toHexString();
     });
-    // TEST model does not belong to user //
-    describe("DELETE /api/users/:user_id - User model DOES NOT BELONG to logged in User", () => {
+
+    // TEST model does not belong to user INVALID data //
+    describe("DELETE /api/users/:user_id - INVALID DATA - User model DOES NOT BELONG to logged in User", () => {
+      it ("Should NOT delete an existing User model and send back the correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/users/${notValidObjectId}`)
+          .set({ Authorization: userJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            expect(response.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.deletedUser).to.be.undefined;
+            done();
+          })
+      });
+      it("Should NOT alter the queried User model the database in any way", async () => {
+        try {
+          const queriedUser = await User.findOne({ _id: otherUserId });
+          // compare //
+          expect(queriedUser.toObject()).to.eql(unconfirmedRegUser.toObject());
+        } catch (error) {
+          throw error;
+        }
+      });
+      it("Shoud NOT alter the number of User or Admin models in the database in any way", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          // 
+          expect(updatedNumOfUsers).to.equal(numberOfUsers);
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST model does not belong to user INVALID data //
+
+    // TEST model does not belong to user VALID data //
+    describe("DELETE /api/users/:user_id - VALID DATA - User model DOES NOT BELONG to logged in User", () => {
       it ("Should NOT delete an existing User model and send back the correct response", (done) => {
         chai.request(server)
           .delete(`/api/users/${otherUserId}`)
@@ -217,14 +262,59 @@ describe("UsersController:Delete DELETE API Tests", () => {
     // END TEST Model belongs to User //
   });
   // END Context User is logged in //
+
   // CONTEXT Admin User is logged in //
   context("Admin Client - A VALID Admin is logged in", () => {
     let otherUserId: string;
     before(() => {
       otherUserId = unconfirmedRegUser._id.toHexString();
     });
-     // TEST model DOES not belong to logged in Admin //
-     describe("DELETE /api/users/:user_id - User model DOES NOT BELONG to logged in Admin", () => {
+    // TEST model DOES not belong to logged in Admin INVALID data //
+    describe("DELETE /api/users/:user_id - IVALID DATA - User model DOES NOT BELONG to logged in Admin", () => {
+      it ("Should delete an existing User model and send back the correct response", (done) => {
+        chai.request(server)
+          .delete(`/api/users/${notValidObjectId}`)
+          .set({ Authorization: adminJWTToken})
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = body as ErrorUserRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(body.deletedUser).to.be.undefined;
+            done();
+          })
+      });
+      it("Should NOT REMOVE the queried User model from the database", async () => {
+        try {
+          const queriedUser: IUser | null = await User.findOne({ _id: otherUserId });
+          // compare //
+          expect(queriedUser).to.not.be.null;
+          expect(queriedUser.toObject()).to.eql(unconfirmedRegUser.toObject());
+        } catch (error) {
+          throw error;
+        }
+      });
+      it("Shoud NOT alte the number of User or ADmin models in the database", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          // 
+          expect(updatedNumOfUsers).to.equal(numberOfUsers);
+          expect(updatedNumOfAdmins).to.equal(numberOfAdmins);
+          // 
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST model DOES not belong to logged in Admin INVALID data //
+
+     // TEST model DOES not belong to logged in Admin VALID data //
+     describe("DELETE /api/users/:user_id - VALID DATA - User model DOES NOT BELONG to logged in Admin", () => {
       it ("Should delete an existing User model and send back the correct response", (done) => {
         chai.request(server)
           .delete(`/api/users/${otherUserId}`)

@@ -81,6 +81,7 @@ describe("ProjectsController PATCH API tests", function () {
   });
 
   // TEST CONTEXT Guest Client NO LOGIN //
+  
   context("Guest CLient - NO LOGIN", function () {
     let projectId: string;
     
@@ -382,6 +383,7 @@ describe("ProjectsController PATCH API tests", function () {
   
     // TEST INVALID DATA //
     describe("PATCH /api/projects/:project_id - default response - INVALID data", function () {
+      
       it("Should NOT alter the <Project> model WITHOUT an <req.body.projectData> field in the request and send a correct response", (done) => {
         chai
           .request(server)
@@ -562,6 +564,27 @@ describe("ProjectsController PATCH API tests", function () {
             done();
           });
       });
+      
+      it("Should NOT alter the <Project> model with an INVALID <project_id> PARAM TYPE and send back a correct response", (done) => {
+        chai
+          .request(server)
+          .patch(`/api/projects/${"notvalidbsonobjectid"}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ projectData: { ...mockProjectData } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedProject, error, errorMessages } = body as EditProjectRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedProject).to.be.undefined;
+            // 
+            done();
+          });
+      });
       it("Should NOT alter the <Project> models in the database", async () => {
         try {
           const queriedProject: IProject = await Project.findById(projectId);
@@ -574,7 +597,7 @@ describe("ProjectsController PATCH API tests", function () {
       });
     }); 
     // END TEST INVALID DATA //
-
+  
     // TEST VALID DATA //
     describe("PATCH /api/projects - default response - VALID data", function () {
       let _editedProject: ProjectData;
@@ -624,6 +647,7 @@ describe("ProjectsController PATCH API tests", function () {
       });
     }); 
     // END TEST VALID DATA //
+  
   });
   // END TEST CONTEXT Admin Client LOGIN - ADMIN Level //
 
