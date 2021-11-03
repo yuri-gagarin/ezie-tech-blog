@@ -31,7 +31,8 @@ export default class UserRoutes extends CRUDRoutesController {
   }
   protected getOne(route: string): void {
     super.getOne(route, [
-      checkforLogin
+      checkforLogin,
+      validateObjectIdParams([ "user_id" ])
     ]);
   }
   protected create(route: string): void {

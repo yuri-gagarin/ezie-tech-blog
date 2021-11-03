@@ -23,6 +23,7 @@ describe("UsersController GET API Tests", () => {
   let adminJWTToken: string;
   let userJWTToken: string;
   let server: Express;
+  const notValidObjectId = "notavalidbsonobjectid";
 
   before(async () => {
     try {
@@ -113,7 +114,7 @@ describe("UsersController GET API Tests", () => {
           });
       });
     });
-    describe("GET /api/users/:user_id response", () => {
+    describe("GET /api/users/:user_id - VALID DATA - response", () => {
       it("Should be able to retreive an ACTIVE CONFIRMED User model and send back the correct response", (done) => {
         const userId: string = confirmedRegUser._id.toHexString();
         chai.request(server)
@@ -141,6 +142,44 @@ describe("UsersController GET API Tests", () => {
             expect(responseMsg).to.be.a("string");
             expect(user).to.be.an("object");
             expect(user.confirmed).to.equal(false);
+            done();
+          });
+      });
+    });
+    describe("GET /api/users/:user_id - IVALID DATA - response", () => {
+      it("Should NOT be able to retreive an ACTIVE CONFIRMED User model and send back the correct response", (done) => {
+        chai.request(server)
+          .get(`/api/users/${notValidObjectId}`)
+          .set({ Authorization: adminJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            //
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(body.user).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT be able to retreive an ACTIVE CONFIRMED User model and send back the correct response", (done) => {
+        chai.request(server)
+          .get(`/api/users/${notValidObjectId}`)
+          .set({ Authorization: adminJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            //
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(body.user).to.be.undefined;
             done();
           });
       });
@@ -237,6 +276,44 @@ describe("UsersController GET API Tests", () => {
             expect(errorMessages).to.be.an("array");
             //
             expect(response.body.user).to.be.undefined;  
+            done();
+          });
+      });
+    });
+    describe("GET /api/users/:user_id - IVALID DATA - response", () => {
+      it("Should NOT be able to retreive an ACTIVE CONFIRMED User model and send back the correct response", (done) => {
+        chai.request(server)
+          .get(`/api/users/${notValidObjectId}`)
+          .set({ Authorization: userJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            //
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(body.user).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT be able to retreive an ACTIVE CONFIRMED User model and send back the correct response", (done) => {
+        chai.request(server)
+          .get(`/api/users/${notValidObjectId}`)
+          .set({ Authorization: userJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            //
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(body.user).to.be.undefined;
             done();
           });
       });
