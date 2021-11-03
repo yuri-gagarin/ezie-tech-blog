@@ -409,6 +409,44 @@ describe("UsersController GET API Tests", () => {
           });
       });
     });
+    describe("GET /api/users/:user_id - IVALID DATA - response", () => {
+      it("Should NOT be able to retreive an ACTIVE CONFIRMED User model and send back the correct response", (done) => {
+        chai.request(server)
+          .get(`/api/users/${notValidObjectId}`)
+          .set({ Authorization: userJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            //
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(body.user).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT be able to retreive an ACTIVE CONFIRMED User model and send back the correct response", (done) => {
+        chai.request(server)
+          .get(`/api/users/${notValidObjectId}`)
+          .set({ Authorization: userJWTToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorUserRes;
+            //
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(body.user).to.be.undefined;
+            done();
+          });
+      });
+    });
   });
   // END CONTEXT GUEST User NO LOGIN //
   after(async () => {
