@@ -30,7 +30,6 @@ describe("BlogPost Guest API tests", function() {
       process.exit(1);
     }
   });
-
   // CONTEXT Guest Client / No Login //
   context("Guest Client / No Login", () => {
     before(async() => {
@@ -42,6 +41,77 @@ describe("BlogPost Guest API tests", function() {
         console.log(error);
         process.exit(1);
       }
+    });
+
+    describe("GET /api/posts - INVALID QUERY Data", function () {
+      it("SHOULD NOT get Blog Posts with an invalid <category> query param field", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ category: "notval%1nrm0lstring" })
+          .end((err, res) => {
+            if (err) done(err);
+            const { status, body } = res;
+            const { responseMsg, blogPosts, error, errorMessages } = body as IndexBlogPostRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(blogPosts).to.be.undefined;
+            done();
+         });
+      });
+      it("SHOULD NOT get Blog Posts with an invalid <publishedStatus> query param field", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ publishedStatus: "notval%1nrm0lstring" })
+          .end((err, res) => {
+            if (err) done(err);
+            const { status, body } = res;
+            const { responseMsg, blogPosts, error, errorMessages } = body as IndexBlogPostRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(blogPosts).to.be.undefined;
+            done();
+         });
+      });
+      it("SHOULD NOT get Blog Posts with an invalid <limit> query param field", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ limit: "notvalnumeric" })
+          .end((err, res) => {
+            if (err) done(err);
+            const { status, body } = res;
+            const { responseMsg, blogPosts, error, errorMessages } = res.body as IndexBlogPostRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(blogPosts).to.be.undefined;
+            done();
+         });
+      });
+      it("SHOULD NOT get Blog Posts with an NON APPROVED query param field", (done) => {
+        chai.request(server)
+          .get("/api/posts")
+          .query({ nonApprovedQuery: "somethinghere" })
+          .end((err, res) => {
+            if (err) done(err);
+            const { status, body } = res;
+            const { responseMsg, blogPosts, error, errorMessages } = res.body as IndexBlogPostRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(blogPosts).to.be.undefined;
+            done();
+         });
+      });
     });
     // GET /api/posts //
     describe("GET /api/posts", () => {
