@@ -258,6 +258,20 @@ describe("BlogPost Guest API tests", function() {
             done();
           });
       });
+      it("Should NOT allow a guest client to fetch a <BlogPost> model with INVALID <post_id> param", (done) => {
+        chai.request(server)
+          .get("/api/posts/" + "notavalidbsonobjectid")
+          .end((err, res) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = res.body as OneBlogPostRes;
+            expect(res.status).to.equal(400);
+            expect(responseMsg).to.be.a("string")
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(res.body.blogPost).to.eq(undefined);
+            done();
+          });
+      });
     });
     // END GET /api/posts/:post_id //
     
