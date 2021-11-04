@@ -51,7 +51,7 @@ export const validateObjectIdParams = (requiredParams: string []) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const errorMessages: string[] = [];
     for (const requiredParam of requiredParams) {
-      if (req.params[requiredParam]) {
+      if (req.params[requiredParam.trim()]) {
         if (!Types.ObjectId.isValid(req.params[requiredParam])) {
           errorMessages.push(`Param '${requiredParam}' is not a valid ObjectId string'.`);
         }   
@@ -62,4 +62,4 @@ export const validateObjectIdParams = (requiredParams: string []) => {
     }
     return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
   }
-}
+};

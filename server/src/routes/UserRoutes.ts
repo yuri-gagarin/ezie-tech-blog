@@ -38,13 +38,16 @@ export default class UserRoutes extends CRUDRoutesController {
   protected create(route: string): void {
     super.create(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
-      verifyAdmin 
+      verifyAdmin,
+      validateRequiredDataFieds([ "userData" ])
     ]);
   }
   protected edit(route: string): void {
     super.edit(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
-      verifyUsersModelAccess
+      verifyUsersModelAccess,
+      validateRequiredDataFieds([ "userData" ]),
+      validateObjectIdParams([ "user_id" ]) 
     ]);
   } 
   protected delete(route: string): void {
