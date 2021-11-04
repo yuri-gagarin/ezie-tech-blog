@@ -198,6 +198,24 @@ describe("BlogPostsController:Create POST API Tests", () => {
         chai.request(server)
           .post("/api/posts")
           .set({ Authorization: contributorToken })
+          .send({})
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT create a new <BlogPost> model with an EMPTY TITLE field and send back a correct response", (done) => {
+        chai.request(server)
+          .post("/api/posts")
+          .set({ Authorization: contributorToken })
           .send({ blogPostData: { ...mockBlogPostData, title: "" } })
           .end((err, response) => {
             if (err) done(err);

@@ -25,6 +25,7 @@ chai.use(chaiHTTP);
 // A logged in User can EDIT their own Blog Post model provided they have CONTRIBUTOR <userType> //
 // A logged in User with READER <userType> cannot edit //
 describe("BlogPostsController:Edit PATCH API Tests", () => {
+  const invalidBlogPostId: string = "notavalidbsonobjectid";
   let server: Express;
   let numberOfBlogPosts: number;
   let mockBlogPostData: BlogPostClientData;
@@ -387,6 +388,42 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
             done();
           });
       });
+      it("Should NOT update an existing <BlogPost> model WITHOUT <blogPostData> in <req.body> and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${firstUsersPostId}`)
+          .set({ Authorization: contributorToken })
+          .send()
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT update an existing <BlogPost> model WITH AN INVALID <post_id> in <req.params> and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/posts/${invalidBlogPostId}`)
+          .set({ Authorization: contributorToken })
+          .send({ blogPostData: mockBlogPostData })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status } = response;
+            const { responseMsg, error, errorMessages } = response.body as ErrorBlogPostRes; 
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(response.body.createdBogPost).to.be.undefined;
+            done();
+          });
+      });
     });
     // END TEST OWN Blog Post, invalid data //
     // TEST OWN Blog Post, valid data //
@@ -473,7 +510,7 @@ describe("BlogPostsController:Edit PATCH API Tests", () => {
         } catch (error) {
           throw error;
         }
-      })
+      });
       it("Should NOT alter the number <BlogPost> model in the database", async () => {
         try {
           const queriedBlogPost = await BlogPost.findOne({ _id: secondUsersBlogPost._id });
