@@ -7,7 +7,7 @@ import type { ICRUDController } from "../_types/abstracts/DefaultController";
 // helpers middleware //
 import { verifyOwnerLevelAccess } from "../controllers/_helpers/adminsControllerHelpers";
 import { checkforLogin } from "../controllers/_helpers/authHelpers";
-import { validateRequiredDataFieds, validateRequiredParams, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
+import { validateRequiredDataFieds, validateObjectIdParams, validateQueryParams } from "../controllers/_helpers/generalHelpers";
 
 export default class ProjectRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -27,6 +27,7 @@ export default class ProjectRoutes extends CRUDRoutesController {
 
   protected index(route: string): void {
     super.index(route, [
+      validateQueryParams({ published: "boolean" }),
       checkforLogin,
     ]);
   }

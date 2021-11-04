@@ -63,3 +63,41 @@ export const validateObjectIdParams = (requiredParams: string []) => {
     return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
   }
 };
+
+type ValidateQueryOpts = { [key: string]: "string" | "number" | "boolean"; }
+export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const errorMessages: string[] = [];
+    const queryKeys: string[] = Object.keys(req.query);
+    if (queryKeys.length > 0) {
+      for (const queryKey of queryKeys) {
+        if (allowedQueryParams[queryKey]) {
+          // check correct query types //
+          if (allowedQueryParams[queryKey] === "boolean") {
+            // should be either true or false //
+            if (req.query[queryKey] !== "true" || req.query[queryKey] !== "false") {
+              return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
+            }
+          } else if (allowedQueryParams[queryKey] === "number") {
+            // should be able to parase to number //
+            if(!/^\d+$/.test(req.query[queryKey] as string)) {
+              return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
+            }
+          } else {
+            if(!/^[a-zA-Z]+$/.test(req.query[queryKey] as string)) {
+              return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <string> with only 'A-Z' chars. Received: ${req.query[queryKey]}` ]);
+            }
+          }
+        } else {
+          // query not allowed //
+          return respondWithNoModelIdError(res, [ "Invalid query for request" ]);
+        }
+      }
+      // assumin all is peachy ... //
+      return next();
+    } else {
+      // no custom query params, move along ..//
+      return next();
+    }
+  }
+}
