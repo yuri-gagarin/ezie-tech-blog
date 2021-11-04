@@ -73,6 +73,77 @@ describe("ProjectsController GET API tests", function () {
   // CONTEXT TEST GET /api/projects //
   context("ProjectsController:Index action", function () {
     // TEST CONTEXT Guest Client NO LOGIN //
+    context("Guest Client - NO LOGIN - INVALID QUERY", function() {
+      describe("GET /api/projects - INVALID <published> query params", function () {
+        it ("Should NOT send back <Project> data, send error response", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .query({ published: "notabooleanvalue" })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+      });
+      describe("GET /api/projects - INVALID <limit> query params", function () {
+        it ("Should NOT send back <Project> data, send error response", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .query({ limit: "notanumeric" })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+      });
+      describe("GET /api/projects - UNAPPROVED query params", function () {
+        it ("Should NOT send back <Project> data, send error response", (done) => {
+          chai
+            .request(server)
+            .get("/api/projects")
+            .query({ notValidQuery: "notapprovedqueryparam" })
+            .end((err, response) => {
+              if (err) done(err);
+              //
+              const { status, body } = response;
+              const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
+              //
+              expect(status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(projects).to.be.undefined;
+              // 
+              done();
+            });
+        });
+      });
+    })
     context("Guest CLient - NO LOGIN", function () {
 
       describe("GET /api/projects - default response", function () {
@@ -123,7 +194,6 @@ describe("ProjectsController GET API tests", function () {
               const { status, body } = response;
               const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
               //
-              console.log(body);
               expect(status).to.equal(401);
               expect(responseMsg).to.be.a("string");
               expect(error).to.be.an("object");
