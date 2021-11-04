@@ -123,6 +123,7 @@ describe("ProjectsController GET API tests", function () {
               const { status, body } = response;
               const { responseMsg, projects, error, errorMessages } = body as IndexProjectRes;
               //
+              console.log(body);
               expect(status).to.equal(401);
               expect(responseMsg).to.be.a("string");
               expect(error).to.be.an("object");
@@ -166,7 +167,7 @@ describe("ProjectsController GET API tests", function () {
 
     });
     // END TEST CONTEXT Guest Client NO LOGIN //
-
+    
     // TEST CONTEXT User Client READER with LOGIN //
     context("User CLient - READER - WITH LOGIN", function () {
       describe("GET /api/projects - default response", function () {
@@ -566,9 +567,10 @@ describe("ProjectsController GET API tests", function () {
 
     });
     // TEST CONTEXT Admin Client ADMIN level with login //
+    
   });
   // END CONTEXT TEST GET /api/projects //
-
+  
   // CONTEXT TEST GET /api/projects/:projectId //
   context("ProjectsController:GetOne action", function () {
     let publishedProject: IProject;
@@ -968,7 +970,7 @@ describe("ProjectsController GET API tests", function () {
 
   });
   // END CONTEXT TEST GET /api/projects/:projectId //
-
+  
   after(async () => {
     try {
       await Admin.deleteMany();

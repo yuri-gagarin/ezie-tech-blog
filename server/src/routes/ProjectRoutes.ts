@@ -27,7 +27,7 @@ export default class ProjectRoutes extends CRUDRoutesController {
 
   protected index(route: string): void {
     super.index(route, [
-      validateQueryParams({ published: "boolean" }),
+      validateQueryParams({ published: "boolean", limit: "number" }),
       checkforLogin,
     ]);
   }

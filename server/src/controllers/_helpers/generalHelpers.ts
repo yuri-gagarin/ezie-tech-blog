@@ -75,7 +75,9 @@ export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
           // check correct query types //
           if (allowedQueryParams[queryKey] === "boolean") {
             // should be either true or false //
-            if (req.query[queryKey] !== "true" || req.query[queryKey] !== "false") {
+            if (req.query[queryKey] === "true" || req.query[queryKey] === "false") {
+              continue;
+            } else {
               return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
             }
           } else if (allowedQueryParams[queryKey] === "number") {
