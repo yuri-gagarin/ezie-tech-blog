@@ -39,8 +39,8 @@ export default class PostRoutes extends CRUDRoutesController {
   protected create(route: string): void {
     super.create(route, [ 
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
+      verifyUserLevel,
       validateRequiredDataFieds([ "blogPostData" ]),
-      verifyUserLevel
     ]);
   }
   protected edit(route: string): void {
@@ -55,8 +55,8 @@ export default class PostRoutes extends CRUDRoutesController {
   protected delete(route: string): void {
     super.delete(route, [ 
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
-      verifyUserModelAndPostId,
       verifyUserLevel,
+      validateObjectIdParams([ "post_id" ]),
       verifyBlogPostModelAccess
     ]);
   }

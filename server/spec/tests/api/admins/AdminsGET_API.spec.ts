@@ -9,7 +9,7 @@ import User from "@/server/src/models/User";
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { AdminData, GetAllAdminsRes, GetOneAdminRes } from "@/redux/_types/admins/dataTypes";
+import type { AdminData, ErrorAdminRes, GetAllAdminsRes, GetOneAdminRes } from "@/redux/_types/admins/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser } from "../../../hepers/testHelpers";
@@ -20,6 +20,8 @@ chai.use(chaiHTTP);
 describe("AdminsController:Index & AdminsController:GetOne GET API Tests", function () {
   // custom timeout //
   this.timeout(10000);
+  //
+  const notValidObjectId = "notavalidbsonobjectid";
   let server: Express;
   // model counts //
   // user models //
@@ -277,6 +279,30 @@ describe("AdminsController:Index & AdminsController:GetOne GET API Tests", funct
       });
     });
     // END CONTEXT LOGGED in Admin //
+    // CONTEXT TESTS with INVALID query data //
+    context("Any Client - INVALID Request data", function () {
+      describe("GET /api/admins/:admin_id - INVALID <admin_id> TYPE in <req.params>", function () {
+        it("Should NOT send back an Admin model and respond with appropriate 400 error", (done) => {
+          chai.request(server)
+            .get(`/api/admins/${notValidObjectId}`)
+            .set({ Authorization: readerUserJWTToken })
+            .end((err, response) => {
+              if (err) done(err);
+              const { status, body } = response;
+              const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
+              expect(status).to.equal(400);
+              expect(responseMsg).to.be.a("string");
+              expect(error).to.be.an("object");
+              expect(errorMessages).to.be.an("array");
+              //
+              expect(body.admin).to.be.undefined;
+              //
+              done();
+            });
+        });
+      });
+    });
+    // END CONTEXT TESTS with INVALID query data //
   });
   // END TEST AdminsController:GetOne action //
   after(async () => {

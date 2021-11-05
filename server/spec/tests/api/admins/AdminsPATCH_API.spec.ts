@@ -27,6 +27,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
   // custom timeout //
   this.timeout(10000);
   let server: Express;
+  const notValidObjectId = "notavalidbsonobjectid";
   // model counts //
   let numberOfAdmins: number;
   // user models //

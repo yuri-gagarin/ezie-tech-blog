@@ -8,6 +8,9 @@ export interface ICRUDController {
   delete?: (req: Request, res: Response) => Promise<Response>;
   [propName: string]: any;
 };
+export interface IGenericClientController extends ICRUDController {
+  changePassword: (req: Request<any>, res: Response<any>) => Promise<Response<any>>;
+};
 
 export interface IGenericAuthController {
   login: (req: Request, res: Response) => Promise<Response>;

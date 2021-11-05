@@ -22,6 +22,7 @@ chai.use(chaiHTTP);
 
 describe("BlogPostsController:Delete DELETE API Tests", function() {
   this.timeout(10000);
+  const notValidPostId = "notavalidbsonobjectid";
   let server: Express;
   // counts ./
   let numberOfPosts: number; 
@@ -228,6 +229,24 @@ describe("BlogPostsController:Delete DELETE API Tests", function() {
     });
     describe("DELETE /api/posts/:post_id - OWN model -  default response" , () => {
       let _deletedBlogPost: BlogPostData;
+      it("Should NOT DELETE and existing <BlogPost> model with an INVALID <post_id> value in <req.params>", (done) => {
+        chai.request(server)
+          .delete(`/api/posts/${notValidPostId}`)
+          .set({ Authorization: contributorUserToken })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, deletedBlogPost, error, errorMessages } = response.body as DeleteBlogPostRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object")
+            expect(errorMessages).to.be.an("array")
+            //
+            expect(deletedBlogPost).to.be.undefined;
+            // 
+            _deletedBlogPost = deletedBlogPost;
+            done();
+          });
+      })
       it("Should correctly DELETE an existing <BlogPost> model and send back correct response", (done) => {
         chai.request(server)
           .delete(`/api/posts/${postId}`)

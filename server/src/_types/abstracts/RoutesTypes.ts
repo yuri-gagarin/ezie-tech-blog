@@ -1,10 +1,10 @@
 import type { Router } from "express";
-import type { ICRUDController, IGenericAuthController } from "./DefaultController";
+import type { ICRUDController, IGenericAuthController, IGenericClientController } from "./DefaultController";
  
 export abstract class CRUDRoutesController {
   protected router: Router
-  protected controller: ICRUDController;
-  constructor(router: Router, controller: (ICRUDController | IGenericAuthController)) {
+  protected controller: ICRUDController | IGenericClientController;
+  constructor(router: Router, controller: (ICRUDController | IGenericAuthController | IGenericClientController)) {
     this.router = router;
     this.controller = controller as ICRUDController;
   }
