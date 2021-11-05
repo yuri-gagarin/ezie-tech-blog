@@ -94,7 +94,8 @@ export default class AdminsController extends BasicController implements IGeneri
         { email, 
           firstName, 
           lastName, 
-          role: role ? role : "admin"
+          role: role ? role : "admin",
+          editedAt: new Date()
         }, 
         { new: true }).exec();
       if (editedAdminModel) {
@@ -110,7 +111,7 @@ export default class AdminsController extends BasicController implements IGeneri
   }
   changePassword = async (req:Request, res: Response<AdminsEditRes>): Promise<Response> => {
     const { admin_id } = req.params;
-    const passwordChangeData: { newPassword?: string; confirmNewPassword?: string; oldPassword?: string; } = req.body;
+    const passwordChangeData: { newPassword?: string; confirmNewPassword?: string; oldPassword?: string; } = req.body.passwordChangeData;
     let editedAdmin: AdminData;
     // validate password change data first //
     const { valid, errorMessages } = validatePasswordChangeData(passwordChangeData);

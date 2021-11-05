@@ -313,7 +313,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
   // END Admin logged in editing other Admins account //
   */
   // CONTEXT Admin logged in, admin level - editing OWN account //
-  /*
+  
   context(("Admin Client - ADMIN LEVEL - Logged in - OWN Account"), function() {
     let regAdminId: string;
     let mockAdminData: ReqAdminData;
@@ -323,7 +323,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
       regAdminId = adminUser._id.toHexString();
       mockAdminData = generateMockAdminData();
     });
-
+    
     describe("PATCH /api/admins/:admin_id - invalid data - default response", function() {
       
       it("Should NOT update an EXISTING Admin model witn an EMPTY <email> field and send back a correct response", (done) => {
@@ -408,37 +408,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
       });
     });
     
+    
     describe("PATCH /api/admins/:admin_id - valid data - default response", function() {
-      it("Should correctly change the password when applicable changing only the password field", (done) => {
-        chai.request(server)
-          .patch(`/api/admins/${regAdminId}`)
-          .set({ Authorization: adminJWTToken })
-          .send({ passwordChangeData: { oldPassword: "password", newPassword: newAdminPassword, confirmNewPassword: newAdminPassword } })
-          .end((err, response) => {
-            if (err) done(err);
-            const { status, body } = response;
-            const { responseMsg, editedAdmin } = body as EditAdminRes;
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(editedAdmin).to.be.an("object");
-            //
-            expect(editedAdmin._id).to.equal(adminUser._id.toHexString());
-            expect(editedAdmin.firstName).to.equal(adminUser.firstName);
-            expect(editedAdmin.lastName).to.equal(adminUser.lastName);
-            expect(editedAdmin.email).to.equal(adminUser.email);
-            expect(editedAdmin.editedAt).to.be.a("string");
-            expect(editedAdmin.createdAt).to.be.a("string");
-            // password should not be sent back, <Admin.role> should not change, <Admin.confirmer> should not change>
-            expect(editedAdmin.role).to.equal("admin");
-            expect(editedAdmin.confirmed).to.equal(adminUser.confirmed);
-            //
-            expect(body.error).to.be.undefined;
-            expect(body.errorMessages).to.be.undefined;
-            //
-            _editedAdmin = editedAdmin;
-            done();
-          });
-      });
       
       it("Should update an EXISTING Admin model and send back a correct response", (done) => {
         chai.request(server)
@@ -490,7 +461,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
     
   });
   // END Admin logged in editing own Admin account //
-  */
+  
   context("Admin Client = ADMIN LEVEL - LOGGED in - Changing OWN Password", function() {
     let regAdminId: string;
     let _editedAdmin: AdminData;
@@ -498,7 +469,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
     before(() => {
       regAdminId = adminUser._id.toHexString();
     });
-
+    
+    // TEST INVALID DATA //
     describe("PATCH /api/admins/password/:admin_id - INVALID data - default response", function() {
       it("Should NOT update and change PASSWORD without a <passwordChange> field in <req.body> and send back a correct response", (done) => {
         chai.request(server)
@@ -589,7 +561,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
             if (err) done(err);
             const { status, body } = response;
             const { responseMsg, error, errorMessages } = body as ErrorAdminRes;
-            expect(status).to.equal(400);
+            expect(status).to.equal(401);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -597,6 +569,48 @@ describe("AdminsController:Edit PATCH API tests", function() {
           });
       });                 
     });
+    // END TEST INVALID DATA //
+    
+    // TEST VALID DATA //
+    describe("PATCH /api/admins/password/:admin_id - VALID data - default response", function() {
+      it("Should CORRECTLY update and change PASSWORD and send back a correct response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/password/${regAdminId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ passwordChangeData: { newPassword: newAdminPassword, confirmNewPassword: newAdminPassword, oldPassword: "password" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(editedAdmin).to.be.an("object");
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      }); 
+      it("Should NOT change any other data in the <Admin> model besides the password", async () => {
+        try {
+          const editedAdminModel: IAdmin = await Admin.findOne({ _id: regAdminId });
+          expect(editedAdminModel).to.not.be.null;
+          expect(editedAdminModel._id.toHexString()).to.equal(adminUser._id.toHexString());
+          expect(editedAdminModel.firstName).to.equal(adminUser.firstName);
+          expect(editedAdminModel.lastName).to.equal(adminUser.lastName);
+          expect(editedAdminModel.email).to.equal(adminUser.email);
+          expect(editedAdminModel.createdAt.toISOString()).to.equal(adminUser.createdAt.toISOString());
+          // values which should change //
+          expect(editedAdminModel.password).to.not.equal(adminUser.password);
+          expect(editedAdminModel.editedAt.toISOString()).to.equal(adminUser.editedAt.toISOString());
+          // reassign admin model //
+          adminUser = editedAdminModel;
+        } catch (error) {
+          throw error;
+        }
+      })
+    });
+    // END TEST VALID DATA //
   });
 
   // Admin logged in editing other admins account //
@@ -780,7 +794,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
       });
     });
     
-    describe("PATCH /api/admins/:admin_id - OTHER ADMINS Account - valid data - default response", function() {
+    describe("PATCH /api/admins/:admin_id - OTHER ADMINS Account - VALID DATA - default response", function() {
       let newMockData: ReqAdminData;
       let _editedAdmin: AdminData;
       before(() => {
@@ -801,25 +815,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
             expect(editedAdmin).to.be.an("object");
             done();
           });
-      });
-      it("Should correctly update and change PASSWORD with validfields and send back a correct response", (done) => {
-        chai.request(server)
-          .patch(`/api/admins/${adminId}`)
-          .set({ Authorization: adminJWTToken })
-          .send({ passwordChangeData: { newPassword: "newpassword2", confirmNewPassword: "newpassword2", oldPassword: newAdminPassword } })
-          .end((err, response) => {
-            if (err) done(err);
-            const { status, body } = response;
-            const { responseMsg, editedAdmin } = body as EditAdminRes;
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(editedAdmin).to.be.an("object");
-            // 
-            expect(body.error).to.be.undefined;
-            expect(body.errorMessages).to.be.undefined;
-            done();
-          });
-      });                         
+      });             
       it("Should NOT alter the number of <Admin> models in the database", async () => {
         try {
           const updatedNumOfAdmins: number = await Admin.countDocuments();
@@ -830,18 +826,20 @@ describe("AdminsController:Edit PATCH API tests", function() {
       });
       it("Should correctly  alter the queried <Admin> model in the database", async () => {
         try {
+          // changed fields //
           const queriedAdminModel: IAdmin = await Admin.findOne({ _id: adminId });
           expect(queriedAdminModel._id.toHexString()).to.equal(adminUser._id.toHexString());
           expect(queriedAdminModel.firstName).to.equal(newMockData.firstName);
           expect(queriedAdminModel.lastName).to.equal(newMockData.lastName);
           expect(queriedAdminModel.email).to.equal(newMockData.email);
           expect(queriedAdminModel.editedAt).to.be.an("date");
-          expect(queriedAdminModel.createdAt).to.be.an("date");
+          expect(queriedAdminModel.editedAt.toISOString()).to.not.equal(adminUser.editedAt.toISOString());
+          // unchanded fields //
           // password should not be sent back, <Admin.role> should not change, <Admin.confirmer> should not change>
           expect(queriedAdminModel.role).to.equal("admin");
           expect(queriedAdminModel.confirmed).to.equal(adminUser.confirmed);
-          // password should be changed as well //
-          expect(queriedAdminModel.password).to.not.equal(adminUser.password);
+          expect(queriedAdminModel.password).to.equal(adminUser.password);
+          expect(queriedAdminModel.createdAt.toISOString()).to.equal(adminUser.createdAt.toISOString());
         } catch (error) {
           throw error;
         }
@@ -937,25 +935,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
             expect(errorMessages).to.be.undefined;
             done();
           });
-      });
-      it("Should correctly update and change PASSWORD with validfields and send back a correct response", (done) => {
-        chai.request(server)
-          .patch(`/api/admins/${ownerId}`)
-          .set({ Authorization: ownerJWTToken })
-          .send({ passwordChangeData: { newPassword: "newpassword2", confirmNewPassword: "newpassword2", oldPassword: "password" } })
-          .end((err, response) => {
-            if (err) done(err);
-            const { status, body } = response;
-            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
-            expect(status).to.equal(200);
-            expect(responseMsg).to.be.a("string");
-            expect(editedAdmin).to.be.an("object");
-            //
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            done();
-          });
-      });                         
+      });                     
       it("Should NOT alter the number of <Admin> models in the database", async () => {
         try {
           const updatedNumOfAdmins: number = await Admin.countDocuments();
@@ -966,18 +946,20 @@ describe("AdminsController:Edit PATCH API tests", function() {
       });
       it("Should correctly  alter the queried <Admin> model in the database", async () => {
         try {
+          // changed fields //
           const queriedAdminModel: IAdmin = await Admin.findOne({ _id: ownerId });
           expect(queriedAdminModel._id.toHexString()).to.equal(ownerUser._id.toHexString());
           expect(queriedAdminModel.firstName).to.equal(newMockData.firstName);
           expect(queriedAdminModel.lastName).to.equal(newMockData.lastName);
           expect(queriedAdminModel.email).to.equal(newMockData.email);
-          expect(queriedAdminModel.editedAt).to.be.a("date");
-          expect(queriedAdminModel.createdAt).to.be.a("date");
-          // password should not be sent back, <Admin.role> should not change, <Admin.confirmed> should not change>
+          expect(queriedAdminModel.editedAt).to.be.an("date");
+          expect(queriedAdminModel.editedAt.toISOString()).to.not.equal(ownerUser.editedAt.toISOString());
+          // unchanded fields //
+          // password should not be sent back, <Admin.role> should not change, <Admin.confirmer> should not change>
           expect(queriedAdminModel.role).to.equal("admin");
           expect(queriedAdminModel.confirmed).to.equal(ownerUser.confirmed);
-          // password should be changed as well //
-          expect(queriedAdminModel.password).to.not.equal(ownerUser.password);
+          expect(queriedAdminModel.password).to.equal(ownerUser.password);
+          expect(queriedAdminModel.createdAt.toISOString()).to.equal(ownerUser.createdAt.toISOString());
         } catch (error) {
           throw error;
         }
@@ -985,6 +967,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
     });
     // END TEST Own account invalid data //
   });
+  
   // END CONTEXT Admin with OWNER privileges //
   after(async () => {
     try {
