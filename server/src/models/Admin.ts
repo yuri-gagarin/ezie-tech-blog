@@ -40,6 +40,7 @@ AdminSchema.methods.validPassword = async function(password: string): Promise<bo
 }
 AdminSchema.methods.hashNewPassword = async function(password: string): Promise<IAdmin> {
   this.password = password;
+  this.editedAt = new Date();
   return this.save();
 }
 

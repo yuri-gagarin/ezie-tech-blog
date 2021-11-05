@@ -84,7 +84,7 @@ export default class AdminsController extends BasicController implements IGeneri
     
 
     try {
-      const { email, firstName = "", lastName = "", role, confirmed } = adminData;
+      const { email, firstName = "", lastName = "", confirmed } = adminData;
       // validate duplicate email //
       const { exists, message } = await validateEditEmail(email, admin_id);
       if (exists) return await this.userInputErrorResponse(res, [ message ]);
@@ -94,7 +94,6 @@ export default class AdminsController extends BasicController implements IGeneri
         { email, 
           firstName, 
           lastName, 
-          role: role ? role : "admin",
           editedAt: new Date()
         }, 
         { new: true }).exec();
