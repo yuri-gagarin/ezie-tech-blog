@@ -20,7 +20,7 @@ export default class AdminRoutes extends CRUDRoutesController {
     this.create("/api/admins");
     this.edit("/api/admins/:admin_id");
     this.delete("/api/admins/:admin_id");
-    this.changePassword("/api/admins/password");
+    this.changePassword("/api/admins/password/:admin_id");
   }
 
   protected index(route: string): void {
@@ -62,7 +62,7 @@ export default class AdminRoutes extends CRUDRoutesController {
 
   protected changePassword(route: string): void {
     this.router
-      .route("/api/admins/password")
+      .route(route)
       .patch(
         [ 
           PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
