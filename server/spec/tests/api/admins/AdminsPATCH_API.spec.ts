@@ -889,10 +889,10 @@ describe("AdminsController:Edit PATCH API tests", function() {
         }
       });
     });
-    
+
+    // TEST Own account, valid data //
     describe("PATCH /api/admins/:admin_id - VALID DATA - OWN Account -  default response", function() {
       let newMockData: ReqAdminData;
-      let _editedAdmin: AdminData;
 
       before(() => {
         newMockData = generateMockAdminData();
@@ -1021,7 +1021,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
         chai.request(server)
           .patch(`/api/admins/password/${ownerAdminId}`)
           .set({ Authorization: ownerJWTToken })
-          .send({ passwordChangeData: { newPassword: "acompleteleynewpass", confirmNewPassword: "acompleteleynewpass", oldPassword: "password" } })
+          .send({ passwordChangeData: { newPassword: newAdminPassword, confirmNewPassword: newAdminPassword, oldPassword: "password" } })
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
@@ -1055,6 +1055,157 @@ describe("AdminsController:Edit PATCH API tests", function() {
       })
     });
     // END TEST VALID DATA //
+
+    // TEST INVALId DATA //
+    describe("PATCH /api/admins/password/:admin_id - INVALID data - default response", function() {
+      it("Should NOT update and change PASSWORD without <passwordChangeData> field in <req.body> and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/password/${ownerAdminId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            //
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            //
+            done();
+          });
+      }); 
+      it("Should NOT update and change PASSWORD with an EMPTY <newPassword> field and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/password/${ownerAdminId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ passwordChangeData: { newPassword: "", confirmNewPassword: "anewadminpass", oldPassword: newAdminPassword } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            //
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            //
+            done();
+          });
+      }); 
+      it("Should NOT update and change PASSWORD with an EMPTY <confirmNewPassword> field and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/password/${ownerAdminId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ passwordChangeData: { newPassword: "anewadminpass", confirmNewPassword: "", oldPassword: newAdminPassword } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            //
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            //
+            done();
+          });
+      }); 
+      it("Should NOT update and change PASSWORD with an EMPTY <oldPassword> field and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/password/${ownerAdminId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ passwordChangeData: { newPassword: "anewadminpass", confirmNewPassword: "anewadminpass", oldPassword: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            //
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            //
+            done();
+          });
+      }); 
+      it("Should NOT update and change PASSWORD with mismatching <newPassword> and <confirmNewPassword> fields and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/password/${ownerAdminId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ passwordChangeData: { newPassword: "anewadminpass", confirmNewPassword: "anewadminpassOOPS", oldPassword: newAdminPassword } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            console.log(errorMessages)
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            //
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            //
+            done();
+          });
+      }); 
+      it("Should NOT update and change PASSWORD with a WRONG <oldPassword> field and send back 401 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/password/${ownerAdminId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ passwordChangeData: { newPassword: "anewadminpass", confirmNewPassword: "anewadminpass", oldPassword: "defnotcorrect" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            console.log(errorMessages)
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            //
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            //
+            done();
+          });
+      }); 
+      /*
+      it("Should NOT change any other data in the <Admin> model besides the password", async () => {
+        try {
+          const editedAdminModel: IAdmin = await Admin.findOne({ _id: ownerAdminId });
+          expect(editedAdminModel).to.not.be.null;
+          expect(editedAdminModel._id.toHexString()).to.equal(ownerUser._id.toHexString());
+          expect(editedAdminModel.firstName).to.equal(ownerUser.firstName);
+          expect(editedAdminModel.lastName).to.equal(ownerUser.lastName);
+          expect(editedAdminModel.email).to.equal(ownerUser.email);
+          expect(editedAdminModel.createdAt.toISOString()).to.equal(ownerUser.createdAt.toISOString());
+          // values which should change //
+          expect(editedAdminModel.password).to.not.equal(ownerUser.password);
+          expect(editedAdminModel.editedAt.toISOString()).to.not.equal(ownerUser.editedAt.toISOString());
+          // reassign admin model //
+          ownerUser = editedAdminModel;
+        } catch (error) {
+          throw error;
+        }
+      });
+      */
+    });
+    // END TEST INVALID DATA //
   });
   // END CONTEXT Admin Owner changing other admins password //
   after(async () => {
