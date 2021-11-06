@@ -26,7 +26,7 @@ export default class PostRoutes extends CRUDRoutesController {
 
   protected index(route: string): void {
     super.index(route, [
-      validateQueryParams({ category: "string", publishedStatus: "string", limit: "number" }),
+      validateQueryParams({ category: "string", publishedStatus: "string", limit: "number", byUser: "boolean", userId: "objectid" }),
       checkforLogin // checks if user is logged in - does NOT protect the route //
     ]);
   }

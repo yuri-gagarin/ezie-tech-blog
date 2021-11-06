@@ -114,7 +114,8 @@ describe("BlogPost ADMIN API tests GET requests", function() {
           .query({ byUser: true, publishedStatus: "unpublished", limit: numberOfPosts, userId })
           .end((err, res) => {
             if (err) done(err);
-            const { responseMsg, blogPosts } = res.body as IndexBlogPostRes;  
+            const { responseMsg, blogPosts, error, errorMessages } = res.body as IndexBlogPostRes; 
+            console.log(errorMessages) 
             expect(res.status).to.equal(200);
             expect(responseMsg).to.be.a("string");
             expect(blogPosts).to.be.an("array");

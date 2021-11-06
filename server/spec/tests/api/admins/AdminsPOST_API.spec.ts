@@ -511,4 +511,12 @@ describe("AdminsController:Create POST API tests", function() {
     });
   });
   // END CONTEXT Admin client ADMIN LEVEL <Admin> logged in //
+  after(async () => {
+    try {
+      await Admin.deleteMany();
+      await User.deleteMany();
+    } catch (error) {
+      throw error;
+    }
+  });
 });

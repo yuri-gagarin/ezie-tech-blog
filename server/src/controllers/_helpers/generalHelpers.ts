@@ -71,7 +71,7 @@ export const validateObjectIdParams = (requiredParams: string []) => {
   }
 };
 
-type ValidateQueryOpts = { [key: string]: "string" | "number" | "boolean"; }
+type ValidateQueryOpts = { [key: string]: "string" | "number" | "boolean" | "objectid"; }
 export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -92,6 +92,10 @@ export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
               // should be able to parase to number //
               if(!/^\d+$/.test(req.query[queryKey] as string)) {
                 return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
+              }
+            } else if (allowedQueryParams[queryKey] === "objectid") {
+              if (!Types.ObjectId.isValid(req.query[queryKey] as string)) {
+                return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Query param <${queryKey}> is not a valid <ObjectID>.`]);
               }
             } else {
               if(!/^[a-zA-Z]+$/.test(req.query[queryKey] as string)) {
