@@ -82,7 +82,6 @@ describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsControl
     }
   });
 
-  /*
   // CONTEXT client no Login //
   context(("Guest Client - NOT Logged in"), function() {
     let regAdminId: string;
@@ -390,7 +389,7 @@ describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsControl
             expect(errorMessages).to.be.an("array");
             done();
           });
-      });             
+      });      
       it("Should NOT alter the number of <Admin> models in the database", async () => {
         try {
           const updatedNumOfAdmins: number = await Admin.countDocuments();
@@ -1195,7 +1194,7 @@ describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsControl
     // END TEST INVALID DATA //
   });
   // END CONTEXT Admin Owner changing other admins password //
-  */
+  
   // CONTEXT TEST <changeRole> API tests //
   context("AdminsController:changeRole - API tests", function () {
     let adminUserId: string;
@@ -1417,9 +1416,52 @@ describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsControl
     });
     // END TEST INVALID DATA //
     // TEST VALID DATA >>
-    describe("PATCH /api/admins/role/:admin_id - INVALID DATA - Admin OWNER Level Logged In", function() {
-
-    })
+    describe("PATCH /api/admins/role/:admin_id - VALID DATA - Admin OWNER Level Logged In", function() {
+      it("Should CORRECTLY change the <Admin> model <role> field and send back 200 response with correct data", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ roleChange: { role: "owner" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            expect(status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            expect(editedAdmin).to.be.an("object");
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            //
+            done();
+          });
+      });
+      it("Should correctly update the queried <Admin> model updating ONLY <Admin.role>", async () => {
+        try {
+          const totalNumOfAdmins: number = await Admin.countDocuments();
+          const queriedAdminModel: IAdmin = await Admin.findOne({ _id: adminUserId });
+          //
+          expect(totalNumOfAdmins).to.equal(numberOfAdmins);
+          expect(queriedAdminModel).to.not.be.null;
+          // fields which should stay the same //
+          expect(queriedAdminModel._id.toHexString()).to.equal(adminUser._id.toHexString());
+          expect(queriedAdminModel.firstName).to.equal(adminUser.firstName);
+          expect(queriedAdminModel.lastName).to.equal(adminUser.lastName);
+          expect(queriedAdminModel.email).to.equal(adminUser.email);
+          expect(queriedAdminModel.password).to.equal(adminUser.password);
+          expect(queriedAdminModel.createdAt.toISOString()).to.equal(adminUser.createdAt.toISOString());
+          // fields which should have changed //    
+          expect(queriedAdminModel.editedAt.toISOString()).to.not.equal(adminUser.editedAt.toISOString());
+          expect(queriedAdminModel.role).to.not.equal(adminUser.role);
+          expect(queriedAdminModel.role).to.equal("owner");
+          // assign updated model //
+          adminUser = queriedAdminModel;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    
   });
   // END CONTEXT TEST <changeRole> API tests //
 
