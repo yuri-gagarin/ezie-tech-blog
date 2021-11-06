@@ -23,7 +23,7 @@ chai.use(chaiHTTP);
 // An Admin client with <admin> access level should be able to edit their model only //
 // An Admin client with <owner> access llevel should be able to edit any model //
 
-describe("AdminsController:Edit PATCH API tests", function() {
+describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsController:changeRole PATCH API tests", function() {
   // custom timeout //
   this.timeout(10000);
   let server: Express;
@@ -1194,6 +1194,64 @@ describe("AdminsController:Edit PATCH API tests", function() {
     // END TEST INVALID DATA //
   });
   // END CONTEXT Admin Owner changing other admins password //
+
+  // CONTEXT TEST <changeRole> API tests //
+  context("AdminsController:changeRole - API tests", function () {
+    let adminUserId: string;
+    let ownerUserId: string;
+
+    before(() => {
+      adminUserId = adminUser._id.toHexString();
+      ownerUserId = ownerUser._id.toHexString();
+    });
+
+    describe("PATCH /api/admins/role/:admin_id - VALID DATA - Not Logged In", function () {
+      it("Should NOT change the <Admin> model <role> field and send back 401 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .send({ roleChange: { role: "onwer"} })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            // const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            // should be default passport 401 response at the moment ;
+            expect(status).to.equal(401);
+          });
+      });
+    });
+    describe("PATCH /api/admins/role/:admin_id - VALID DATA - User READER Logged In", function () {
+      it("Should NOT change the <Admin> model <role> field and send back 401 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .set({ Authorization: readerUserJWTToken })
+          .send({ roleChange: { role: "onwer"} })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            // const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            // should be default passport 401 response at the moment ;
+            expect(status).to.equal(401);
+          })
+      })
+    });
+    describe("PATCH /api/admins/role/:admin_id - VALID DATA - User CONTRIBUTOR Logged In", function () {
+      it("Should NOT change the <Admin> model <role> field and send back 401 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .set({ Authorization: contributorUserJWTToken })
+          .send({ roleChange: { role: "onwer"} })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            // const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            // should be default passport 401 response at the moment ;
+            expect(status).to.equal(401);
+          });
+      });
+    });
+  });
+  // END CONTEXT TEST <changeRole> API tests //
+
   after(async () => {
     try {
       await Admin.deleteMany();

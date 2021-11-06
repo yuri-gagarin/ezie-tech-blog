@@ -60,6 +60,7 @@ export default class AdminRoutes extends CRUDRoutesController {
     ]);
   }
 
+  // password change //
   protected changePassword(route: string): void {
     this.router
       .route(route)
@@ -72,5 +73,18 @@ export default class AdminRoutes extends CRUDRoutesController {
         ],
         this.controller.changePassword
       );
+  }
+
+  // role change //
+  // Only OWNER Level admin should be allowed to do Admin model role change //
+  protected changeAdminRole(route: string): void {
+    this.router
+      .route(route)
+      .patch([
+        PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
+        verifyOwnerLevelAccess,
+        validateObjectIdParams([ "admin_id" ]),
+        validateRequiredDataFieds([ "roleChange" ])
+      ]);
   }
 };

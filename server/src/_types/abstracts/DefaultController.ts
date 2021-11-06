@@ -10,6 +10,7 @@ export interface ICRUDController {
 };
 export interface IGenericClientController extends ICRUDController {
   changePassword: (req: Request<any>, res: Response<any>) => Promise<Response<any>>;
+  changeRole?: (req: Request<any>, res: Response<any>) => Promise<Response<any>>;
 };
 
 export interface IGenericAuthController {
