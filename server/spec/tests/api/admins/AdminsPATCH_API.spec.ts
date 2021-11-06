@@ -82,7 +82,6 @@ describe("AdminsController:Edit PATCH API tests", function() {
     }
   });
 
-  /*
   // CONTEXT client no Login //
   context(("Guest Client - NOT Logged in"), function() {
     let regAdminId: string;
@@ -91,8 +90,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
       regAdminId = adminUser._id.toHexString();
       mockAdminData = generateMockAdminData();
     });
-    describe("PATCH /api/admins/:admin_id - valid data - default response", function() {
-      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+    describe("PATCH /api/admins/:admin_id - VALID DATA - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct 401 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/${regAdminId}`)
           .send({ adminData: mockAdminData })
@@ -112,8 +111,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
         }
       });
     });
-    describe("PATCH /api/admins/:admin_id - invalid data - default response", function() {
-      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+    describe("PATCH /api/admins/:admin_id - INVALID DATA - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct 401 response", (done) => {
         chai.request(server)
           .patch("/api/admins/:admin_id")
           .send({ adminData: {} })
@@ -135,6 +134,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
     });
   });
   // END CONTEXT client no Login //
+
   // Context User client READER - Logged in /
   context(("User Client - READER - Logged in"), function() {
     let regAdminId: string;
@@ -143,8 +143,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
       regAdminId = adminUser._id.toHexString();
       mockAdminData = generateMockAdminData();
     });
-    describe("PATCH /api/admins/:admin_id - valid data - default response", function() {
-      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+    describe("PATCH /api/admins/:admin_id - VALID DATA - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct 401 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/${regAdminId}`)
           .set({ Authorization: readerUserJWTToken })
@@ -165,8 +165,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
         }
       });
     });
-    describe("PATCH /api/admins/:admin_id - invalid data - default response", function() {
-      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+    describe("PATCH /api/admins/:admin_id - INVALID DATA - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct 401 response", (done) => {
         chai.request(server)
           .patch("/api/admins/:admin_id")
           .set({ Authorization: readerUserJWTToken })
@@ -200,8 +200,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
       mockAdminData = generateMockAdminData();
     });
 
-    describe("PATCH /api/admins/:admin_id - valid data - default response", function() {
-      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+    describe("PATCH /api/admins/:admin_id - VALID DATA - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct 401 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/${regAdminId}`)
           .set({ Authorization: contributorUserJWTToken })
@@ -222,8 +222,9 @@ describe("AdminsController:Edit PATCH API tests", function() {
         }
       });
     });
-    describe("PATCH /api/admins/:admin_id - invalid data - default response", function() {
-      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+
+    describe("PATCH /api/admins/:admin_id - INVALID - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct 401 response", (done) => {
         chai.request(server)
           .patch("/api/admins/:admin_id")
           .set({ Authorization: readerUserJWTToken })
@@ -257,8 +258,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
       mockAdminData = generateMockAdminData();
     });
     
-    describe("PATCH /api/admins/:admin_id - valid data - default response", function() {
-      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+    describe("PATCH /api/admins/:admin_id - VALID DATA - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct 401 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/${ownerAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -283,8 +284,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
         }
       });
     });
-    describe("PATCH /api/admins/:admin_id - invalid data - default response", function() {
-      it("Should NOT update an EXISTING Admin model and send back a correct response", (done) => {
+    describe("PATCH /api/admins/:admin_id - INVALID - default response", function() {
+      it("Should NOT update an EXISTING Admin model and send back a correct 401 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/${ownerAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -311,9 +312,8 @@ describe("AdminsController:Edit PATCH API tests", function() {
     });
   });
   // END Admin logged in editing other Admins account //
-  */
+
   // CONTEXT Admin logged in, admin level - editing OWN account //
-  
   context(("Admin Client - ADMIN LEVEL - Logged in - OWN Account"), function() {
     let regAdminId: string;
     let mockAdminData: ReqAdminData;
@@ -472,7 +472,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
     
     // TEST INVALID DATA //
     describe("PATCH /api/admins/password/:admin_id - INVALID data - default response", function() {
-      it("Should NOT update and change PASSWORD without a <passwordChange> field in <req.body> and send back a correct response", (done) => {
+      it("Should NOT update and change PASSWORD without a <passwordChange> field in <req.body> and send back a correct 400 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/password/${regAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -488,7 +488,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
             done();
           });
       }); 
-      it("Should NOT update and change PASSWORD without a <newPassword> field and send back a correct response", (done) => {
+      it("Should NOT update and change PASSWORD without a <newPassword> field and send back a correct 400 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/password/${regAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -504,7 +504,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
             done();
           });
       }); 
-      it("Should NOT update and change PASSWORD without a <confirmNewPassword> field and send back a correct response", (done) => {
+      it("Should NOT update and change PASSWORD without a <confirmNewPassword> field and send back a correct 400 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/password/${regAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -520,7 +520,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
             done();
           });
       });           
-      it("Should NOT update and change PASSWORD without a <oldPassword> field and send back a correct response", (done) => {
+      it("Should NOT update and change PASSWORD without a <oldPassword> field and send back a correct 400 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/password/${regAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -536,7 +536,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
             done();
           });
       }); 
-      it("Should NOT update and change PASSWORD with mismatching <newPassword> and <confirmNewPassword> fields and send back a correct response", (done) => {
+      it("Should NOT update and change PASSWORD with mismatching <newPassword> and <confirmNewPassword> fields and send back a correct 400 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/password/${regAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -552,7 +552,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
             done();
           });
       });
-      it("Should NOT update and change PASSWORD with an INCORRECT <oldPassword> field and send back a correct response", (done) => {
+      it("Should NOT update and change PASSWORD with an INCORRECT <oldPassword> field and send back a correct 400 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/password/${regAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -573,7 +573,7 @@ describe("AdminsController:Edit PATCH API tests", function() {
     
     // TEST VALID DATA //
     describe("PATCH /api/admins/password/:admin_id - VALID data - default response", function() {
-      it("Should CORRECTLY update and change PASSWORD and send back a correct response", (done) => {
+      it("Should CORRECTLY update and change PASSWORD and send back a correct 200 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/password/${regAdminId}`)
           .set({ Authorization: adminJWTToken })
@@ -1067,7 +1067,6 @@ describe("AdminsController:Edit PATCH API tests", function() {
             if (err) done(err);
             const { status, body } = response;
             const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
-            console.log(errorMessages)
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             //
@@ -1088,7 +1087,6 @@ describe("AdminsController:Edit PATCH API tests", function() {
             if (err) done(err);
             const { status, body } = response;
             const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
-            console.log(errorMessages)
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             //
@@ -1109,7 +1107,6 @@ describe("AdminsController:Edit PATCH API tests", function() {
             if (err) done(err);
             const { status, body } = response;
             const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
-            console.log(errorMessages)
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             //
@@ -1130,7 +1127,6 @@ describe("AdminsController:Edit PATCH API tests", function() {
             if (err) done(err);
             const { status, body } = response;
             const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
-            console.log(errorMessages)
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             //
@@ -1151,7 +1147,6 @@ describe("AdminsController:Edit PATCH API tests", function() {
             if (err) done(err);
             const { status, body } = response;
             const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
-            console.log(errorMessages)
             expect(status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             //
@@ -1172,7 +1167,6 @@ describe("AdminsController:Edit PATCH API tests", function() {
             if (err) done(err);
             const { status, body } = response;
             const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
-            console.log(errorMessages)
             expect(status).to.equal(401);
             expect(responseMsg).to.be.a("string");
             //
@@ -1184,26 +1178,18 @@ describe("AdminsController:Edit PATCH API tests", function() {
             done();
           });
       }); 
-      /*
-      it("Should NOT change any other data in the <Admin> model besides the password", async () => {
+      
+      it("Should NOT change ANY other data in the  <Admin> model", async () => {
         try {
           const editedAdminModel: IAdmin = await Admin.findOne({ _id: ownerAdminId });
           expect(editedAdminModel).to.not.be.null;
-          expect(editedAdminModel._id.toHexString()).to.equal(ownerUser._id.toHexString());
-          expect(editedAdminModel.firstName).to.equal(ownerUser.firstName);
-          expect(editedAdminModel.lastName).to.equal(ownerUser.lastName);
-          expect(editedAdminModel.email).to.equal(ownerUser.email);
-          expect(editedAdminModel.createdAt.toISOString()).to.equal(ownerUser.createdAt.toISOString());
-          // values which should change //
-          expect(editedAdminModel.password).to.not.equal(ownerUser.password);
-          expect(editedAdminModel.editedAt.toISOString()).to.not.equal(ownerUser.editedAt.toISOString());
-          // reassign admin model //
+          expect(editedAdminModel.toObject()).to.eql(ownerUser.toObject());
+          //
           ownerUser = editedAdminModel;
         } catch (error) {
           throw error;
         }
       });
-      */
     });
     // END TEST INVALID DATA //
   });
