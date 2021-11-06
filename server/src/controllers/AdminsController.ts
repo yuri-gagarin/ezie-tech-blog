@@ -1,12 +1,14 @@
-import Admin, { IAdmin } from "../models/Admin";
+import Admin from "../models/Admin";
 import { BasicController } from "../_types/abstracts/DefaultController";
 // data enums //
 // types //
 import type { Request, Response } from "express";
-import type { ICRUDController, IGenericClientController } from "../_types/abstracts/DefaultController";
+import type { IAdmin } from "../models/Admin";
+import type { IGenericClientController } from "../_types/abstracts/DefaultController";
 import type { FetchAdminsOpts, ReqAdminData, PasswordChangeData, AdminsIndexRes, AdminsGetOneRes, AdminsEditRes, AdminsCreateRes, AdminsDeleteRes, AdminData } from "../_types/admins/adminTypes";
 // helpers //
-import { validateAdminData, validateUniqueEmail, validateEditEmail, validatePasswordChangeData } from "./_helpers/validationHelpers";
+import { AdminModelValidators } from "./_helpers/adminsControllerHelpers";
+import { validateUniqueEmail, validateEditEmail, validatePasswordChangeData } from "./_helpers/validationHelpers";
 
 export default class AdminsController extends BasicController implements IGenericClientController {
   constructor() {
@@ -45,7 +47,7 @@ export default class AdminsController extends BasicController implements IGeneri
     // validate input //
     if (!adminData) return await this.userInputErrorResponse(res, [ "Could not resolve new Admin model data" ]);
     // validate new admin model data //
-    const { valid, errorMessages } = validateAdminData(adminData);
+    const { valid, errorMessages } = AdminModelValidators.validateAdminData(adminData);
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
     //
     try {
@@ -79,7 +81,7 @@ export default class AdminsController extends BasicController implements IGeneri
     // validate input //
     if (!adminData) return await this.userInputErrorResponse(res, [ "Could not resolve new Admin model data" ]);
     // validate new admin model data //
-    const { valid, errorMessages } = validateAdminData(adminData, { existing: true });
+    const { valid, errorMessages } = AdminModelValidators.validateAdminData(adminData, { existing: true });
     if (!valid) return await this.userInputErrorResponse(res, errorMessages);
     
 
@@ -136,6 +138,32 @@ export default class AdminsController extends BasicController implements IGeneri
       return await this.generalErrorResponse(res, { error });
     }
   }
+
+  changeRole = async (req: Request, res: Response<AdminsEditRes>): Promise<Response> => {
+    const { admin_id } = req.params;
+    const { role } = req.body.roleChange as { role: string };
+    const adminUser = req.user as IAdmin;
+    // first validate correct role //
+    const { valid, errorMessages } = AdminModelValidators.validateAdminRole(role);
+    try {
+      if (!valid) return this.userInputErrorResponse(res, errorMessages);
+      // should change own role //
+      if (this.checkForChangingOwnRole(adminUser, admin_id)) return this.notAllowedErrorResponse(res, [ "Not allowed to change own role" ]);
+      // otherwise should update //
+      const adminUpdate: IAdmin = await Admin.findOneAndUpdate({ _id: admin_id }, { $set: { role, editedAt: new Date() } }, { new: true });
+      if (adminUpdate) {
+        const editedAdmin: AdminData = adminUpdate.toObject();
+        delete editedAdmin.password;
+        return res.status(200).json({
+          responseMsg: `Admin role changed to ${editedAdmin.role.toUpperCase()}.`, editedAdmin
+        })
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Could not resolve queried Admin model" ]);
+      }
+    } catch (error) {
+      return await this.generalErrorResponse(res, { error });
+    }
+  }
   delete = async (req: Request, res: Response<AdminsDeleteRes>): Promise<Response> => {
     const { admin_id } = req.params;
 
@@ -157,31 +185,7 @@ export default class AdminsController extends BasicController implements IGeneri
     }
   }
 
-  private processPasswordChange = async (res: Response<AdminsEditRes>, data: { adminId: string; passwordChangeData: PasswordChangeData }) => {
-    const { adminId, passwordChangeData } = data;
-    let editedAdmin: AdminData;
-    // validate password change data first //
-    const { valid, errorMessages } =  validatePasswordChangeData(passwordChangeData);
-    if (!valid) return this.userInputErrorResponse(res, errorMessages);
-    // attempt password change //
-    // first check if old password is valid //
-    try {
-      const { newPassword, oldPassword } = passwordChangeData;
-      const admin: IAdmin | null = await Admin.findOne({ _id: adminId });
-      if (admin) {
-        if (await admin.validPassword(oldPassword)) {
-          const updatedAdminWithPass: IAdmin = await admin.hashNewPassword(newPassword);
-          editedAdmin = updatedAdminWithPass.toObject();
-          delete editedAdmin.password;
-          return res.status(200).json({ responseMsg: "Password changed", editedAdmin });
-        } else {
-          return this.notAllowedErrorResponse(res, [ "Seems like you entered a wrong current password" ]);
-        }
-      } else {
-        return await this.notFoundErrorResponse(res, [ "Could not resolve queried Admin model" ]);
-      }
-    } catch (error) {
-      return await this.generalErrorResponse(res, { error });
-    }
+  private checkForChangingOwnRole = (user: IAdmin, queriedUserId: string): boolean => {
+    return (user._id.equals(queriedUserId));
   }
 };

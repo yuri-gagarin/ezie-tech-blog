@@ -113,44 +113,6 @@ export const validateUserData = (data: { email?: string; password?: string; conf
   return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
 };
 
-export const validateAdminData = (data: { email?: string; password?: string; confirmPassword?: string; firstName?: string; lastName?: string; }, opts?: { existing?: boolean; }): ValidationResponse => {
-  const errorMessages = [];
-  if (!data.email) {
-    errorMessages.push("Email is required");
-  }
-  if (!opts && !data.password) {
-    errorMessages.push("Password is required");
-  }
-  if (!opts && !data.confirmPassword) {
-    errorMessages.push("Password confirmation is required");
-  }
-
-  // validate correct types //
-  if (data.email) {
-    if (typeof data.email !== "string") {
-      errorMessages.push("Wrong input for email");
-    }
-  }
-  if (data.password && typeof data.password !== "string") {
-    errorMessages.push("Wrong input for password");
-  }
-  if (data.confirmPassword && typeof data.confirmPassword !== "string") {
-    errorMessages.push("Wrong input for password confirm");
-  }
-  if (data.password && data.confirmPassword) {
-    if (data.password !== data.confirmPassword) {
-      errorMessages.push("Passwords do not match");
-    }
-  }
-  if (data.firstName && typeof data.firstName !== "string") {
-    errorMessages.push("Wrong input type for first name field");
-  }
-  if (data.lastName && typeof data.lastName !== "string") {
-    errorMessages.push("Wrong input type for last name field");
-  }
-  return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
-};
-
 // blog post model validators //
 export const validateBlogPostModelData = (data: BlogPostFormData): ValidationRes => {
   const errorMessages: string[] = [];

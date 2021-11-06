@@ -37,69 +37,80 @@ export const validateRequiredParams = (requiredParameters: string[]) => {
 };
 export const validateRequiredDataFieds = (requiredDataFields: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const errorMessages: string[] = [];
-    for (const requiredField of requiredDataFields) {
-      if (!req.body[requiredField]) {
-        errorMessages.push(`Required data: ${requiredField} is missing from the Request`);
+    try {
+      const errorMessages: string[] = [];
+      for (const requiredField of requiredDataFields) {
+        if (!req.body[requiredField]) {
+          errorMessages.push(`Required data: ${requiredField} is missing from the Request`);
+        }
       }
+      return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
+    } catch (error) {
+      next(error);
     }
-
-    return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
   }
 };
 export const validateObjectIdParams = (requiredParams: string []) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const errorMessages: string[] = [];
-    for (const requiredParam of requiredParams) {
-      if (req.params[requiredParam.trim()]) {
-        if (!Types.ObjectId.isValid(req.params[requiredParam])) {
-          errorMessages.push(`Param '${requiredParam}' is not a valid ObjectId string'.`);
-        }   
-      } else {
-        errorMessages.push(`Required params: ${requiredParam} is missing from the Request`);
+    try {
+      const errorMessages: string[] = [];
+      for (const requiredParam of requiredParams) {
+        if (req.params[requiredParam.trim()]) {
+          if (!Types.ObjectId.isValid(req.params[requiredParam])) {
+            errorMessages.push(`Param '${requiredParam}' is not a valid ObjectId string'.`);
+          }   
+        } else {
+          errorMessages.push(`Required params: ${requiredParam} is missing from the Request`);
+        }
+        
       }
-      
+      return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
+    } catch (error) {
+      next(error);
     }
-    return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
   }
 };
 
 type ValidateQueryOpts = { [key: string]: "string" | "number" | "boolean"; }
 export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const errorMessages: string[] = [];
-    const queryKeys: string[] = Object.keys(req.query);
-    if (queryKeys.length > 0) {
-      for (const queryKey of queryKeys) {
-        if (allowedQueryParams[queryKey]) {
-          // check correct query types //
-          if (allowedQueryParams[queryKey] === "boolean") {
-            // should be either true or false //
-            if (req.query[queryKey] === "true" || req.query[queryKey] === "false") {
-              continue;
+    try {
+      const errorMessages: string[] = [];
+      const queryKeys: string[] = Object.keys(req.query);
+      if (queryKeys.length > 0) {
+        for (const queryKey of queryKeys) {
+          if (allowedQueryParams[queryKey]) {
+            // check correct query types //
+            if (allowedQueryParams[queryKey] === "boolean") {
+              // should be either true or false //
+              if (req.query[queryKey] === "true" || req.query[queryKey] === "false") {
+                continue;
+              } else {
+                return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
+              }
+            } else if (allowedQueryParams[queryKey] === "number") {
+              // should be able to parase to number //
+              if(!/^\d+$/.test(req.query[queryKey] as string)) {
+                return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
+              }
             } else {
-              return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
-            }
-          } else if (allowedQueryParams[queryKey] === "number") {
-            // should be able to parase to number //
-            if(!/^\d+$/.test(req.query[queryKey] as string)) {
-              return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
+              if(!/^[a-zA-Z]+$/.test(req.query[queryKey] as string)) {
+                return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <string> with only 'A-Z' chars. Received: ${req.query[queryKey]}` ]);
+              }
             }
           } else {
-            if(!/^[a-zA-Z]+$/.test(req.query[queryKey] as string)) {
-              return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <string> with only 'A-Z' chars. Received: ${req.query[queryKey]}` ]);
-            }
+            // query not allowed //
+            return respondWithNoModelIdError(res, [ "Invalid query for request" ]);
           }
-        } else {
-          // query not allowed //
-          return respondWithNoModelIdError(res, [ "Invalid query for request" ]);
         }
+        // assumin all is peachy ... //
+        return next();
+      } else {
+        // no custom query params, move along ..//
+        return next();
       }
-      // assumin all is peachy ... //
-      return next();
-    } else {
-      // no custom query params, move along ..//
-      return next();
+    } catch (error) {
+      next(error);
     }
   }
 }

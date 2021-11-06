@@ -21,6 +21,7 @@ export default class AdminRoutes extends CRUDRoutesController {
     this.edit("/api/admins/:admin_id");
     this.delete("/api/admins/:admin_id");
     this.changePassword("/api/admins/password/:admin_id");
+    this.changeAdminRole("/api/admins/role/:admin_id");
   }
 
   protected index(route: string): void {
@@ -80,11 +81,14 @@ export default class AdminRoutes extends CRUDRoutesController {
   protected changeAdminRole(route: string): void {
     this.router
       .route(route)
-      .patch([
-        PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
-        verifyOwnerLevelAccess,
-        validateObjectIdParams([ "admin_id" ]),
-        validateRequiredDataFieds([ "roleChange" ])
-      ]);
+      .patch(
+        [
+          PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
+          verifyOwnerLevelAccess,
+          validateObjectIdParams([ "admin_id" ]),
+          validateRequiredDataFieds([ "roleChange" ]),
+        ],
+        this.controller.changeRole
+      );
   }
 };

@@ -82,6 +82,7 @@ describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsControl
     }
   });
 
+  /*
   // CONTEXT client no Login //
   context(("Guest Client - NOT Logged in"), function() {
     let regAdminId: string;
@@ -1194,7 +1195,7 @@ describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsControl
     // END TEST INVALID DATA //
   });
   // END CONTEXT Admin Owner changing other admins password //
-
+  */
   // CONTEXT TEST <changeRole> API tests //
   context("AdminsController:changeRole - API tests", function () {
     let adminUserId: string;
@@ -1209,14 +1210,25 @@ describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsControl
       it("Should NOT change the <Admin> model <role> field and send back 401 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/role/${adminUserId}`)
-          .send({ roleChange: { role: "onwer"} })
+          .send({ roleChange: { role: "owner"} })
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
             // const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
             // should be default passport 401 response at the moment ;
             expect(status).to.equal(401);
+            done();
           });
+      });
+      it("Should NOT alter the queried <Admin> model in any way", async () => {
+        try {
+          const queriedAdminModel: IAdmin = await Admin.findOne({ _id: adminUserId });
+          // 
+          expect(queriedAdminModel).to.not.be.null;
+          expect(queriedAdminModel.toObject()).to.eql(adminUser.toObject());
+        } catch (error) {
+          throw error;
+        }
       });
     });
     describe("PATCH /api/admins/role/:admin_id - VALID DATA - User READER Logged In", function () {
@@ -1224,31 +1236,190 @@ describe("AdminsController:Edit, AdminsContrloller:ChangePassword, AdminsControl
         chai.request(server)
           .patch(`/api/admins/role/${adminUserId}`)
           .set({ Authorization: readerUserJWTToken })
-          .send({ roleChange: { role: "onwer"} })
+          .send({ roleChange: { role: "owner"} })
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
             // const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
             // should be default passport 401 response at the moment ;
             expect(status).to.equal(401);
-          })
-      })
+            done();
+          });
+      });
+      it("Should NOT alter the queried <Admin> model in any way", async () => {
+        try {
+          const queriedAdminModel: IAdmin = await Admin.findOne({ _id: adminUserId });
+          // 
+          expect(queriedAdminModel).to.not.be.null;
+          expect(queriedAdminModel.toObject()).to.eql(adminUser.toObject());
+        } catch (error) {
+          throw error;
+        }
+      });
     });
     describe("PATCH /api/admins/role/:admin_id - VALID DATA - User CONTRIBUTOR Logged In", function () {
       it("Should NOT change the <Admin> model <role> field and send back 401 response", (done) => {
         chai.request(server)
           .patch(`/api/admins/role/${adminUserId}`)
           .set({ Authorization: contributorUserJWTToken })
-          .send({ roleChange: { role: "onwer"} })
+          .send({ roleChange: { role: "owner"} })
           .end((err, response) => {
             if (err) done(err);
             const { status, body } = response;
             // const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
             // should be default passport 401 response at the moment ;
             expect(status).to.equal(401);
+            done();
           });
       });
+      it("Should NOT alter the queried <Admin> model in any way", async () => {
+        try {
+          const queriedAdminModel: IAdmin = await Admin.findOne({ _id: adminUserId });
+          // 
+          expect(queriedAdminModel).to.not.be.null;
+          expect(queriedAdminModel.toObject()).to.eql(adminUser.toObject());
+        } catch (error) {
+          throw error;
+        }
+      });
     });
+    describe("PATCH /api/admins/role/:admin_id - VALID DATA - Admin ADMIN Level Logged In", function () {
+      it("Should NOT change the <Admin> model <role> field and send back 401 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .set({ Authorization: adminJWTToken })
+          .send({ roleChange: { role: "owner"} })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            // const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            // should be default passport 401 response at the moment ;
+            expect(status).to.equal(401);
+            done();
+          });
+      });
+      it("Should NOT alter the queried <Admin> model in any way", async () => {
+        try {
+          const queriedAdminModel: IAdmin = await Admin.findOne({ _id: adminUserId });
+          // 
+          expect(queriedAdminModel).to.not.be.null;
+          expect(queriedAdminModel.toObject()).to.eql(adminUser.toObject());
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    describe("PATCH /api/admins/role/:admin_id - INVALID DATA - Admin OWNER Level Logged In", function () {
+      it("Should NOT change the <Admin> model <role> field WITHOUT <roleChange> property in <req.body> and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT change the <Admin> model <role> field WITH an EMPTY <roleChange.role> property and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ roleChange: { role: "" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT change the <Admin> model <role> field WITH a WRONG <roleChange.role> property TYPE and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ roleChange: { role: {} } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT change the <Admin> model <role> field WITH a NON APPROVED <roleChange.role> property and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${adminUserId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ roleChange: { role: "thisisnotoneoftheroles" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            expect(status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT change OWN <Admin> OWNER <role> field property and send back 400 response", (done) => {
+        chai.request(server)
+          .patch(`/api/admins/role/${ownerUserId}`)
+          .set({ Authorization: ownerJWTToken })
+          .send({ roleChange: { role: "admin" } })
+          .end((err, response) => {
+            if (err) done(err);
+            const { status, body } = response;
+            const { responseMsg, editedAdmin, error, errorMessages } = body as EditAdminRes;
+            expect(status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(editedAdmin).to.be.undefined;
+            done();
+          });
+      });
+      
+      it("Should NOT alter the queried <Admin> models in any way", async () => {
+        try {
+          const queriedAdminModel: IAdmin = await Admin.findOne({ _id: adminUserId });
+          const queriedOwnerModel: IAdmin = await Admin.findOne({ _id: ownerUserId });
+          // 
+          expect(queriedAdminModel).to.not.be.null;
+          expect(queriedOwnerModel).to.not.be.null;
+          expect(queriedAdminModel.toObject()).to.eql(adminUser.toObject());
+          expect(queriedOwnerModel.toObject()).to.eql(ownerUser.toObject());
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST INVALID DATA //
+    // TEST VALID DATA >>
+    describe("PATCH /api/admins/role/:admin_id - INVALID DATA - Admin OWNER Level Logged In", function() {
+
+    })
   });
   // END CONTEXT TEST <changeRole> API tests //
 
