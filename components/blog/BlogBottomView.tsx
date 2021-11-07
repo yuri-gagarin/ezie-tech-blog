@@ -20,7 +20,7 @@ export const BlogBottomView: React.FunctionComponent<IBlogBottomViewProps> = ({ 
     {
       blogPosts.slice(1, 4).map((postData) => {
         return (
-          <Card className={ styles.blogBottomCard } key={ postData._id }>
+          <Card className={ styles.blogBottomCard } key={ postData._id } data-test-id="Blog_Bottom_Card">
             <Image src="/images/blog1.jpg" alt="image" />
             <Card.Content>
               <Card.Header>{ postData.title }</Card.Header>

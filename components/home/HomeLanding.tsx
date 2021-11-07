@@ -12,7 +12,7 @@ interface IHomeLandingProps {
 };
 export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handleSeeMore }): JSX.Element => {
   return (
-    <Grid.Row className={ styles.wrapperRow } data-testid="Home_Landing_Main_Component" >
+    <Grid.Row className={ styles.wrapperRow } data-test-id="Home_Landing_Component" >
       <div className={ styles.landingMain }> 
         <AnimatedScrollingCode />
         <div className={ styles.imgOverlay}> 
@@ -21,7 +21,7 @@ export const HomeLanding: React.FunctionComponent<IHomeLandingProps> = ({ handle
           <MainTitle />
         </div>
        
-        <div className={ styles.seeMoreBtnWrapper }>
+        <div className={ styles.seeMoreBtnWrapper } data-test-id="Home_Landing_See_More_Btn">
           <AnimatedCyberButton 
             content="More" 
             clip="clipLeftBottom" 

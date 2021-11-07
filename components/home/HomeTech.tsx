@@ -12,7 +12,7 @@ interface IHomeTechProps {
 export const HomeTech: React.FunctionComponent<IHomeTechProps> = (props): JSX.Element => {
 
   return (
-    <Grid.Row id="homeTechRow" className={ homeTechStyle.homeTechRow }> 
+    <Grid.Row id="homeTechRow" className={ homeTechStyle.homeTechRow } data-test-id="Home_Tech_Component"> 
       <Grid.Column>
         <h4 className={ homeTechStyle.techTitleDiv }>
           Our Tech

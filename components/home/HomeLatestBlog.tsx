@@ -16,7 +16,7 @@ interface IHomeLatestBlogProps {
 export const HomeLatestBlog: React.FunctionComponent<IHomeLatestBlogProps> = ({ blogPostsArr, navigateToBlogPost, handleGoToSection }): JSX.Element => {
   return (
     <>
-      <Grid.Row id="homeLatestBlogRow">
+      <Grid.Row id="homeLatestBlogRow" data-test-id="Home_Latest_Blog">
         <h4 className={ styles.homeBlogTitleRow }>Our Blog</h4>
       </Grid.Row>
       <Grid.Row className={ styles.latestBlogRow }>

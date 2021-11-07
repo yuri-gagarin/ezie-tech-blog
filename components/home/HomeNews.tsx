@@ -12,7 +12,7 @@ interface IHomeNewsProps {
 
 export const HomeNews: React.FunctionComponent<IHomeNewsProps> = ({ handleGoToSpecificFeed }): JSX.Element => {
   return (
-    <Grid.Row id="homeNewsRow" className={ styles.homeNewsRow }>
+    <Grid.Row id="homeNewsRow" className={ styles.homeNewsRow } data-test-id="Home_News_Component">
       <h4 className={ styles.newsTitleDiv }>News Feeds</h4>
         <div className={ styles.newsDescription }>
           <h4>Read about current news and events in tech in our sourced RSS feeds from the hottest tech news sources today</h4>

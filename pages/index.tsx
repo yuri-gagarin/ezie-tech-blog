@@ -89,7 +89,7 @@ export default function Home(): JSX.Element {
   
 
   return ( 
-    <Grid className={ styles.mainLandingGrid }>
+    <Grid className={ styles.mainLandingGrid } data-test-id="Main_Home_Page_Grid">
       <Head>
         <title>Eezie Tech Home</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />        <meta name="description" content="Eezie tech. We make tech easy for people of all backgrounds." />

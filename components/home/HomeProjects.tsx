@@ -9,7 +9,7 @@ interface IProjectsHomeProps {
 
 export const HomeProjects: React.FunctionComponent<IProjectsHomeProps> = ({ handleGoToSection }): JSX.Element => {
   return (
-    <Grid.Row id="homeProjectsRow" className={ projectsHomeStyles.projectsWrapper }> 
+    <Grid.Row id="homeProjectsRow" className={ projectsHomeStyles.projectsWrapper } data-test-id="Home_Projects"> 
       <div className={ projectsHomeStyles.projectsTitle } >
         Recent and Past Projects
       </div>
