@@ -65,7 +65,7 @@ export class BlogPostActions {
   }
 
   static handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts): Promise<GetAllBlogPosts> => {
-    const fetchParams = opts ? { ...opts } : { none: "none selected" };
+    const fetchParams = opts ? { ...opts } : {};
     const baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL ? process.env.NEXT_PUBLIC_SERVER_BASE_URL : "";
     const reqOpts: AxiosRequestConfig = {
       method: "GET",

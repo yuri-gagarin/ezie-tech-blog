@@ -9,11 +9,11 @@ import type { PostFormState } from '../../../pages/admin/dashboard/posts/new';
 
 interface IPostFormProps {
   updateTitle: (title: string) => void;
-  updateAuthor: (author: string) => void;
   updateCategory: (category: string) => void;
   updateKeywords: (keywords: string) => void;
   updateContent: (content: string) => void;
-  postFormState: PostFormState
+  postFormState: PostFormState;
+  postAuthor: string;
 }
 
 const dropdownVals: DropdownItemProps[] = [
@@ -23,14 +23,11 @@ const dropdownVals: DropdownItemProps[] = [
   { key: 4, text: "Advanced", value: "advanced" }
 ];
 
-export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle, updateAuthor, updateCategory, updateKeywords, updateContent, postFormState }): JSX.Element => {
+export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle, updateCategory, updateKeywords, updateContent, postFormState, postAuthor }): JSX.Element => {
   
   // action handlers //
   const handlePostTitleChange = (e:  React.FormEvent<HTMLInputElement>): void => {
     updateTitle(e.currentTarget.value);
-  };
-  const handleAuthorChange = (e: React.FormEvent<HTMLInputElement>): void => {
-    updateAuthor(e.currentTarget.value);
   };
   const handleKeywordsChange = (e: React.FormEvent<HTMLInputElement>): void => {
     updateKeywords(e.currentTarget.value);
@@ -51,7 +48,7 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
       </Form.Field>
       <Form.Field>
         <label>Author</label>
-        <input value={ postFormState.postAuthor.name } placeholder="value..." onChange={ handleAuthorChange } />
+        <div>{ }</div>
       </Form.Field>
       <Form.Field>
         <label>Keywords</label>

@@ -10,10 +10,10 @@ import { capitalizeString } from "../../_helpers/displayHelpers";
 
 interface IPostPreviewProps {
   postTitle: string;
-  postAuthor: { authorId?: string; name?: string; };
   postKeywords: string;
   postCategory: string;
   postContent: string;
+  postAuthor: string;
 }
 
 export const AdminPostPreview: React.FunctionComponent<IPostPreviewProps> = ({ postTitle, postAuthor, postKeywords, postCategory, postContent }): JSX.Element => {
@@ -30,7 +30,7 @@ export const AdminPostPreview: React.FunctionComponent<IPostPreviewProps> = ({ p
         <span>Title:</span>{ postTitle ? <span>{ postTitle }</span> : null }
       </div>
       <div className={ styles.previewAuthor }>
-        <span>Author:</span>{ postAuthor ? <span>{ postAuthor.name }</span> : null }
+        <span>Author:</span>{ postAuthor ? <span>{ postAuthor }</span> : null }
       </div>  
       <div className={ styles.previewCategory }>
         <span>Category:</span>{ postCategory ? <span>{ capitalizeString(postCategory) }</span> : null }

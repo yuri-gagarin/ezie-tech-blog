@@ -52,6 +52,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
   } catch (err) {
     // TODO //
     // error handling helpers //
+    console.log(err);
     if (err.response && err.response.status === 404) {
       return {
         redirect: {

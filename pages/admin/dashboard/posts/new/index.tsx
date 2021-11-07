@@ -22,7 +22,6 @@ interface IAdminNewViewProps {
 }
 export type PostFormState = {
   postTitle: string;
-  postAuthor: { authorId?: string; name?: string; };
   postKeywords: string;
   postCategory: string;
   postContent: string;
@@ -30,27 +29,27 @@ export type PostFormState = {
 
 const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.Element => {
   // local component hooks and state //
-  const [ postFormState, setPostFormState ] = React.useState<PostFormState>({ postTitle: "", postAuthor: { authorId: "", name: "" }, postKeywords: "", postCategory: "", postContent: "" });
+  const [ postFormState, setPostFormState ] = React.useState<PostFormState>({ postTitle: "",  postKeywords: "", postCategory: "", postContent: "" });
   // next hooks //
   const router = useRouter();
   // redux hooks and state  //
   const dispatch = useDispatch();
-  const { blogPostsState } = useSelector((state: IGeneralState) => state);
+  const { authState, blogPostsState } = useSelector((state: IGeneralState) => state);
   
   // action handlers //
   const cancelNewPost = (): void => {
     router.push("/admin/dashboard/posts");
   };
   const saveNewPost = async (): Promise<any> => {
-    const { postTitle: title, postAuthor: author, postCategory: category, postContent: content } = postFormState;
+    const { postTitle: title, postCategory: category, postContent: content } = postFormState;
     const keywords: string[] = postFormState.postKeywords ? postFormState.postKeywords.split(",") : [];
     // first validate on client side //
-    const { valid, errorMessages } = blogPostValidator({ title, author, category, keywords, content });
+    const { valid, errorMessages } = blogPostValidator({ title, category, keywords, content });
     // TODO //
     // show an error div //
     if (valid) {
       try {
-        await BlogPostActions.handleSaveNewBlogPost(dispatch, { title, author, category, keywords, content}, blogPostsState);
+        await BlogPostActions.handleSaveNewBlogPost(dispatch, { title, category, keywords, content}, blogPostsState);
         router.push("/admin/dashboard/posts");
       } catch (err) {
         console.log(err)
@@ -61,9 +60,6 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
   // form listeners to update both form and preview //
   const updateTitle = (postTitle: string): void => {
     setPostFormState({ ...postFormState, postTitle });
-  };
-  const updateAuthor = (postAuthor: string): void => {
-    setPostFormState({ ...postFormState, postAuthor: { authorId: "", name: "" } });
   };
   const updateKeywords = (postKeywords: string): void => {
     setPostFormState({ ...postFormState, postKeywords });
@@ -79,7 +75,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
   React.useEffect(() => {
     // set local state so the form is filled out with current blog post values //
     const { title, author, content, category, keywords } = blogPostsState.currentBlogPost;
-    setPostFormState({ postTitle: title, postAuthor: author, postContent: content, postCategory: category, postKeywords: keywords.join(",") });
+    setPostFormState({ postTitle: title,  postContent: content, postCategory: category, postKeywords: keywords.join(",") });
   }, [ blogPostsState.currentBlogPost ]);
 
   return (
@@ -94,15 +90,16 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
         <Grid.Column stretched width={ 8 } style={{ paddingRight: "5px" }}>
           <PostForm 
             updateTitle={ updateTitle }
-            updateAuthor={ updateAuthor }
             updateKeywords={ updateKeywords }
             updateCategory={ updateCategory }
             updateContent={ updateContent }
             postFormState={ postFormState }
+            postAuthor={ authState.currentUser.firstName }
           />
         </Grid.Column>
         <Grid.Column stretched width={ 8 } style={{ paddingLeft: "5px" }}>
           <AdminPostPreview 
+            postAuthor={ authState.currentUser.firstName }
             { ...postFormState }
           />
         </Grid.Column>

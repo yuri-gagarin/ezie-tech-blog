@@ -5,7 +5,7 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router  } from "express";
 import type { IGenericClientController } from "../_types/abstracts/DefaultController";
 // helpers //
-import { validateObjectIdParams, validateRequiredDataFieds } from "@/server/src/controllers/_helpers/generalHelpers";
+import { validateObjectIdParams, validateRequiredDataFieds } from "../controllers/_helpers/generalHelpers";
 import { verifyOwnerLevelAccess, verifyAdminModelAccess, verifyAdminRoleOrConfirmationChange } from "../controllers/_helpers/adminsControllerHelpers";
 
 export default class AdminRoutes extends CRUDRoutesController {
