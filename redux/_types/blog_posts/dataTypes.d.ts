@@ -79,6 +79,7 @@ export type ErrorBlogPostRes = {
 export type FetchBlogPostsOpts = {
   category?: "all" | "informational" | "beginner" | "intermediate" | "advanced";
   createdAt?: "desc" | "asc";
+  publishedStatus?: "published" | "unpublished";
   limit?: number;
   baseUrl?: string;
 }

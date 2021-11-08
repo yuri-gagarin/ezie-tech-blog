@@ -44,7 +44,14 @@ const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IG
 };
 
 //if (isClient) console.log("client request");
-
+export const store: Store<IGeneralState> = createStore<IGeneralState, AnyAction, any, any>(
+  rootReducer, 
+  composeWithDevTools(applyMiddleware(
+    nextReduxCookieMiddleware({ subtrees: ["authState"], expires: new Date(Date.now() + 3600 * 100) })
+  ))
+);
+const makeStore = wrapMakeStore<Store<IGeneralState>>(() => store);
+/*
 const makeStore = wrapMakeStore<Store<IGeneralState>>(() => 
   createStore<IGeneralState, AnyAction, any, any>(
     rootReducer, 
@@ -53,5 +60,6 @@ const makeStore = wrapMakeStore<Store<IGeneralState>>(() =>
     ))
   )
 );
+*/
 
 export const wrapper = createWrapper<Store<IGeneralState>>(makeStore, { debug: false });

@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
   const dispatch: Dispatch<BlogPostAction> = store.dispatch;
   try {
-    await BlogPostActions.handleFetchBlogPosts(dispatch, { limit: 3, createdAt: "asc" });
+    await BlogPostActions.handleFetchBlogPosts(dispatch, { limit: 3, publishedStatus: "published", createdAt: "asc" });
   } catch (error) {
     BlogPostActions.handleBlogPostError(dispatch, error);
   }

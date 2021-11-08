@@ -32,6 +32,20 @@ context("Main Home Page", () => {
   it("Should display most recent blog posts on the main page", () => {
     getTestElement("Home_Latest_Blog").scrollIntoView();
     getTestElement("Blog_Bottom_Card").should("have.length", 3);
+  });
+
+  it("Should correctly set the initial redux store", () => {
+    cy.window().its("store").invoke("getState").then((state) => {
+      // auth state user should be null //
+      expect(state.authState.currentUser).to.be.null;
+      expect(state.authState.loggedIn).to.be.false;
+      expect(state.authState.isAdmin).to.be.false;
+      // home blog post state //
+      expect(state.blogPostsState.blogPosts).to.be.an("array");
+      expect(state.blogPostsState.blogPosts.length).to.equal(3);
+      //
+
+    })
   })
 
 });

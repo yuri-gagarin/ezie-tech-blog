@@ -4,20 +4,28 @@ import NProgress from "nprogress";
 import App, { AppInitialProps, AppContext } from "next/app";
 import Router from "next/router";
 // redux imports //
-import { wrapper } from "../redux/store";
+import { wrapper, store } from "../redux/store";
 // firebase for storage //
 import FirebaseController from "../firebase/firebaseSetup";
 // additional components //
 import Layout from '../components/layout/Layout';
+// types //
+import type { Store } from "redux";
+import type { IGeneralState } from "@/redux/_types/generalTypes";
 // styles //
 import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
 import "nprogress/nprogress.css";
 import 'react-image-lightbox/style.css'
 
+declare global {
+  interface Window { Cypress: any; store: Store<IGeneralState>  }
+}
+
 interface IAppInitialState {
   firebaseContInstance: null | FirebaseController;
 }
+
 class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
   constructor(props: any) {
     super(props)
@@ -46,6 +54,9 @@ class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
     Router.events.on("routeChangeError", () => {
       NProgress.done();
     });
+    if (window && window.Cypress) {
+      window.store = store; 
+    }
   }
   
   public render () {

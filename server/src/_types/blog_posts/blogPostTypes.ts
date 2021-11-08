@@ -76,8 +76,8 @@ export type FetchBlogPostsOpts = {
   category?: "all" | "informational" | "beginner" | "intermediate" | "advanced";
   createdAt?: "desc" | "asc";
   publishedStatus?: "published" | "unpublished" | "all";
-  limit?: number;
-  byUser?: boolean;
+  limit?: string;
+  byUser?: string;
   userId?: string;
 }
 

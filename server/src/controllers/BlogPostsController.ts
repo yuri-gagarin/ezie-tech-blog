@@ -22,15 +22,16 @@ export default class BlogPostsController extends BasicController implements ICRU
     const user = req.user as IUser | IAdmin | null;
     // check for a user and admin //
     let blogPosts: IBlogPost[];
-
     try {
       if (objectIsEmtpy(req.query)) {
+        console.log("should not be called")
         return this.processGetAllDefault(res);
       }
       else if (byUser && userId) {
         return this.processGetAllByUser(req, res);
       }
       else {
+        console.log("should be called");
         return this.processGetAllWithOptions(req, res);
       }
     } catch (error) {
@@ -223,29 +224,32 @@ export default class BlogPostsController extends BasicController implements ICRU
     }
   }
   private processGetAllWithOptions = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
-    const { limit = 10, category = "all", createdAt = "asc", publishedStatus = "published" } = req.query as FetchBlogPostsOpts;
+    const { limit = "10", category = "all", createdAt = "asc", publishedStatus = "published" } = req.query as FetchBlogPostsOpts;
     const user = req.user as IAdmin | IUser | null;
     let blogPosts: IBlogPost[];
 
     const { loggedIn, isAdmin } = this.checkLogin(user);
 
     if (loggedIn && isAdmin) {
-      blogPosts = await BlogPost.find({}).byPublishedStatus(publishedStatus).byCategory(category).sort({ createdAt }).limit(limit);
+      blogPosts = await BlogPost.find({}).byPublishedStatus(publishedStatus).byCategory(category).sort({ createdAt }).limit(parseInt(limit));
     } else {
       // can only see published posts //
       if (publishedStatus === "published") {
-        blogPosts = await BlogPost.find({}).byPublishedStatus(publishedStatus).byCategory(category).sort({ createdAt }).limit(limit);
+        console.log(247);
+        console.log(limit);
+        console.log(typeof limit)
+        blogPosts = await BlogPost.find({}).byPublishedStatus(publishedStatus).byCategory(category).sort({ createdAt }).limit(parseInt(limit));
+        console.log(blogPosts.length)
       } else {
         return this.notAllowedErrorResponse(res, [ "Not allowed to fetch this Blog Post query" ]);
       }
-    }
-
+    }    
     return res.status(200).json({
       responseMsg: "Fetched blog posts", blogPosts
     });
   } 
   private processGetAllByUser = async (req: Request, res: Response<IndexBlogPostRes>):  Promise<Response<IndexBlogPostRes>> => {
-    const { limit = 10, category = "all", createdAt = "asc", publishedStatus = "published", userId } = req.query as FetchBlogPostsOpts;
+    const { limit = "10", category = "all", createdAt = "asc", publishedStatus = "published", userId } = req.query as FetchBlogPostsOpts;
     const user = req.user as IAdmin | IUser | null;
     let blogPosts: IBlogPost[];
 
@@ -257,7 +261,7 @@ export default class BlogPostsController extends BasicController implements ICRU
         BlogPost
           .find({"author.authorId": userId })
           .byPublishedStatus(publishedStatus).byCategory(category)
-          .sort({ createdAt }).limit(limit)
+          .sort({ createdAt }).limit(parseInt(limit))
       );
     } else if (loggedIn && !isAdmin) {
       const { _id: loggedInUserId } = user._id
@@ -267,7 +271,7 @@ export default class BlogPostsController extends BasicController implements ICRU
           BlogPost
             .find({"author.authorId": userId })
             .byPublishedStatus(publishedStatus).byCategory(category)
-            .sort({ createdAt }).limit(limit)
+            .sort({ createdAt }).limit(parseInt(limit))
         );
       } else {
         // not fetching own posts, can only see published //
@@ -276,7 +280,7 @@ export default class BlogPostsController extends BasicController implements ICRU
             BlogPost
               .find({"author.authorId": userId })
               .byPublishedStatus(publishedStatus).byCategory(category)
-              .sort({ createdAt }).limit(limit)
+              .sort({ createdAt }).limit(parseInt(limit))
           );
         } else {
           return this.notAllowedErrorResponse(res, [ "Not authorized to fetch this query" ]);
@@ -289,7 +293,7 @@ export default class BlogPostsController extends BasicController implements ICRU
           BlogPost
             .find({"author.authorId": userId })
             .byPublishedStatus(publishedStatus).byCategory(category)
-            .sort({ createdAt }).limit(limit)
+            .sort({ createdAt }).limit(parseInt(limit))
         );
       } else {
         return this.notAllowedErrorResponse(res, [ "Not authorized to fetch this query" ]);
