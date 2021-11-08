@@ -136,7 +136,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
         <AnimatedHomeNav handleScrollToContent={ handleScrollToContent } />
       </div>
       :
-      <Grid.Row className={ `${navMenuStyle.menuRow} ${navMenuStyle.fadeIn} ` }>
+      <Grid.Row className={ `${navMenuStyle.menuRow} ${navMenuStyle.fadeIn}` } data-test-id="Main_Menu">
         <GenErrorModal 
           open={ error ? true : false }
           handleErrorModalClose={ handleErrorModalClose }
@@ -151,6 +151,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             active={ navState.activeItem === "home" }
             onClick={ handleNavClick }
             color="purple"
+            data-test-id="Main_Menu_Home_Link"
           />
           <Menu.Item
             className={ navMenuStyle.navMenuItem }
@@ -158,6 +159,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             active={ navState.activeItem === "blog" }
             onClick={ handleNavClick }
             color="purple"
+            data-test-id="Main_Menu_Blog_Link"
           />
           <Menu.Item
             className={ navMenuStyle.navMenuItem }
@@ -165,6 +167,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             active={ navState.activeItem === "news" }
             onClick={ handleNavClick }
             color="purple"
+            data-test-id="Main_Menu_News_Link"
           />
           <Menu.Item
             className={ navMenuStyle.navMenuItem }
@@ -172,6 +175,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             active={ navState.activeItem === "projects" }
             onClick={ handleNavClick }
             color="purple"
+            data-test-id="Main_Menu_Projects_Link"
           />
           <Menu.Item
               className={ navMenuStyle.navMenuItem }
@@ -179,6 +183,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
               active={ navState.activeItem === "about" }
               onClick={ handleNavClick }
               color="purple"
+              data-test-id="Main_Menu_About_Link"
           />
           <Menu.Menu position='right'>
             {
@@ -200,10 +205,10 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
                   ?
                   null
                   :
-                  <Button inverted color="purple" content="Logout" onClick={ handleLogout } />
+                  <Button inverted color="purple" content="Logout" onClick={ handleLogout } data-test-id="Main_Menu_Logout_link" />
                 )
                 :
-                <Button inverted color="purple" content="Login" onClick={ handleGoToLogin } />
+                <Button inverted color="purple" content="Login" onClick={ handleGoToLogin } data-test-id="Main_Menu_Login_Link" />
               }
             </Menu.Item>
           </Menu.Menu>
