@@ -80,7 +80,7 @@ export default function Home(): JSX.Element {
   };
   
 
-  const handleGoToSection = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleGoToSection = (e: React.MouseEvent<HTMLButtonElement>, data?: any): void => {
     const target = e.currentTarget.dataset["value"]
     if (target) {
       router.push(`/${target}`);
@@ -97,7 +97,10 @@ export default function Home(): JSX.Element {
       </Head>
       <HomeLanding handleSeeMore={ handleSeeMore } />
       <HomeTech />
-      <HomeNews handleGoToSpecificFeed={ handleGoToSpecificFeed } />
+      <HomeNews 
+        handleGoToSection={ handleGoToSection }
+        handleGoToSpecificFeed={ handleGoToSpecificFeed } 
+      />
       <HomeLatestBlog 
         blogPostsArr={ blogPostsState.blogPosts }
         navigateToBlogPost={ navigateToBlogPost }

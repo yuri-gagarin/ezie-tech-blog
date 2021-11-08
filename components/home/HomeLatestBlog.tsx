@@ -30,7 +30,7 @@ export const HomeLatestBlog: React.FunctionComponent<IHomeLatestBlogProps> = ({ 
       <Grid.Row>
         <div className={ styles.techBlogBtnOuter }>
           <div className={ styles.techBlogBtnInner }>
-            <Button fluid color="purple" content="All Blog Posts" data-value="blog" onClick={ handleGoToSection } />
+            <Button fluid color="purple" content="All Blog Posts" data-value="blog" onClick={ handleGoToSection } data-test-id="Home_Go_To_Blog_Section_Btn" />
           </div>
         </div>  
       </Grid.Row>

@@ -7,7 +7,7 @@ context("Main Home Page", () => {
   beforeEach(() => {
     cy.visit("http://localhost:3000");
   });
-
+  
   it("Should correctly render the main home page set corret cookes", () => {
     getTestElement("Main_Home_Page_Grid");
     getTestElement("Home_Landing_Component");
@@ -44,9 +44,43 @@ context("Main Home Page", () => {
       expect(state.blogPostsState.blogPosts).to.be.an("array");
       expect(state.blogPostsState.blogPosts.length).to.equal(3);
       //
+      // home project state //
+      expect(state.projectsState.currentSelectedProject).to.be.null;
+      expect(state.projectsState.projectsArr.length).to.equal(0);
+      //
+      expect(state.rssState.readingList.length).to.equal(0);
+      expect(state.rssState.rssFeed.length).to.equal(0);
+    });
+  });
 
-    })
-  })
+  it("Should have an <All Blog Posts> button and properly respond to the <click> action", () => {
+    getTestElement("Home_Latest_Blog").scrollIntoView();
+    //
+    const btn = getTestElement("Home_Go_To_Blog_Section_Btn").contains("All Blog Posts");
+    btn.click().wait(2000);
+    // should go to blog post page //
+    cy.url().should("match", /blog/);
+  });
+
+  it("Should have an <All News Feeds> button and properly respond to the <click> action", () => {
+    getTestElement("Home_News_Component").scrollIntoView();
+    //
+    const btn = getTestElement("Home_Go_To_News_Section_Btn").contains("All News Feeds");
+    btn.click();
+    // should go to rss news page //
+    cy.url().should("match", /news/);
+    cy.wait(5000);
+  });
+
+  it("Should have a <See More> button for Projects and properly respond to the <click> action", () => {
+    getTestElement("Home_Projects").scrollIntoView();
+    //
+    const btn = getTestElement("Home_Go_To_Projects_Section_Btn").contains("See More");
+    btn.click().wait(2000);
+    // should go to rss news page //
+    cy.url().should("match", /projects/);
+  });
+
 
 });
 

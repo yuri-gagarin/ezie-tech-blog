@@ -2,15 +2,19 @@ import * as React from 'react';
 import { Button, Grid } from "semantic-ui-react";
 // next imports //
 import NextImage from "next/image";
+// types //
+import type { ButtonProps } from "semantic-ui-react";
 // styles //
 import styles from "@/styles/home/HomeNews.module.css";
 
 
 interface IHomeNewsProps {
+  handleGoToSection(e: React.MouseEvent<HTMLButtonElement>, data: ButtonProps);
   handleGoToSpecificFeed: React.MouseEventHandler<HTMLDivElement>;
+
 }
 
-export const HomeNews: React.FunctionComponent<IHomeNewsProps> = ({ handleGoToSpecificFeed }): JSX.Element => {
+export const HomeNews: React.FunctionComponent<IHomeNewsProps> = ({ handleGoToSection, handleGoToSpecificFeed }): JSX.Element => {
   return (
     <Grid.Row id="homeNewsRow" className={ styles.homeNewsRow } data-test-id="Home_News_Component">
       <h4 className={ styles.newsTitleDiv }>News Feeds</h4>
@@ -45,7 +49,7 @@ export const HomeNews: React.FunctionComponent<IHomeNewsProps> = ({ handleGoToSp
           </div>
         </div>
         <div className={ styles.homeNewsControls }>
-          <Button color="purple" content="All news feeds" />
+          <Button color="purple" content="All News Feeds" onClick={ handleGoToSection } data-value="news"  data-test-id="Home_Go_To_News_Section_Btn" />
         </div>
     </Grid.Row>
   );

@@ -25,7 +25,7 @@ export const HomeProjects: React.FunctionComponent<IProjectsHomeProps> = ({ hand
             <p>What we&apos;re working on</p>
           </div>
           <div className={ projectsHomeStyles.projectsMoreBtn }>
-            <Button color="purple" content={"See More"} onClick={ handleGoToSection } data-value="projects" />
+            <Button color="purple" content={"See More"} onClick={ handleGoToSection } data-value="projects" data-test-id="Home_Go_To_Projects_Section_Btn" />
 
           </div>
         </div>

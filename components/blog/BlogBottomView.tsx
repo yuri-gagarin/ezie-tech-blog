@@ -10,15 +10,17 @@ import { trimStringToSpecificLength, capitalizeString, formatTimeString } from "
 interface IBlogBottomViewProps {
   blogPosts: BlogPostData[];
   navigateToBlogPost(blogPostId: string): void;
+  startIndex?: number;
+  endIndex?: number;
 }
 
-export const BlogBottomView: React.FunctionComponent<IBlogBottomViewProps> = ({ blogPosts, navigateToBlogPost }): JSX.Element | null => {
+export const BlogBottomView: React.FunctionComponent<IBlogBottomViewProps> = ({ blogPosts, navigateToBlogPost, startIndex, endIndex }): JSX.Element | null => {
   return (
-    blogPosts.length > 3 
+    blogPosts.length >= 3 
     ?
     <Card.Group itemsPerRow={3} className={ styles.cardGroup } >
     {
-      blogPosts.slice(1, 4).map((postData) => {
+      blogPosts.slice(startIndex || 0, endIndex || 3).map((postData) => {
         return (
           <Card className={ styles.blogBottomCard } key={ postData._id } data-test-id="Blog_Bottom_Card">
             <Image src="/images/blog1.jpg" alt="image" />
