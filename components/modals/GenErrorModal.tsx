@@ -34,16 +34,16 @@ export const GenErrorModal: React.FunctionComponent<IGenErrorModalProps> = ({ op
       transition={{ animation, duration }}
       onClose={ handleErrorModalClose }
     >
-      <div className={( position ? postStyle : styles.errorSegment)}>
+      <div className={( position ? postStyle : styles.errorSegment)} data-test-id="Gen_Error_Modal">
         <div className={ styles.errorHeader }>{ header ? header : "An Error Occured" }</div>
         <div className={ styles.errorMessagesWrapper }>
           <ul className={ styles.errorMessagesList }>
             {
               (errorMessages && errorMessages.length > 0) 
               ? 
-                errorMessages.map((msg) => <li key={msg} className={ styles.message }>{ msg }</li>)
+                errorMessages.map((msg) => <li key={msg} className={ styles.message } data-test-id="Gen_Error_Modal_Msg">{ msg }</li>)
               :
-              <li key="msg" className={ styles.message }>Seems like something went wrong.</li>
+              <li key="msg" className={ styles.message } data-test-id="Gen_Error_Modal_Msg">Seems like something went wrong.</li>
             }
           </ul>
         </div>

@@ -9,7 +9,11 @@ import type { ErrorResponse } from "../../_types/auth/authTypes";
 
 export const passportLoginMiddleware = (req: Request, res: Response, next: NextFunction) => {
   PassportContInstance.authenticate(StrategyNames.LoginAuthStrategy, { session: false }, (err, user: IAdmin | IUser | null, info) => {
-    if(err || !user) {
+    if (err) return next(err);
+    console.log(13)
+    console.log("here")
+    if(!user) {
+      console.log(16)
       return res.status(400).json({
         responseMsg: "Invalid login",
         error: err ? err : new Error("Login Error"),

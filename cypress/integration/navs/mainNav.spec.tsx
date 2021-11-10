@@ -8,7 +8,13 @@ context("Main Nav Tests", () => {
     cy.visit("http://localhost:3000");
   });
   
-  it("Should NOT be visible on initial load", () => {
+  it("Inital nav should be visible on load with animated buttons", () => {
+    const animatedMenu = getTestElement("Home_Animated_Menu");
+    //
+    getTestElement("Home_Animated_News_Btn").find("div").contains("News");
+    getTestElement("Home_Animated_Blog_Btn").find("div").contains("Blog");
+    getTestElement("Home_Animated_Projects_Btn").find("div").contains("Projects");
+    getTestElement("Home_Animated_About_Btn").find("div").contains("About");
   });
   it("Should be visible after scroll", () => {
     cy.scrollTo(0, 500);

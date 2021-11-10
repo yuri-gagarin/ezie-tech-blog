@@ -107,18 +107,18 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
         errorMessages={ errorMessages ? errorMessages : loginFormState.errorMessages } 
         position={"fixed-top"}
       />
-      <div className={ styles.loginFormHeader }>
+      <div className={ styles.loginFormHeader } data-test-id="Login_Page_Header">
         <h1>Login</h1>
       </div>
       <div className={ styles.loginFormContainer }>
         <Form>
           <Form.Field inline error={ loginFormState.emailError ? true : false }>
             <Label style={{ width: "75px" }} content="Email: " />
-            <Input className={ styles.textInput } icon="mail"  iconPosition="left" placeholder="Email..." onChange={ handleEmaiInputChange } />
+            <Input className={ styles.textInput } icon="mail"  iconPosition="left" placeholder="Email..." onChange={ handleEmaiInputChange } data-test-id="Login_Page_Email_Input" />
           </Form.Field>
           <Form.Field error={ loginFormState.passwordError ? true : false } inline className={ styles.passwordField }>
             <Label style={{ width: "75px" }} content="Password: " />
-            <Input className={ styles.textInput } placeholder="Password..." type={showPassword ? "text": "password"} onChange={ handlePasswordChange } />
+            <Input className={ styles.textInput } placeholder="Password..." type={showPassword ? "text": "password"} onChange={ handlePasswordChange } data-test-id="Login_Page_Password_Input" />
             <Popup
               content={`${showPassword ? "Hide" : "Show"} password`}
               trigger={ <span><Icon onClick={ handlePasswordHideClick } name="hide" /></span> }
@@ -127,11 +127,11 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
           </Form.Field>
         </Form>
         <div className={ styles.loginDiv }>
-          <Button fluid color="green" onClick={ handleLogin }>Login</Button>
+          <Button fluid color="green" onClick={ handleLogin } data-test-id="Login_Page_Login_Btn">Login</Button>
         </div>
         <div className={ styles.loginDivBottom }>
           <h4>Don&apos;t have an account?</h4>
-          <Link href={"/register"} ><a>Register</a></Link>
+          <Link href={"/register"}><a data-test-id="Login_Page_Register_Link">Register</a></Link>
         </div>
       </div>
     </div>

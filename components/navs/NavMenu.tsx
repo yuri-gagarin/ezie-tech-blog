@@ -132,7 +132,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
     (
       animMenuState.show
       ?
-      <div className={ navMenuStyle.animatedMenuRow } style={{ transform: `translateY(${animMenuState.transformY})`}}>
+      <div className={ navMenuStyle.animatedMenuRow } style={{ transform: `translateY(${animMenuState.transformY})`}} data-test-id="Home_Animated_Menu">
         <AnimatedHomeNav handleScrollToContent={ handleScrollToContent } />
       </div>
       :
