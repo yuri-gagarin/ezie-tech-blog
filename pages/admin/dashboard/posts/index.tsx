@@ -112,24 +112,24 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
           {
             blogPosts.map((blogPostData) => {
               return (
-                <Card key={ blogPostData._id }>
+                <Card key={ blogPostData._id } data-test-id="Admin_Blog_Post_Card">
                   <Card.Content>
-                    <Card.Header>{ blogPostData.title }</Card.Header>
-                    <Card.Meta>Created at: { formatTimeString(blogPostData.createdAt, { yearMonth: true }) }</Card.Meta>
-                    <Card.Description>
+                    <Card.Header data-test-id="Admin_Blog_Post_Card_Title">{ blogPostData.title }</Card.Header>
+                    <Card.Meta data-test-id="Admin_Blog_Post_Card_Created">Created at: { formatTimeString(blogPostData.createdAt, { yearMonth: true }) }</Card.Meta>
+                    <Card.Description data-test-id="Admin_Blog_Post_Card_Desc">
                       <div dangerouslySetInnerHTML={{ __html: trimStringToSpecificLength(blogPostData.content, 200) }} />
                     </Card.Description>
                   </Card.Content>
                   <Card.Content>
-                    <Card.Description>
+                    <Card.Description data-test-id="Admin_Blog_Post_Card_Category">
                       Category: { capitalizeString(blogPostData.category) }
                     </Card.Description>
                   </Card.Content>
                   <Card.Content>
-                    <Card.Meta>
+                    <Card.Meta data-test-id="Admin_Blog_Post_Card_Published">
                       Published: { blogPostData.published ? "Yes" : "No" }
                     </Card.Meta>
-                    <Button color="green" content="View" onClick={ () => toggleBlogPostModal(blogPostData._id) } />
+                    <Button color="green" content="View" onClick={ () => toggleBlogPostModal(blogPostData._id) } data-test-id="Admin_Blog_Post_Card_View_Btn" />
                   </Card.Content>
                 </Card>
               )
