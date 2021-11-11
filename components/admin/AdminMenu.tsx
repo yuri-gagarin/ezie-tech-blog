@@ -62,6 +62,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
   };
   const handleMenuItemClick = (_, data: MenuItemProps ) => {
     const name = data.name as MenuItemVal;
+    if (name === LocalState.activeMenuItem) return; // dont reload same page //
     switch (name) {
       case "dashboard": {
         router.push("/admin/dashboard");
@@ -118,17 +119,17 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
 
   return (
     <Grid.Row className={ adminMenuStyles.adminMenuRow } >
-      <Menu pointing color="violet" fluid fixed="top" className={ adminMenuStyles.fixedAdminMenu }>
-        <Dropdown text='File' className={ `${adminMenuStyles.adminMenuFile} link item` }>
+      <Menu pointing color="violet" fluid fixed="top" className={ adminMenuStyles.fixedAdminMenu } data-test-id="Admin_Main_Menu">
+        <Dropdown text='File' className={ `${adminMenuStyles.adminMenuFile} link item` } data-test-id={"Main_File_Dropdown"}>
           <Dropdown.Menu style={{ zIndex: 9999 }}>
             <Dropdown.Item>
-              <Dropdown text='New' pointing="left">
+              <Dropdown text='New' pointing="left" data-test-id={"New_File_Menu"}>
                 <Dropdown.Menu style={{ left: "140px", transform: "translateY(-12px)"}}>
-                  <Dropdown.Item onClick={ handleGoToNew } value="post">Blog Post</Dropdown.Item >
-                  <Dropdown.Item onClick={ handleGoToNew } value="project">Project</Dropdown.Item>
+                  <Dropdown.Item onClick={ handleGoToNew } value="post" data-test-id="Go_To_New_Blog_Post_Option">Blog Post</Dropdown.Item>
+                  <Dropdown.Item onClick={ handleGoToNew } value="project" data-test-id="Go_To_New_Project_Option">Project</Dropdown.Item>
                   <Dropdown.Item>News Post</Dropdown.Item>
                   <Dropdown.Divider />
-                  <Dropdown.Item>User</Dropdown.Item>
+                  <Dropdown.Item data-test-id="Go_To_New_Project_Option">User</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </Dropdown.Item>
@@ -143,27 +144,27 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
           </Dropdown.Menu>
         </Dropdown>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="dashboard" active={ LocalState.activeMenuItem === "dashboard" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="dashboard" active={ LocalState.activeMenuItem === "dashboard" } data-test-id="Main_Admin_Dash_Link">
             Dashboard
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="posts" active={ LocalState.activeMenuItem === "posts" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="posts" active={ LocalState.activeMenuItem === "posts" } data-test-id="Main_Admin_Posts_Link">
             View Posts
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="projects" active={ LocalState.activeMenuItem === "projects" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="projects" active={ LocalState.activeMenuItem === "projects" } data-test-id="Main_Admin_Projects_Link">
             View Projects
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="news" active={ LocalState.activeMenuItem === "news" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="news" active={ LocalState.activeMenuItem === "news" } data-test-id="Main_Admin_News_Link">
             View News
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="users" active={ LocalState.activeMenuItem === "users" }>
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="users" active={ LocalState.activeMenuItem === "users" } data-test-id="Main_Admin_Users_Link">
             View Users
           </Menu.Item>
         </Menu.Menu>
@@ -171,7 +172,7 @@ export const AdminMenu: React.FunctionComponent<IAdminMenuProps> = (props): JSX.
           {
             <AdminUserMenu />
           }
-          <Menu.Item onClick={ handleLogout }>
+          <Menu.Item onClick={ handleLogout } data-test-id="Admin_Main_Logout_Link">
             Logout
           </Menu.Item>
         </Menu.Menu>

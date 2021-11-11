@@ -58,9 +58,9 @@ context("Main Home Page", () => {
     getTestElement("Login_Page_Password_Input").type("password");
     getTestElement("Login_Page_Login_Btn").click();
     // 
+    getTestElement("Admin_Main_Page").should("not.be.null");
     cy.url().should("match", /admin\/dashboard/);
     //
-    getTestElement("Admin_Main_Page").should("not.be.null");
     cy.window().its("store").invoke("getState").then((state) => {
       // auth state user should be set //
       expect(state.authState.currentUser).to.not.be.null;

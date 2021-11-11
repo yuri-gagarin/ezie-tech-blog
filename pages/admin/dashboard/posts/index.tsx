@@ -106,7 +106,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
           <h3>All Blog Posts - Published and In Progress</h3>
         </Segment>
       </Grid.Row>
-      <Grid.Row className={ styles.contentRow } centered>
+      <Grid.Row className={ styles.contentRow } centered data-test-id="Admin_Blog_Posts_Page">
         <Grid.Column largeScreen={15} mobile={16} >
           <Card.Group itemsPerRow="4" stackable>
           {

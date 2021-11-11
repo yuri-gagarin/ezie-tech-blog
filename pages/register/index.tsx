@@ -124,7 +124,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
       <div className={ styles.registerFormHeader }>
         <h1>Register</h1>
       </div>
-      <div className={ styles.registerFormContainer }>
+      <div className={ styles.registerFormContainer } data-test-id={"Register_Page_Form_Cont"}>
         <Form>
           <Form.Field inline error={ isDefined(registerFormState.emailError) }>
             <Label style={{ width: "75px" }} content="Email: " />

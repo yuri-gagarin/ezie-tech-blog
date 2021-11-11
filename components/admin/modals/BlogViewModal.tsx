@@ -30,8 +30,8 @@ export const BlogViewModal: React.FunctionComponent<IBlogViewModalProps> = ({ mo
       </Modal.Content>
       <Modal.Header>{ blogPostData.title }</Modal.Header>
       <Modal.Content scrolling>
-        <div className={ styles.authorDiv }>Author: <span>{ blogPostData.author}</span></div>
-        <div className={ styles.categoryDiv }>Category: <span>{ blogPostData.category}</span></div>
+        <div className={ styles.authorDiv }>Author: <span>{ blogPostData.author.name }</span></div>
+        <div className={ styles.categoryDiv }>Category: <span>{ blogPostData.category }</span></div>
         <div className={ styles.keywordsDiv }>Keywords: 
           {
             blogPostData.keywords.map(word => <span key={ word }>{ word }</span>)

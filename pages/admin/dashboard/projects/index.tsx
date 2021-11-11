@@ -105,7 +105,7 @@ const AdminProjectsMainPage: React.FunctionComponent<IAdminProjectsMainPageProps
             <h3>Projects</h3>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row style={{ minHeight: "calc(100vh - 50px)"}}>
+        <Grid.Row style={{ minHeight: "calc(100vh - 50px)"}} data-test-id="Admin_Projects_Page">
           <Grid.Column width={"8"} textAlign="center" style={{ height: "100%" }}>
             <h4>Published</h4>
             <Card.Group>

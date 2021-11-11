@@ -55,6 +55,7 @@ const AdminDash: React.FunctionComponent<IAdminDashProps> = (props): JSX.Element
       await BlogPostActions.handleFetchBlogPosts(dispatch);
     }
     getAllData();
+    console.log("ran")
   }, [ dispatch ]);
 
   return (

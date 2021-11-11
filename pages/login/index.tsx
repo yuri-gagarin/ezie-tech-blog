@@ -89,12 +89,14 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
     if (error || errorMessages) setLoginFormState(state => ({ ...state, errorCompOpen: true }));
   }, [ error, errorMessages ])
 
+  /*
   React.useEffect(() => {
     if (loggedIn) {
       if (isAdmin) router.push("/admin/dashboard");
       else router.push("/");
     }
   }, [ loggedIn, isAdmin, router ])
+  */
 
   return (
     <div className={ styles.loginWrapper }>
@@ -110,7 +112,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
       <div className={ styles.loginFormHeader } data-test-id="Login_Page_Header">
         <h1>Login</h1>
       </div>
-      <div className={ styles.loginFormContainer }>
+      <div className={ styles.loginFormContainer } data-test-id="Login_Page_Form_Cont">
         <Form>
           <Form.Field inline error={ loginFormState.emailError ? true : false }>
             <Label style={{ width: "75px" }} content="Email: " />

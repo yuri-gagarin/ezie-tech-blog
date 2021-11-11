@@ -65,7 +65,7 @@ export const AdminMain: React.FunctionComponent<IAdminMainProps> = ({ generalSta
               <Card.Header>Statistics</Card.Header>
             </Card.Content>
             <Card.Content textAlign="center">
-              <Button content={"Co To Stats"} />
+              <Button content={"Go To Stats"} />
             </Card.Content>
           </Card>
         </Card.Group>
