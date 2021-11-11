@@ -1,0 +1,12 @@
+.modalHeader {
+  color: red !important;
+  text-align: center !important;
+}
+
+.modalContent {
+  text-align: center;
+}
+
+.modalBtns {
+  text-align: center;
+}

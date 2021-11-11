@@ -8,6 +8,7 @@ import { BlogPostActions } from "../../../../redux/actions/blogPostActions";
 // additonal components //
 import { AdminLayout } from '../../../../components/admin/AdminLayout';
 import { BlogViewModal } from "../../../../components/admin/modals/BlogViewModal";
+import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 // types //
 import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import type { Dispatch } from "redux";
@@ -54,6 +55,7 @@ interface IAdminPostsIndexProps {
 const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props): JSX.Element => {
   // local component state //
   const [ viewModalState, setViewModalState ] = React.useState<{ modalOpen: boolean }>({ modalOpen: false });
+  const [ deleteModalState, setDeleteModalState ] = React.useState<{ modalOpen: boolean }>({ modalOpen: false });
   // next hooks //
   const router = useRouter();
   // redux hooks and state //
@@ -75,15 +77,19 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
     setViewModalState({ ...setViewModalState, modalOpen: false });
     router.push("/admin/dashboard/posts/new");
   };
+  // 
   const triggerBlogPostDelete = async (): Promise<void> => {
-    // TODO //
-    // ideally a popup confirm modal should appear //
+    setDeleteModalState({ modalOpen: true });
+  };
+  const cancelBlogPostDelete = (): void => {
+    setDeleteModalState({ modalOpen: false });
+  };
+  const handleDeleteBlogPost = async (): Promise<any> => {
     try {
-      const { _id: postId } = currentBlogPost;
-      await BlogPostActions.handleDeleteBlogPost(dispatch, postId, blogPostsState);
-      router.push("/admin/dashboard/posts");
+      const { _id: blogPostId } = currentBlogPost;
+      await BlogPostActions.handleDeleteBlogPost(dispatch, blogPostId, blogPostsState);
     } catch (error) {
-      console.log(error);
+      BlogPostActions.handleBlogPostError(dispatch, error);
     }
   };
 
@@ -100,6 +106,11 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
         closeModal={ toggleBlogPostModal }
         goToBlogPostEdit={ goToBlogPostEdit }
         triggerBlogPostDelete={ triggerBlogPostDelete }
+      />
+      <ConfirmDeleteModal
+        modalOpen={ deleteModalState.modalOpen }
+        handleCloseModal={ cancelBlogPostDelete }
+        handleModelDelete={ handleDeleteBlogPost }
       />
       <Grid.Row className={ styles.headerRow }> 
         <Segment placeholder textAlign="center"  className={ styles.headerTitle }>
