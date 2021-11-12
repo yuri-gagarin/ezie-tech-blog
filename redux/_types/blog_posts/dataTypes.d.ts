@@ -1,3 +1,6 @@
+import type { Dispatch } from "redux";
+import type { BlogPostAction } from "./actionTypes";
+
 export type BlogPostData = {
   _id: string;
   title: string;
@@ -83,3 +86,11 @@ export type FetchBlogPostsOpts = {
   limit?: number;
   baseUrl?: string;
 }
+
+// action handlers method types //
+export type DeleteBlogPostParams = {
+  dispatch: Dispatch<BlogPostAction>;
+  modelId: string;
+  JWTToken: string;
+  state: IBlogPostState;
+};

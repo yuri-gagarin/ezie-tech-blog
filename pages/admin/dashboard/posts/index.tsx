@@ -51,44 +51,50 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 interface IAdminPostsIndexProps {
 
 }
+type ModalState = {
+  blogPostViewModalOpen: boolean;
+  confirmDeleteModalOpen: boolean;
+}
 
 const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props): JSX.Element => {
   // local component state //
-  const [ viewModalState, setViewModalState ] = React.useState<{ modalOpen: boolean }>({ modalOpen: false });
-  const [ deleteModalState, setDeleteModalState ] = React.useState<{ modalOpen: boolean }>({ modalOpen: false });
+  const [ modalState, setModalState ] = React.useState<ModalState>({ blogPostViewModalOpen: false, confirmDeleteModalOpen: false });
   // next hooks //
   const router = useRouter();
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<BlogPostAction>>();
-  const { blogPostsState } = useSelector((state: IGeneralState) => state);
+  const { blogPostsState, authState } = useSelector((state: IGeneralState) => state);
   const { blogPosts, currentBlogPost } = blogPostsState;
 
   // action handlers //
   const toggleBlogPostModal = (blogPostId?: string): void => {
-    if (blogPostId && !viewModalState.modalOpen) {
+    if (blogPostId && !modalState.blogPostViewModalOpen) {
       BlogPostActions.handleSetCurrentBlogPost(dispatch, blogPostId, blogPostsState);
-      setViewModalState({ ...viewModalState, modalOpen: true});
+      setModalState((s) => ({ ...s, blogPostViewModalOpen: true }));
     } else { 
       BlogPostActions.handleClearCurrentBlogPost(dispatch);
-      setViewModalState({ ...setViewModalState, modalOpen: false });
+      setModalState((s) => ({ ...s, blogPostViewModalOpen: false }));
     }
   };
   const goToBlogPostEdit = (): void => {
-    setViewModalState({ ...setViewModalState, modalOpen: false });
+    setModalState((s) => ({ ...s, blogPostViewModalOpen: false }));
     router.push("/admin/dashboard/posts/new");
   };
   // 
   const triggerBlogPostDelete = async (): Promise<void> => {
-    setDeleteModalState({ modalOpen: true });
+    setModalState((s) => ({ ...s, confirmDeleteModalOpen: true }));
   };
   const cancelBlogPostDelete = (): void => {
-    setDeleteModalState({ modalOpen: false });
+    setModalState((s) => ({ ...s, confirmDeleteModalOpen: false }));
   };
   const handleDeleteBlogPost = async (): Promise<any> => {
     try {
-      const { _id: blogPostId } = currentBlogPost;
-      await BlogPostActions.handleDeleteBlogPost(dispatch, blogPostId, blogPostsState);
+      const { _id: modelId } = currentBlogPost;
+      const {authToken: JWTToken } = authState;
+      await BlogPostActions.handleDeleteBlogPost({ dispatch, JWTToken, modelId, state: blogPostsState });
+      setModalState((s) => ({ ...s, confirmDeleteModalOpen: false, blogPostViewModalOpen: false }));
     } catch (error) {
+      console.log(error.response)
       BlogPostActions.handleBlogPostError(dispatch, error);
     }
   };
@@ -101,14 +107,14 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
   return (
     <AdminLayout>
       <BlogViewModal 
-        modalOpen={ viewModalState.modalOpen } 
+        modalOpen={ modalState.blogPostViewModalOpen } 
         blogPostData={ currentBlogPost } 
         closeModal={ toggleBlogPostModal }
         goToBlogPostEdit={ goToBlogPostEdit }
         triggerBlogPostDelete={ triggerBlogPostDelete }
       />
       <ConfirmDeleteModal
-        modalOpen={ deleteModalState.modalOpen }
+        modalOpen={ modalState.confirmDeleteModalOpen }
         handleCloseModal={ cancelBlogPostDelete }
         handleModelDelete={ handleDeleteBlogPost }
       />

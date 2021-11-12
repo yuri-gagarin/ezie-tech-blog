@@ -12,7 +12,7 @@ interface ConfirmDeleteModalProps {
 
 export const ConfirmDeleteModal: React.FunctionComponent<ConfirmDeleteModalProps> = ({ modalOpen, handleCloseModal, handleModelDelete }): JSX.Element => {
   return (
-    <Modal closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large">
+    <Modal closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "Confirm_Delete_Modal" }>
       <Modal.Header className={ styles.modalHeader }>Confirm Delete Action</Modal.Header>
       <Modal.Content>
         <p className={ styles.modalContent }>
@@ -21,9 +21,9 @@ export const ConfirmDeleteModal: React.FunctionComponent<ConfirmDeleteModalProps
       </Modal.Content>
       <Modal.Content className={ styles.modalBtns }>
         <Button.Group>
-          <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal }  />
+          <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal } data-test-id={ "Confirm_Delete_Modal_Cancel_Btn" } />
           <Button.Or />
-          <Button color="red" content="Delete" icon="trash" onClick={ handleModelDelete }  />
+          <Button color="red" content="Delete" icon="trash" onClick={ handleModelDelete } data-test-id={ "Confirm_Delete_Modal_Del_Btn" }  />
         </Button.Group>
       </Modal.Content>
     </Modal>

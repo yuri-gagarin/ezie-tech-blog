@@ -1,8 +1,12 @@
-import axios, { AxiosResponse } from "axios";
-import type { AxiosRequestConfig } from "axios";
+import axios from "axios";
+// types 
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type { Dispatch } from "redux";
 import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost, ToggleBlogPostLike, ClearBlogPost, DeleteBlogPost } from "../_types/blog_posts/actionTypes";
-import type { IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts, DeleteBlogPostRes, EditBlogPostRes } from "../_types/blog_posts/dataTypes";
+import type { 
+  IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts, DeleteBlogPostRes, EditBlogPostRes,
+  DeleteBlogPostParams
+} from "../_types/blog_posts/dataTypes";
 // helpers //
 import { generateEmptyBlogPost } from "../_helpers/mockData";
 import { processAxiosError } from "../_helpers/dataHelpers";
@@ -22,12 +26,6 @@ const fetchBlogPosts = (data: { status: number; responseMsg: string; blogPosts: 
 const createBlogPost = (data: { status: number; responseMsg: string; createdBlogPost: BlogPostData; updatedBlogPosts: BlogPostData[] }): CreateBlogPost => {
   return {
     type: "CreateBlogPost",
-    payload: { ...data, loading: false }
-  };
-};
-const deleteBlogPost = (data: { status: number; responseMsg: string; updatedCurrentBlogPost: BlogPostData; updatedBlogPosts: BlogPostData[] }): DeleteBlogPost => {
-  return {
-    type: "DeleteBlogPost",
     payload: { ...data, loading: false }
   };
 };
@@ -108,13 +106,12 @@ export class BlogPostActions {
     }
   }
 
-  static handleDeleteBlogPost = async (dispatch: Dispatch<BlogPostAction>, blogPostId: string, currentBlogPostState: IBlogPostState): Promise<DeleteBlogPost> => {
-    const { blogPosts } = currentBlogPostState;
-    const token: string | null = localStorage.getItem("jwtToken");
+  static handleDeleteBlogPost = async ({ dispatch, JWTToken, modelId, state }: DeleteBlogPostParams): Promise<DeleteBlogPost> => {
+    const { blogPosts } = state;
     const reqOpts: AxiosRequestConfig = {
       method: "DELETE",
-      headers: { "Authorization": token ? token : "" }, 
-      url: "/api/posts/" + blogPostId 
+      headers: { "Authorization": JWTToken ? JWTToken : "" }, 
+      url: `/api/posts/${modelId}`
     };
 
     try {
@@ -123,7 +120,9 @@ export class BlogPostActions {
       const { responseMsg, deletedBlogPost } = data;
       const updatedBlogPosts: BlogPostData[] = blogPosts.filter((blogPost) => blogPost._id !== deletedBlogPost._id);
       const updatedCurrentBlogPost: BlogPostData = generateEmptyBlogPost();
-      return dispatch(deleteBlogPost({ status, responseMsg, updatedCurrentBlogPost, updatedBlogPosts })); 
+      return dispatch({
+        type: "DeleteBlogPost", payload: { status, responseMsg, loading: false, updatedCurrentBlogPost, updatedBlogPosts }
+      }); 
     } catch (error) {
       // TODO //
       throw error;
