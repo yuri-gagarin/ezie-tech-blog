@@ -55,7 +55,7 @@ const processCreateProjects = async (data: string): Promise<void> => {
 const processCreateUserModels = async (data: string): Promise<void> => {
   try {
     const num = parseInt(data, 10);
-    await generateMockUsers(num);
+    await generateMockUsers({ number: num });
   } catch (error) {
     throw error;
   }

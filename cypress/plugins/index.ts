@@ -6,9 +6,12 @@ import Admin from "../../server/src/models/Admin";
 import User from "../../server/src/models/User";
 import BlogPost from "../../server/src/models/BlogPost";
 //
+import mongoSetup from "../../server/src/database/mongoSetup";
+//
 import type { IAdmin } from "../../server/src/models/Admin";
 import type { IUser } from "../../server/src/models/User";
 import type { IBlogPost } from "../../server/src/models/BlogPost";
+import type { LoginRes } from "../../redux/_types/auth/dataTypes";
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
 //
@@ -30,15 +33,14 @@ module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
   on("task", {
-
+    async connectToDB() {
+      await mongoSetup();
+      return true;
+    },
     async seedUsers({ number, confirmed, type }: { number?: number; confirmed?: boolean; type?: "READER" | "CONTRIBUTOR" }): Promise<{ users: IUser[] }> {
-      try {
-        await generateMockUsers({ number, confirmed, type });
-        const users: IUser[] = await User.find({});
-        return { users };
-      } catch (error) {
-        throw error;
-      }
+      await generateMockUsers({ number, confirmed, type });
+      const users: IUser[] = await User.find({});
+      return { users };
     },
     async seedAdmins({ number, role }: { number?: number; role?: "admin" | "owner"; }): Promise<{ admins: IAdmin[] }> {
       try {
@@ -57,6 +59,33 @@ module.exports = (on, config) => {
       } catch (error) {
         throw error;
       }
+    },
+    async deleteBlogPostModels(blogPostIds: string[]) {
+      try {
+        return BlogPost.deleteMany({ _id: { $in: blogPostIds } });
+      } catch (error) {
+        throw error;
+      }
+    },
+    async deleteAdminModels(adminModelIds: string[]) {
+      try {
+        return Admin.deleteMany({ _id: { $in: adminModelIds } });
+      } catch (error) {
+        throw error;
+      }
     }
+    /*
+    async handleLoginUser({ email, password, cy }: { email: string; password: string; cy: any }) {
+      try {
+        cy.request<LoginRes>("POST", "api/login",  { email, password })
+          .then((response) => {
+            return response;
+          })
+      } catch (error) {
+        throw error;
+      }
+    }
+    */
+  
   })
 }

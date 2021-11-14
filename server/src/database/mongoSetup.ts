@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 
 export default async function mongoSetup(): Promise<void> {
+  console.log("running db setup");
+  console.log("Environmnt is: " + process.env.NODE_ENV);
+  
   if (process.env.NODE_ENV === "production") {
     /// we will get to this later //
     throw new Error("Need a production database");

@@ -1,4 +1,9 @@
 {
-  "defaultCommandTimeout": 8000,
-  "watchForFileChanges": false
+  "defaultCommandTimeout": 10000,
+  "watchForFileChanges": false,
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "products_url": "/products"
+  },
+  "nodeVersion": "system"
 }

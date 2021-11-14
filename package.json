@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NODE_ENV=development ts-node --project tsconfig.server.json server/src/server.ts",
+    "testServer": "NODE_ENV=test ts-node --project tsconfig.server.json server/src/server.ts", 
     "build": "next build",
     "start": "NODE_ENV=production node server/build/server.js",
     "lint": "next lint",
