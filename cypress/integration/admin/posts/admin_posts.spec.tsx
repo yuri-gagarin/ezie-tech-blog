@@ -173,7 +173,6 @@ describe("Admin dashboard navigation tets", () => {
     });
     // confirm delete should be open //
     const deleteModal = getTestElement("Confirm_Delete_Modal").should("exist").should("have.length", 1)
-    const cancelButton = getTestElement("Confirm_Delete_Modal_Cancel_Btn").should("exist").should("have.length", 1);
     const delButton = getTestElement("Confirm_Delete_Modal_Del_Btn").should("exist").should("have.length", 1);
     // should successfully cancel //
     // redux auth state should stay the same //
