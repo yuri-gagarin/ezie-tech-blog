@@ -44,7 +44,7 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
     <Form className={ styles.adminPostForm } data-test-id="Admin_New_Post_Form">
       <Form.Field>
         <label>Title:</label>
-        <input value={ postFormState.postTitle } placeholder="title here..." onChange={ handlePostTitleChange } />
+        <input value={ postFormState.postTitle } placeholder="title here..." onChange={ handlePostTitleChange }  data-test-id="Admin_New_Post_Title_Input" />
       </Form.Field>
       <Form.Field>
         <label>Author</label>
@@ -52,15 +52,15 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
       </Form.Field>
       <Form.Field>
         <label>Keywords</label>
-        <input value={ postFormState.postKeywords} placeholder="comma separated keywords" onChange={ handleKeywordsChange } />
+        <input value={ postFormState.postKeywords} placeholder="comma separated keywords" onChange={ handleKeywordsChange } data-test-id="Admin_New_Post_Keywords_Input"  />
       </Form.Field>
       <Form.Field>
         <label>Category</label>
-        <Dropdown defaultValue={ postFormState.postCategory ? postFormState.postCategory : null } clearable options={dropdownVals } selection  placeholder="select category" onChange={ handleCategoryChange }/>
+        <Dropdown defaultValue={ postFormState.postCategory ? postFormState.postCategory : null } clearable options={dropdownVals } selection  placeholder="select category" onChange={ handleCategoryChange } data-test-id="Admin_New_Post_Category_Input" />
       </Form.Field>
       <Form.Field>
         <label>Content:</label>
-        <Form.TextArea value={ postFormState.postContent } className={ styles.postTextArea } onChange={ handleTextAreaChange } />
+        <Form.TextArea value={ postFormState.postContent } className={ styles.postTextArea } onChange={ handleTextAreaChange } data-test-id="Admin_New_Post_Content_Input" />
       </Form.Field>
     </Form>
   );

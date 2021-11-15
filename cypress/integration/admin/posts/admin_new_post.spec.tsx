@@ -63,8 +63,23 @@ describe("Admin New Post page tests", () => {
 
     it("Should render correct components", () => {
       getTestElement("Admin_New_Post_Form")
-        .should("be.visible")
+        .should("be.visible");
+      getTestElement("Admin_Post_Preview")
+        .should("be.visible");
     });
+    it("Should set correct values in the input and preview", () => {
+      // form //
+      getTestElement("Admin_New_Post_Title_Input")
+        .should("be.visible").and("have.value", "")
+      getTestElement("Admin_New_Post_Keywords_Input")
+        .should("be.visible").and("have.value", "")
+      getTestElement("Admin_New_Post_Category_Input")
+        .should("be.visible").and("have.value","");
+      getTestElement("Admin_New_Post_Content_Input")
+        .should("be.visible").and("have.value", "");
+      // post preview values //
+    });
+
   });
 
   after(() => {
