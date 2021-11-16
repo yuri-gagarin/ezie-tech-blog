@@ -26,21 +26,21 @@ export const AdminPostPreview: React.FunctionComponent<IPostPreviewProps> = ({ p
   return (
     <div className={ styles.adminPostPreviewWrapper } data-test-id="Admin_Post_Preview">
       <div className={ styles.adminPostPreviewHeader }>Formatted Post Preview</div>
-      <div className={ styles.previewTitle }>
-        <span>Title:</span>{ postTitle ? <span data-test-id="Post_Title_Preview">{ postTitle }</span> : null }
+      <div className={ styles.previewTitle } data-test-id="Post_Title_Preview">
+        <span>Title:</span>{ postTitle ? <span >{ postTitle }</span> : null }
       </div>
-      <div className={ styles.previewAuthor }>
-        <span>Author:</span>{ postAuthor ? <span data-test-id="Post_Author_Preview">{ postAuthor }</span> : null }
+      <div className={ styles.previewAuthor } data-test-id="Post_Author_Preview">
+        <span>Author:</span>{ postAuthor ? <span >{ postAuthor }</span> : null }
       </div>  
-      <div className={ styles.previewCategory }>
-        <span>Category:</span>{ postCategory ? <span data-test-id="Post_Cateogy_Preview">{ capitalizeString(postCategory) }</span> : null }
+      <div className={ styles.previewCategory } data-test-id="Post_Category_Preview">
+        <span>Category:</span>{ postCategory ? <span>{ capitalizeString(postCategory) }</span> : null }
       </div>  
-      <div className={ styles.previewKeywords }>
+      <div className={ styles.previewKeywords } data-test-id="Post_Keywords_Preview">
         <span>Keywords:</span>
         {
           postKeywordsArr.length > 0 && postKeywordsArr[0]
           ?
-          postKeywordsArr.map((cat, i) => <span key={`${cat}_${i}`} className={ styles.previewKeywordSpan } data-test-id="Post_Keywowrd_Preview">{ cat }</span>)
+          postKeywordsArr.map((cat, i) => <span key={`${cat}_${i}`} className={ styles.previewKeywordSpan } data-test-id="Post_Keyword_Preview_Span">{ cat }</span>)
           :
           null
         }

@@ -67,7 +67,7 @@ describe("Admin New Post page tests", () => {
       getTestElement("Admin_Post_Preview")
         .should("be.visible");
     });
-    it("Should set correct values in the input and preview", () => {
+    it.only("Should set correct values in the input and preview", () => {
       // form //
       getTestElement("Admin_New_Post_Title_Input")
         .should("be.visible").and("have.value", "")
@@ -78,6 +78,35 @@ describe("Admin New Post page tests", () => {
       getTestElement("Admin_New_Post_Content_Input")
         .should("be.visible").and("have.value", "");
       // post preview values //
+      getTestElement("Post_Title_Preview")
+        .should("be.visible")
+        .find("span")
+        .then((spanEls) => {
+          expect(spanEls.length).to.equal(1);
+          expect(spanEls.first().html()).to.equal("Title:")
+        });
+      getTestElement("Post_Author_Preview")
+        .should("be.visible")
+        .find("span")
+        .then((spanEls) => {
+          expect(spanEls.length).to.equal(2);
+          expect(spanEls.first().html()).to.equal("Author:")
+        });
+      getTestElement("Post_Category_Preview")
+        .should("be.visible")
+        .find("span")
+        .then((spanEls) => {
+          expect(spanEls.length).to.equal(1);
+          expect(spanEls.first().html()).to.equal("Category:")
+        });
+        getTestElement("Post_Keywords_Preview")
+          .should("be.visible")
+          .find("span")
+          .then((spanEls) => {
+            expect(spanEls.length).to.equal(1);
+            expect(spanEls.first().html()).to.equal("Keywords:")
+          });
+     
     });
 
   });

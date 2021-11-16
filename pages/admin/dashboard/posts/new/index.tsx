@@ -16,6 +16,8 @@ import type { IGeneralState } from '../../../../../redux/_types/generalTypes';
 import adminNewPostsStyle from "../../../../../styles/admin/AdminNewPost.module.css";
 // helpers //
 import { blogPostValidator } from '../../../../../components/_helpers/validators';
+import { capitalizeString } from '@/components/_helpers/displayHelpers';
+import { IAuthState } from '@/redux/_types/auth/dataTypes';
 
 interface IAdminNewViewProps {
 
@@ -70,6 +72,15 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
   const updateContent = (postContent: string): void => {
     setPostFormState({ ...postFormState, postContent });
   };
+  // 
+  const setPostAuthor = (authState: IAuthState): string => {
+    const { firstName, lastName } = authState.currentUser;
+    if (firstName && lastName) {
+      return `${capitalizeString(firstName)} ${capitalizeString(lastName)}`
+    } else {
+      return `Anonymous`;
+    }
+  };
 
   // lifecycle hooks //
   React.useEffect(() => {
@@ -94,12 +105,12 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
             updateCategory={ updateCategory }
             updateContent={ updateContent }
             postFormState={ postFormState }
-            postAuthor={ authState.currentUser.firstName }
+            postAuthor={ setPostAuthor(authState) }
           />
         </Grid.Column>
         <Grid.Column stretched width={ 8 } style={{ paddingLeft: "5px" }}>
           <AdminPostPreview 
-            postAuthor={ authState.currentUser.firstName }
+            postAuthor={ setPostAuthor(authState) }
             { ...postFormState }
           />
         </Grid.Column>

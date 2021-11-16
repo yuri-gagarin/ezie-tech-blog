@@ -48,7 +48,7 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
       </Form.Field>
       <Form.Field>
         <label>Author</label>
-        <div>{ }</div>
+        <div>{postAuthor}</div>
       </Form.Field>
       <Form.Field>
         <label>Keywords</label>
