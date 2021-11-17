@@ -4,6 +4,8 @@
 import { expect } from "chai";
 import { getTestElement, closestBySelector } from "../../../helpers/generalHelpers";
 //
+import faker from "faker";
+//
 import type { IAuthState } from "@/redux/_types/auth/dataTypes";
 import type { BlogPostData, IBlogPostState } from "@/redux/_types/blog_posts/dataTypes";
 import type { IBlogPost } from "@/server/src/models/BlogPost";
@@ -19,6 +21,8 @@ describe("Admin New Post page tests", () => {
   let blogPostsArr: BlogPostData[];
   let adminJWTToken: string;
   let user: AdminData;
+  //
+  const dropdownVals: string[] = ["informational", "beginner", "intermediate", "advanced"];
 
   before(() => {
     try {
@@ -67,16 +71,34 @@ describe("Admin New Post page tests", () => {
       getTestElement("Admin_Post_Preview")
         .should("be.visible");
     });
-    it.only("Should set correct values in the input and preview", () => {
+
+    it("Should set correct default values in the input and preview", () => {
       // form //
+      // form default values //
       getTestElement("Admin_New_Post_Title_Input")
         .should("be.visible").and("have.value", "")
       getTestElement("Admin_New_Post_Keywords_Input")
         .should("be.visible").and("have.value", "")
+      // category dropdown //
       getTestElement("Admin_New_Post_Category_Input")
         .should("be.visible").and("have.value","");
+      // category dropdown values //
+      getTestElement("Admin_New_Post_Category_Input").click()
+        .then((dropdown) => {
+          return dropdown.find(".item");
+        })
+        .then((dropdownItems) => {
+          expect(dropdownItems.length).to.equal(4);
+          //
+          dropdownItems.toArray().forEach((dropdownItem, index) => {
+            expect(dropdownItem.firstChild.textContent).to.equal(capitalizeString(dropdownVals[index]));
+          })
+        });
+      // content input // 
       getTestElement("Admin_New_Post_Content_Input")
         .should("be.visible").and("have.value", "");
+      
+      // post preview component ///
       // post preview values //
       getTestElement("Post_Title_Preview")
         .should("be.visible")
@@ -109,10 +131,42 @@ describe("Admin New Post page tests", () => {
      
     });
 
+    it.only("Should correctly handle changing values in <PostForm> and update <AdminPostPreview> components", () => {
+      const numOfKeywords: number = 5;
+      const postTitle: string = faker.lorem.word();
+      const keywordsArr: string[] = faker.lorem.words(numOfKeywords).split(" ")
+      const keywordsCSVString: string = keywordsArr.join(",");
+      // title input-preview test //
+      getTestElement("Admin_New_Post_Title_Input").type(postTitle)
+      getTestElement("Post_Title_Preview").find("span").last().should("have.text", postTitle);
+      // category dropdown select tests //
+      for (let i = 0; i < 4; i++) {
+        getTestElement("Admin_New_Post_Category_Input").click()
+          .then((dropdown) => {
+            dropdown.find(".item").toArray()[i].click();
+            // check against preview value //
+          });
+        getTestElement("Post_Category_Preview").find("span")
+          .should("have.length", 2)
+          .then((els) => {
+            expect(els.last().text()).to.equal(capitalizeString(dropdownVals[i]));
+        })
+      }
+    
+      // keywords input-preview-test //
+      getTestElement("Admin_New_Post_Keywords_Input").type(keywordsCSVString);
+      getTestElement("Post_Keyword_Preview_Span")
+        .should("have.length", numOfKeywords)  
+        .then((elements) => {
+          elements.toArray().forEach((el, index) => {
+            expect(el.innerHTML).to.equal(keywordsArr[index]);
+          });
+        });    
+    })
+
   });
 
   after(() => {
-    adminsArr.forEach((data) => console.log(typeof data._id));
     const ids: string[] = adminsArr.map(adminData => adminData._id);
     const blogPostIds: string[] = blogPostsArr.map(blogPostData => blogPostData._id);
     try {

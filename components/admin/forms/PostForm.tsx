@@ -17,7 +17,7 @@ interface IPostFormProps {
 }
 
 const dropdownVals: DropdownItemProps[] = [
-  { key: 1, text: "Informational", value: "informatonal" },
+  { key: 1, text: "Informational", value: "informational" },
   { key: 2, text: "Beginner", value: "beginner" },
   { key: 3, text: "Intermediate", value: "intermediate" },
   { key: 4, text: "Advanced", value: "advanced" }

@@ -33,7 +33,7 @@ export const AdminPostPreview: React.FunctionComponent<IPostPreviewProps> = ({ p
         <span>Author:</span>{ postAuthor ? <span >{ postAuthor }</span> : null }
       </div>  
       <div className={ styles.previewCategory } data-test-id="Post_Category_Preview">
-        <span>Category:</span>{ postCategory ? <span>{ capitalizeString(postCategory) }</span> : null }
+        <span>Category:</span>{ postCategory ? <span>{capitalizeString(postCategory)}</span> : null }
       </div>  
       <div className={ styles.previewKeywords } data-test-id="Post_Keywords_Preview">
         <span>Keywords:</span>
