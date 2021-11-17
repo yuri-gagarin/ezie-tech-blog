@@ -123,30 +123,30 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
           <h3>All Blog Posts - Published and In Progress</h3>
         </Segment>
       </Grid.Row>
-      <Grid.Row className={ styles.contentRow } centered data-test-id="Admin_Blog_Posts_Page">
+      <Grid.Row className={ styles.contentRow } centered data-test-id="dash-blog-posts-page">
         <Grid.Column largeScreen={15} mobile={16} >
           <Card.Group itemsPerRow="4" stackable>
           {
             blogPosts.map((blogPostData) => {
               return (
-                <Card key={ blogPostData._id } data-test-id="Admin_Blog_Post_Card">
+                <Card key={ blogPostData._id } data-test-id="dash-blog-post-card">
                   <Card.Content>
-                    <Card.Header data-test-id="Admin_Blog_Post_Card_Title">{ blogPostData.title }</Card.Header>
-                    <Card.Meta data-test-id="Admin_Blog_Post_Card_Created">Created at: { formatTimeString(blogPostData.createdAt, { yearMonth: true }) }</Card.Meta>
-                    <Card.Description data-test-id="Admin_Blog_Post_Card_Desc">
+                    <Card.Header data-test-id="dash-blog-post-card_Title">{ blogPostData.title }</Card.Header>
+                    <Card.Meta data-test-id="dash-blog-post-card-created">Created at: { formatTimeString(blogPostData.createdAt, { yearMonth: true }) }</Card.Meta>
+                    <Card.Description data-test-id="dash-blog-post-card-created">
                       <div dangerouslySetInnerHTML={{ __html: trimStringToSpecificLength(blogPostData.content, 200) }} />
                     </Card.Description>
                   </Card.Content>
                   <Card.Content>
-                    <Card.Description data-test-id="Admin_Blog_Post_Card_Category">
+                    <Card.Description data-test-id="dash-blog-post-card-category">
                       Category: { capitalizeString(blogPostData.category) }
                     </Card.Description>
                   </Card.Content>
                   <Card.Content>
-                    <Card.Meta data-test-id="Admin_Blog_Post_Card_Published">
+                    <Card.Meta data-test-id="dash-blog-post-card-published">
                       Published: { blogPostData.published ? "Yes" : "No" }
                     </Card.Meta>
-                    <Button color="green" content="View" onClick={ () => toggleBlogPostModal(blogPostData._id) } data-test-id="Admin_Blog_Post_Card_View_Btn" />
+                    <Button color="green" content="View" onClick={ () => toggleBlogPostModal(blogPostData._id) } data-test-id="dash-blog-post-card-view-btn" />
                   </Card.Content>
                 </Card>
               )

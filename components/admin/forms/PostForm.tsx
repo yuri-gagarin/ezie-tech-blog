@@ -41,10 +41,10 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
   };
   
   return (
-    <Form className={ styles.adminPostForm } data-test-id="Admin_New_Post_Form">
+    <Form className={ styles.adminPostForm } data-test-id="admin-post-form">
       <Form.Field>
         <label>Title:</label>
-        <input value={ postFormState.postTitle } placeholder="title here..." onChange={ handlePostTitleChange }  data-test-id="Admin_New_Post_Title_Input" />
+        <input value={ postFormState.postTitle } placeholder="title here..." onChange={ handlePostTitleChange }  data-test-id="post-form-title-input" />
       </Form.Field>
       <Form.Field>
         <label>Author</label>
@@ -52,15 +52,15 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
       </Form.Field>
       <Form.Field>
         <label>Keywords</label>
-        <input value={ postFormState.postKeywords} placeholder="comma separated keywords" onChange={ handleKeywordsChange } data-test-id="Admin_New_Post_Keywords_Input"  />
+        <input value={ postFormState.postKeywords} placeholder="comma separated keywords" onChange={ handleKeywordsChange } data-test-id="post-form-keywords-input"  />
       </Form.Field>
       <Form.Field>
         <label>Category</label>
-        <Dropdown defaultValue={ postFormState.postCategory ? postFormState.postCategory : null } clearable options={dropdownVals } selection  placeholder="select category" onChange={ handleCategoryChange } data-test-id="Admin_New_Post_Category_Input" />
+        <Dropdown defaultValue={ postFormState.postCategory ? postFormState.postCategory : null } clearable options={dropdownVals } selection  placeholder="select category" onChange={ handleCategoryChange } data-test-id="post-form-category-input" />
       </Form.Field>
       <Form.Field>
         <label>Content:</label>
-        <Form.TextArea value={ postFormState.postContent } className={ styles.postTextArea } onChange={ handleTextAreaChange } data-test-id="Admin_New_Post_Content_Input" />
+        <Form.TextArea value={ postFormState.postContent } className={ styles.postTextArea } onChange={ handleTextAreaChange } data-test-id="post-form-content-input" />
       </Form.Field>
     </Form>
   );

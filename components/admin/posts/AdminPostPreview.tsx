@@ -24,23 +24,23 @@ export const AdminPostPreview: React.FunctionComponent<IPostPreviewProps> = ({ p
   }, [ postKeywords ]);
 
   return (
-    <div className={ styles.adminPostPreviewWrapper } data-test-id="Admin_Post_Preview">
+    <div className={ styles.adminPostPreviewWrapper } data-test-id="post-preview">
       <div className={ styles.adminPostPreviewHeader }>Formatted Post Preview</div>
-      <div className={ styles.previewTitle } data-test-id="Post_Title_Preview">
+      <div className={ styles.previewTitle } data-test-id="post-title-preview">
         <span>Title:</span>{ postTitle ? <span >{ postTitle }</span> : null }
       </div>
-      <div className={ styles.previewAuthor } data-test-id="Post_Author_Preview">
+      <div className={ styles.previewAuthor } data-test-id="post-author-preview">
         <span>Author:</span>{ postAuthor ? <span >{ postAuthor }</span> : null }
       </div>  
-      <div className={ styles.previewCategory } data-test-id="Post_Category_Preview">
+      <div className={ styles.previewCategory } data-test-id="post-category-preview">
         <span>Category:</span>{ postCategory ? <span>{capitalizeString(postCategory)}</span> : null }
       </div>  
-      <div className={ styles.previewKeywords } data-test-id="Post_Keywords_Preview">
+      <div className={ styles.previewKeywords } data-test-id="post-keywords-preview">
         <span>Keywords:</span>
         {
           postKeywordsArr.length > 0 && postKeywordsArr[0]
           ?
-          postKeywordsArr.map((cat, i) => <span key={`${cat}_${i}`} className={ styles.previewKeywordSpan } data-test-id="Post_Keyword_Preview_Span">{ cat }</span>)
+          postKeywordsArr.map((cat, i) => <span key={`${cat}_${i}`} className={ styles.previewKeywordSpan } data-test-id="post-keyword-preview-span">{ cat }</span>)
           :
           null
         }

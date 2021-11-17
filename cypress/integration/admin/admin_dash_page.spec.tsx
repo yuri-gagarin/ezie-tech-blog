@@ -116,4 +116,3 @@ context("Main Home Page", () => {
 
 });
 
-export {};

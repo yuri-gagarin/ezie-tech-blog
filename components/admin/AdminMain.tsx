@@ -17,7 +17,7 @@ interface IAdminMainProps {
 export const AdminMain: React.FunctionComponent<IAdminMainProps> = ({ generalState }): JSX.Element => {
   const { blogPostsState, usersState } = generalState;
   return (
-    <Grid.Row className={ adminMainStyles.adminMainRow } data-test-id="Admin_Main_Page"> 
+    <Grid.Row className={ adminMainStyles.adminMainRow } data-test-id="admin-main-page"> 
       <Grid.Column className={ adminMainStyles.leftColumn } width={5}>
         <Card.Group>
           <Card fluid color="blue">

@@ -6,6 +6,7 @@ import { getTestElement, closestBySelector } from "../../../helpers/generalHelpe
 //
 import faker from "faker";
 //
+import type { IGeneralState } from "@/redux/_types/generalTypes"
 import type { IAuthState } from "@/redux/_types/auth/dataTypes";
 import type { BlogPostData, IBlogPostState } from "@/redux/_types/blog_posts/dataTypes";
 import type { IBlogPost } from "@/server/src/models/BlogPost";
@@ -13,11 +14,13 @@ import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { AdminData } from "@/redux/_types/users/dataTypes";
 
 // helpers //
+import { deepCopyObject } from "@/components/_helpers/generalHelpers";
 import { checkEmptyObjVals } from "@/redux/_helpers/dataHelpers";
 import { capitalizeString, formatTimeString } from "../../../../components/_helpers/displayHelpers";
 import { generateMockPostData } from "@/server/spec/hepers/testHelpers";
 
 describe("Admin New Post page tests", () => {
+  let appState: IGeneralState;
   let adminsArr: AdminData[];
   let blogPostsArr: BlogPostData[];
   let adminJWTToken: string;
@@ -55,36 +58,44 @@ describe("Admin New Post page tests", () => {
     beforeEach(() => {
       cy.visit("/login")
         .then(() => {
-          getTestElement("Login_Page_Email_Input").type(user.email);
-          getTestElement("Login_Page_Password_Input").type("password");
-          getTestElement("Login_Page_Login_Btn").click();
+          cy.getByDataAttr("Login_Page_Email_Input").type(user.email);
+          cy.getByDataAttr("Login_Page_Password_Input").type("password");
+          cy.getByDataAttr("Login_Page_Login_Btn").click();
           //
-        });
-      cy.wait(6000)
-      cy.visit("/admin/dashboard/posts/new");
-      
+          cy.getByDataAttr("admin-main-page").should("exist");
+        })
+        .then(() => {
+          return cy.visit("/admin/dashboard/posts/new");
+        })     
+        .then(() => {
+          cy.window().its("store").invoke("getState").then((state) => {
+            appState = deepCopyObject<IGeneralState>(state);
+          });
+        })      
         
     })
 
     it("Should render correct components", () => {
-      getTestElement("Admin_New_Post_Form")
-        .should("be.visible");
-      getTestElement("Admin_Post_Preview")
-        .should("be.visible");
+      cy.getByDataAttr("post-save-btn").should("be.visible").contains("Save");
+      cy.getByDataAttr("post-cancel-btn").should("be.visible").contains("Cancel");
+      //
+      cy.getByDataAttr("admin-post-form").should("exist").and("be.visible");
+      cy.getByDataAttr("post-preview").should("exist").and("be.visible");
     });
 
+    // empty state data render tests //
     it("Should set correct default values in the input and preview", () => {
       // form //
       // form default values //
-      getTestElement("Admin_New_Post_Title_Input")
+      cy.getByDataAttr("post-form-title-input")
         .should("be.visible").and("have.value", "")
-      getTestElement("Admin_New_Post_Keywords_Input")
+      cy.getByDataAttr("post-form-keywords-input")
         .should("be.visible").and("have.value", "")
       // category dropdown //
-      getTestElement("Admin_New_Post_Category_Input")
+      cy.getByDataAttr("post-form-category-input")
         .should("be.visible").and("have.value","");
       // category dropdown values //
-      getTestElement("Admin_New_Post_Category_Input").click()
+      cy.getByDataAttr("post-form-category-input").click()
         .then((dropdown) => {
           return dropdown.find(".item");
         })
@@ -96,33 +107,33 @@ describe("Admin New Post page tests", () => {
           })
         });
       // content input // 
-      getTestElement("Admin_New_Post_Content_Input")
+      cy.getByDataAttr("post-form-content-input")
         .should("be.visible").and("have.value", "");
       
       // post preview component ///
       // post preview values //
-      getTestElement("Post_Title_Preview")
+      cy.getByDataAttr("post-title-preview")
         .should("be.visible")
         .find("span")
         .then((spanEls) => {
           expect(spanEls.length).to.equal(1);
           expect(spanEls.first().html()).to.equal("Title:")
         });
-      getTestElement("Post_Author_Preview")
+      cy.getByDataAttr("post-author-preview")
         .should("be.visible")
         .find("span")
         .then((spanEls) => {
           expect(spanEls.length).to.equal(2);
           expect(spanEls.first().html()).to.equal("Author:")
         });
-      getTestElement("Post_Category_Preview")
+      cy.getByDataAttr("post-category-preview")
         .should("be.visible")
         .find("span")
         .then((spanEls) => {
           expect(spanEls.length).to.equal(1);
           expect(spanEls.first().html()).to.equal("Category:")
         });
-        getTestElement("Post_Keywords_Preview")
+        cy.getByDataAttr("post-keywords-preview")
           .should("be.visible")
           .find("span")
           .then((spanEls) => {
@@ -132,22 +143,24 @@ describe("Admin New Post page tests", () => {
      
     });
 
+    // changing state data render tests //
     it("Should correctly handle changing values in <PostForm> and update <AdminPostPreview> components", () => {
       const numOfKeywords: number = 5;
       const postTitle: string = faker.lorem.word();
       const keywordsArr: string[] = faker.lorem.words(numOfKeywords).split(" ")
       const keywordsCSVString: string = keywordsArr.join(",");
+
       // title input-preview test //
-      getTestElement("Admin_New_Post_Title_Input").type(postTitle)
-      getTestElement("Post_Title_Preview").find("span").last().should("have.text", postTitle);
+      cy.getByDataAttr("post-form-title-input").type(postTitle)
+      cy.getByDataAttr("post-title-preview").find("span").last().should("have.text", postTitle);
       // category dropdown select tests //
       for (let i = 0; i < 4; i++) {
-        getTestElement("Admin_New_Post_Category_Input").click()
+        cy.getByDataAttr("post-form-category-input").click()
           .then((dropdown) => {
             dropdown.find(".item").toArray()[i].click();
             // check against preview value //
           });
-        getTestElement("Post_Category_Preview").find("span")
+        cy.getByDataAttr("post-category-preview").find("span")
           .should("have.length", 2)
           .then((els) => {
             expect(els.last().text()).to.equal(capitalizeString(dropdownVals[i]));
@@ -155,8 +168,8 @@ describe("Admin New Post page tests", () => {
       }
     
       // keywords input-preview-test //
-      getTestElement("Admin_New_Post_Keywords_Input").type(keywordsCSVString);
-      getTestElement("Post_Keyword_Preview_Span")
+      cy.getByDataAttr("post-form-keywords-input").type(keywordsCSVString);
+      cy.getByDataAttr("post-keyword-preview-span")
         .should("have.length", numOfKeywords)  
         .then((elements) => {
           elements.toArray().forEach((el, index) => {
@@ -166,7 +179,7 @@ describe("Admin New Post page tests", () => {
       //   
     });
 
-    it.only("Should correctly handle all data, correctly submit and create a new <BlogPost>, update state", () => {
+    it.only("Should correctly handle all data, correctly correctly cancel creation of a <BlogPost>, NOT update state", () => {
       // get current user info //
       let authState: IAuthState;
       cy.window().its("store").invoke("getState").then((state) => {
@@ -175,15 +188,26 @@ describe("Admin New Post page tests", () => {
       .then(() => {
         const newPostData = generateMockPostData({ name: authState.currentUser.firstName, authorId: authState.currentUser._id });
         // type in values //
-        getTestElement("Admin_New_Post_Category_Input").click().then((dropdown) => dropdown.find(".item").toArray()[0].click());
-        getTestElement("Admin_New_Post_Keywords_Input").type(newPostData.keywords.join(","));
-        getTestElement("Admin_New_Post_Content_Input").type(newPostData.content);
+        cy.getByDataAttr("post-form-category-input").click().then((dropdown) => dropdown.find(".item").toArray()[0].click());
+        cy.getByDataAttr("post-form-keywords-input").type(newPostData.keywords.join(","));
+        cy.getByDataAttr("post-form-content-input").type(newPostData.content);
         //
-        //cy.getByDataAttr("post-save-btn").should("be.visible");
-        cy.getByDataAttr("post-cancel-btn").should("be.visible");
       })
-     
-      //
+      .then(() => {
+        cy.getByDataAttr("post-cancel-btn").click();
+      })
+      .then(() => {
+        // url should go back to all posts //
+        cy.url().should("eql", "http://localhost:3000/admin/dashboard/posts");
+        cy.getByDataAttr("admin-post-form").should("not.exist");
+        cy.getByDataAttr("post-preview").should("not.exist");
+      })
+      .then(() => {
+        // redux state should NOT change //
+        cy.window().its("store").invoke("getState").then((state) => {
+          expect(appState).to.eql(state);
+        });
+      });
     });
 
   });

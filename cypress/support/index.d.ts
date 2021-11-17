@@ -1,5 +1,5 @@
 declare namespace Cypress {
-  interface Chainable<Subject = any> {
-    getByDataAttr(string: string): Chainable<Subject>;
+  interface Chainable<Subject = HTMLElement> {
+    getByDataAttr<E extends Node = HTMLElement>(string: string): Chainable<JQuery<E>>;
   }
 }
