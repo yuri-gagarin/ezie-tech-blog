@@ -12,11 +12,11 @@ export const AdminPostNav: React.FunctionComponent<IAdminPostNavProps> = ({ save
   return (
     <div className={ styles.adminPostNavWrapper }>  
       <Button.Group>
-        <Button color="green" onClick={ savePost }>
+        <Button color="green" onClick={ savePost } data-test-id="post-save-btn">
           <Icon name="save" />
           Save
         </Button>
-        <Button color="orange" onClick={ cancelNewPost }>
+        <Button color="orange" onClick={ cancelNewPost } data-test-id="post-cancel-btn">
           <Icon name="cancel" />
           Cancel
         </Button>

@@ -15,6 +15,7 @@ import type { AdminData } from "@/redux/_types/users/dataTypes";
 // helpers //
 import { checkEmptyObjVals } from "@/redux/_helpers/dataHelpers";
 import { capitalizeString, formatTimeString } from "../../../../components/_helpers/displayHelpers";
+import { generateMockPostData } from "@/server/spec/hepers/testHelpers";
 
 describe("Admin New Post page tests", () => {
   let adminsArr: AdminData[];
@@ -131,7 +132,7 @@ describe("Admin New Post page tests", () => {
      
     });
 
-    it.only("Should correctly handle changing values in <PostForm> and update <AdminPostPreview> components", () => {
+    it("Should correctly handle changing values in <PostForm> and update <AdminPostPreview> components", () => {
       const numOfKeywords: number = 5;
       const postTitle: string = faker.lorem.word();
       const keywordsArr: string[] = faker.lorem.words(numOfKeywords).split(" ")
@@ -161,8 +162,29 @@ describe("Admin New Post page tests", () => {
           elements.toArray().forEach((el, index) => {
             expect(el.innerHTML).to.equal(keywordsArr[index]);
           });
-        });    
-    })
+        });  
+      //   
+    });
+
+    it.only("Should correctly handle all data, correctly submit and create a new <BlogPost>, update state", () => {
+      // get current user info //
+      let authState: IAuthState;
+      cy.window().its("store").invoke("getState").then((state) => {
+        authState = { ...state.authState, currentUser: { ...state.authState.currentUser }};
+      })
+      .then(() => {
+        const newPostData = generateMockPostData({ name: authState.currentUser.firstName, authorId: authState.currentUser._id });
+        // type in values //
+        getTestElement("Admin_New_Post_Category_Input").click().then((dropdown) => dropdown.find(".item").toArray()[0].click());
+        getTestElement("Admin_New_Post_Keywords_Input").type(newPostData.keywords.join(","));
+        getTestElement("Admin_New_Post_Content_Input").type(newPostData.content);
+        //
+        //cy.getByDataAttr("post-save-btn").should("be.visible");
+        cy.getByDataAttr("post-cancel-btn").should("be.visible");
+      })
+     
+      //
+    });
 
   });
 

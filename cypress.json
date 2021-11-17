@@ -1,5 +1,5 @@
 {
-  "defaultCommandTimeout": 10000,
+  "defaultCommandTimeout": 15000,
   "watchForFileChanges": false,
   "baseUrl": "http://localhost:3000",
   "env": {
