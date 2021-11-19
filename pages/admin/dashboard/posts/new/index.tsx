@@ -10,6 +10,7 @@ import { AdminLayout } from '../../../../../components/admin/AdminLayout';
 import { PostForm } from "../../../../../components/admin/forms/PostForm";
 import { AdminPostNav } from '../../../../../components/admin/posts/AdminPostNav';
 import { AdminPostPreview } from '../../../../../components/admin/posts/AdminPostPreview';
+import { GenErrorModal } from "@/components/modals/GenErrorModal";
 // types //
 import type { IGeneralState } from '../../../../../redux/_types/generalTypes';
 // styles //
@@ -37,7 +38,8 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
   // redux hooks and state  //
   const dispatch = useDispatch();
   const { authState, blogPostsState } = useSelector((state: IGeneralState) => state);
-  
+  const { error, errorMessages } = blogPostsState;
+  //
   // action handlers //
   const cancelNewPost = (): void => {
     router.push("/admin/dashboard/posts");
@@ -89,8 +91,16 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     setPostFormState({ postTitle: title,  postContent: content, postCategory: category, postKeywords: keywords.join(",") });
   }, [ blogPostsState.currentBlogPost ]);
 
+
   return (
     <AdminLayout>
+      {
+        <GenErrorModal 
+          open={ error }
+          handleErrorModalClose={ () => {}}
+          errorMessages={errorMessages ? errorMessages : [ "An error occured" ] }
+        />
+      }
       <Grid.Row className={ adminNewPostsStyle.navRow }>
         <AdminPostNav 
           savePost={ saveNewPost }

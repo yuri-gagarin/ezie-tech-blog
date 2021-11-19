@@ -179,7 +179,7 @@ describe("Admin New Post page tests", () => {
       //   
     });
 
-    it.only("Should correctly handle all data, correctly correctly cancel creation of a <BlogPost>, NOT update state", () => {
+    it("Should correctly handle all data, correctly correctly cancel creation of a <BlogPost>, NOT update state", () => {
       // get current user info //
       let authState: IAuthState;
       cy.window().its("store").invoke("getState").then((state) => {
@@ -188,6 +188,7 @@ describe("Admin New Post page tests", () => {
       .then(() => {
         const newPostData = generateMockPostData({ name: authState.currentUser.firstName, authorId: authState.currentUser._id });
         // type in values //
+        cy.getByDataAttr("post-form-title-input").type(newPostData.title);
         cy.getByDataAttr("post-form-category-input").click().then((dropdown) => dropdown.find(".item").toArray()[0].click());
         cy.getByDataAttr("post-form-keywords-input").type(newPostData.keywords.join(","));
         cy.getByDataAttr("post-form-content-input").type(newPostData.content);
@@ -201,6 +202,46 @@ describe("Admin New Post page tests", () => {
         cy.url().should("eql", "http://localhost:3000/admin/dashboard/posts");
         cy.getByDataAttr("admin-post-form").should("not.exist");
         cy.getByDataAttr("post-preview").should("not.exist");
+        cy.getByDataAttr("post-nav-main").should("not.exist");
+        //
+        cy.getByDataAttr("dash-blog-posts-page").should("exist").and("be.visible");
+
+      })
+      .then(() => {
+        // redux state should NOT change //
+        cy.window().its("store").invoke("getState").then((state) => {
+          expect(appState).to.eql(state);
+        });
+      });
+    });
+
+    it.only("Should correctly handle all data, CORRECTLY handle creation of a <BlogPost>, AND update state", () => {
+      // get current user info //
+      let authState: IAuthState;
+      cy.window().its("store").invoke("getState").then((state) => {
+        authState = { ...state.authState, currentUser: { ...state.authState.currentUser }};
+      })
+      .then(() => {
+        const newPostData = generateMockPostData({ name: authState.currentUser.firstName, authorId: authState.currentUser._id });
+        // type in values //
+        cy.getByDataAttr("post-form-title-input").type(newPostData.title);
+        cy.getByDataAttr("post-form-category-input").click().then((dropdown) => dropdown.find(".item").toArray()[0].click());
+        cy.getByDataAttr("post-form-keywords-input").type(newPostData.keywords.join(","));
+        cy.getByDataAttr("post-form-content-input").type(newPostData.content);
+        //
+      })
+      .then(() => {
+        cy.getByDataAttr("post-save-btn").click();
+      })
+      .then(() => {
+        // url should go back to all posts //
+        cy.url().should("eql", "http://localhost:3000/admin/dashboard/posts");
+        cy.getByDataAttr("admin-post-form").should("not.exist");
+        cy.getByDataAttr("post-preview").should("not.exist");
+        cy.getByDataAttr("post-nav-main").should("not.exist");
+        //
+        cy.getByDataAttr("dash-blog-posts-page").should("exist").and("be.visible");
+
       })
       .then(() => {
         // redux state should NOT change //

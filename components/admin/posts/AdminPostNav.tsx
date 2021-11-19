@@ -10,7 +10,7 @@ interface IAdminPostNavProps {
 
 export const AdminPostNav: React.FunctionComponent<IAdminPostNavProps> = ({ savePost, cancelNewPost }): JSX.Element => {
   return (
-    <div className={ styles.adminPostNavWrapper }>  
+    <div className={ styles.adminPostNavWrapper } data-test-id="post-nav-main">  
       <Button.Group>
         <Button color="green" onClick={ savePost } data-test-id="post-save-btn">
           <Icon name="save" />
