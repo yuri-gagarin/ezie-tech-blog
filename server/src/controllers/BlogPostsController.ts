@@ -18,7 +18,7 @@ import { validateBlogPostModelData } from "./_helpers/validationHelpers";
 
 export default class BlogPostsController extends BasicController implements ICRUDController {
   index = async (req: Request, res: Response<IndexBlogPostRes>): Promise<Response<IndexBlogPostRes>> => {
-    const { limit = 10, category = "all", createdAt = "asc", publishedStatus = "published", byUser = false, userId = "" } = req.query as FetchBlogPostsOpts;
+    const { limit = 10, category = "all", createdAt = "desc", publishedStatus = "published", byUser = false, userId = "" } = req.query as FetchBlogPostsOpts;
     const user = req.user as IUser | IAdmin | null;
     // check for a user and admin //
     let blogPosts: IBlogPost[];

@@ -1,4 +1,5 @@
 import type { BlogPostData } from "../../redux/_types/blog_posts/dataTypes";
+import type { IAuthState } from "@/redux/_types/auth/dataTypes";
 
 export const trimStringToSpecificLength = (stringToTrim: string, numOfChars?: number): string => {
   return `${stringToTrim.slice(0, numOfChars ? numOfChars : 10)}...`;
@@ -66,6 +67,17 @@ export const setDefaultBlogPosts = (blogPostData: BlogPostData[]): BlogPostData[
 
 export const capitalizeString = (stringToCapitalize: string): string => {
   return stringToCapitalize.slice(0, 1).toUpperCase() + stringToCapitalize.slice(1);
+};
+
+export const setPostAuthor = (authState: IAuthState): string => {
+  const { firstName, lastName } = authState.currentUser;
+  if (firstName && lastName) {
+    return `${capitalizeString(firstName)} ${capitalizeString(lastName)}`
+  } else if (firstName || lastName) {
+    return firstName ? capitalizeString(firstName) : capitalizeString(lastName);
+  } else {
+    return `Anonymous`;
+  }
 };
 
 export const isDefined = (data: string | number): boolean => {

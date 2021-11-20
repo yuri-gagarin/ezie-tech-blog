@@ -37,7 +37,7 @@ describe("Admin New Post page tests", () => {
         .then(({ admins }) => {
           adminsArr = admins;
           user = adminsArr[0];
-          return cy.task<{ blogPosts: BlogPostData[]}>("seedBlogPosts", { number: 0, publishedStatus: "published", user })
+          return cy.task<{ blogPosts: BlogPostData[]}>("seedBlogPosts", { number: 10, publishedStatus: "published", user })
         })
         .then(({ blogPosts}) => { 
           blogPostsArr = blogPosts;
@@ -63,17 +63,18 @@ describe("Admin New Post page tests", () => {
           cy.getByDataAttr("Login_Page_Login_Btn").click();
           //
           cy.getByDataAttr("admin-main-page").should("exist");
+          cy.wait(5000)
+          return cy.window().its("store").invoke("getState")
         })
-        .then(() => {
+        .then((state) => {
+          console.log(state.blogPostsState);
+          appState = deepCopyObject<IGeneralState>(state);
           return cy.visit("/admin/dashboard/posts/new");
         })     
         .then(() => {
-          cy.window().its("store").invoke("getState").then((state) => {
-            appState = deepCopyObject<IGeneralState>(state);
-          });
-        })      
-        
-    })
+          cy.getByDataAttr("new-post-main-row").should("be.visible");
+        });        
+    });
 
     it("Should render correct components", () => {
       cy.getByDataAttr("post-save-btn").should("be.visible").contains("Save");
@@ -244,9 +245,20 @@ describe("Admin New Post page tests", () => {
 
       })
       .then(() => {
-        // redux state should NOT change //
+        // redux state shoul change to reflect a new blog post model //
+        cy.wait(4000)
         cy.window().its("store").invoke("getState").then((state) => {
-          expect(appState).to.eql(state);
+          const { blogPostsState: oldBlogPostsState } = appState;
+          const { status, responseMsg, loading, blogPosts, currentBlogPost, error, errorMessages } = state.blogPostsState;
+          console.log(oldBlogPostsState.blogPosts.length)
+          console.log(blogPosts.length)
+          expect(status).to.equal(200);
+          expect(responseMsg).to.be.a("string");
+          expect(loading).to.equal(false);
+          expect(blogPosts.length).to.equal(oldBlogPostsState.blogPosts.length + 1);
+          expect(checkEmptyObjVals(currentBlogPost)).to.equal(true);
+          expect(error).to.be.null;
+          expect(errorMessages).to.be.null;
         });
       });
     });

@@ -101,6 +101,12 @@ export default function blogPostsReducer(state: IBlogPostState = initialState, a
         errorMessages: null
       };
     }
+    case "SetBlogPostError": {
+      return {
+        ...state,
+        ...action.payload
+      }
+    }
     default: {
       return state;
     }

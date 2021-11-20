@@ -2,7 +2,7 @@ import axios from "axios";
 // types 
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type { Dispatch } from "redux";
-import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost, ToggleBlogPostLike, ClearBlogPost, DeleteBlogPost } from "../_types/blog_posts/actionTypes";
+import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost, ToggleBlogPostLike, ClearBlogPost, DeleteBlogPost, SetBlogPostError } from "../_types/blog_posts/actionTypes";
 import type { 
   IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts, DeleteBlogPostRes, EditBlogPostRes,
   DeleteBlogPostParams
@@ -83,13 +83,15 @@ export class BlogPostActions {
     }
   }
 
-  static handleSaveNewBlogPost = async (dispatch: Dispatch<BlogPostAction>, blogPostFormData: BlogPostFormData, currentBlogPostState: IBlogPostState): Promise<CreateBlogPost> => {
+  static handleSaveNewBlogPost = async ({ dispatch, JWTToken, blogPostFormData, state }: { dispatch: Dispatch<BlogPostAction>; JWTToken: string; blogPostFormData: BlogPostFormData; state: IBlogPostState }): Promise<CreateBlogPost | SetBlogPostError> => {
+    console.log("clicked")
+    console.log("should be here");
+    if (!JWTToken) throw new Error("Could Not resolve")
     const { title, author, category, keywords } = blogPostFormData;
-    const token: string | null = localStorage.getItem("jwtToken");
     const reqOpts: AxiosRequestConfig = {
       method: "POST",
       url: "/api/posts",
-      headers: { "Authorization": token ? token : "" }, 
+      headers: { "Authorization": JWTToken }, 
       data: { title, author, category, keywords }
     };
 
@@ -98,7 +100,8 @@ export class BlogPostActions {
       const res: AxiosResponse<CreateBlogPostRes> = await axios(reqOpts);
       const { status, data } = res;
       const { responseMsg, createdBlogPost } = data;
-      const updatedBlogPosts = [ createdBlogPost, ...currentBlogPostState.blogPosts ];
+      const updatedBlogPosts = [ createdBlogPost, ...state.blogPosts ];
+      console.log(createdBlogPost)
       return dispatch(createBlogPost({ status, responseMsg, createdBlogPost, updatedBlogPosts }))
     } catch (error) {
       // TODO //

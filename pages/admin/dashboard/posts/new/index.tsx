@@ -4,21 +4,22 @@ import { Grid } from "semantic-ui-react";
 import { useRouter } from "next/router";
 // redux and actions //
 import { useDispatch, useSelector } from 'react-redux';
-import { BlogPostActions } from "../../../../../redux/actions/blogPostActions";
+import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additional components //
-import { AdminLayout } from '../../../../../components/admin/AdminLayout';
-import { PostForm } from "../../../../../components/admin/forms/PostForm";
-import { AdminPostNav } from '../../../../../components/admin/posts/AdminPostNav';
-import { AdminPostPreview } from '../../../../../components/admin/posts/AdminPostPreview';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { PostForm } from "@/components/admin/forms/PostForm";
+import { AdminPostNav } from '@/components/admin/posts/AdminPostNav';
+import { AdminPostPreview } from '@/components/admin/posts/AdminPostPreview';
 import { GenErrorModal } from "@/components/modals/GenErrorModal";
 // types //
-import type { IGeneralState } from '../../../../../redux/_types/generalTypes';
+import type { IGeneralState } from '@/redux/_types/generalTypes';
 // styles //
-import adminNewPostsStyle from "../../../../../styles/admin/AdminNewPost.module.css";
+import adminNewPostsStyle from "@/styles/admin/AdminNewPost.module.css";
 // helpers //
-import { blogPostValidator } from '../../../../../components/_helpers/validators';
-import { capitalizeString } from '@/components/_helpers/displayHelpers';
+import { blogPostValidator } from '@/components/_helpers/validators';
+import { capitalizeString, setPostAuthor, checkEmptyObjVals } from '@/components/_helpers/displayHelpers';
 import { IAuthState } from '@/redux/_types/auth/dataTypes';
+import { BlogPostFormData } from '@/redux/_types/blog_posts/dataTypes';
 
 interface IAdminNewViewProps {
 
@@ -46,20 +47,26 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
   };
   const saveNewPost = async (): Promise<any> => {
     const { postTitle: title, postCategory: category, postContent: content } = postFormState;
+    const { authToken: JWTToken, currentUser } = authState;
     const keywords: string[] = postFormState.postKeywords ? postFormState.postKeywords.split(",") : [];
+    //
+    const author: { name: string; authorId: string } = { name: setPostAuthor(authState), authorId: currentUser._id };
+    
     // first validate on client side //
-    const { valid, errorMessages } = blogPostValidator({ title, category, keywords, content });
+    const { valid, errorMessages } = blogPostValidator({ title, category, keywords, content, author });
     // TODO //
     // show an error div //
     if (valid) {
       try {
-        await BlogPostActions.handleSaveNewBlogPost(dispatch, { title, category, keywords, content}, blogPostsState);
+        const blogPostFormData: BlogPostFormData = { title, author, category, content, keywords };
+        await BlogPostActions.handleSaveNewBlogPost({ dispatch, JWTToken: "", blogPostFormData, state: blogPostsState });
         router.push("/admin/dashboard/posts");
       } catch (err) {
-        console.log(err)
+        return BlogPostActions.handleBlogPostError(dispatch, err);
       }
-    } 
-    
+    } else {
+      console.log(errorMessages);
+    }
   };
   // form listeners to update both form and preview //
   const updateTitle = (postTitle: string): void => {
@@ -75,21 +82,16 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     setPostFormState({ ...postFormState, postContent });
   };
   // 
-  const setPostAuthor = (authState: IAuthState): string => {
-    const { firstName, lastName } = authState.currentUser;
-    if (firstName && lastName) {
-      return `${capitalizeString(firstName)} ${capitalizeString(lastName)}`
-    } else {
-      return `Anonymous`;
-    }
-  };
-
   // lifecycle hooks //
   React.useEffect(() => {
     // set local state so the form is filled out with current blog post values //
     const { title, author, content, category, keywords } = blogPostsState.currentBlogPost;
     setPostFormState({ postTitle: title,  postContent: content, postCategory: category, postKeywords: keywords.join(",") });
   }, [ blogPostsState.currentBlogPost ]);
+
+  React.useEffect(() => {
+    console.log(blogPostsState);
+  }, [ blogPostsState ]);
 
 
   return (
@@ -107,7 +109,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
           cancelNewPost={ cancelNewPost } 
         />
       </Grid.Row>
-      <Grid.Row className={ adminNewPostsStyle.previewRow }>
+      <Grid.Row className={ adminNewPostsStyle.previewRow } data-test-id="new-post-main-row">
         <Grid.Column stretched width={ 8 } style={{ paddingRight: "5px" }}>
           <PostForm 
             updateTitle={ updateTitle }
