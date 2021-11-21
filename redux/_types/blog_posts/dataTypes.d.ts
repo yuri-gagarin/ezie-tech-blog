@@ -84,7 +84,7 @@ export type FetchBlogPostsOpts = {
   createdAt?: "desc" | "asc";
   publishedStatus?: "published" | "unpublished";
   limit?: number;
-  baseUrl?: string;
+  JWTToken: string;
 }
 
 // action handlers method types //

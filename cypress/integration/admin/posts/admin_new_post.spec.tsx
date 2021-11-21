@@ -265,6 +265,7 @@ describe("Admin New Post page tests", () => {
 
   });
 
+  /*
   after(() => {
     const ids: string[] = adminsArr.map(adminData => adminData._id);
     const blogPostIds: string[] = blogPostsArr.map(blogPostData => blogPostData._id);
@@ -277,4 +278,5 @@ describe("Admin New Post page tests", () => {
       throw (error);
     }
   });
+  */
 })

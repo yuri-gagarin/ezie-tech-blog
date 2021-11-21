@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import type { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
 export const respondWithNoModelIdError = (res: Response, customMessages?: string[]) => {
   return res.status(400).json({
@@ -71,7 +72,7 @@ export const validateObjectIdParams = (requiredParams: string []) => {
   }
 };
 
-type ValidateQueryOpts = { [key: string]: "string" | "number" | "boolean" | "objectid"; }
+type ValidateQueryOpts = { [key: string]: "string" | "number" | "boolean" | "objectid" | "jsonwebtoken"; }
 export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -96,6 +97,10 @@ export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
             } else if (allowedQueryParams[queryKey] === "objectid") {
               if (!Types.ObjectId.isValid(req.query[queryKey] as string)) {
                 return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Query param <${queryKey}> is not a valid <ObjectID>.`]);
+              }
+            } else if (allowedQueryParams[queryKey] === "jsonwebtoken") {
+              if (!jwt.decode(req.query[queryKey] as string, { complete: true })) {
+                return respondWithNoModelIdError(res, [ `Invalid JWT token passed into query params` ]);
               }
             } else {
               if(!/^[a-zA-Z]+$/.test(req.query[queryKey] as string)) {

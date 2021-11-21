@@ -61,7 +61,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     if (valid) {
       try {
         const blogPostFormData: BlogPostFormData = { title, author, category, content, keywords };
-        await BlogPostActions.handleSaveNewBlogPost({ dispatch, JWTToken: "", blogPostFormData, state: blogPostsState });
+        await BlogPostActions.handleSaveNewBlogPost({ dispatch, JWTToken, blogPostFormData, state: blogPostsState });
         router.push("/admin/dashboard/posts");
       } catch (err) {
         return BlogPostActions.handleBlogPostError(dispatch, err);
@@ -104,7 +104,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     <AdminLayout>
       <GenErrorModal 
         open={ error }
-        handleErrorModalClose={ () => {}}
+        handleErrorModalClose={ handleErrorDismiss }
         errorMessages={errorMessages ? errorMessages : [ "An error occured" ] }
         position="fixed-top"
       />

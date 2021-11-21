@@ -101,7 +101,8 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
 
   // lifecycle hooks //
   React.useEffect(() => {
-    BlogPostActions.handleFetchBlogPosts(dispatch);
+    const { authToken: JWTToken } = authState;
+    BlogPostActions.handleFetchBlogPosts(dispatch, { limit: 20, createdAt: "desc", JWTToken } );
   }, [ dispatch ]);
 
   return (

@@ -29,9 +29,11 @@ export class BlogPostActions {
   static handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts): Promise<GetAllBlogPosts> => {
     const fetchParams = opts ? { ...opts } : {};
     const baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL ? process.env.NEXT_PUBLIC_SERVER_BASE_URL : "";
+    const headers = opts && opts.JWTToken ? { Authorization: opts.JWTToken } : null;
     const reqOpts: AxiosRequestConfig = {
       method: "GET",
       url: `${baseURL}/api/posts`,
+      headers: headers,
       params: fetchParams
     };
 
@@ -43,18 +45,23 @@ export class BlogPostActions {
       return dispatch({ type: "GetBlogPosts", payload: { status, responseMsg, blogPosts, loading: false } });
     } catch (error) {
       // TODO //
+      console.log(48);
+      console.log(error);
+      console.log(error.response)
       throw error;
     }
   }
 
   static handleSaveNewBlogPost = async ({ dispatch, JWTToken, blogPostFormData, state }: { dispatch: Dispatch<BlogPostAction>; JWTToken: string; blogPostFormData: BlogPostFormData; state: IBlogPostState }): Promise<CreateBlogPost | SetBlogPostError> => {
     if (!JWTToken) throw new ClientAuthError();
-    const { title, author, category, keywords } = blogPostFormData;
+    
     const reqOpts: AxiosRequestConfig = {
       method: "POST",
       url: "/api/posts",
       headers: { "Authorization": JWTToken }, 
-      data: { title, author, category, keywords }
+      data: {
+        blogPostData: blogPostFormData
+      }
     };
 
     dispatch({ type: "BlogPostsAPIRequest", payload: { responseMsg: "Loading", loading: true }});
