@@ -11,6 +11,7 @@ import { PostForm } from "@/components/admin/forms/PostForm";
 import { AdminPostNav } from '@/components/admin/posts/AdminPostNav';
 import { AdminPostPreview } from '@/components/admin/posts/AdminPostPreview';
 import { GenErrorModal } from "@/components/modals/GenErrorModal";
+// errors handling //
 // types //
 import type { IGeneralState } from '@/redux/_types/generalTypes';
 // styles //
@@ -20,6 +21,7 @@ import { blogPostValidator } from '@/components/_helpers/validators';
 import { capitalizeString, setPostAuthor, checkEmptyObjVals } from '@/components/_helpers/displayHelpers';
 import { IAuthState } from '@/redux/_types/auth/dataTypes';
 import { BlogPostFormData } from '@/redux/_types/blog_posts/dataTypes';
+import { ClientInputError } from '@/components/_helpers/errorHelpers';
 
 interface IAdminNewViewProps {
 
@@ -65,8 +67,12 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
         return BlogPostActions.handleBlogPostError(dispatch, err);
       }
     } else {
-      console.log(errorMessages);
+      const error: ClientInputError = new ClientInputError("Invalid Data", errorMessages);
+      BlogPostActions.handleBlogPostError(dispatch, error);
     }
+  };
+  const handleErrorDismiss = () => {
+    return BlogPostActions.handleClearBlogPostError(dispatch);
   };
   // form listeners to update both form and preview //
   const updateTitle = (postTitle: string): void => {
@@ -96,13 +102,12 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
 
   return (
     <AdminLayout>
-      {
-        <GenErrorModal 
-          open={ error }
-          handleErrorModalClose={ () => {}}
-          errorMessages={errorMessages ? errorMessages : [ "An error occured" ] }
-        />
-      }
+      <GenErrorModal 
+        open={ error }
+        handleErrorModalClose={ () => {}}
+        errorMessages={errorMessages ? errorMessages : [ "An error occured" ] }
+        position="fixed-top"
+      />
       <Grid.Row className={ adminNewPostsStyle.navRow }>
         <AdminPostNav 
           savePost={ saveNewPost }

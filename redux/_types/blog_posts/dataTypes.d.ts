@@ -34,7 +34,7 @@ export type BlogPostFormData = {
   createdAt?: string;
 };
 export interface IBlogPostState {
-  status: number;
+  status: number | null;
   responseMsg: string;
   loading: boolean;
   blogPosts: BlogPostData[];

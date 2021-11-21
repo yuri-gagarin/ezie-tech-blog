@@ -1,17 +1,17 @@
 export class GeneralClientError extends Error {
   protected customErrorMessages: string[] | null;
-  constructor(message?: string, customErrorMessages?: string[]) {
-    super(message = "Client error occured");
+  constructor(message: string="General Client Error", customErrorMessages?: string[]) {
+    super(message);
     this.customErrorMessages = customErrorMessages ? customErrorMessages : null;
   }
 
-  protected getErrorMessages(): string[] | null {
+  public get errorMessages(): string[] {
     return this.customErrorMessages;
   }
 
   protected setErrorMessages(errorMessages?: string[]) {
     if (errorMessages) {
-
+      this.customErrorMessages = errorMessages;
     } else {
       this.customErrorMessages = [ "General client error occured. Please try again" ]
     }
@@ -19,7 +19,7 @@ export class GeneralClientError extends Error {
 };
 
 export class ClientInputError extends GeneralClientError {
-  constructor({ message, customErrorMessages }: { message?: string; customErrorMessages?: string[]; }) {
+  constructor(message: string="Client Input Error", customErrorMessages?: string[]) {
     super(message, customErrorMessages);
     this.init(customErrorMessages)
   }
@@ -28,13 +28,13 @@ export class ClientInputError extends GeneralClientError {
     if (customErrorMessages) {
       this.customErrorMessages = customErrorMessages;
     } else {
-      this.customErrorMessages = [ "Invalid client input" ];
+      this.customErrorMessages = [ "Invalid client input. Please try again." ];
     }
   }
 };
 
 export class ClientAuthError extends GeneralClientError {
-  constructor({ message, customErrorMessages }: { message?: string; customErrorMessages?: string[]; }) {
+  constructor(message: string="Client Auth Error", customErrorMessages?: string[]) {
     super(message, customErrorMessages);
     this.init(customErrorMessages)
   }
@@ -43,7 +43,7 @@ export class ClientAuthError extends GeneralClientError {
     if (customErrorMessages) {
       this.customErrorMessages = customErrorMessages;
     } else {
-      this.customErrorMessages = [ "Invalid client input" ];
+      this.customErrorMessages = [ "Authorization error. Please try to login again." ];
     }
   }
 }

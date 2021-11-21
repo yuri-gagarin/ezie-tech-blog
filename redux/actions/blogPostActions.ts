@@ -2,64 +2,28 @@ import axios from "axios";
 // types 
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type { Dispatch } from "redux";
-import type { BlogPostAction, BlogPostAPIRequest, GetAllBlogPosts, SetBlogPost, CreateBlogPost, ToggleBlogPostLike, ClearBlogPost, DeleteBlogPost, SetBlogPostError } from "../_types/blog_posts/actionTypes";
+import type { BlogPostAction,  GetAllBlogPosts, SetBlogPost, CreateBlogPost, ToggleBlogPostLike, ClearBlogPost, DeleteBlogPost, SetBlogPostError, ClearBlogPostError } from "../_types/blog_posts/actionTypes";
 import type { 
   IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts, DeleteBlogPostRes, EditBlogPostRes,
   DeleteBlogPostParams
 } from "../_types/blog_posts/dataTypes";
+// custom client errors //
+import { ClientAuthError, GeneralClientError } from "@/components/_helpers/errorHelpers";
 // helpers //
 import { generateEmptyBlogPost } from "../_helpers/mockData";
 import { processAxiosError } from "../_helpers/dataHelpers";
-
-const blogPostAPIRequest = (): BlogPostAPIRequest => {
-  return {
-    type: "BlogPostsAPIRequest",
-    payload: { loading: true, responseMsg: "Loading" }
-  };
-};
-const fetchBlogPosts = (data: { status: number; responseMsg: string; blogPosts: BlogPostData[] }): GetAllBlogPosts => {
-  return {
-    type: "GetBlogPosts",
-    payload: { ...data, loading: false }
-  };
-};
-const createBlogPost = (data: { status: number; responseMsg: string; createdBlogPost: BlogPostData; updatedBlogPosts: BlogPostData[] }): CreateBlogPost => {
-  return {
-    type: "CreateBlogPost",
-    payload: { ...data, loading: false }
-  };
-};
-const toggleBlogPostLike = (data: { status: number; responseMsg: string, updatedCurrentBlogPost: BlogPostData; updatedBlogPosts: BlogPostData[] }): ToggleBlogPostLike => {
-  return {
-    type: "ToggleBlogPostLike",
-    payload: { ...data,  loading: false }
-  };
-};
-const setBlogPost = (data: { blogPost: BlogPostData; currentBlogPostState: IBlogPostState }): SetBlogPost => {
-  return {
-    type: "SetBlogPost",
-    payload: { ...data }
-  };
-};
-const clearBlogPost = (data: { blogPost: BlogPostData }): ClearBlogPost => {
-  return {
-    type: "ClearBlogPost",
-    payload: { ...data }
-  };
-};
-
 
 
 export class BlogPostActions {
   // NON API related method //
   static handleSetCurrentBlogPost = (dispatch: Dispatch<BlogPostAction>, blogPostId: string, currentBlogPostState: IBlogPostState): BlogPostData => {
     const blogPost = currentBlogPostState.blogPosts.filter((blogPostData) => blogPostData._id === blogPostId)[0];
-    dispatch(setBlogPost({ blogPost, currentBlogPostState }));
+    dispatch({ type: "SetBlogPost", payload: { blogPost, currentBlogPostState } });
     return blogPost;
-  };
+  }
   static handleClearCurrentBlogPost = (dispatch: Dispatch<BlogPostAction>): void => {
     const blogPost: BlogPostData = generateEmptyBlogPost();
-    dispatch(clearBlogPost({ blogPost }));
+    dispatch({ type: "ClearBlogPost", payload: { blogPost } });
   }
 
   static handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts): Promise<GetAllBlogPosts> => {
@@ -71,12 +35,12 @@ export class BlogPostActions {
       params: fetchParams
     };
 
-    dispatch(blogPostAPIRequest());
+    dispatch({ type: "BlogPostsAPIRequest", payload: { responseMsg: "Loading", loading: true }});
     try {
       const res: AxiosResponse<IndexBlogPostRes> = await axios(reqOpts);
       const { status } = res;
       const { responseMsg, blogPosts } = res.data;
-      return dispatch(fetchBlogPosts({ status, responseMsg, blogPosts }));
+      return dispatch({ type: "GetBlogPosts", payload: { status, responseMsg, blogPosts, loading: false } });
     } catch (error) {
       // TODO //
       throw error;
@@ -84,9 +48,7 @@ export class BlogPostActions {
   }
 
   static handleSaveNewBlogPost = async ({ dispatch, JWTToken, blogPostFormData, state }: { dispatch: Dispatch<BlogPostAction>; JWTToken: string; blogPostFormData: BlogPostFormData; state: IBlogPostState }): Promise<CreateBlogPost | SetBlogPostError> => {
-    console.log("clicked")
-    console.log("should be here");
-    if (!JWTToken) throw new Error("Could Not resolve")
+    if (!JWTToken) throw new ClientAuthError();
     const { title, author, category, keywords } = blogPostFormData;
     const reqOpts: AxiosRequestConfig = {
       method: "POST",
@@ -95,16 +57,16 @@ export class BlogPostActions {
       data: { title, author, category, keywords }
     };
 
-    dispatch(blogPostAPIRequest());
+    dispatch({ type: "BlogPostsAPIRequest", payload: { responseMsg: "Loading", loading: true }});
     try {
       const res: AxiosResponse<CreateBlogPostRes> = await axios(reqOpts);
       const { status, data } = res;
       const { responseMsg, createdBlogPost } = data;
       const updatedBlogPosts = [ createdBlogPost, ...state.blogPosts ];
-      console.log(createdBlogPost)
-      return dispatch(createBlogPost({ status, responseMsg, createdBlogPost, updatedBlogPosts }))
+      return dispatch({
+        type: "CreateBlogPost", payload: { status, responseMsg, createdBlogPost, updatedBlogPosts, loading: false }
+      });
     } catch (error) {
-      // TODO //
       throw error;
     }
   }
@@ -127,7 +89,6 @@ export class BlogPostActions {
         type: "DeleteBlogPost", payload: { status, responseMsg, loading: false, updatedCurrentBlogPost, updatedBlogPosts }
       }); 
     } catch (error) {
-      // TODO //
       throw error;
     }
   }
@@ -140,7 +101,7 @@ export class BlogPostActions {
       url: `/api/posts/toggle_like/${blogPostId}`
     };
 
-    dispatch(blogPostAPIRequest());
+    dispatch({ type: "BlogPostsAPIRequest", payload: { responseMsg: "Loading", loading: true }});
     try {
       const { status, data }: AxiosResponse<EditBlogPostRes> = await axios(reqOpts);
       const { responseMsg, editedBlogPost } = data;
@@ -150,17 +111,25 @@ export class BlogPostActions {
         else return blogPostData;
       });
       const updatedCurrentBlogPost: BlogPostData = currentBlogPost._id === editedBlogPost._id ? { ...editedBlogPost } : currentBlogPost;
-      return dispatch(toggleBlogPostLike({ status, responseMsg, updatedCurrentBlogPost, updatedBlogPosts }));
+      return dispatch({
+        type: "ToggleBlogPostLike", payload: { status, responseMsg, updatedCurrentBlogPost, updatedBlogPosts, loading: false }
+      });
     } catch (error) {
       throw error;
     }
   }
 
-  static handleBlogPostError = (dispatch: Dispatch<BlogPostAction>, err: any): void => {
+  static handleBlogPostError = (dispatch: Dispatch<BlogPostAction>, err: any): SetBlogPostError => {
     const { status, responseMsg, error, errorMessages } = processAxiosError(err);
-    dispatch({ 
+    return dispatch({ 
       type: "SetBlogPostError", 
       payload: { loading: false, status, responseMsg, error, errorMessages } 
+    });
+  }
+
+  static handleClearBlogPostError = (dispatch: Dispatch<BlogPostAction>): ClearBlogPostError => {
+    return dispatch({
+      type: "ClearBlogPostError", payload: { responseMsg: "", status: null, error: null, errorMessages: null, loading: false }
     });
   }
 }

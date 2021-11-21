@@ -76,6 +76,16 @@ export type SetBlogPostError = {
     errorMessages: string[];
   };
 };
+export type ClearBlogPostError = {
+  readonly type: "ClearBlogPostError";
+  readonly payload: {
+    status: null;
+    responseMsg: string;
+    loading: boolean;
+    error: null;
+    errorMessages: null;
+  };
+};
 // non api actions //
 export type SetBlogPost = {
   readonly type: "SetBlogPost";
@@ -91,4 +101,4 @@ export type ClearBlogPost = {
   };
 };
 
-export type BlogPostAction = (BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | ToggleBlogPostLike | SetBlogPost | ClearBlogPost | SetBlogPostError);
+export type BlogPostAction = (BlogPostAPIRequest | GetAllBlogPosts | GetOneBlogPost | CreateBlogPost | EditBblogPost | DeleteBlogPost | ToggleBlogPostLike | SetBlogPost | ClearBlogPost | SetBlogPostError | ClearBlogPostError);
