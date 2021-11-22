@@ -4,21 +4,21 @@ import { Button, Card, Grid, Segment } from "semantic-ui-react";
 import { useRouter } from "next/router";
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
-import { BlogPostActions } from "../../../../redux/actions/blogPostActions";
+import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additonal components //
-import { AdminLayout } from '../../../../components/admin/AdminLayout';
-import { BlogViewModal } from "../../../../components/admin/modals/BlogViewModal";
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { BlogViewModal } from "@/components/admin/modals/BlogViewModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 // types //
 import type { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import type { Dispatch } from "redux";
-import type { IGeneralState } from '../../../../redux/_types/generalTypes';
-import type { BlogPostAction } from '../../../../redux/_types/blog_posts/actionTypes';
+import type { IGeneralState } from '@/redux/_types/generalTypes';
+import type { BlogPostAction } from '@/redux/_types/blog_posts/actionTypes';
 // styles //
-import styles from "../../../../styles/admin/AdminPostsIndex.module.css";
+import styles from "@/styles/admin/AdminPostsIndex.module.css";
 // helpers //
-import { verifyAdminToken } from "../../../../components/_helpers/adminComponentHelpers";
-import { capitalizeString, formatTimeString, trimStringToSpecificLength } from "../../../../components/_helpers/displayHelpers";
+import { verifyAdminToken } from "@/components/_helpers/adminComponentHelpers";
+import { capitalizeString, formatTimeString, trimStringToSpecificLength } from "@/components/_helpers/displayHelpers";
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
   const token = context.req["signedCookies"].JWTToken;
@@ -132,9 +132,9 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
               return (
                 <Card key={ blogPostData._id } data-test-id="dash-blog-post-card">
                   <Card.Content>
-                    <Card.Header data-test-id="dash-blog-post-card_Title">{ blogPostData.title }</Card.Header>
+                    <Card.Header data-test-id="dash-blog-post-card-title">{ blogPostData.title }</Card.Header>
                     <Card.Meta data-test-id="dash-blog-post-card-created">Created at: { formatTimeString(blogPostData.createdAt, { yearMonth: true }) }</Card.Meta>
-                    <Card.Description data-test-id="dash-blog-post-card-created">
+                    <Card.Description data-test-id="dash-blog-post-card-content">
                       <div dangerouslySetInnerHTML={{ __html: trimStringToSpecificLength(blogPostData.content, 200) }} />
                     </Card.Description>
                   </Card.Content>

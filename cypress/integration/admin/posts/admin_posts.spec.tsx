@@ -2,17 +2,16 @@
 /// <reference types="cypress-pipe" />
 
 import { expect } from "chai";
-import { getTestElement, closestBySelector } from "../../../helpers/generalHelpers";
-//
+// types 
 import type { IAuthState } from "@/redux/_types/auth/dataTypes";
-import type { BlogPostData, IBlogPostState } from "@/redux/_types/blog_posts/dataTypes";
+import type { IBlogPostState } from "@/redux/_types/blog_posts/dataTypes";
 // helpers //
 import { checkEmptyObjVals } from "@/redux/_helpers/dataHelpers";
 import { capitalizeString, formatTimeString } from "../../../../components/_helpers/displayHelpers";
 
 
 describe("Admin dashboard navigation tets", () => {
-  const adminEmail: string = "admin@email.com";
+  const adminEmail: string = "owner@email.com";
   const adminPass: string = "password";
   let authState: IAuthState;
   let blogPostsState: IBlogPostState;
@@ -21,12 +20,12 @@ describe("Admin dashboard navigation tets", () => {
   beforeEach(() => {
     cy.visit("http://localhost:3000/login");
     //
-    getTestElement("Login_Page_Email_Input").type(adminEmail);
-    getTestElement("Login_Page_Password_Input").type(adminPass);
+    cy.getByDataAttr("login-page-email-input").type(adminEmail);
+    cy.getByDataAttr("login-page-password-input").type(adminPass);
     // 
-    getTestElement("Login_Page_Login_Btn").click();
+    cy.getByDataAttr("login-page-login-btn").click();
     //
-    getTestElement("Admin_Main_Page").should("be.visible");
+    cy.getByDataAttr("admin-main-page").should("be.visible");
     //
     cy.window().its("store").invoke("getState").then((state) => {
       if (!state.authState.currentUser || !state.authState.isAdmin) throw new Error("Login error in <before> hook");
@@ -39,7 +38,7 @@ describe("Admin dashboard navigation tets", () => {
 
   it("Should correctly render all components at the <AdminBlogPosts> page", () => {
     //
-    getTestElement("Admin_Blog_Posts_Page").should("be.visible");
+    cy.getByDataAttr("dash-blog-posts-page").should("be.visible");
     cy.wait(5000);
     // assert correct state //
     cy.window().its("store").invoke("getState")
@@ -52,30 +51,30 @@ describe("Admin dashboard navigation tets", () => {
         expect(status).to.equal(200);
         expect(loading).to.equal(false);
         expect(checkEmptyObjVals(currentBlogPost)).to.equal(true);
-        expect(blogPosts.length).to.be.lte(10);
+        expect(blogPosts.length).to.be.lte(100);
         expect(errorMessages).to.be.null;
         expect(error).to.be.null;
         //
       })
       .then(() => {
         const blogPostsLength = blogPostsState.blogPosts.length
-        getTestElement("Admin_Blog_Post_Card").should("have.length", blogPostsLength);
+        cy.getByDataAttr("dash-blog-post-card").should("have.length", blogPostsLength);
       })
       .then(() => {
         const { blogPosts } = blogPostsState;
-        getTestElement("Admin_Blog_Post_Card_Title").each((elem, index) => {
+        cy.getByDataAttr("dash-blog-post-card-title").each((elem, index) => {
           expect(elem.html()).to.equal(blogPosts[index].title);
         });
-        getTestElement("Admin_Blog_Post_Card_Created").each((elem, index) => {
+        cy.getByDataAttr("dash-blog-post-card-created").each((elem, index) => {
           const formattedTimeString: string = formatTimeString(blogPosts[index].createdAt, { yearMonth: true });
           const createdString: string = `Created at: ${formattedTimeString}`;
           expect(elem.html()).to.equal(createdString);
         });
-        getTestElement("Admin_Blog_Post_Card_Category").each((elem, index) => {
+        cy.getByDataAttr("dash-blog-post-card-category").each((elem, index) => {
           const categoryString: string = `Category: ${capitalizeString(blogPosts[index].category)}`;
           expect(elem.html()).to.equal(categoryString);
         });
-        getTestElement("Admin_Blog_Post_Card_Published").each((elem, index) => {
+        cy.getByDataAttr("dash-blog-post-card-published").each((elem, index) => {
           const publishedStatus = blogPosts[index].published ? "Yes" : "No";
           const publishedString: string = `Published: ${publishedStatus}`;
           expect(elem.html()).to.equal(publishedString);
@@ -83,18 +82,17 @@ describe("Admin dashboard navigation tets", () => {
       })
       .then(() => {
         const blogPostsLength = blogPostsState.blogPosts.length
-        getTestElement("Admin_Blog_Post_Card_View_Btn").should("have.length",  blogPostsLength);
+        cy.getByDataAttr("dash-blog-post-card-view-btn").should("have.length",  blogPostsLength);
       });
     // assert correct blog post card rendering //
   });
 
   it("Should correctly toggle the preview modal and open the queried blog post", () => {
     let blogPostsState: IBlogPostState;
-
     //
-    getTestElement("Admin_Blog_View_Modal").should("not.exist");
-    getTestElement("Admin_Blog_Post_Card_View_Btn").first().click();
-    //
+    cy.getByDataAttr("dash-blog-view-modal").should("not.exist");
+    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click();
+    // wait for store update - edit later //
     cy.wait(3000);
     // assert new state //
     cy.window().its("store").invoke("getState").then((state) => {
@@ -106,47 +104,47 @@ describe("Admin dashboard navigation tets", () => {
       expect(status).to.equal(200);
       expect(loading).to.equal(false);
       expect(currentBlogPost).to.eql(blogPosts[0]);
-      expect(blogPosts.length).to.be.lte(10);
+      expect(blogPosts.length).to.be.lte(100);
       expect(errorMessages).to.be.null;
       expect(error).to.be.null;
       //
     }).then(() => {
       // blog post modal should be open //
-      getTestElement("Admin_Blog_View_Modal").should("be.visible");
+      cy.getByDataAttr("blog-view-modal").should("be.visible");
       // ensure all buttons are present //
-      getTestElement("Blog_Modal_Close_Btn").should("be.visible").contains("Close");
-      getTestElement("Blog_Modal_Edit_Btn").should("be.visible").contains("Edit");
-      getTestElement("Blog_Modal_Publish_Btn").should("be.visible").contains("Publish");
-      getTestElement("Blog_Modal_Delete_Btn").should("be.visible").contains("Delete");
+      cy.getByDataAttr("blog-modal-close-btn").should("be.visible").contains("Close");
+      cy.getByDataAttr("blog-modal-edit-btn").should("be.visible").contains("Edit");
+      cy.getByDataAttr("blog-modal-publish-btn").should("be.visible").contains("Publish");
+      cy.getByDataAttr("blog-modal-delete-btn").should("be.visible").contains("Delete");
     }).then(() => {
       const { title, author, category } = blogPostsState.currentBlogPost;
       // ensure corect data rendered //
-      getTestElement("Blog_Modal_Title").contains(title);
+      cy.getByDataAttr("blog-modal-title").contains(title);
       //
-      getTestElement("Blog_Modal_Author")
+      cy.getByDataAttr("blog-modal-author")
         .contains("Author: ")
         .find("span").contains(author.name)
-      getTestElement("Blog_Modal_Category")
+      cy.getByDataAttr("blog-modal-category")
         .contains("Category: ")
         .find("span").contains(category);
     }).then(() => {
-      getTestElement("Blog_Modal_Close_Btn").click();
+      cy.getByDataAttr("blog-modal-close-btn").click();
       // modal should be close //
-      getTestElement("Admin_Blog_View_Modal").should("not.exist");
+      cy.getByDataAttr("blog-view-modal").should("not.exist");
     });
   });
 
-  it("Should correctly handle the <Delete> CANCEL functionality", () => {
-    getTestElement("Admin_Blog_Post_Card_View_Btn").first().click();
+  it.only("Should correctly handle the <Delete> CANCEL functionality", () => {
+    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click();
     // redux state should not change //
     cy.window().its("store").invoke("getState").then((state) => {
       expect(authState).to.eql(state.authState);
       expect(blogPostsState).to.eql(state.blogPostsState);
     });
     // confirm delete should be open //
-    const deleteModal = getTestElement("Confirm_Delete_Modal").should("exist").should("have.length", 1)
-    const cancelButton = getTestElement("Confirm_Delete_Modal_Cancel_Btn").should("exist").should("have.length", 1);
-    const delButton = getTestElement("Confirm_Delete_Modal_Del_Btn").should("exist").should("have.length", 1);
+    const deleteModal = cy.getByDataAttr("confirm-delete-modal").should("exist").and("have.length", 1)
+    const cancelButton = cy.getByDataAttr("confirm-delete-modal-cancel-btn").should("exist").and("have.length", 1);
+    const delButton = cy.getByDataAttr("confirm-delete-modal-del-btn").should("exist").and("have.length", 1);
     // should successfully cancel //
     // redux state should stay the same //
     cancelButton.click().then(() => {
@@ -163,17 +161,17 @@ describe("Admin dashboard navigation tets", () => {
 
   })
   it("Should correctly handle the <Delete> CONFIRM DELETE functionality", () => {
-    getTestElement("Admin_Blog_Post_Card_View_Btn").first().click();
+    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click();
     //
-    const blogPostViewModal = getTestElement("Admin_Blog_View_Modal").should("exist");
+    const blogPostViewModal = cy.getByDataAttr("blog-view-modal").should("exist");
     // redux state should not change //
     cy.window().its("store").invoke("getState").then((state) => {
       expect(authState).to.eql(state.authState);
       expect(blogPostsState).to.eql(state.blogPostsState);
     });
     // confirm delete should be open //
-    const deleteModal = getTestElement("Confirm_Delete_Modal").should("exist").should("have.length", 1)
-    const delButton = getTestElement("Confirm_Delete_Modal_Del_Btn").should("exist").should("have.length", 1);
+    const deleteModal = cy.getByDataAttr("confirm-delete-modal").should("exist").should("have.length", 1)
+    const delButton = cy.getByDataAttr("confirm-delete-modal-del-btn").should("exist").should("have.length", 1);
     // should successfully cancel //
     // redux auth state should stay the same //
     delButton.click().then(() => {
@@ -202,7 +200,7 @@ describe("Admin dashboard navigation tets", () => {
   // logout //
   /*
   afterEach(() => {
-    getTestElement("Admin_Main_Logout_Link").click();
+    cy.getByDataAttr("dash_Main_Logout_Link").click();
   });
   */
 });

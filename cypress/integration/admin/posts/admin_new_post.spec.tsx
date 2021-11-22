@@ -72,9 +72,9 @@ describe("Admin New Post page tests", () => {
     beforeEach(() => {
       cy.visit("/login")
         .then(() => {
-          cy.getByDataAttr("Login_Page_Email_Input").type(user.email);
-          cy.getByDataAttr("Login_Page_Password_Input").type("password");
-          cy.getByDataAttr("Login_Page_Login_Btn").click();
+          cy.getByDataAttr("login-page-email-input").type(user.email);
+          cy.getByDataAttr("login-page-password-input").type("password");
+          cy.getByDataAttr("login-page-login-btn").click();
           //
           cy.getByDataAttr("admin-main-page").should("exist");
           cy.wait(5000)
