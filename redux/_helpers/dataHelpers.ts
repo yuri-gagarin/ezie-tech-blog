@@ -1,5 +1,6 @@
 import { GeneralClientError } from "@/components/_helpers/errorHelpers";
-import type { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { CreateBlogPostRes } from "../_types/blog_posts/dataTypes";
 type AnyObj = {
   [key: string]: any;
 }
@@ -24,7 +25,14 @@ export const checkEmptyObjVals = (obj: AnyObj): boolean => {
 };
 
 export const processAxiosError = (error: any): { status: number; responseMsg: string; error: Error; errorMessages: string[] } => {
-  if (error instanceof GeneralClientError) {
+  if (error.isAxiosError) {
+    const { response } = error as AxiosError;
+    const { status } = response;
+    const { responseMsg, error: _error, errorMessages  } = response.data as CreateBlogPostRes;
+    return {
+      status, responseMsg, errorMessages, error: _error
+    };
+  } else if (error instanceof GeneralClientError) {
     return {
       status: 400,
       responseMsg: "Client Error",
@@ -46,7 +54,6 @@ export const processAxiosError = (error: any): { status: number; responseMsg: st
       };
     }
   } else {
-    console.log("here");
     return {
       status: 500,
       responseMsg: "Error",

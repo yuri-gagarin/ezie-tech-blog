@@ -95,10 +95,14 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     setPostFormState({ postTitle: title,  postContent: content, postCategory: category, postKeywords: keywords.join(",") });
   }, [ blogPostsState.currentBlogPost ]);
 
+  React.useEffect(() => {
+    console.log(error, errorMessages)
+  }, [ error, errorMessages ])
+
   return (
     <AdminLayout>
       <GenErrorModal 
-        open={ error }
+        open={ error ? true : false }
         handleErrorModalClose={ handleErrorDismiss }
         errorMessages={errorMessages ? errorMessages : [ "An error occured" ] }
         position="fixed-top"

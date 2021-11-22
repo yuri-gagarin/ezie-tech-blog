@@ -4,11 +4,13 @@ import { expect } from "chai";
 //
 import faker from "faker";
 //
+import type { StaticResponse } from "cypress/types/net-stubbing";
 import type { IGeneralState } from "@/redux/_types/generalTypes"
 import type { IAuthState } from "@/redux/_types/auth/dataTypes";
-import type { BlogPostData, CreateBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
+import type { BlogPostData, CreateBlogPostRes, ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { AdminData } from "@/redux/_types/users/dataTypes";
+import type { BlogPostClientData } from "@/server/src/_types/blog_posts/blogPostTypes";
 
 // helpers //
 import { deepCopyObject } from "@/components/_helpers/generalHelpers";
@@ -20,8 +22,10 @@ describe("Admin New Post page tests", () => {
   let appState: IGeneralState;
   let adminsArr: AdminData[];
   //
+  let newPostData: BlogPostClientData
   let newBlogPost: BlogPostData;
   let blogPostsArr: BlogPostData[];
+  let mockErrorResponse: ErrorBlogPostRes;
   //
   let adminJWTToken: string;
   let user: AdminData;
@@ -57,6 +61,11 @@ describe("Admin New Post page tests", () => {
     } catch (error) {
       throw error;
     }
+  });
+
+  before(() => {
+    newPostData = generateMockPostData({ name: user.firstName, authorId: user._id });
+    mockErrorResponse = { responseMsg: "Error Occured", error: new Error("Oooooops"), errorMessages: [ "An error occured" ]};
   });
 
   describe("Admin new blog posts page - normal render", () => {
@@ -221,7 +230,7 @@ describe("Admin New Post page tests", () => {
       });
     });
 
-    it.only("Should correctly handle all data, CORRECTLY handle creation of a <BlogPost>, AND update state", () => {
+    it("Should correctly handle all data, CORRECTLY handle creation of a <BlogPost>, AND update state", () => {
       // get current user info //
       let authState: IAuthState;
       cy.intercept({ method: "POST", url: "/api/posts"}).as("createBlogPost");
@@ -230,7 +239,6 @@ describe("Admin New Post page tests", () => {
         authState = { ...state.authState, currentUser: { ...state.authState.currentUser }};
       })
       .then(() => {
-        const newPostData = generateMockPostData({ name: authState.currentUser.firstName, authorId: authState.currentUser._id });
         // type in values //
         cy.getByDataAttr("post-form-title-input").type(newPostData.title);
         cy.getByDataAttr("post-form-category-input").click().then((dropdown) => dropdown.find(".item").toArray()[0].click());
@@ -279,6 +287,66 @@ describe("Admin New Post page tests", () => {
           expect(errorMessages).to.be.null;
           // created blog post should be in new loaded state //
           expect(blogPost).to.be.an("object");
+        });
+      });
+    });
+
+    // with simulated error response //
+    it.only("Should correctly handle all data, CORRECTLY handle creation of a <BlogPost>, AND update state", () => {
+      const errorResponse: StaticResponse = { statusCode: 400, body: mockErrorResponse };
+      // get current user info //
+      let authState: IAuthState;
+      cy.intercept({ method: "POST", url: "/api/posts"}, errorResponse).as("createBlogPost");
+      //
+      cy.window().its("store").invoke("getState").then((state) => {
+        authState = { ...state.authState, currentUser: { ...state.authState.currentUser }};
+      })
+      .then(() => {
+        // type in values //
+        cy.getByDataAttr("post-form-title-input").type(newPostData.title);
+        cy.getByDataAttr("post-form-category-input").click().then((dropdown) => dropdown.find(".item").toArray()[0].click());
+        cy.getByDataAttr("post-form-keywords-input").type(newPostData.keywords.join(","));
+        cy.getByDataAttr("post-form-content-input").type(newPostData.content);
+        //
+      })
+      .then(() => {
+        cy.getByDataAttr("post-save-btn").click();
+        return cy.wait("@createBlogPost")
+      })
+      .then((interception) => {
+        const { responseMsg, createdBlogPost, error, errorMessages } = interception.response.body as CreateBlogPostRes;
+        expect(responseMsg).to.be.a("string");
+        expect(error).to.be.an("object")
+        expect(errorMessages).to.be.an("array");
+        //
+        expect(createdBlogPost).to.be.undefined;
+      })
+      .then(() => {
+        // url should not change //
+        cy.url().should("eql", "http://localhost:3000/admin/dashboard/posts/new");
+        cy.getByDataAttr("admin-post-form").should("exist").and("be.visible");
+        cy.getByDataAttr("post-preview").should("exist").and("be.visible");
+        cy.getByDataAttr("post-nav-main").should("exist").and("be.visible");
+        // data in form and preview should not change //
+        cy.getByDataAttr("post-form-title-input").should("have.value", newPostData.title);
+        cy.getByDataAttr("post-form-keywords-input").should("have.value", newPostData.keywords.join(","));
+        cy.getByDataAttr("post-form-category-input").find(".divider").contains("Informational");
+        //cy.getByDataAttr("post-form-content-input").should("have.value", newPostData.content);
+      })
+      .then(() => {
+        // redux state shoul change to reflect a new blog post model //
+        cy.wait(4000)
+        cy.window().its("store").invoke("getState").then((state) => {
+          const { blogPostsState: oldBlogPostsState } = appState;
+          const { status, responseMsg, loading, blogPosts, currentBlogPost, error, errorMessages } = state.blogPostsState;
+          //
+          expect(status).to.equal(400);
+          expect(responseMsg).to.be.a("string");
+          expect(loading).to.equal(false);
+          expect(blogPosts.length).to.equal(0); // should be no api call to fetch updated posts //
+          expect(checkEmptyObjVals(currentBlogPost)).to.equal(true);
+          expect(error).to.not.be.null;
+          expect(errorMessages).to.eql(mockErrorResponse.errorMessages);
         });
       });
     });
