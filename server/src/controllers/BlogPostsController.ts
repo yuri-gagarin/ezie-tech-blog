@@ -229,9 +229,6 @@ export default class BlogPostsController extends BasicController implements ICRU
     
     if (loggedIn && isAdmin) {
       blogPosts = await BlogPost.find({}).byPublishedStatus(publishedStatus).byCategory(category).sort({ createdAt }).limit(parseInt(limit));
-      console.log(233)
-      console.log(req.query);
-      console.log(blogPosts.length)
     } else {
       // can only see published posts //
       if (publishedStatus === "published") {

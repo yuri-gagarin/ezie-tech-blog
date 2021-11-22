@@ -1,11 +1,12 @@
 import axios from "axios";
 // types 
-import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import type { AxiosRequestConfig, AxiosResponse,  } from "axios";
 import type { Dispatch } from "redux";
 import type { BlogPostAction,  GetAllBlogPosts, SetBlogPost, CreateBlogPost, ToggleBlogPostLike, ClearBlogPost, DeleteBlogPost, SetBlogPostError, ClearBlogPostError } from "../_types/blog_posts/actionTypes";
 import type { 
   IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts, DeleteBlogPostRes, EditBlogPostRes,
-  DeleteBlogPostParams
+  DeleteBlogPostParams,
+  AuthOpts
 } from "../_types/blog_posts/dataTypes";
 // custom client errors //
 import { ClientAuthError, GeneralClientError } from "@/components/_helpers/errorHelpers";
@@ -26,10 +27,10 @@ export class BlogPostActions {
     dispatch({ type: "ClearBlogPost", payload: { blogPost } });
   }
 
-  static handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts): Promise<GetAllBlogPosts> => {
+  static handleFetchBlogPosts = async (dispatch: Dispatch<BlogPostAction>, opts?: FetchBlogPostsOpts, auth?: AuthOpts ): Promise<GetAllBlogPosts> => {
     const fetchParams = opts ? { ...opts } : {};
     const baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL ? process.env.NEXT_PUBLIC_SERVER_BASE_URL : "";
-    const headers = opts && opts.JWTToken ? { Authorization: opts.JWTToken } : null;
+    const headers = auth ? { Authorization: auth.JWTToken } : null;
     const reqOpts: AxiosRequestConfig = {
       method: "GET",
       url: `${baseURL}/api/posts`,
@@ -45,7 +46,6 @@ export class BlogPostActions {
       return dispatch({ type: "GetBlogPosts", payload: { status, responseMsg, blogPosts, loading: false } });
     } catch (error) {
       // TODO //
-      console.log(48);
       console.log(error);
       console.log(error.response)
       throw error;

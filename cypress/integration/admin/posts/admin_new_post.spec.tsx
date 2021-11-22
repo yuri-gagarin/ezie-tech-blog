@@ -1,15 +1,12 @@
 /// <reference types="cypress" />
 /// <reference types="cypress-pipe" />
-
 import { expect } from "chai";
-import { getTestElement, closestBySelector } from "../../../helpers/generalHelpers";
 //
 import faker from "faker";
 //
 import type { IGeneralState } from "@/redux/_types/generalTypes"
 import type { IAuthState } from "@/redux/_types/auth/dataTypes";
-import type { BlogPostData, IBlogPostState } from "@/redux/_types/blog_posts/dataTypes";
-import type { IBlogPost } from "@/server/src/models/BlogPost";
+import type { BlogPostData, CreateBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { AdminData } from "@/redux/_types/users/dataTypes";
 
@@ -22,10 +19,16 @@ import { generateMockPostData } from "@/server/spec/hepers/testHelpers";
 describe("Admin New Post page tests", () => {
   let appState: IGeneralState;
   let adminsArr: AdminData[];
+  //
+  let newBlogPost: BlogPostData;
   let blogPostsArr: BlogPostData[];
+  //
   let adminJWTToken: string;
   let user: AdminData;
   //
+  let adminIds: string[];
+  let blogPostIds: string[];
+
   const dropdownVals: string[] = ["informational", "beginner", "intermediate", "advanced"];
 
   before(() => {
@@ -37,10 +40,12 @@ describe("Admin New Post page tests", () => {
         .then(({ admins }) => {
           adminsArr = admins;
           user = adminsArr[0];
+          adminIds = admins.map((adminData) => adminData._id);
           return cy.task<{ blogPosts: BlogPostData[]}>("seedBlogPosts", { number: 10, publishedStatus: "published", user })
         })
         .then(({ blogPosts}) => { 
           blogPostsArr = blogPosts;
+          blogPostIds = blogPostsArr.map((blogPostData) => blogPostData._id);
           const { email } = user;
           return cy.request<LoginRes>("POST", "api/login",  { email, password: "password" })
         })
@@ -219,6 +224,8 @@ describe("Admin New Post page tests", () => {
     it.only("Should correctly handle all data, CORRECTLY handle creation of a <BlogPost>, AND update state", () => {
       // get current user info //
       let authState: IAuthState;
+      cy.intercept({ method: "POST", url: "/api/posts"}).as("createBlogPost");
+      //
       cy.window().its("store").invoke("getState").then((state) => {
         authState = { ...state.authState, currentUser: { ...state.authState.currentUser }};
       })
@@ -233,6 +240,17 @@ describe("Admin New Post page tests", () => {
       })
       .then(() => {
         cy.getByDataAttr("post-save-btn").click();
+        return cy.wait("@createBlogPost")
+      })
+      .then((interception) => {
+        const { responseMsg, createdBlogPost, error, errorMessages } = interception.response.body as CreateBlogPostRes;
+        expect(responseMsg).to.be.a("string");
+        expect(createdBlogPost).to.be.an("object");
+        expect(error).to.be.undefined;
+        expect(errorMessages).to.be.undefined;
+        // needed for cleanup //
+        newBlogPost = createdBlogPost
+        blogPostIds.push(createdBlogPost._id);
       })
       .then(() => {
         // url should go back to all posts //
@@ -250,8 +268,8 @@ describe("Admin New Post page tests", () => {
         cy.window().its("store").invoke("getState").then((state) => {
           const { blogPostsState: oldBlogPostsState } = appState;
           const { status, responseMsg, loading, blogPosts, currentBlogPost, error, errorMessages } = state.blogPostsState;
-          console.log(oldBlogPostsState.blogPosts.length)
-          console.log(blogPosts.length)
+          const blogPost = blogPosts.filter((postData) => postData._id === newBlogPost._id)[0];
+          //
           expect(status).to.equal(200);
           expect(responseMsg).to.be.a("string");
           expect(loading).to.equal(false);
@@ -259,24 +277,23 @@ describe("Admin New Post page tests", () => {
           expect(checkEmptyObjVals(currentBlogPost)).to.equal(true);
           expect(error).to.be.null;
           expect(errorMessages).to.be.null;
+          // created blog post should be in new loaded state //
+          expect(blogPost).to.be.an("object");
         });
       });
     });
 
   });
 
-  /*
-  after(() => {
-    const ids: string[] = adminsArr.map(adminData => adminData._id);
-    const blogPostIds: string[] = blogPostsArr.map(blogPostData => blogPostData._id);
+  after(() => {  
     try {
-      cy.task("deleteAdminModels", ids)
+      cy.task("deleteAdminModels", adminIds)
         .then(() => {
           return cy.task("deleteBlogPostModels", blogPostIds)
         });
     } catch (error) {
       throw (error);
     }
+  
   });
-  */
 })

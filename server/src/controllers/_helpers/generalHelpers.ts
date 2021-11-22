@@ -98,10 +98,6 @@ export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
               if (!Types.ObjectId.isValid(req.query[queryKey] as string)) {
                 return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Query param <${queryKey}> is not a valid <ObjectID>.`]);
               }
-            } else if (allowedQueryParams[queryKey] === "jsonwebtoken") {
-              if (!jwt.decode(req.query[queryKey] as string, { complete: true })) {
-                return respondWithNoModelIdError(res, [ `Invalid JWT token passed into query params` ]);
-              }
             } else {
               if(!/^[a-zA-Z]+$/.test(req.query[queryKey] as string)) {
                 return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <string> with only 'A-Z' chars. Received: ${req.query[queryKey]}` ]);

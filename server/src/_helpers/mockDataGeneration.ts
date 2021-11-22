@@ -3,7 +3,7 @@ import faker from "faker";
 // models //
 import Admin from "../models/Admin";
 import User from "../models/User";
-import BlogPost from "../models/BlogPost";
+import BlogPost, { IBlogPost } from "../models/BlogPost";
 import Project from "../models/Project";
 // helpers //
 import { randomIntFromInterval, setRandBoolean } from "./generalHelpers";
@@ -26,6 +26,7 @@ const pullRandomValsFromArray = <T>(array: T[]): T[] => {
 
 export const generateMockBlogPosts = async ({ number, publishedStatus, user }: { number?: number; publishedStatus?: "published" | "unpublished"; user?: (IUser | IAdmin ); }) => {
   const numOfBlogPosts = number ? number : 10;
+  const blogPosts: IBlogPost[] = [];
   for (let i = 0; i < numOfBlogPosts; i++) {
     const categories = ["informational", "beginner", "intermediate", "advanced"];
     let keywords = ["programming", "tech", "help", "javascript", "typescript", "nodejs", "html", "css", "react", "react-native", "mobile", "desktop", "ruby", "python", "next", "gatsby", "mongodb", "sql" ];
@@ -40,7 +41,7 @@ export const generateMockBlogPosts = async ({ number, publishedStatus, user }: {
      
       else {
         const { _id: authorId, firstName: name } = randomUser;
-        await BlogPost.create({ 
+        const post = await BlogPost.create({ 
           title: faker.lorem.words(),
           author: { authorId, name },
           content: faker.lorem.paragraphs(ranNum),
@@ -50,17 +51,19 @@ export const generateMockBlogPosts = async ({ number, publishedStatus, user }: {
           category: categories[randomIntFromInterval(0, categories.length - 1)],
           published
         });
+        blogPosts.push(post);
       }
     } catch (error) {
       console.log(error);
       process.exit(1);
     }
   }
+  return blogPosts;
 };
 
 export const generateMockProjects = async (num?: number, opts?: { published?: boolean, creator?: string; }): Promise<number> => {
   const numToGenerate: number = num ? num : 1;
-
+  
   for (let i = 0; i < num; i++) {
     const newProject: IProject = new Project({
       title: faker.lorem.words(randomIntFromInterval(1, 4)),
@@ -92,8 +95,9 @@ export const generateMockProjects = async (num?: number, opts?: { published?: bo
   return numToGenerate;
 };
 
-export const generateMockAdmins = async (num?: number, role?: "admin" | "owner"): Promise<void> => {
+export const generateMockAdmins = async (num?: number, role?: "admin" | "owner"): Promise<IAdmin[]> => {
   const numToGenerate: number = num ? num : 10;
+  const admins: IAdmin[] = [];
   for (let i = 0; i < numToGenerate; i++) {
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
@@ -107,12 +111,13 @@ export const generateMockAdmins = async (num?: number, role?: "admin" | "owner")
       confirmed: randomIntFromInterval(0, 1) ? true : false
     });
     try {
-      await admin.save();
+      admins.push(await admin.save());
     } catch (error) {
       console.log(error);
       process.exit(1);
     }
   } 
+  return admins;
 }
 export const generateMockUsers = async ({ number, confirmed, type }: { number?: number; confirmed?: boolean; type?: "READER" | "CONTRIBUTOR" }): Promise<void> => {
   const numToGenerate: number = number ? number : 10;

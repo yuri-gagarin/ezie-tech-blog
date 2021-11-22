@@ -82,10 +82,12 @@ export type ErrorBlogPostRes = {
 export type FetchBlogPostsOpts = {
   category?: "all" | "informational" | "beginner" | "intermediate" | "advanced";
   createdAt?: "desc" | "asc";
-  publishedStatus?: "published" | "unpublished";
+  publishedStatus?: "published" | "unpublished" | "all";
   limit?: number;
+};
+export type AuthOpts = {
   JWTToken: string;
-}
+};
 
 // action handlers method types //
 export type DeleteBlogPostParams = {

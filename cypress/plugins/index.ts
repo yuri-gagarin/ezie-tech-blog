@@ -44,8 +44,7 @@ module.exports = (on, config) => {
     },
     async seedAdmins({ number, role }: { number?: number; role?: "admin" | "owner"; }): Promise<{ admins: IAdmin[] }> {
       try {
-        await generateMockAdmins(number, role);
-        const admins: IAdmin[] = await Admin.find({});
+        const admins = await generateMockAdmins(number, role);
         return { admins };
       } catch (error) {
         throw error;
@@ -53,8 +52,7 @@ module.exports = (on, config) => {
     },
     async seedBlogPosts({ number, publishedStatus, user }: { number?: number; publishedStatus?: "published" | "unpublished"; user?: IUser | IAdmin; }): Promise<{ blogPosts: IBlogPost[] }> {
       try {
-        await generateMockBlogPosts({ number, publishedStatus, user });
-        const blogPosts: IBlogPost[] = await BlogPost.find({});
+        const blogPosts = await generateMockBlogPosts({ number, publishedStatus, user });
         return { blogPosts };
       } catch (error) {
         throw error;

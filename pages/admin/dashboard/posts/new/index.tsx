@@ -95,11 +95,6 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     setPostFormState({ postTitle: title,  postContent: content, postCategory: category, postKeywords: keywords.join(",") });
   }, [ blogPostsState.currentBlogPost ]);
 
-  React.useEffect(() => {
-    console.log(blogPostsState);
-  }, [ blogPostsState ]);
-
-
   return (
     <AdminLayout>
       <GenErrorModal 
