@@ -82,12 +82,15 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
   };
   // 
   const triggerBlogPostDelete = async (): Promise<void> => {
+    console.log("triggered delete");
     setModalState((s) => ({ ...s, confirmDeleteModalOpen: true }));
   };
   const cancelBlogPostDelete = (): void => {
+    console.log("canceled delete");
     setModalState((s) => ({ ...s, confirmDeleteModalOpen: false }));
   };
   const handleDeleteBlogPost = async (): Promise<any> => {
+    console.log("confirmed delete");
     try {
       const { _id: modelId } = currentBlogPost;
       const {authToken: JWTToken } = authState;

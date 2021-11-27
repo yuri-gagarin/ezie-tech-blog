@@ -23,7 +23,12 @@ const pullRandomValsFromArray = <T>(array: T[]): T[] => {
     .filter((val) => val !== null);
   return returnArr;
 };
-
+const setRandomUser = async (): Promise<IUser | IAdmin | null>=> {
+  let user: IUser | IAdmin | null = await User.findOne({});
+  if (user) return user;
+  else return await Admin.findOne({});
+  
+}
 export const generateMockBlogPosts = async ({ number, publishedStatus, user }: { number?: number; publishedStatus?: "published" | "unpublished"; user?: (IUser | IAdmin ); }) => {
   const numOfBlogPosts = number ? number : 10;
   const blogPosts: IBlogPost[] = [];
@@ -32,8 +37,9 @@ export const generateMockBlogPosts = async ({ number, publishedStatus, user }: {
     let keywords = ["programming", "tech", "help", "javascript", "typescript", "nodejs", "html", "css", "react", "react-native", "mobile", "desktop", "ruby", "python", "next", "gatsby", "mongodb", "sql" ];
     const ranNum: number = randomIntFromInterval(1, 20);
     try {
-      const randomUser: IUser | IAdmin = user ? user : await User.findOne({}).limit(1);
       let published: boolean;
+      let randomUser: IUser | IAdmin | null = user ? user : await setRandomUser();
+      //
       if (publishedStatus) published = publishedStatus === "published" ? true : false;
       else published = randomIntFromInterval(0, 1) ? true : false
 
