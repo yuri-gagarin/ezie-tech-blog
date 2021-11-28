@@ -39,6 +39,10 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
   const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
     updateContent(e.currentTarget.value);
   };
+
+  React.useEffect(() => {
+    console.log(postFormState);
+  },  [postFormState])
   
   return (
     <Form className={ styles.adminPostForm } data-test-id="admin-post-form">
@@ -56,7 +60,7 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
       </Form.Field>
       <Form.Field>
         <label>Category</label>
-        <Dropdown defaultValue={ postFormState.postCategory ? postFormState.postCategory : null } clearable options={dropdownVals } selection  placeholder="select category" onChange={ handleCategoryChange } data-test-id="post-form-category-input" />
+        <Dropdown value={ postFormState.postCategory ? postFormState.postCategory : null } clearable options={dropdownVals } selection  placeholder="select category" onChange={ handleCategoryChange } data-test-id="post-form-category-input" />
       </Form.Field>
       <Form.Field>
         <label>Content:</label>

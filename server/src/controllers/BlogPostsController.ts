@@ -22,6 +22,8 @@ export default class BlogPostsController extends BasicController implements ICRU
     const user = req.user as IUser | IAdmin | null;
     // check for a user and admin //
     let blogPosts: IBlogPost[];
+    console.log("called");
+    console.log(req.user);
     try {
       if (objectIsEmtpy(req.query)) {
         return this.processGetAllDefault(res);

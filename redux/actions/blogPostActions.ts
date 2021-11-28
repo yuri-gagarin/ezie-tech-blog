@@ -46,8 +46,6 @@ export class BlogPostActions {
       return dispatch({ type: "GetBlogPosts", payload: { status, responseMsg, blogPosts, loading: false } });
     } catch (error) {
       // TODO //
-      console.log(error);
-      console.log(error.response)
       throw error;
     }
   }

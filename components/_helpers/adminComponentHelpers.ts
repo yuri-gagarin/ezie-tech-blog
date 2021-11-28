@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { GetServerSidePropsResult } from "next";
+
 export const verifyAdminToken = async (JWTToken: string): Promise<boolean> => {
   if (!JWTToken) return false;
 
