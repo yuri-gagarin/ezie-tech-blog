@@ -46,7 +46,72 @@ describe("Admin Edit Post page tests", () => {
       });
   });
 
-  it("Should correctly navigate to <Edit> form, render, and correctly set local state", () => {
+  it("Should render correct components", () => {
+    cy.getByDataAttr("post-save-btn").should("be.visible").contains("Save");
+    cy.getByDataAttr("post-cancel-btn").should("be.visible").contains("Cancel");
+    //
+    cy.getByDataAttr("admin-post-form").should("exist").and("be.visible");
+    cy.getByDataAttr("post-preview").should("exist").and("be.visible");
+  });
 
-  })
+  // empty state data render tests //
+  it("Should set correct default values in the input and preview", () => {
+    // form //
+    // form default values //
+    cy.getByDataAttr("post-form-title-input")
+      .should("be.visible").and("have.value", "")
+    cy.getByDataAttr("post-form-keywords-input")
+      .should("be.visible").and("have.value", "")
+    // category dropdown //
+    cy.getByDataAttr("post-form-category-input")
+      .should("be.visible").and("have.value","");
+    // category dropdown values //
+    cy.getByDataAttr("post-form-category-input").click()
+      .then((dropdown) => {
+        return dropdown.find(".item");
+      })
+      .then((dropdownItems) => {
+        expect(dropdownItems.length).to.equal(4);
+        //
+        dropdownItems.toArray().forEach((dropdownItem, index) => {
+          expect(dropdownItem.firstChild.textContent).to.equal(capitalizeString(dropdownVals[index]));
+        })
+      });
+    // content input // 
+    cy.getByDataAttr("post-form-content-input")
+      .should("be.visible").and("have.value", "");
+    
+    // post preview component ///
+    // post preview values //
+    cy.getByDataAttr("post-title-preview")
+      .should("be.visible")
+      .find("span")
+      .then((spanEls) => {
+        expect(spanEls.length).to.equal(1);
+        expect(spanEls.first().html()).to.equal("Title:")
+      });
+    cy.getByDataAttr("post-author-preview")
+      .should("be.visible")
+      .find("span")
+      .then((spanEls) => {
+        expect(spanEls.length).to.equal(2);
+        expect(spanEls.first().html()).to.equal("Author:")
+      });
+    cy.getByDataAttr("post-category-preview")
+      .should("be.visible")
+      .find("span")
+      .then((spanEls) => {
+        expect(spanEls.length).to.equal(1);
+        expect(spanEls.first().html()).to.equal("Category:")
+      });
+      cy.getByDataAttr("post-keywords-preview")
+        .should("be.visible")
+        .find("span")
+        .then((spanEls) => {
+          expect(spanEls.length).to.equal(1);
+          expect(spanEls.first().html()).to.equal("Keywords:")
+        });
+   
+  });
+
 })
