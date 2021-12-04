@@ -8,12 +8,14 @@ import type { IBlogPostState, IGeneralState } from "@/redux/_types/generalTypes"
 import { deepCopyObject } from "@/components/_helpers/generalHelpers";
 import { checkEmptyObjVals } from "@/redux/_helpers/dataHelpers";
 import { capitalizeString, formatTimeString } from "@/components/_helpers/displayHelpers";
+import { BlogPostData } from "@/redux/_types/blog_posts/dataTypes";
 
 describe("Admin Edit Post page tests", () => {
   const adminEmail: string = "owner@email.com";
   const adminPass: string = "password";
   //
   let blogPostsState: IBlogPostState;
+  let currentBlogPost: BlogPostData;
   let appState: IGeneralState;
 
   // login and navigate to dash //
@@ -41,6 +43,7 @@ describe("Admin Edit Post page tests", () => {
         cy.window().its("store").invoke("getState").its("blogPostsState").its("blogPosts").should("have.length.above", 0);
         cy.window().its("store").invoke("getState").then((state) => {
           appState = deepCopyObject(state);
+          currentBlogPost = { ...state.blogPostsState.blogPosts[0] };
         });
           
       });
@@ -55,6 +58,11 @@ describe("Admin Edit Post page tests", () => {
     //
     cy.getByDataAttr("admin-post-form").should("exist").and("be.visible");
     cy.getByDataAttr("post-preview").should("exist").and("be.visible");
+    // assert correct values //
+    cy.getByDataAttr("post-form-title-input").should("be.visible").and("have.value", currentBlogPost.title);
+    cy.getByDataAttr("post-form-keywords-input").should("be.visible").and("have.value", currentBlogPost.keywords.join(","));
+    // category dropdown //
+    cy.getByDataAttr("post-form-category-input").find(".divider").should("be.visible").and("contain", capitalizeString(currentBlogPost.category));
   });
 
   /*
