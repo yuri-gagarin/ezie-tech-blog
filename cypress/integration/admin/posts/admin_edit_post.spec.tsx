@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 /// <reference types="cypress-pipe" />
-
+//
 import { expect } from "chai";
-// types 
+// types //
 import type { IBlogPostState, IGeneralState } from "@/redux/_types/generalTypes";
 // helpers //
 import { deepCopyObject } from "@/components/_helpers/generalHelpers";
@@ -47,6 +47,9 @@ describe("Admin Edit Post page tests", () => {
   });
 
   it("Should render correct components", () => {
+    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click(); 
+    cy.getByDataAttr("blog-modal-edit-btn").click();
+    //
     cy.getByDataAttr("post-save-btn").should("be.visible").contains("Save");
     cy.getByDataAttr("post-cancel-btn").should("be.visible").contains("Cancel");
     //
@@ -54,6 +57,7 @@ describe("Admin Edit Post page tests", () => {
     cy.getByDataAttr("post-preview").should("exist").and("be.visible");
   });
 
+  /*
   // empty state data render tests //
   it("Should set correct default values in the input and preview", () => {
     // form //
@@ -113,5 +117,6 @@ describe("Admin Edit Post page tests", () => {
         });
    
   });
+  */
 
 })
