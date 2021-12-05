@@ -40,10 +40,6 @@ export const PostForm: React.FunctionComponent<IPostFormProps> = ({ updateTitle,
     updateContent(e.currentTarget.value);
   };
 
-  React.useEffect(() => {
-    console.log(postFormState);
-  },  [postFormState])
-  
   return (
     <Form className={ styles.adminPostForm } data-test-id="admin-post-form">
       <Form.Field>

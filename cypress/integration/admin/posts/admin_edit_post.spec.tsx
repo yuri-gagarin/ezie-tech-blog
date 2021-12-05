@@ -2,13 +2,15 @@
 /// <reference types="cypress-pipe" />
 //
 import { expect } from "chai";
+import faker from "faker";
 // types //
 import type { IBlogPostState, IGeneralState } from "@/redux/_types/generalTypes";
 // helpers //
 import { deepCopyObject } from "@/components/_helpers/generalHelpers";
 import { checkEmptyObjVals } from "@/redux/_helpers/dataHelpers";
 import { capitalizeString, formatTimeString } from "@/components/_helpers/displayHelpers";
-import { BlogPostData } from "@/redux/_types/blog_posts/dataTypes";
+import { BlogPostData, ErrorBlogPostRes } from "@/redux/_types/blog_posts/dataTypes";
+import { StaticResponse } from "cypress/types/net-stubbing";
 
 describe("Admin Edit Post page tests", () => {
   const adminEmail: string = "owner@email.com";
@@ -58,11 +60,30 @@ describe("Admin Edit Post page tests", () => {
     //
     cy.getByDataAttr("admin-post-form").should("exist").and("be.visible");
     cy.getByDataAttr("post-preview").should("exist").and("be.visible");
-    // assert correct values //
+
+    // assert correct values in form //
     cy.getByDataAttr("post-form-title-input").should("be.visible").and("have.value", currentBlogPost.title);
     cy.getByDataAttr("post-form-keywords-input").should("be.visible").and("have.value", currentBlogPost.keywords.join(","));
     // category dropdown //
     cy.getByDataAttr("post-form-category-input").find(".divider").should("be.visible").and("contain", capitalizeString(currentBlogPost.category));
+    // assert correct values in preview view //
+    cy.getByDataAttr("post-title-preview").find("span").last().should("contain", currentBlogPost.title);
+    cy.getByDataAttr("post-category-preview").find("span").last().should("contain", capitalizeString(currentBlogPost.category));
+    cy.getByDataAttr("post-keyword-preview-span").should("have.length", currentBlogPost.keywords.length);
+  });
+
+  it.only("Should correctly handle a <Save:Edit> error, show appropriate error responses", () => {
+    // intercept an error /./
+    const blogPostErrorResponse: ErrorBlogPostRes = { responseMsg: "Oppes", error: new Error("Oppes"), errorMessages: [ "An error occured" ]};
+    const errorResponse: StaticResponse = { statusCode: 400, body: blogPostErrorResponse }; 
+    cy.intercept({ method: "PATCH", url: "/api/posts/:postId" }, errorResponse).as("editBlogPost");
+    //
+    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click(); 
+    cy.getByDataAttr("blog-modal-edit-btn").click();
+    // 
+    cy.getByDataAttr("post-save-btn").should("be.visible").click();
+    cy.wait("@editBlogPost", { timeout: 10000 });
+
   });
 
   /*

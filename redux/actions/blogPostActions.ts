@@ -2,7 +2,7 @@ import axios from "axios";
 // types 
 import type { AxiosRequestConfig, AxiosResponse,  } from "axios";
 import type { Dispatch } from "redux";
-import type { BlogPostAction,  GetAllBlogPosts, SetBlogPost, CreateBlogPost, ToggleBlogPostLike, ClearBlogPost, DeleteBlogPost, SetBlogPostError, ClearBlogPostError } from "../_types/blog_posts/actionTypes";
+import type { BlogPostAction,  GetAllBlogPosts, SetBlogPost, CreateBlogPost, EditBblogPost, ToggleBlogPostLike, ClearBlogPost, DeleteBlogPost, SetBlogPostError, ClearBlogPostError } from "../_types/blog_posts/actionTypes";
 import type { 
   IBlogPostState, BlogPostData, BlogPostFormData, IndexBlogPostRes, CreateBlogPostRes, FetchBlogPostsOpts, DeleteBlogPostRes, EditBlogPostRes,
   DeleteBlogPostParams,
