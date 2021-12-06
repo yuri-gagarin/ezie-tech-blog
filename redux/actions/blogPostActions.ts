@@ -9,7 +9,7 @@ import type {
   AuthOpts
 } from "../_types/blog_posts/dataTypes";
 // custom client errors //
-import { ClientAuthError, GeneralClientError } from "@/components/_helpers/errorHelpers";
+import { ClientAuthError, ClientInputError, GeneralClientError } from "@/components/_helpers/errorHelpers";
 // helpers //
 import { generateEmptyBlogPost } from "../_helpers/mockData";
 import { processAxiosError } from "../_helpers/dataHelpers";
@@ -70,6 +70,33 @@ export class BlogPostActions {
       const updatedBlogPosts = [ createdBlogPost, ...state.blogPosts ];
       return dispatch({
         type: "CreateBlogPost", payload: { status, responseMsg, createdBlogPost, updatedBlogPosts, loading: false }
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static handleEditBlogPost = async ({ dispatch, JWTToken, blogPostFormData, postId, state }: { dispatch: Dispatch<BlogPostAction>; JWTToken: string; blogPostFormData: BlogPostFormData; state: IBlogPostState; postId: string }): Promise<EditBblogPost> => {
+    if (!JWTToken) throw new ClientAuthError();
+    if (postId) throw new ClientInputError("Client Error", [ "Could not resolve the Blog Post id to edit" ]);
+
+    const reqOpts: AxiosRequestConfig = {
+      method: "PATCH",
+      url: `/api/posts/${postId}`,
+      headers: { "Authorization": JWTToken }, 
+      data: {
+        blogPostData: blogPostFormData
+      }
+    };
+
+    dispatch({ type: "BlogPostsAPIRequest", payload: { responseMsg: "Loading", loading: true } });
+    try {
+      const res: AxiosResponse<EditBlogPostRes> = await axios(reqOpts);
+      const { status, data } = res;
+      const { responseMsg, editedBlogPost } = data;
+      const updatedBlogPosts: BlogPostData[] = state.blogPosts.map((postData) => postData._id === postId ? editedBlogPost : postData);
+      return dispatch({
+        type: "EditBlogPost", payload: { status, responseMsg, editedBlogPost, updatedBlogPosts, loading: false }
       });
     } catch (error) {
       throw error;

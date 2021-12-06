@@ -22,6 +22,7 @@ import { capitalizeString, setPostAuthor, checkEmptyObjVals } from '@/components
 import { IAuthState } from '@/redux/_types/auth/dataTypes';
 import { BlogPostFormData } from '@/redux/_types/blog_posts/dataTypes';
 import { ClientInputError } from '@/components/_helpers/errorHelpers';
+import { objectIsEmtpy } from '@/server/src/controllers/_helpers/generalHelpers';
 
 interface IAdminNewViewProps {
 
@@ -41,13 +42,13 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
   // redux hooks and state  //
   const dispatch = useDispatch();
   const { authState, blogPostsState } = useSelector((state: IGeneralState) => state);
-  const { error, errorMessages } = blogPostsState;
+  const { error, errorMessages, currentBlogPost } = blogPostsState;
   //
   // action handlers //
   const cancelNewPost = (): void => {
     router.push("/admin/dashboard/posts");
   };
-  const saveNewPost = async (): Promise<any> => {
+  const handleSavePost = async (): Promise<any> => {
     const { postTitle: title, postCategory: category, postContent: content } = postFormState;
     const { authToken: JWTToken, currentUser } = authState;
     const keywords: string[] = postFormState.postKeywords ? postFormState.postKeywords.split(",") : [];
@@ -61,8 +62,13 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
     if (valid) {
       try {
         const blogPostFormData: BlogPostFormData = { title, author, category, content, keywords };
-        await BlogPostActions.handleSaveNewBlogPost({ dispatch, JWTToken, blogPostFormData, state: blogPostsState });
-        router.push("/admin/dashboard/posts");
+        if (objectIsEmtpy(currentBlogPost)) {
+          await BlogPostActions.handleSaveNewBlogPost({ dispatch, JWTToken, blogPostFormData, state: blogPostsState });
+          router.push("/admin/dashboard/posts");
+        } else {
+          const { _id: postId } = currentBlogPost;
+          await BlogPostActions.handleEditBlogPost({ dispatch, JWTToken, blogPostFormData, postId, state: blogPostsState });
+        }   
       } catch (err) {
         return BlogPostActions.handleBlogPostError(dispatch, err);
       }
@@ -105,7 +111,7 @@ const AdminNewPost: React.FunctionComponent<IAdminNewViewProps> = (props): JSX.E
       />
       <Grid.Row className={ adminNewPostsStyle.navRow }>
         <AdminPostNav 
-          savePost={ saveNewPost }
+          savePost={ handleSavePost }
           cancelNewPost={ cancelNewPost } 
         />
       </Grid.Row>
