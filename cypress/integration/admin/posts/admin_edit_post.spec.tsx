@@ -83,7 +83,67 @@ describe("Admin Edit Post page tests", () => {
     // 
     cy.getByDataAttr("post-save-btn").should("be.visible").click();
     cy.wait("@editBlogPost", { timeout: 10000 });
+    // 
 
+  });
+
+  it.only("Should correctly handle all data, CORRECTLY handle creation of a <BlogPost>, AND update state", () => {
+    const errorResponse: StaticResponse = { statusCode: 400, body: mockErrorResponse };
+    // get current user info //
+    let authState: IAuthState;
+    cy.intercept({ method: "POST", url: "/api/posts"}, errorResponse).as("createBlogPost");
+    //
+    cy.window().its("store").invoke("getState").then((state) => {
+      authState = { ...state.authState, currentUser: { ...state.authState.currentUser }};
+    })
+    .then(() => {
+      // type in values //
+      cy.getByDataAttr("post-form-title-input").type(newPostData.title);
+      cy.getByDataAttr("post-form-category-input").click().then((dropdown) => dropdown.find(".item").toArray()[0].click());
+      cy.getByDataAttr("post-form-keywords-input").type(newPostData.keywords.join(","));
+      cy.getByDataAttr("post-form-content-input").type(newPostData.content);
+      //
+    })
+    .then(() => {
+      cy.getByDataAttr("post-save-btn").click();
+      return cy.wait("@createBlogPost")
+    })
+    .then((interception) => {
+      const { responseMsg, createdBlogPost, error, errorMessages } = interception.response.body as CreateBlogPostRes;
+      expect(responseMsg).to.be.a("string");
+      expect(error).to.be.an("object")
+      expect(errorMessages).to.be.an("array");
+      //
+      expect(createdBlogPost).to.be.undefined;
+    })
+    .then(() => {
+      // url should not change //
+      cy.url().should("eql", "http://localhost:3000/admin/dashboard/posts/new");
+      cy.getByDataAttr("admin-post-form").should("exist").and("be.visible");
+      cy.getByDataAttr("post-preview").should("exist").and("be.visible");
+      cy.getByDataAttr("post-nav-main").should("exist").and("be.visible");
+      // data in form and preview should not change //
+      cy.getByDataAttr("post-form-title-input").should("have.value", newPostData.title);
+      cy.getByDataAttr("post-form-keywords-input").should("have.value", newPostData.keywords.join(","));
+      cy.getByDataAttr("post-form-category-input").find(".divider").contains("Informational");
+      //cy.getByDataAttr("post-form-content-input").should("have.value", newPostData.content);
+    })
+    .then(() => {
+      // redux state shoul change to reflect a new blog post model //
+      cy.wait(4000)
+      cy.window().its("store").invoke("getState").then((state) => {
+        const { blogPostsState: oldBlogPostsState } = appState;
+        const { status, responseMsg, loading, blogPosts, currentBlogPost, error, errorMessages } = state.blogPostsState;
+        //
+        expect(status).to.equal(400);
+        expect(responseMsg).to.be.a("string");
+        expect(loading).to.equal(false);
+        expect(blogPosts.length).to.equal(0); // should be no api call to fetch updated posts //
+        expect(checkEmptyObjVals(currentBlogPost)).to.equal(true);
+        expect(error).to.not.be.null;
+        expect(errorMessages).to.eql(mockErrorResponse.errorMessages);
+      });
+    });
   });
 
   /*
