@@ -76,16 +76,26 @@ describe("Admin Edit Post page tests", () => {
     // intercept an error /./
     const blogPostErrorResponse: ErrorBlogPostRes = { responseMsg: "Oppes", error: new Error("Oppes"), errorMessages: [ "An error occured" ]};
     const errorResponse: StaticResponse = { statusCode: 400, body: blogPostErrorResponse }; 
-    cy.intercept({ method: "PATCH", url: "/api/posts/:postId" }, errorResponse).as("editBlogPost");
+    cy.intercept({ method: "PATCH", url: "/api/posts/*" }, errorResponse).as("editBlogPost");
     //
     cy.getByDataAttr("dash-blog-post-card-view-btn").first().click(); 
     cy.getByDataAttr("blog-modal-edit-btn").click();
     // 
-    cy.getByDataAttr("post-save-btn").should("be.visible").click();
-    cy.wait("@editBlogPost", { timeout: 10000 });
+    cy.getByDataAttr("post-save-btn").should("be.visible").click()
+      .then(() => {
+        cy.window().its("store").invoke("getState").its("blogPostsState").its("error").should("not.be.null");
+        return cy.window().its("store").invoke("getState");
+      })
+      .then((state) => {
+        const { responseMsg, loading, error, errorMessages } = state.blogPostsState;
+        expect(responseMsg).to.be.a("string");
+        expect(loading).to.equal(false);
+        expect(error).to.be.an("object");
+        expect(errorMessages).to.be.an("array");
+      })
     // 
-
   });
+  /*
 
   it.only("Should correctly handle all data, CORRECTLY handle creation of a <BlogPost>, AND update state", () => {
     const errorResponse: StaticResponse = { statusCode: 400, body: mockErrorResponse };
@@ -145,7 +155,7 @@ describe("Admin Edit Post page tests", () => {
       });
     });
   });
-
+  */
   /*
   // empty state data render tests //
   it("Should set correct default values in the input and preview", () => {

@@ -78,7 +78,7 @@ export class BlogPostActions {
 
   static handleEditBlogPost = async ({ dispatch, JWTToken, blogPostFormData, postId, state }: { dispatch: Dispatch<BlogPostAction>; JWTToken: string; blogPostFormData: BlogPostFormData; state: IBlogPostState; postId: string }): Promise<EditBblogPost> => {
     if (!JWTToken) throw new ClientAuthError();
-    if (postId) throw new ClientInputError("Client Error", [ "Could not resolve the Blog Post id to edit" ]);
+    if (!postId) throw new ClientInputError("Client Error", [ "Could not resolve the Blog Post id to edit" ]);
 
     const reqOpts: AxiosRequestConfig = {
       method: "PATCH",
