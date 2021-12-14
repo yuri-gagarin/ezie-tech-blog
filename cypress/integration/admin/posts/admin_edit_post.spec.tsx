@@ -19,6 +19,9 @@ describe("Admin Edit Post page tests", () => {
   let blogPostsState: IBlogPostState;
   let currentBlogPost: BlogPostData;
   let appState: IGeneralState;
+  // new mock data //
+  const newTitle: string = faker.lorem.words();
+  const newCategories: string = faker.lorem.words().split(" ").join(",");
 
   // login and navigate to dash //
 
@@ -72,7 +75,7 @@ describe("Admin Edit Post page tests", () => {
     cy.getByDataAttr("post-keyword-preview-span").should("have.length", currentBlogPost.keywords.length);
   });
 
-  it.only("Should correctly handle a <Save:Edit> error, show appropriate error responses", () => {
+  it("Should correctly handle a <Save:Edit> error, show appropriate error responses", () => {
     // intercept an error /./
     const blogPostErrorResponse: ErrorBlogPostRes = { responseMsg: "Oppes", error: new Error("Oppes"), errorMessages: [ "An error occured" ]};
     const errorResponse: StaticResponse = { statusCode: 400, body: blogPostErrorResponse }; 
@@ -92,6 +95,29 @@ describe("Admin Edit Post page tests", () => {
         expect(loading).to.equal(false);
         expect(error).to.be.an("object");
         expect(errorMessages).to.be.an("array");
+      })
+    // 
+  });
+
+  it.only("Should correctly handle a <Save:Edit> error, show appropriate error responses", () => {
+    // intercept an error /./
+    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click(); 
+    cy.getByDataAttr("blog-modal-edit-btn").click();
+    //
+    cy.getByDataAttr("post-form-title-input").clear().type(newTitle);
+    cy.getByDataAttr("post-form-keywords-input").clear().type(newCategories);
+    // 
+    cy.getByDataAttr("post-save-btn").should("be.visible").click()
+      .then(() => {
+        cy.window().its("store").invoke("getState").its("blogPostsState").its("error").should("not.be.null");
+        return cy.window().its("store").invoke("getState");
+      })
+      .then((state) => {
+        const { responseMsg, loading, error, errorMessages } = state.blogPostsState;
+        expect(responseMsg).to.be.a("string");
+        expect(loading).to.equal(false);
+        expect(error).to.be.null;
+        expect(errorMessages).to.be.null;
       })
     // 
   });
