@@ -61,7 +61,7 @@ const AdminUsersPage: React.FunctionComponent<IAdminUsersPageProps> = (props): J
 
   return (
     <AdminLayout>
-      <Grid padded className={ styles.adminUsersPageGrid } data-test-id="Admin_Users_Page">
+      <Grid padded className={ styles.adminUsersPageGrid } data-test-id="admin-users-page">
         <Grid.Row className={ styles.adminUserMainRow }>
           <Grid.Column>
             <List divided relaxed>

@@ -3,7 +3,7 @@
 
 import { expect } from "chai";
 // types 
-import type { IBlogUserState, IGeneralState } from "@/redux/_types/generalTypes";
+import type { IUserState, IGeneralState } from "@/redux/_types/generalTypes";
 // helpers //
 import { deepCopyObject } from "@/components/_helpers/generalHelpers";
 import { checkEmptyObjVals } from "@/redux/_helpers/dataHelpers";
@@ -14,7 +14,7 @@ describe("Admin dashboard navigation tets", () => {
   const adminEmail: string = "owner@email.com";
   const adminPass: string = "password";
   //
-  let blogUsersState: IBlogUserState;
+  let usersState: IUserState;
   let appState: IGeneralState;
 
   // login and navigate to dash //
@@ -33,12 +33,12 @@ describe("Admin dashboard navigation tets", () => {
     cy.getByDataAttr("admin-main-page").should("be.visible");
     //
     cy.wait("@getUsers");
-    cy.visit("http://localhost:3000/admin/dashboard/posts")
+    cy.visit("http://localhost:3000/admin/dashboard/users")
       .then(() => {
-        cy.getByDataAttr("dash-blog-post-card").should("exist");
+        cy.getByDataAttr("admin-users-page").should("exist");
         //
         cy.window().its("store").invoke("getState").its("authState").its("currentUser").should("not.be.null");
-        cy.window().its("store").invoke("getState").its("blogUsersState").its("blogUsers").should("have.length.above", 0);
+        cy.window().its("store").invoke("getState").its('usersState').its("usersArr").should("have.length.above", 0);
         cy.window().its("store").invoke("getState").then((state) => {
           appState = deepCopyObject(state);
         });
@@ -46,53 +46,45 @@ describe("Admin dashboard navigation tets", () => {
       });
   });
 
-  it("Should correctly render all components at the <AdminBlogUsers> page", () => {
+  it("Should correctly render all components at the <AdminUsers> page", () => {
     //
-    cy.getByDataAttr("dash-blog-posts-page").should("be.visible");
+    cy.getByDataAttr("admin-users-page").should("be.visible");
     // assert correct state //
-    cy.window().its("store").invoke("getState").its("blogUsersState").its("blogUsers").should("have.length.above", 0);
+    cy.window().its("store").invoke("getState").its("usersState").its("usersArr").should("have.length.above", 0);
     cy.window().its("store").invoke("getState").then((state) => {
       // auth state should not change //
       expect(appState.authState).to.eql(state.authState);
       // blog posts state should update //
-      blogUsersState = { ...state.blogUsersState };
-      const { status, loading, currentBlogUser, blogUsers, error, errorMessages } = blogUsersState;
+      usersState = { ...state.usersState };
+      const { status, loading, selectedUserData, usersArr, error, errorMessages } = usersState;
       // check blogUserState updates //
       expect(status).to.equal(200);
       expect(loading).to.equal(false);
-      expect(checkEmptyObjVals(currentBlogUser)).to.equal(true);
-      expect(blogUsers.length).to.be.lte(100);
+      expect(checkEmptyObjVals(selectedUserData)).to.equal(true);
+      expect(usersArr.length).to.be.lte(100);
       expect(errorMessages).to.be.null;
       expect(error).to.be.null;
         //
     })
     .then(() => {
-      const blogUsersLength = blogUsersState.blogUsers.length
-      cy.getByDataAttr("dash-blog-post-card").should("have.length", blogUsersLength);
+      const usersArrLength: number = usersState.usersArr.length;
+      cy.getByDataAttr("user-data-row").should("have.length", usersArrLength);
     })
     .then(() => {
-      const { blogUsers } = blogUsersState;
-      cy.getByDataAttr("dash-blog-post-card-title").each((elem, index) => {
-        expect(elem.html()).to.equal(blogUsers[index].title);
+      const { usersArr } = usersState;
+      cy.getByDataAttr("user-name-div").each((elem, index) => {
+        expect(elem.html()).to.equal(usersArr[index].firstName);
       });
-      cy.getByDataAttr("dash-blog-post-card-created").each((elem, index) => {
-        const formattedTimeString: string = formatTimeString(blogUsers[index].createdAt, { yearMonth: true });
-        const createdString: string = `Created at: ${formattedTimeString}`;
-        expect(elem.html()).to.equal(createdString);
+      cy.getByDataAttr("user-email-div").each((elem, index) => {
+        expect(elem.html()).to.equal(usersArr[index].email);
       });
-      cy.getByDataAttr("dash-blog-post-card-category").each((elem, index) => {
-        const categoryString: string = `Category: ${capitalizeString(blogUsers[index].category)}`;
-        expect(elem.html()).to.equal(categoryString);
-      });
-      cy.getByDataAttr("dash-blog-post-card-published").each((elem, index) => {
-        const publishedStatus = blogUsers[index].published ? "Yes" : "No";
-        const publishedString: string = `Published: ${publishedStatus}`;
-        expect(elem.html()).to.equal(publishedString);
+      cy.getByDataAttr("user-confirmed-div").each((elem, index) => {
+        expect(elem.html()).to.equal(usersArr[index].confirmed);
       });
     })
     .then(() => {
-      const blogUsersLength = blogUsersState.blogUsers.length
-      cy.getByDataAttr("dash-blog-post-card-view-btn").should("have.length",  blogUsersLength);
+      const usersLength = usersState.usersArr.length
+      cy.getByDataAttr("user-view-btn").should("have.length",  usersLength);
     });
     // assert correct blog post card rendering //
   });
