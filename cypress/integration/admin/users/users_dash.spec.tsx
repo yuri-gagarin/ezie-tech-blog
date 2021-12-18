@@ -90,48 +90,46 @@ describe("Admin dashboard navigation tets", () => {
   });
 
   it("Should correctly toggle the preview modal and open the queried blog post", () => {
-    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click();
+    cy.getByDataAttr("user-view-btn").first().click();
     // assert new state //
-    cy.window().its("store").invoke("getState").its("blogUsersState").its("currentBlogUser").should("not.deep.equal", appState.blogUsersState.currentBlogUser);
+    cy.window().its("store").invoke("getState").its("usersState").its("selectedUserData").should("not.deep.equal", appState.usersState.selectedUserData);
     cy.window().its("store").invoke("getState").then((state) => {
-      blogUsersState = { ...state.blogUsersState };
-      const { status, loading, currentBlogUser, blogUsers, error, errorMessages } = blogUsersState;
+      usersState = { ...state.usersState };
+      const { status, loading, selectedUserData, usersArr, error, errorMessages } = usersState;
       // auth state should stay the same //
       expect(appState.authState).to.eql(state.authState);
-      // check blogUserState updates //
+      // check usersState updates //
       expect(status).to.equal(200);
       expect(loading).to.equal(false);
-      expect(currentBlogUser).to.eql(blogUsers[0]);
-      expect(blogUsers.length).to.be.lte(100);
+      expect(selectedUserData).to.eql(usersArr[0]);
+      expect(usersArr.length).to.be.lte(100);
       expect(errorMessages).to.be.null;
       expect(error).to.be.null;
       //
     }).then(() => {
-      // blog post modal should be open //
-      cy.getByDataAttr("blog-view-modal").should("be.visible");
+      // user view modal should be open //
+      cy.getByDataAttr("user-view-modal").should("be.visible");
       // ensure all buttons are present //
-      cy.getByDataAttr("blog-modal-close-btn").should("be.visible").contains("Close");
-      cy.getByDataAttr("blog-modal-edit-btn").should("be.visible").contains("Edit");
-      cy.getByDataAttr("blog-modal-publish-btn").should("be.visible").contains("Publish");
-      cy.getByDataAttr("blog-modal-delete-btn").should("be.visible").contains("Delete");
+      cy.getByDataAttr("user-modal-close-btn").should("be.visible").contains("Close");
+      cy.getByDataAttr("user-modal-confirm-btn").should("be.visible").contains("Confirm");
+      cy.getByDataAttr("user-modal-edit-btn").should("be.visible").contains("Edit");
+      cy.getByDataAttr("user-modal-delete-btn").should("be.visible").contains("Delete");
     }).then(() => {
-      const { title, author, category } = blogUsersState.currentBlogUser;
+      const { firstName, lastName, email, confirmed } = usersState.selectedUserData;
       // ensure corect data rendered //
-      cy.getByDataAttr("blog-modal-title").contains(title);
-      //
-      cy.getByDataAttr("blog-modal-author")
-        .contains("Author: ")
-        .find("span").contains(author.name)
-      cy.getByDataAttr("blog-modal-category")
-        .contains("Category: ")
-        .find("span").contains(category);
+      cy.getByDataAttr("user-modal-first-name").contains("First Name: ").find("span").contains(firstName);
+      cy.getByDataAttr("user-modal-last-name").contains("Last Name: ").find("span").contains(lastName);
+      cy.getByDataAttr("user-modal-email").contains("Email: ").find("span").contains(email);
+      cy.getByDataAttr("user-modal-confirmed").contains("Confirmed: ").find("span").contains(`${confirmed ? "Yes" : "No"}`);
+  
     }).then(() => {
-      cy.getByDataAttr("blog-modal-close-btn").click();
+      cy.getByDataAttr("user-modal-close-btn").click();
       // modal should be closed //
-      cy.getByDataAttr("blog-view-modal").should("not.exist");
+      cy.getByDataAttr("user-view-modal").should("not.exist");
     });
   });
 
+  /*
   it("Should correctly handle the <Delete> CANCEL functionality", () => {
     //
     cy.getByDataAttr("dash-blog-post-card-view-btn").first().click();   
@@ -181,8 +179,7 @@ describe("Admin dashboard navigation tets", () => {
     // blog post view modal should be closed //
     cy.getByDataAttr("blog-view-modal").should("not.exist");
   });
-
-  
+  */
 
   // logout //
   /*
