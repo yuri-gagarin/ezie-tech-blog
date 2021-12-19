@@ -89,7 +89,7 @@ describe("Admin dashboard navigation tets", () => {
     // assert correct blog post card rendering //
   });
 
-  it("Should correctly toggle the preview modal and open the queried blog post", () => {
+  it("Should correctly toggle the preview modal and open the queried <User> model", () => {
     cy.getByDataAttr("user-view-btn").first().click();
     // assert new state //
     cy.window().its("store").invoke("getState").its("usersState").its("selectedUserData").should("not.deep.equal", appState.usersState.selectedUserData);
@@ -129,11 +129,11 @@ describe("Admin dashboard navigation tets", () => {
     });
   });
 
-  /*
+  
   it("Should correctly handle the <Delete> CANCEL functionality", () => {
     //
-    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click();   
-    cy.getByDataAttr("blog-modal-delete-btn").click();
+    cy.getByDataAttr("user-view-btn").first().click();
+    cy.getByDataAttr("user-modal-delete-btn").click();
     // confirm delete should be open //
     cy.getByDataAttr("confirm-delete-modal").should("exist").and("have.length", 1)
     cy.getByDataAttr("confirm-delete-modal-cancel-btn").should("exist").and("have.length", 1);
@@ -141,7 +141,7 @@ describe("Admin dashboard navigation tets", () => {
     // should successfully cancel //
     cy.getByDataAttr("confirm-delete-modal-cancel-btn").click();
     
-    cy.window().its("store").invoke("getState").its("blogUsersState").its("currentBlogUser").should("not.deep.equal", appState.blogUsersState.currentBlogUser);
+    cy.window().its("store").invoke("getState").its("usersState").its("selectedUserData").should("not.deep.equal", appState.usersState.selectedUserData);
     cy.window().its("store").invoke("getState").then((state) => {
       expect(appState.authState).to.eql(state.authState);
     });
@@ -153,8 +153,8 @@ describe("Admin dashboard navigation tets", () => {
   });
 
   it("Should correctly handle the <Delete> CONFIRM DELETE functionality", () => {
-    cy.getByDataAttr("dash-blog-post-card-view-btn").first().click();
-    cy.getByDataAttr("blog-modal-delete-btn").click();    
+    cy.getByDataAttr("user-view-btn").first().click();
+    cy.getByDataAttr("usermodal-delete-btn").click();    
     // confirm delete should be open //
     cy.getByDataAttr("confirm-delete-modal").should("exist").and("have.length", 1)
     cy.getByDataAttr("confirm-delete-modal-delete-btn").should("exist").and("have.length", 1);
@@ -164,22 +164,21 @@ describe("Admin dashboard navigation tets", () => {
       return cy.window().its("store").invoke("getState");
     })
     .then((state) => {
-      const { status, loading, responseMsg, currentBlogUser, blogUsers, error, errorMessages } = state.blogUsersState;
+      const { status, loading, responseMsg, selectedUserData, usersArr, error, errorMessages } = state.usersState;
       // changed <BlogUsers> state //
       expect(status).to.equal(200);
       expect(loading).to.equal(false);
       expect(responseMsg).to.be.a("string");
-      expect(checkEmptyObjVals(currentBlogUser)).to.equal(true);
-      expect(blogUsers.length).to.equal(appState.blogUsersState.blogUsers.length - 1);
+      expect(checkEmptyObjVals(selectedUserData)).to.equal(true);
+      expect(usersArr.length).to.equal(appState.usersState.usersArr.length - 1);
       expect(error).to.be.null;
       expect(errorMessages).to.be.null;
     });
     // confirm delete modal should be closed //
     cy.getByDataAttr("confirm-delete-modal").should("not.exist");
     // blog post view modal should be closed //
-    cy.getByDataAttr("blog-view-modal").should("not.exist");
+    cy.getByDataAttr("user-view-modal").should("not.exist");
   });
-  */
 
   // logout //
   /*
