@@ -11,6 +11,7 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import styles from "@/styles/user/NewUserComponent.module.css";
 
 interface IUserNewComponentProps {
+  
 }
 
 const NewUserComponent: React.FunctionComponent<IUserNewComponentProps> = (props): JSX.Element => {

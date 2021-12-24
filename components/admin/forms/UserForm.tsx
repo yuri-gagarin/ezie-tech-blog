@@ -23,7 +23,7 @@ const dropdownVals: DropdownItemProps[] = [
   { key: 2, text: "Contributor", value: "CONTRIBUTORR" }
 ];
 
-export const PostForm: React.FunctionComponent<IUserFormProps> = ({ }): JSX.Element => {
+export const UserForm: React.FunctionComponent<IUserFormProps> = ({ }): JSX.Element => {
   const [ userFormState, setUserFormState ] = React.useState<UserFormState>({ firstName: "", lastName: "", email: "", userRole: "" });
 
   // action handlers //
@@ -42,7 +42,7 @@ export const PostForm: React.FunctionComponent<IUserFormProps> = ({ }): JSX.Elem
   };
 
   return (
-    <Form className={ styles.adminPostForm } data-test-id="admin-user-form">
+    <Form className={ styles.adminUserForm } data-test-id="admin-user-form">
       <Form.Field>
         <label>First Name:</label>
         <input value={ userFormState.firstName } placeholder="Users first name..." onChange={ handleUserFirstNameChange }  data-test-id="user-form-first-name-input" />

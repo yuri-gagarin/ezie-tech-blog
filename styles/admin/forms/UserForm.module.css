@@ -1,0 +1,16 @@
+.adminUserForm {
+  border: 1px solid grey;
+  padding: 1em;
+}
+
+
+@media screen and (max-width: 550px) {
+  .adminUserForm {
+    width: 100%;
+  }
+}
+@media screen and (min-width: 551px) {
+  .adminUserForm {
+    width: 75%;
+  }
+}

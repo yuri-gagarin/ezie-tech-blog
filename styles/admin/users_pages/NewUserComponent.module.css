@@ -1,0 +1,24 @@
+.navRow {
+  position: relative;
+  height: 40px;
+  margin-top: 15px;
+}
+.formRow {
+  display: flex !important;
+  width: 100%;
+  height: calc(100vh - 80px);
+  border: 1px solid blue;
+  overflow: hidden;
+  padding-top: 0 !important;
+}
+
+@media screen and (max-width: 550px) {
+ .formRow {
+  justify-content: center !important;
+ }
+}
+@media screen and (min-width: 551px) {
+  .formRow {
+    justify-content: flex-start;
+   }
+}
