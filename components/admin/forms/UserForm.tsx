@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dropdown, Form } from 'semantic-ui-react';
+import { Dropdown, Form, Radio } from 'semantic-ui-react';
 // types //
 import type { DropdownItemProps, DropdownProps } from "semantic-ui-react"
 // styles //
@@ -16,6 +16,7 @@ type UserFormState = {
   lastName: string;
   email: string;
   userRole: "READER" | "CONTRIBUTOR" | "";
+  confirmed: boolean;
 
 }
 const dropdownVals: DropdownItemProps[] = [
@@ -24,7 +25,8 @@ const dropdownVals: DropdownItemProps[] = [
 ];
 
 export const UserForm: React.FunctionComponent<IUserFormProps> = ({ }): JSX.Element => {
-  const [ userFormState, setUserFormState ] = React.useState<UserFormState>({ firstName: "", lastName: "", email: "", userRole: "" });
+  const [ userFormState, setUserFormState ] = React.useState<UserFormState>({ firstName: "", lastName: "", email: "", userRole: "", confirmed: false });
+
 
   // action handlers //
   const handleUserFirstNameChange = (e:  React.FormEvent<HTMLInputElement>): void => {
@@ -58,6 +60,10 @@ export const UserForm: React.FunctionComponent<IUserFormProps> = ({ }): JSX.Elem
       <Form.Field>
         <label>User Role:</label>
         <Dropdown value={ userFormState.userRole ? userFormState.userRole : null } clearable options={ dropdownVals } selection  placeholder="Select User Role" onChange={ handleUserRoleChange } data-test-id="user-form-role-dropdown" />
+      </Form.Field>
+      <Form.Field>
+        <label>Confirmed:</label>
+        <Radio toggle={ userFormState.confirmed } />
       </Form.Field>
     </Form>
   );
