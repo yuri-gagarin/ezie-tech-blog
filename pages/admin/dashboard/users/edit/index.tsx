@@ -15,6 +15,11 @@ interface IUserNewComponentProps {
 }
 
 const NewUserComponent: React.FunctionComponent<IUserNewComponentProps> = (props): JSX.Element => {
+
+  const handleSaveUser = async () => {
+
+  };
+
   return (
     <AdminLayout>
       <Grid.Row className={ styles.navRow }>

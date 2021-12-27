@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Icon } from "semantic-ui-react";
 // styles //
-import styles from "@/styles/admin/AdminUserNav.module.css";
+import styles from "@/styles/admin/users_pages/AdminUserNav.module.css";
 
 interface IAdminUserNavProps {
   saveUser(): Promise<any>;

@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { Dropdown, Form, Radio } from 'semantic-ui-react';
-// types //
-import type { DropdownItemProps, DropdownProps } from "semantic-ui-react"
+// additional components //
+import { AdminUserNav } from "@/components/admin/users/AdminUsersNav";
 // styles //
 import styles from "@/styles/admin/forms/UserForm.module.css";
 // types //
-
+import type { IUserState } from '@/redux/_types/generalTypes';
+import type { DropdownItemProps, DropdownProps } from "semantic-ui-react";
+// helpers //
+import { checkEmptyObjVals } from "@/components/_helpers/displayHelpers"
+import { UserActions } from '@/redux/actions/userActions';
 
 interface IUserFormProps {
-
+  userState: IUserState;
 }
 
 type UserFormState = {
@@ -24,7 +28,7 @@ const dropdownVals: DropdownItemProps[] = [
   { key: 2, text: "Contributor", value: "CONTRIBUTORR" }
 ];
 
-export const UserForm: React.FunctionComponent<IUserFormProps> = ({ }): JSX.Element => {
+export const UserForm: React.FunctionComponent<IUserFormProps> = ({ userState }): JSX.Element => {
   const [ userFormState, setUserFormState ] = React.useState<UserFormState>({ firstName: "", lastName: "", email: "", userRole: "", confirmed: false });
 
 
@@ -42,8 +46,31 @@ export const UserForm: React.FunctionComponent<IUserFormProps> = ({ }): JSX.Elem
   const handleUserEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setUserFormState({ ...userFormState, email: e.currentTarget.value });
   };
+  const handleConfirmedChange = (e: React.MouseEvent<HTMLInputElement>): void => {
+    setUserFormState({ ...userFormState, confirmed: !userFormState.confirmed });
+  };
+
+  //
+  const handleSaveUser = async () => {
+    const { selectedUserData } = userState;
+    if (checkEmptyObjVals(selectedUserData)) {
+      // new users is being created //
+      try {
+        await UserActions.handleCreateUser({ dispatch, JWTToken, formData, usersState });
+      } catch (error) {
+        UserActions.handleUserError({ dispatch, error })l
+      }
+    } else {
+
+    }
+  };
+  const handleCancelUser = () => {
+
+  };
 
   return (
+    <>
+    <AdminUserNav saveUser={ handleSaveUser } cancelNewUser= {  handleCancelUser } />
     <Form className={ styles.adminUserForm } data-test-id="admin-user-form">
       <Form.Field>
         <label>First Name:</label>
@@ -63,9 +90,10 @@ export const UserForm: React.FunctionComponent<IUserFormProps> = ({ }): JSX.Elem
       </Form.Field>
       <Form.Field>
         <label>Confirmed:</label>
-        <Radio toggle={ userFormState.confirmed } />
+        <Radio toggle checked={userFormState.confirmed} onClick={ handleConfirmedChange } />
       </Form.Field>
     </Form>
+    </>
   );
 };
 
