@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dropdown, Form, Radio } from 'semantic-ui-react';
+import { Button, Dropdown, Form, Icon, Radio } from 'semantic-ui-react';
 // additional components //
 import { AdminUserNav } from "@/components/admin/users/AdminUsersNav";
 // styles //
@@ -81,6 +81,20 @@ export const UserForm: React.FunctionComponent<IUserFormProps> = ({ usersState, 
         <Form.Field>
           <label>Confirmed:</label>
           <Radio toggle checked={userFormState.confirmed} onClick={ handleConfirmedChange } />
+        </Form.Field>
+        <Form.Field>
+          <label>Password:</label>
+          <Button.Group>
+            <Button basic color="green">
+              <Icon name="keyboard outline"  />
+              Custom Password
+            </Button>
+            <Button.Or className={ styles.passwordOrBtn } />
+            <Button basic color="blue">
+              <Icon name="lock" />
+              Generate Random Secure Password
+            </Button>
+          </Button.Group>
         </Form.Field>
       </Form>
     </div>

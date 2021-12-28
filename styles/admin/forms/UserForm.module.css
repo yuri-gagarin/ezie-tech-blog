@@ -9,6 +9,10 @@
   padding: 1em;
   margin-top: 0.5em;
 }
+.passwordOrBtn::before {
+  background-color: rgb(74, 74, 201) !important;
+  color: white !important;
+}
 
 
 @media screen and (max-width: 550px) {
