@@ -6,9 +6,10 @@ import styles from "@/styles/admin/users_pages/AdminUserNav.module.css";
 interface IAdminUserNavProps {
   saveUser(): Promise<any>;
   cancelNewUser(): void;
-}
+  handleMuteUser(): Promise<any>;
+};
 
-export const AdminUserNav: React.FunctionComponent<IAdminUserNavProps> = ({ saveUser, cancelNewUser }): JSX.Element => {
+export const AdminUserNav: React.FunctionComponent<IAdminUserNavProps> = ({ saveUser, cancelNewUser, handleMuteUser }): JSX.Element => {
   return (
     <div className={ styles.adminUserNavWrapper } data-test-id="admin-user-nav-main">  
       <Button.Group>
@@ -19,6 +20,14 @@ export const AdminUserNav: React.FunctionComponent<IAdminUserNavProps> = ({ save
         <Button color="orange" onClick={ cancelNewUser } data-test-id="admin-user-cancel-btn">
           <Icon name="cancel" />
           Cancel
+        </Button>
+        <Button basic color="purple" onClick={ handleMuteUser } data-test-id="admin-user-mute-btn">
+          <Icon name="microphone slash" />
+          Mute
+        </Button>
+        <Button basic color="orange" data-test-id="admin-user-warn-btn">
+          <Icon name="exclamation triangle" />
+          Warn
         </Button>
       </Button.Group>
     </div>

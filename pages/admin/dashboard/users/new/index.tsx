@@ -10,17 +10,25 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { UserForm } from "@/components/admin/forms/UserForm"
 //
 import styles from "@/styles/admin/users_pages/NewUserComponent.module.css";
+// types //
+import type { UserFormState } from "@/components/admin/forms/UserForm";
+import type { IGeneralState } from '@/redux/_types/generalTypes';
 
 interface IUserNewComponentProps {
   
 }
 
 const NewUserComponent: React.FunctionComponent<IUserNewComponentProps> = (): JSX.Element => {
+  // next hooks //
+  const { usersState } = useSelector((state: IGeneralState) => state);
 
-  const handleSaveUser = async () => {
+  const handleSaveUser = async (userData: UserFormState) => {
 
   };
   const handleCancelUser = () => {
+
+  };
+  const handleMuteUser = async () => {
 
   };
 
@@ -29,7 +37,12 @@ const NewUserComponent: React.FunctionComponent<IUserNewComponentProps> = (): JS
       <Grid.Row className={ styles.navRow }>
       </Grid.Row>
       <Grid.Row className={ styles.formRow }>
-        <UserForm />
+        <UserForm 
+          usersState={ usersState } 
+          handleSaveUser={ handleSaveUser }
+          handleCancelUser={ handleCancelUser }
+          handleMuteUser={ handleMuteUser }
+        />
       </Grid.Row>
 
     </AdminLayout>
