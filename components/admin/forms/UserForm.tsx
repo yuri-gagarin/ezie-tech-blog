@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Dropdown, Form, Icon, Radio } from 'semantic-ui-react';
 // additional components //
 import { AdminUserNav } from "@/components/admin/users/AdminUsersNav";
+import { UserPassInput } from "@/components/admin/forms/UserPassInput";
 // styles //
 import styles from "@/styles/admin/forms/UserForm.module.css";
 // types //
@@ -32,8 +33,9 @@ const dropdownVals: DropdownItemProps[] = [
 ];
 
 export const UserForm: React.FunctionComponent<IUserFormProps> = ({ usersState, handleSaveUser, handleCancelUser, handleMuteUser }): JSX.Element => {
+  // local component state //
   const [ userFormState, setUserFormState ] = React.useState<UserFormState>({ firstName: "", lastName: "", email: "", userRole: "", confirmed: false });
-
+  const [ passFormOpen, setPassFormOpen ] = React.useState<boolean>(false);
 
   // action handlers //
   const handleUserFirstNameChange = (e:  React.FormEvent<HTMLInputElement>): void => {
@@ -85,17 +87,20 @@ export const UserForm: React.FunctionComponent<IUserFormProps> = ({ usersState, 
         <Form.Field>
           <label>Password:</label>
           <Button.Group>
-            <Button basic color="green">
+            <Button basic color="green" onClick={ () => setPassFormOpen(!passFormOpen) }>
               <Icon name="keyboard outline"  />
               Custom Password
             </Button>
             <Button.Or className={ styles.passwordOrBtn } />
-            <Button basic color="blue">
+            <Button basic color="blue" >
               <Icon name="lock" />
               Generate Random Secure Password
             </Button>
           </Button.Group>
         </Form.Field>
+        {
+          passFormOpen ?  <UserPassInput /> : null 
+        }
       </Form>
     </div>
   );

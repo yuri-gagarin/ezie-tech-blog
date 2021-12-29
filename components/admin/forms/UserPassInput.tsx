@@ -4,7 +4,7 @@ import { Form } from 'semantic-ui-react';
 interface IUserPassInputProps {
 }
 
-const UserPassInput: React.FunctionComponent<IUserPassInputProps> = (props) => {
+export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = (props) => {
   return (
     <React.Fragment>
       <Form.Field>
@@ -19,4 +19,3 @@ const UserPassInput: React.FunctionComponent<IUserPassInputProps> = (props) => {
   );
 };
 
-export default UserPassInput;

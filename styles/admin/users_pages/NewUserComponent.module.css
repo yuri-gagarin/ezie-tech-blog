@@ -1,14 +1,7 @@
-.navRow {
-  position: relative;
-  height: 60px;
-  margin-top: 15px;
-  padding: 0 !important;
-}
 .formRow {
   display: flex !important;
   width: 100%;
-  height: calc(100vh - 80px);
-  border: 1px solid blue;
+  min-height: calc(100vh - 80px);
   overflow: hidden;
   padding-top: 0 !important;
 }
