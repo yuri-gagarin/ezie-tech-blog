@@ -11,6 +11,7 @@ import type { DropdownItemProps, DropdownProps } from "semantic-ui-react";
 // helpers //
 import { checkEmptyObjVals } from "@/components/_helpers/displayHelpers"
 import { UserActions } from '@/redux/actions/userActions';
+import { UserPassGenerator } from './UserPassGenerator';
 
 interface IUserFormProps {
   usersState: IUserState;
@@ -25,6 +26,12 @@ export type UserFormState = {
   email: string;
   userRole: "READER" | "CONTRIBUTOR" | "";
   confirmed: boolean;
+  password: string;
+  passwordConfirm: string;
+};
+type PassFormState = {
+  inputFormOpen: boolean;
+  generatorFormOpen: boolean;
 };
 
 const dropdownVals: DropdownItemProps[] = [
@@ -34,8 +41,8 @@ const dropdownVals: DropdownItemProps[] = [
 
 export const UserForm: React.FunctionComponent<IUserFormProps> = ({ usersState, handleSaveUser, handleCancelUser, handleMuteUser }): JSX.Element => {
   // local component state //
-  const [ userFormState, setUserFormState ] = React.useState<UserFormState>({ firstName: "", lastName: "", email: "", userRole: "", confirmed: false });
-  const [ passFormOpen, setPassFormOpen ] = React.useState<boolean>(false);
+  const [ userFormState, setUserFormState ] = React.useState<UserFormState>({ firstName: "", lastName: "", email: "", userRole: "", confirmed: false, password: "", passwordConfirm: "" });
+  const [ passFormState, setPassFormState ] = React.useState<PassFormState>({ inputFormOpen: false, generatorFormOpen: false });
 
   // action handlers //
   const handleUserFirstNameChange = (e:  React.FormEvent<HTMLInputElement>): void => {
@@ -53,6 +60,12 @@ export const UserForm: React.FunctionComponent<IUserFormProps> = ({ usersState, 
   };
   const handleConfirmedChange = (e: React.MouseEvent<HTMLInputElement>): void => {
     setUserFormState({ ...userFormState, confirmed: !userFormState.confirmed });
+  };
+  const handlePasswordChange = (e: React.FormEvent<HTMLInputElement>): void => {
+    setUserFormState({ ...userFormState, passwordConfirm: e.currentTarget.value });
+  };
+  const handleConfirmPassChange = (e: React.FormEvent<HTMLInputElement>): void => {
+    setUserFormState({ ...userFormState, password: e.currentTarget.value });
   };
 
   
@@ -87,19 +100,28 @@ export const UserForm: React.FunctionComponent<IUserFormProps> = ({ usersState, 
         <Form.Field>
           <label>Password:</label>
           <Button.Group>
-            <Button basic color="green" onClick={ () => setPassFormOpen(!passFormOpen) }>
+            <Button basic color="green" onClick={ () => setPassFormState({ inputFormOpen: !passFormState.inputFormOpen, generatorFormOpen: false }) }>
               <Icon name="keyboard outline"  />
               Custom Password
             </Button>
             <Button.Or className={ styles.passwordOrBtn } />
-            <Button basic color="blue" >
+            <Button basic color="blue" onClick={ () => setPassFormState({ generatorFormOpen: !passFormState.generatorFormOpen, inputFormOpen: false }) } >
               <Icon name="lock" />
               Generate Random Secure Password
             </Button>
           </Button.Group>
         </Form.Field>
         {
-          passFormOpen ?  <UserPassInput /> : null 
+          passFormState.inputFormOpen 
+          ? 
+            <UserPassInput 
+              handlePassChange={ handlePasswordChange } 
+              handleConfirmPassChange={ handleConfirmPassChange } 
+            /> 
+          : null  
+        }
+        {
+          passFormState.generatorFormOpen ? <UserPassGenerator /> : null
         }
       </Form>
     </div>

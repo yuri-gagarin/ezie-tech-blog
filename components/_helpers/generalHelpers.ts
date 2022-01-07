@@ -11,3 +11,12 @@ export const deepCopyObject = <T>(object: T & Object): T => {
   }
   return JSON.parse(JSON.stringify(object));
 };
+
+export const generatePassword = (passLength: number = 8): string => {
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let retVal = "";
+  for (let i = 0, n = charset.length; i < passLength; ++i) {
+    retVal += charset.charAt(Math.floor(Math.random() * n));
+  }
+  return retVal;
+}
