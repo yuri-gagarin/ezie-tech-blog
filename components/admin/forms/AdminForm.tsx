@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button, Dropdown, Form, Icon, Radio } from 'semantic-ui-react';
 // additional components //
-import { AdminAdminNav } from "@/components/admin/users/AdminAdminsNav";
-import { AdminPassInput } from "@/components/admin/forms/AdminPassInput";
+import { AdminUserNav } from "@/components/admin/users/AdminUsersNav";
+import { UserPassInput } from "@/components/admin/forms/UserPassInput";
 // styles //
 import styles from "@/styles/admin/forms/AdminForm.module.css";
 // types //
@@ -10,8 +10,8 @@ import type { IAdminState } from '@/redux/_types/generalTypes';
 import type { DropdownItemProps, DropdownProps } from "semantic-ui-react";
 // helpers //
 import { checkEmptyObjVals } from "@/components/_helpers/displayHelpers"
-import { AdminActions } from '@/redux/actions/userActions';
-import { AdminPassGenerator } from './AdminPassGenerator';
+import { AdminActions } from '@/redux/actions/adminActions';
+import { UserPassGenerator } from './UserPassGenerator';
 
 interface IAdminFormProps {
   usersState: IAdminState;
@@ -24,7 +24,7 @@ export type AdminFormState = {
   firstName: string;
   lastName: string;
   email: string;
-  userRole: "READER" | "CONTRIBUTOR" | "";
+  role: "admin" | "owner" | "";
   confirmed: boolean;
   password: string;
   passwordConfirm: string;
@@ -35,13 +35,13 @@ type PassFormState = {
 };
 
 const dropdownVals: DropdownItemProps[] = [
-  { key: 1, text: "Reader", value: "READER" },
-  { key: 2, text: "Contributor", value: "CONTRIBUTORR" }
+  { key: 1, text: "Admin", value: "admin" },
+  { key: 2, text: "Owner", value: "owner" } 
 ];
 
 export const AdminForm: React.FunctionComponent<IAdminFormProps> = ({ usersState, handleSaveAdmin, handleCancelAdmin, handleMuteAdmin }): JSX.Element => {
   // local component state //
-  const [ userFormState, setAdminFormState ] = React.useState<AdminFormState>({ firstName: "", lastName: "", email: "", userRole: "", confirmed: false, password: "", passwordConfirm: "" });
+  const [ userFormState, setAdminFormState ] = React.useState<AdminFormState>({ firstName: "", lastName: "", email: "", role: "", confirmed: false, password: "", passwordConfirm: "" });
   const [ passFormState, setPassFormState ] = React.useState<PassFormState>({ inputFormOpen: false, generatorFormOpen: false });
 
   // action handlers //
@@ -53,7 +53,7 @@ export const AdminForm: React.FunctionComponent<IAdminFormProps> = ({ usersState
   };
   const handleAdminRoleChange = (_, data: DropdownProps): void => {
     const { value } = data;
-    setAdminFormState({ ...userFormState, userRole: value as "READER" || "CONTRIBUTOR" });
+    setAdminFormState({ ...userFormState, role: value as "admin" || "owner" });
   };
   const handleAdminEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setAdminFormState({ ...userFormState, email: e.currentTarget.value });
@@ -71,10 +71,10 @@ export const AdminForm: React.FunctionComponent<IAdminFormProps> = ({ usersState
   
   return (
     <div className={ styles.adminAdminFormWrapper }>
-      <AdminAdminNav 
-        saveAdmin={ () => handleSaveAdmin(userFormState) } 
-        cancelNewAdmin={ handleCancelAdmin } 
-        handleMuteAdmin={ handleMuteAdmin }
+      <AdminUserNav 
+        saveUser={ () => handleSaveAdmin(userFormState) } 
+        cancelNewUser={ handleCancelAdmin } 
+        handleMuteUser={ handleMuteAdmin }
       />
       <Form className={ styles.adminAdminForm } data-test-id="admin-user-form">
         <Form.Field>
@@ -91,7 +91,7 @@ export const AdminForm: React.FunctionComponent<IAdminFormProps> = ({ usersState
         </Form.Field>
         <Form.Field>
           <label>Admin Role:</label>
-          <Dropdown value={ userFormState.userRole ? userFormState.userRole : null } clearable options={ dropdownVals } selection  placeholder="Select Admin Role" onChange={ handleAdminRoleChange } data-test-id="user-form-role-dropdown" />
+          <Dropdown value={ userFormState.role ? userFormState.role : null } clearable options={ dropdownVals } selection  placeholder="Select Admin Role" onChange={ handleAdminRoleChange } data-test-id="user-form-role-dropdown" />
         </Form.Field>
         <Form.Field>
           <label>Confirmed:</label>
@@ -114,14 +114,14 @@ export const AdminForm: React.FunctionComponent<IAdminFormProps> = ({ usersState
         {
           passFormState.inputFormOpen 
           ? 
-            <AdminPassInput 
+            <UserPassInput 
               handlePassChange={ handlePasswordChange } 
               handleConfirmPassChange={ handleConfirmPassChange } 
             /> 
           : null  
         }
         {
-          passFormState.generatorFormOpen ? <AdminPassGenerator /> : null
+          passFormState.generatorFormOpen ? <UserPassGenerator /> : null
         }
       </Form>
     </div>
