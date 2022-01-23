@@ -1,5 +1,5 @@
 import type { BlogPostData } from "../_types/blog_posts/dataTypes";
-import type { IBlogPostState, IUserState } from "../_types/generalTypes";
+import type { AdminData, IBlogPostState, IUserState, IAdminState } from "../_types/generalTypes";
 import type { IAuthState } from "../_types/auth/dataTypes";
 import type { IProjectState } from "../_types/projects/dataTypes";
 import type { UserData } from "../_types/users/dataTypes";
@@ -28,9 +28,16 @@ export const generateEmptyUser = (): UserData => {
     firstName: "",
     lastName: "",
     email: "",
+    userType: "CONTRIBUTOR",
     confirmed: false,
     editedAt: "",
     createdAt: ""
+  };
+};
+
+export const generateEmptyAdmin = (): AdminData => {
+  return {
+    _id: "", firstName: "", lastName: "", email: "", role: "admin", confirmed: false, editedAt: "", createdAt: ""
   };
 };
 
@@ -46,13 +53,27 @@ export const generateEmptyPostState = (): IBlogPostState => {
   };
 };
 
+export const generateEmptyAdminState = (): IAdminState => {
+  return {
+    status: null,
+    responseMsg: "",
+    loading: false,
+    selectedAdminData: {
+      _id: "", firstName: "", lastName: "", email: "", role: "admin", confirmed: false, editedAt: "", createdAt: ""
+    },
+    adminsArr: [],
+    error: null,
+    errorMessages: null
+  };
+};
+
 export const generateEmptyUserState = (): IUserState => {
   return {
     status: null,
     responseMsg: "",
     loading: false,
     selectedUserData: {
-      _id: "", firstName: "", lastName: "", email: "", confirmed: false, editedAt: "", createdAt: ""
+      _id: "", firstName: "", lastName: "", email: "", userType: "CONTRIBUTOR", confirmed: false, editedAt: "", createdAt: ""
     },
     usersArr: [],
     error: null,

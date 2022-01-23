@@ -3,13 +3,13 @@ import { AdminData } from "./dataTypes"
 export type SetAdmin = {
   readonly type: "SetAdmin";
   readonly payload: {
-    userData: GenAdminData;
+    adminData: AdminData;
   };
 };
 export type ClearAdmin = {
   readonly type: "ClearAdmin";
   readonly payload: {
-    userData: GenAdminData;
+    adminData: AdminData;
   };
 };
 
@@ -24,13 +24,13 @@ export type AdminAPIRequest = {
 export type GetAdmins = {
   readonly type: "GetAdmins";
   readonly payload: {
-    status: number; loading: boolean; responseMsg: string; users: AdminData[];
+    status: number; loading: boolean; responseMsg: string; admins: AdminData[];
   };
 };
 export type GetOneAdmin = {
   readonly type: "GetOneAdmin";
   readonly payload: {
-    status: number; loading: boolean; responseMsg: string; user: AdminData;
+    status: number; loading: boolean; responseMsg: string; admin: AdminData;
   };
 };
 export type EditAdmin = {

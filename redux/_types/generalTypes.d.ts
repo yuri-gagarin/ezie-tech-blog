@@ -16,6 +16,7 @@ import type { IRSSState } from "./rss/dataTypes";
 export interface IGeneralState  {
   authState: IAuthState;
   usersState: IUserState;
+  adminState: IAdminState;
   blogPostsState: IBlogPostState;
   projectsState: IProjectState;
   rssState: IRSSState;
@@ -23,6 +24,15 @@ export interface IGeneralState  {
 
 export type IGeneralAppAction = BlogPostAction | UserAction | AuthAction | ProjectAction | RSSAction;
 
+export interface IAdminState {
+  status: number | null;
+  responseMsg: string;
+  loading: boolean;
+  selectedAdminData: AdminData;
+  adminsArr: AdminData[];
+  error: any | null;
+  errorMessages: string[] | null;
+};
 export interface IUserState {
   status: number | null;
   responseMsg: string;
