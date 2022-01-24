@@ -15,7 +15,7 @@ export type FetchAdminsOpts = {
   date?: "asc" | "desc";
 };
 export type GetOneAdminOpts = {
-  userId?: string;
+  adminId?: string;
   email?: string;
   handle?: string;
 };

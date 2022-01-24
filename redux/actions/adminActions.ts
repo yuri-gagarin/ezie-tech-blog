@@ -3,8 +3,8 @@ import axios from "axios";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 import type { Dispatch } from "redux";
 import type { IAdminState } from "../_types/generalTypes";
-import type { GetOneAdmin, GetAdmins, EditAdmin, CreateAdmin, DeleteAdmin, AdminAction, SetAdminError, ClearAdminError } from "../_types/users/actionTypes";
-import type { GetAllAdminsRes, GetOneAdminRes, CreateAdminRes, EditAdminRes, DeleteAdminRes, FetchAdminsOpts, GetOneAdminOpts, AdminFormData, GenAdminData, AdminData } from "../_types/users/dataTypes";
+import type { GetOneAdmin, GetAdmins, EditAdmin, CreateAdmin, DeleteAdmin, AdminAction, SetAdminError, ClearAdminError } from "../_types/admins/actionTypes";
+import type { GetAllAdminsRes, GetOneAdminRes, CreateAdminRes, EditAdminRes, DeleteAdminRes, FetchAdminsOpts, GetOneAdminOpts, AdminFormData, AdminData } from "../_types/admins/dataTypes";
 // helpers //
 import { generateEmptyAdmin } from "../_helpers/mockData"; 
 import { processAxiosError, checkEmptyObjVals } from "../_helpers/dataHelpers";
@@ -21,7 +21,7 @@ export class AdminActions {
     // axios req conf //
     const reqConfig: AxiosRequestConfig = {
       method: "GET",
-      url: "/api/users",
+      url: "/api/admins",
       headers: { "Authorization": JWTToken },
       params: options ? options : null
     };
@@ -30,10 +30,10 @@ export class AdminActions {
 
     try {
       const { status, data }: AxiosResponse<GetAllAdminsRes> = await axios(reqConfig);
-      const { responseMsg, users } = data;
+      const { responseMsg, admins } = data;
       return dispatch({ 
         type: "GetAdmins", 
-        payload: { status, responseMsg, users, loading: false }
+        payload: { status, responseMsg, admins, loading: false }
       }); 
     } catch (error) {
       return dispatch({ type: "SetAdminError", payload: { ...processAxiosError(error), loading: false } });
@@ -42,12 +42,12 @@ export class AdminActions {
   public static async handleGetOneAdmin(data: { dispatch: Dispatch<AdminAction>; JWTToken: string; options: GetOneAdminOpts; }): Promise<GetOneAdmin | SetAdminError> {
     const { dispatch, JWTToken, options } = data;
     // set query params //
-    const queryType: "USER_ID" | "EMAIL" | "HANDLE" = options.userId ? "USER_ID" : (options.email ? "EMAIL" : "HANDLE");
-    const queryParam: string = queryType === "EMAIL" ? options.email : (queryType === "HANDLE" ? options.handle : options.userId);
+    const queryType: "USER_ID" | "EMAIL" | "HANDLE" = options.adminId ? "USER_ID" : (options.email ? "EMAIL" : "HANDLE");
+    const queryParam: string = queryType === "EMAIL" ? options.email : (queryType === "HANDLE" ? options.handle : options.adminId);
     //
     const reqConfig: AxiosRequestConfig = {
       method: "GET",
-      url: `/api/users/${queryType === "USER_ID" ? options.userId : ""}`,
+      url: `/api/admins/${queryType === "USER_ID" ? options.adminId : ""}`,
       headers: { "Authorization": JWTToken },
       params: { queryType, queryParam }
     };
@@ -56,11 +56,11 @@ export class AdminActions {
 
     try {
       const { status, data }: AxiosResponse<GetOneAdminRes> = await axios(reqConfig);
-      const { responseMsg, user } = data;
+      const { responseMsg, admin } = data;
       return dispatch({ 
         type: "GetOneAdmin", 
         payload: {
-          status, responseMsg, user, loading: false
+          status, responseMsg, admin, loading: false
         }
       });
     } catch (err) {
@@ -68,14 +68,14 @@ export class AdminActions {
     }
   }
 
-  public static async handleCreateAdmin(data: { dispatch: Dispatch<AdminAction>; JWTToken: string; formData: AdminFormData; usersState: IAdminState }): Promise<CreateAdmin | SetAdminError> {
-    const { dispatch, JWTToken, formData, usersState } = data;
+  public static async handleCreateAdmin(data: { dispatch: Dispatch<AdminAction>; JWTToken: string; formData: AdminFormData; adminsState: IAdminState }): Promise<CreateAdmin | SetAdminError> {
+    const { dispatch, JWTToken, formData, adminsState } = data;
     const { email, password, handle } = formData;
-    const { usersArr } = usersState;
+    const { adminsArr } = adminsState;
 
     const reqConfig: AxiosRequestConfig = {
       method: "POST",
-      url: "/api/users",
+      url: "/api/admins",
       headers: { "Authorization": JWTToken },
       data: { email, password, handle }
     };
@@ -85,7 +85,7 @@ export class AdminActions {
     try {
       const { status, data }: AxiosResponse<CreateAdminRes> = await axios(reqConfig);
       const { responseMsg, createdAdmin } = data;
-      const updatedAdminsArr: AdminData[] = [ createdAdmin, ...usersArr ];
+      const updatedAdminsArr: AdminData[] = [ createdAdmin, ...adminsArr ];
       const updatedSelectedAdminData: AdminData = { ...createdAdmin };
 
       return dispatch({
@@ -100,13 +100,13 @@ export class AdminActions {
     }
   }
 
-  public static async handleEditAdmin(data: { dispatch: Dispatch<AdminAction>; JWTToken: string; userId: string; formData: AdminFormData; usersState: IAdminState}): Promise<EditAdmin | SetAdminError> {
-    const { dispatch, JWTToken, userId, formData, usersState } = data;
-    const { usersArr } = usersState;
+  public static async handleEditAdmin(data: { dispatch: Dispatch<AdminAction>; JWTToken: string; adminId: string; formData: AdminFormData; adminsState: IAdminState}): Promise<EditAdmin | SetAdminError> {
+    const { dispatch, JWTToken, adminId, formData, adminsState } = data;
+    const { adminsArr } = adminsState;
 
     const reqConfig: AxiosRequestConfig = {
       method: "PATCH",
-      url: `/api/users/${userId}`,
+      url: `/api/admins/${adminId}`,
       headers: { "Authorization": JWTToken }
     };
 
@@ -116,9 +116,9 @@ export class AdminActions {
       const { status, data }: AxiosResponse<EditAdminRes> = await axios(reqConfig);
       const { responseMsg, editedAdmin } = data;
       //
-      const updatedAdminsArr: AdminData[] = usersArr.map((userData) => {
-        if (userData._id === editedAdmin._id) return { ...editedAdmin };
-        else return userData;
+      const updatedAdminsArr: AdminData[] = adminsArr.map((adminData) => {
+        if (adminData._id === editedAdmin._id) return { ...editedAdmin };
+        else return adminData;
       });
       const updatedSelectedAdminData: AdminData = { ...editedAdmin };
       return dispatch({
@@ -133,13 +133,13 @@ export class AdminActions {
     }
   }
 
-  public static async handleDeleteAdmin(data: { dispatch: Dispatch<AdminAction>; JWTToken: string; userId: string; usersState: IAdminState; }): Promise<DeleteAdmin | SetAdminError> {
-    const { dispatch, JWTToken, userId, usersState } = data;
-    const { selectedAdminData, usersArr } = usersState;
+  public static async handleDeleteAdmin(data: { dispatch: Dispatch<AdminAction>; JWTToken: string; adminId: string; adminsState: IAdminState; }): Promise<DeleteAdmin | SetAdminError> {
+    const { dispatch, JWTToken, adminId, adminsState } = data;
+    const { selectedAdminData, adminsArr } = adminsState;
 
     const reqConfig: AxiosRequestConfig = {
       method: "DELETE",
-      url: `/api/users/${userId}`,
+      url: `/api/admins/${adminId}`,
       headers: { "Authorization": JWTToken }
     };
 
@@ -149,7 +149,7 @@ export class AdminActions {
       const { status, data }: AxiosResponse<DeleteAdminRes> = await axios(reqConfig);
       const { responseMsg, deletedAdmin } = data;
       // 
-      const updatedAdminsArr: AdminData[] = usersArr.filter((userData) => userData._id !== deletedAdmin._id);
+      const updatedAdminsArr: AdminData[] = adminsArr.filter((adminData) => adminData._id !== deletedAdmin._id);
       const updatedSelectedAdminData: AdminData = checkEmptyObjVals(selectedAdminData) ? selectedAdminData : generateEmptyAdmin();
       return dispatch({
         type: "DeleteAdmin",
