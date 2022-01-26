@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Container, Grid } from "semantic-ui-react"; 
 // next imports //
+import Head from 'next/head';
 // redux imports and actions //
 import { useDispatch, useSelector } from "react-redux";
 import { RssActions } from '@/redux/actions/rssActions';
@@ -140,6 +141,11 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
         duration={100}
         open={ infoModalState.open } header={ infoModalState.header } messages={ infoModalState.messages } handleInfoModalClose={ handleCloseInfoModal } 
       />
+      <Head>
+        <title>Tech News</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />        <meta name="description" content="Eezie tech. We make tech easy for people of all backgrounds." />
+        <meta name="keywords" content="programming web development nodej typescript react javascript express"></meta>
+      </Head>
       <Grid.Row className={ styles.headerRow } >
         <h1>RSS News</h1>
       </Grid.Row>

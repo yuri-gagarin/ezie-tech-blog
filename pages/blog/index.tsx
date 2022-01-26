@@ -87,6 +87,8 @@ const BlogMainIndexPage: React.FC<IBlogPageProps> = ({ }): JSX.Element => {
       <NeedLoginModal modalOpen={ needLoginModalState } handleCloseModal={ dismissNeedLoginModal } /> 
       <Head>
         <title>Ezie Blog - Dont Panic!</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />        <meta name="description" content="Eezie tech. We make tech easy for people of all backgrounds." />
+        <meta name="keywords" content="programming web development nodej typescript react javascript express"></meta>
       </Head>
       <BlogHeader />
       <Grid.Row className={ blogMainStyle.blogPageRow } centered>
