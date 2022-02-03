@@ -8,6 +8,7 @@ import type { StaticResponse } from "cypress/types/net-stubbing";
 import type { IGeneralState } from "@/redux/_types/generalTypes"
 import type { IAuthState } from "@/redux/_types/auth/dataTypes";
 import type { AdminData, CreateAdminRes, ErrorAdminRes } from "@/redux/_types/admins/dataTypes";
+import type { UserData } from "@/redux/_types/users/dataTypes";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { ReqAdminData } from "@/server/src/_types/admins/adminTypes"
 
@@ -20,16 +21,18 @@ import { generateMockAdminData } from "@/server/spec/hepers/testHelpers";
 describe("Admin new <Admin> user page tests", () => {
   let appState: IGeneralState;
   let adminsArr: AdminData[]; // one <admin> level one <owner> level at start //
+  let usersArr: UserData[]; 
   //
   let newAdminData: ReqAdminData;
   let newCreatedAdmin: AdminData;
   let mockErrorResponse: ErrorAdminRes;
   //
-  let regUserJWTToken: string;
-  let adminOwnerJWTToken: string;
-  let adminUserJWTToken: string;
+  //let regUserJWTToken: string;
+  //let adminOwnerJWTToken: string;
+  //let adminUserJWTToken: string;
   let ownerAdmin: AdminData;
   let regAdmin: AdminData;
+  let registeredUser: UserData;
   //
   let adminIds: string[];
   const adminRole: string[] = [ "admin", "owner" ];
@@ -52,7 +55,12 @@ describe("Admin new <Admin> user page tests", () => {
           adminsArr = [ ...adminsArr, ...admins ];
           regAdmin = adminsArr[1];
           adminIds = adminsArr.map((adminData) => adminData._id);
-        });
+          return cy.task<{ users: UserData[] }>("seedUsers", { number: 1, role: "READER" });
+        })
+        .then(({ users }) => {
+          usersArr = [ ...users ];
+          registeredUser = usersArr[0];
+        })
       //
     } catch (error) {
       throw error;
@@ -61,6 +69,35 @@ describe("Admin new <Admin> user page tests", () => {
 
   before(() => {
     mockErrorResponse = { responseMsg: "Error Occured", error: new Error("Oooooops"), errorMessages: [ "An error occured" ]};
+  });
+
+  context("New Admin page, regular registered User", () => {
+    beforeEach(() => {
+      cy.visit("/login")
+        .then(() => {
+          cy.getByDataAttr("login-page-email-input").type(registeredUser.email);
+          cy.getByDataAttr("login-page-password-input").type("password");
+          cy.getByDataAttr("login-page-login-btn").click();
+          //
+          cy.getByDataAttr("user-main-page").should("exist");
+          cy.wait(5000)
+          return cy.window().its("store").invoke("getState")
+        })
+        .then((state) => {
+          appState = deepCopyObject<IGeneralState>(state);
+          return cy.visit("/admin/dashboard/admins/new");
+        })       
+    });
+    it("Should render NOT render the new Admin form and reroute to proper page", () => {
+      //
+      cy.getByDataAttr("admin-admin-form").should("not.exist");
+      // assert correct 401 page rendering //
+      cy.getByDataAttr("admin-401-page").should("exist").and("be.visible");
+      // admin state should not have a currently selected admin //
+      // auth state should not change //
+      cy.window().its("store").invoke("getState").its("authState").should("deep.equal", appState.authState);
+      cy.window().its("store").invoke("getState").its("adminsState").its("selectedAdminData").should("deep.equal", appState.adminState.selectedAdminData);
+    });
   });
 
   context("New Admin page, <admin> level admin", () => {
@@ -93,8 +130,8 @@ describe("Admin new <Admin> user page tests", () => {
       // auth state should not change //
       cy.window().its("store").invoke("getState").its("authState").should("deep.equal", appState.authState);
       cy.window().its("store").invoke("getState").its("adminsState").its("selectedAdminData").should("deep.equal", appState.adminState.selectedAdminData);
-    })
-  })
+    });
+  });
 
   context("New Admin page, <owner> level admin", () => {
     beforeEach(() => {
