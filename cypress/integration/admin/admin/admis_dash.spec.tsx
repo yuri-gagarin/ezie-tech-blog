@@ -3,6 +3,8 @@
 
 import { expect } from "chai";
 // types 
+import type { AdminData } from "@/redux/_types/admins/dataTypes";
+import type { UserData} from "@/redux/_types/users/dataTypes";
 import type { IAdminState, IGeneralState } from "@/redux/_types/generalTypes";
 // helpers //
 import { deepCopyObject } from "@/components/_helpers/generalHelpers";
@@ -14,13 +16,77 @@ describe("Admin dashboard navigation tets", () => {
   const adminEmail: string = "owner@email.com";
   const adminPass: string = "password";
   //
+  let adminsArr: AdminData[];
+  let ownerAdmin: AdminData;
+  let regAdmin: AdminData;
+  let regUser: UserData;
+  let adminIds: string[];
+  //
   let adminsState: IAdminState;
   let appState: IGeneralState;
+
+  before(() => {
+    try {
+      cy.task("connectToDB")
+        .then(() => {
+          return cy.task<{ admins: AdminData[] }>("seedAdmins", { number: 1, role: "owner" });
+        })
+        .then(({ admins }) => {
+          adminsArr = [ ...admins ];
+          ownerAdmin = adminsArr[0];
+          return cy.task<{ admins: AdminData[]}>("seedBlogPosts", { number: 10, confirmed: true });
+        })
+        .then(() => {
+          return cy.task<{ admins: AdminData[] }>("seedAdmins", { number: 1, role: "admin" });
+        })
+        .then(({ admins }) => { 
+          adminsArr = [ ...adminsArr, ...admins ];
+          regAdmin = adminsArr[1];
+          adminIds = adminsArr.map((adminData) => adminData._id);
+          return cy.task<{ users: UserData[] }>("seedUsers", { number: 1, role: "READER" });
+        })
+        .then(({ users }) => {
+          usersArr = [ ...users ];
+          registeredUser = usersArr[0];
+        })
+      //
+    } catch (error) {
+      throw error;
+    }
+  });
 
   // login and navigate to dash //
 
   beforeEach(() => {
     cy.intercept({ method: "GET", url: "/api/posts" }).as("getAdmins");
+  });
+  context("Non admin user", () => {
+    beforeEach(() => {
+      cy.visit("http://localhost:3000/login");
+      //
+      cy.getByDataAttr("login-page-email-input").type(adminEmail);
+      cy.getByDataAttr("login-page-password-input").type(adminPass);
+      // 
+      cy.getByDataAttr("login-page-login-btn").click();
+      //
+      cy.getByDataAttr("admin-main-page").should("be.visible");
+      //
+      cy.wait("@getAdmins");
+      cy.visit("http://localhost:3000/admin/dashboard/admins")
+        .then(() => {
+          cy.getByDataAttr("admin-admins-page").should("exist");
+          //
+          cy.window().its("store").invoke("getState").its("authState").its("currentAdmin").should("not.be.null");
+          cy.window().its("store").invoke("getState").its('adminsState').its("adminsArr").should("have.length.above", 0);
+          cy.window().its("store").invoke("getState").then((state) => {
+            appState = deepCopyObject(state);
+          });
+            
+        });
+    });
+    it("Should NOT render the admin page and reroute to proper 401 page", () => {
+
+    });
   });
   beforeEach(() => {
     cy.visit("http://localhost:3000/login");
