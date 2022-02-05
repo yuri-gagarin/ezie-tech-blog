@@ -3,9 +3,9 @@ import { Button, Card, Grid  } from "semantic-ui-react";
 // additoinal components //
 import { UserMainCurrentDash } from './UserMainCurrentDash';
 // styles //
-import userMainStyles from "../../styles/user/UserMain.module.css";
+import userMainStyles from "@/styles/user/UserMain.module.css";
 // types //
-import type { IGeneralAppAction, IGeneralState } from '../../redux/_types/generalTypes';
+import type { IGeneralAppAction, IGeneralState } from '@/redux/_types/generalTypes';
 import type { Dispatch } from "redux";
 
 
