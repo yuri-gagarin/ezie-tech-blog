@@ -11,6 +11,10 @@ import { deepCopyObject } from "@/components/_helpers/generalHelpers";
 import { checkEmptyObjVals } from "@/redux/_helpers/dataHelpers";
 import { capitalizeString, formatTimeString } from "@/components/_helpers/displayHelpers";
 
+/**
+ * ONLY ADMIN accounts should have access to admin dashboard //
+ * Regular user accounts and guests should not //
+ */
 
 describe("Admin dashboard navigation tets", () => {
   const adminEmail: string = "owner@email.com";

@@ -1,40 +1,68 @@
 import * as React from 'react';
-import { Button, Form, Grid, Header } from "semantic-ui-react";
-// next //
-import type { GetStaticProps, GetStaticPropsResult } from "next";
-// styles //
-import styles from "../../styles/user/UserRegister.module.css";
+// next imports //
+// redux //
+import { useSelector, useDispatch } from "react-redux";
+import { BlogPostActions } from "@/redux/actions/blogPostActions";
+// additional components //
+// import { UserLayout } from '@/components/user/UserLayout';
+// import { UserMain } from '@/components/user/UserMain';
+// types //
+import type { Dispatch } from "redux";
+import type { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from "next";
+import type { IGeneralState, IGeneralAppAction } from '@/redux/_types/generalTypes';
+// helpers //
+// import { verifyUserToken } from "@/components/_helpers/userComponentHelpers";
 
-interface IUserRegisterProps {
+interface IUserDashProps {
+
 }
 
-export const getStaticProps: GetStaticProps =  async (context): Promise<GetStaticPropsResult<any>> => {
-  return {
-    props: { }
+export const getServerSideProps: GetServerSideProps =  async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
+  const token = context.req["signedCookies"].JWTToken;
+  let validUser: boolean;
+  try {
+    // validUser = await verifyUserToken(token);
+  } catch (error) {
+    console.log(error);
+    validUser = false;
   }
-}
-const UserRegister: React.FunctionComponent<IUserRegisterProps> = (props): JSX.Element => {
+
+  if (validUser) {
+    return {
+      props: { }
+    };
+  } else {
+    return {
+      redirect: {
+        destination: "/401",
+        statusCode: 301,
+      },
+      props: {
+        errorMessages: [ "Not Logged in "] 
+      }
+    };
+  }
+};
+
+
+const UserDash: React.FunctionComponent<IUserDashProps> = (props): JSX.Element => {
+  // redux hooks and state //
+  const state = useSelector((state: IGeneralState) => state);
+  const dispatch = useDispatch<Dispatch<IGeneralAppAction>>();
+
+  React.useEffect(() => {
+    async function getAllData() {
+      await BlogPostActions.handleFetchBlogPosts(dispatch);
+    }
+    getAllData();
+    console.log("ran")
+  }, [ dispatch ]);
+
   return (
-    <Grid.Row className={ styles.adminLoginWrapper }>
-      <Header as="h2">Register</Header>
-      <div>
-        <Form className={ styles.adminLoginForm }>
-          <Form.Field>
-            <label>Username</label>
-            <input placeholder='Username' />
-          </Form.Field>
-          <Form.Field>
-            <label>Password</label>
-            <input type="password" placeholder='Password' />
-          </Form.Field>
-          <Form.Field>
-            <label>Confirm Password</label>
-            <input type="password" placeholder='Confirm Password' />
-          </Form.Field>
-        </Form>
-      </div>
-    </Grid.Row>
+    <UserLayout>
+      <UserMain generalState={ state } dispatch={ dispatch } />
+    </UserLayout>
   );
 };
 
-export default UserRegister;
+export default UserDash;
