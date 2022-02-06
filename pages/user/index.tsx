@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additional components //
 import { UserLayout } from '@/components/user/UserLayout';
-// import { UserMain } from '@/components/user/UserMain';
+import { UserMain } from '@/components/user/UserMain';
 // types //
 import type { Dispatch } from "redux";
 import type { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from "next";
@@ -16,7 +16,9 @@ import type { IGeneralState, IGeneralAppAction } from '@/redux/_types/generalTyp
 interface IUserDashProps {
 
 }
-
+// TODO
+// this should be a protected route //
+/*
 export const getServerSideProps: GetServerSideProps =  async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
   const token = context.req["signedCookies"].JWTToken;
   let validUser: boolean;
@@ -43,7 +45,7 @@ export const getServerSideProps: GetServerSideProps =  async (context: GetServer
     };
   }
 };
-
+*/
 
 const UserDash: React.FunctionComponent<IUserDashProps> = (props): JSX.Element => {
   // redux hooks and state //

@@ -3,7 +3,7 @@ import { Button, Divider, Grid, Header, Icon, Segment, Search } from "semantic-u
 // types //
 import { BlogPostData } from '@/redux/_types/blog_posts/dataTypes';
 // styles //
-import styles from "@/styles/admin/UserMainCurrentPost.module.css";
+import styles from "@/styles/user/UserMainCurrentPost.module.css";
 
 export interface IUserMainCurrentPostProps {
   currentPostData: BlogPostData;
@@ -11,7 +11,7 @@ export interface IUserMainCurrentPostProps {
 
 export const UserMainCurrentDash: React.FC<IUserMainCurrentPostProps> = ({ currentPostData }): JSX.Element => {
   return (
-    <div className={ styles.adminMainCurrentPostWrapper }>
+    <div className={ styles.userMainCurrentPostWrapper }>
       <Segment placeholder style={{ width: "100%", margin: 0 }}>
         <Grid columns={2} stackable textAlign='center'>
           <Divider vertical>Or</Divider>

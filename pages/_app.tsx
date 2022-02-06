@@ -2,7 +2,7 @@ import React from "react";
 import NProgress from "nprogress";
 // next imports //
 import App, { AppInitialProps, AppContext } from "next/app";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 // redux imports //
 import { wrapper, store } from "../redux/store";
 // firebase for storage //
@@ -17,6 +17,8 @@ import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
 import "nprogress/nprogress.css";
 import 'react-image-lightbox/style.css'
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { UserLayout } from "@/components/user/UserLayout";
 
 declare global {
   interface Window { Cypress: any; store: Store<IGeneralState>  }
@@ -24,13 +26,15 @@ declare global {
 
 interface IAppInitialState {
   firebaseContInstance: null | FirebaseController;
+  layoutRender: "user" | "admin" | "public";
 }
 
 class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
   constructor(props: any) {
     super(props)
     this.state = {
-      firebaseContInstance: new FirebaseController()
+      firebaseContInstance: new FirebaseController(),
+      layoutRender: "public"
     }
   }
   
@@ -43,6 +47,8 @@ class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
     };
   });
 
+
+  // lifecycle //
   componentDidMount() {
     NProgress.configure({ showSpinner: true, easing: "ease", speed: 500 });
     Router.events.on("routeChangeStart", () => {
@@ -57,19 +63,50 @@ class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
     if (window && window.Cypress) {
       window.store = store; 
     }
+
+    if(Router.route.includes("user")) {
+      this.setState({ layoutRender: "user" });
+    } else if (Router.route.includes("admin")) {
+      this.setState({ layoutRender: "admin" });
+    } else {
+      this.setState({ layoutRender: "public" });
+    }
+
   }
   
   public render () {
     const { Component, pageProps } = this.props;
-    const { firebaseContInstance } = this.state;
-    return (
-      <Layout { ...pageProps }>
-        <Component 
-          firebaseContInstance={firebaseContInstance} 
-          { ...pageProps } 
-        />
-      </Layout>
-    );
+    const { firebaseContInstance, layoutRender } = this.state;
+    console.log(this.state)
+
+    if (layoutRender === "admin") {
+      return (
+        <AdminLayout { ...pageProps }>
+          <Component 
+            firebaseContInstance={firebaseContInstance} 
+            { ...pageProps } 
+          />
+        </AdminLayout>
+      );
+    } else if (layoutRender === "user") {
+      return (
+        <UserLayout { ...pageProps }>
+          <Component 
+            firebaseContInstance={firebaseContInstance} 
+            { ...pageProps } 
+          />
+        </UserLayout>
+      );
+    } else {
+      return (
+        <Layout { ...pageProps }>
+          <Component 
+            firebaseContInstance={firebaseContInstance} 
+            { ...pageProps } 
+          />
+        </Layout>
+      );
+    }
   }
 }
 

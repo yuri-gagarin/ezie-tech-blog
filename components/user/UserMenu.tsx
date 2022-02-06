@@ -11,7 +11,7 @@ import type { Dispatch } from "redux";
 import type { IGeneralState , IGeneralAppAction} from '@/redux/_types/generalTypes';
 import type { DropdownItemProps, MenuItemProps } from "semantic-ui-react";
 // styles //
-import userMenuStyles from "@/styles/User/UserMenu.module.css";
+import userMenuStyles from "@/styles/user/UserMenu.module.css";
 // helpers //
 import { checkEmptyObjVals } from "../_helpers/displayHelpers";
 
