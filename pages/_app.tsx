@@ -2,7 +2,7 @@ import React from "react";
 import NProgress from "nprogress";
 // next imports //
 import App, { AppInitialProps, AppContext } from "next/app";
-import Router, { useRouter } from "next/router";
+import NextRouter, { useRouter } from "next/router";
 // redux imports //
 import { wrapper, store } from "../redux/store";
 // firebase for storage //
@@ -10,6 +10,7 @@ import FirebaseController from "../firebase/firebaseSetup";
 // additional components //
 import Layout from '../components/layout/Layout';
 // types //
+import type { Router } from "next/router";
 import type { Store } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 // styles //
@@ -19,6 +20,7 @@ import "nprogress/nprogress.css";
 import 'react-image-lightbox/style.css'
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { UserLayout } from "@/components/user/UserLayout";
+import { NextComponentType, NextPageContext } from "next";
 
 declare global {
   interface Window { Cypress: any; store: Store<IGeneralState>  }
@@ -47,31 +49,42 @@ class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
     };
   });
 
-
   // lifecycle //
   componentDidMount() {
     NProgress.configure({ showSpinner: true, easing: "ease", speed: 500 });
-    Router.events.on("routeChangeStart", () => {
+    NextRouter.events.on("routeChangeStart", () => {
       NProgress.start();
     });
-    Router.events.on("routeChangeComplete", () => {
+    NextRouter.events.on("routeChangeComplete", () => {
       NProgress.done();
     });
-    Router.events.on("routeChangeError", () => {
+    NextRouter.events.on("routeChangeError", () => {
       NProgress.done();
     });
     if (window && window.Cypress) {
       window.store = store; 
     }
 
-    if(Router.route.includes("user")) {
+    if(NextRouter.route.includes("user")) {
       this.setState({ layoutRender: "user" });
-    } else if (Router.route.includes("admin")) {
+    } else if (NextRouter.route.includes("admin")) {
       this.setState({ layoutRender: "admin" });
     } else {
       this.setState({ layoutRender: "public" });
     }
+  }
+  
+  shouldComponentUpdate(nextProps: Readonly<AppInitialProps & { Component: NextComponentType<NextPageContext<any>, any, any>; router: Router; __N_SSG?: boolean; __N_SSP?: boolean; }>, nextState: Readonly<IAppInitialState>, nextContext: any): boolean {
+    const { route } = nextProps.router;
 
+    if(route.includes("user") && nextState.layoutRender !== "user") {
+      this.setState({ layoutRender: "user" });
+    } else if (route.includes("admin") && nextState.layoutRender !== "admin") {
+      this.setState({ layoutRender: "admin" });
+    } else if ((!route.includes("admin") && !route.includes("user")) && nextState.layoutRender !== "public") {
+      this.setState({ layoutRender: "public" });
+    }
+    return true;
   }
   
   public render () {

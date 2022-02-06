@@ -57,13 +57,10 @@ const UserDash: React.FunctionComponent<IUserDashProps> = (props): JSX.Element =
       await BlogPostActions.handleFetchBlogPosts(dispatch);
     }
     getAllData();
-    console.log("ran")
   }, [ dispatch ]);
 
   return (
-    <UserLayout>
-      <UserMain generalState={ state } dispatch={ dispatch } />
-    </UserLayout>
+    <UserMain generalState={ state } dispatch={ dispatch } />
   );
 };
 
