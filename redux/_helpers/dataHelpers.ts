@@ -25,8 +25,9 @@ export const checkEmptyObjVals = (obj: AnyObj): boolean => {
 };
 
 export const processAxiosError = (error: any): { status: number; responseMsg: string; error: Error; errorMessages: string[] } => {
-  if (error.isAxiosError) {
+  if (error.isAxiosError && error.response) {
     const { response } = error as AxiosError;
+    console.log(error)
     const { status } = response;
     const { responseMsg, error: _error, errorMessages  } = response.data as CreateBlogPostRes;
     return {
