@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additional components //
-import { UserLayout } from '@/components/user/UserLayout';
+import { UserLayout } from '@/components/layout/UserLayout';
 import { UserMain } from '@/components/user/UserMain';
 // types //
 import type { Dispatch } from "redux";
@@ -56,7 +56,7 @@ const UserDash: React.FunctionComponent<IUserDashProps> = (props): JSX.Element =
     async function getAllData() {
       await BlogPostActions.handleFetchBlogPosts(dispatch);
     }
-    getAllData();
+      getAllData().catch((err) => console.log(err));
   }, [ dispatch ]);
 
   return (

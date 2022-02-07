@@ -17,6 +17,7 @@ import { checkAndSetUniqueUserId } from "./_helpers/customMiddleware";
 // types //
 import type { NextServer } from "next/dist/server/next";
 import type { Request, Response } from "express";
+import type { CorsOptions } from "cors";
 
 
 export const PassportContInstance = new PassportController().initialize();
@@ -56,6 +57,11 @@ combineRoutes(router);
   }
 })();
 */
+
+const corsOptions: CorsOptions = {
+  origin: "*"
+};
+
 export class Server {
   private server: Express;
   private app: NextServer;
@@ -103,7 +109,7 @@ export class Server {
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: true }));
     this.server.use(cookieParser(process.env.COOKIE_SECRET));
-    this.server.use(cors());
+    this.server.use(cors(corsOptions));
     this.server.use(PassportContInstance.initialize());
     this.server.use(checkAndSetUniqueUserId);
   }

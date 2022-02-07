@@ -70,13 +70,21 @@ export default class FirebaseController {
   }
 
   private initialize(): void {
-    this.app = initializeApp(this.firebaseConfig);
-    //this.analytics = getAnalytics(this.app);
+    try {
+      this.app = initializeApp(this.firebaseConfig);
+      //this.analytics = getAnalytics(this.app);
+    } catch (error) {
+      console.log(error);
+    }
   }
   private initializeStorage(): void {
-    this.firebaseStorage = getStorage(this.app);
-    //const storageRef = ref(this.firebaseStorage);
-    //console.log(storageRef);
+    try {
+      this.firebaseStorage = getStorage(this.app);
+      //const storageRef = ref(this.firebaseStorage);
+      //console.log(storageRef);
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 

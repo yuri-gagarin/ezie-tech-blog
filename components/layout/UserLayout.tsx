@@ -1,19 +1,29 @@
 import * as React from 'react';
 import { Grid } from "semantic-ui-react";
-// components which are to be always displayed //
-import { NavMenu } from '../navs/NavMenu';
+// additional components //
 import { MobileMenuSidebar } from '../sidebars/MobileMenuSidebar';
-import Footer from '../footer/Footer';
+import { UserMenu } from '../user/UserMenu';
 // styles //
 import layoutStyles from "@/styles/layout/LayoutStyle.module.css";
 // helpers //
 import { useWindowSize } from "@/components/_helpers/monitorWindowSize";
 
-interface ILayoutProps {
+interface IUserLayoutProps {
   pageProps: any;
 }
 
-const Layout: React.FunctionComponent<ILayoutProps> = ({ children, pageProps }): JSX.Element => {
+/*
+export const UserLayout: React.FunctionComponent<IUserLayoutProps> = ({ children }): JSX.Element => {
+  return (
+    <React.Fragment>
+      <UserMenu />
+      {  children }
+    </React.Fragment>
+  );
+};
+*/
+
+export const UserLayout: React.FunctionComponent<IUserLayoutProps> = ({ children, pageProps }): JSX.Element => {
   // custom hooks //
   const { width } = useWindowSize();
   return (
@@ -22,18 +32,15 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({ children, pageProps }):
         width > 550 
         ?
         <>
-          <NavMenu { ...pageProps }/>
+          <UserMenu { ...pageProps }/>
           { children }
         </>
         :
        < MobileMenuSidebar>
         { children }
        </MobileMenuSidebar>
-      }
-     
-      <Footer />
+      }     
     </Grid>
   )
 };
 
-export default Layout;

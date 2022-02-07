@@ -3,16 +3,16 @@ import { Button, Divider, Grid, Header, Icon, Segment, Search } from "semantic-u
 // types //
 import { BlogPostData } from '@/redux/_types/blog_posts/dataTypes';
 // styles //
-import styles from "@/styles/user/UserMainCurrentPost.module.css";
+import styles from "@/styles/user/UserMainCurrentDash.module.css";
 
-export interface IUserMainCurrentPostProps {
+export interface IUserMainCurrentDashProps {
   currentPostData: BlogPostData;
 }
 
-export const UserMainCurrentDash: React.FC<IUserMainCurrentPostProps> = ({ currentPostData }): JSX.Element => {
+export const UserMainCurrentDash: React.FC<IUserMainCurrentDashProps> = ({ currentPostData }): JSX.Element => {
   return (
-    <div className={ styles.userMainCurrentPostWrapper }>
-      <Segment placeholder style={{ width: "100%", margin: 0 }}>
+    <div className={ styles.userMainCurrentDashWrapper }>
+      <Segment placeholder style={{ width: "100%", height: "50%", margin: 0 }}>
         <Grid columns={2} stackable textAlign='center'>
           <Divider vertical>Or</Divider>
           <Grid.Row verticalAlign='middle'>
@@ -35,7 +35,7 @@ export const UserMainCurrentDash: React.FC<IUserMainCurrentPostProps> = ({ curre
           </Grid.Row>
         </Grid>
       </Segment>
-      <Segment placeholder style={{ width: "100%", margin: 0 }}>
+      <Segment placeholder style={{ width: "100%", height: "50%", margin: 0 }}>
         <Grid columns={2} stackable textAlign='center'>
           <Divider vertical>Or</Divider>
           <Grid.Row verticalAlign='middle'>

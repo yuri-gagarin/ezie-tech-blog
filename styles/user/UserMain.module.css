@@ -1,0 +1,13 @@
+.userMainRow {
+  margin-top: 0.5em;
+}
+
+
+@media screen and (min-width: 550px) {
+  .userMainRow {
+    margin-top: 1.75em;
+  }
+  .rightColumn {
+    border-left: 2px solid gray !important;
+  }
+}
