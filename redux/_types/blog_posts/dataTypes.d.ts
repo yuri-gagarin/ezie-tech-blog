@@ -84,6 +84,7 @@ export type FetchBlogPostsOpts = {
   createdAt?: "desc" | "asc";
   publishedStatus?: "published" | "unpublished" | "all";
   limit?: number;
+  userId?: string;
 };
 export type AuthOpts = {
   JWTToken: string;

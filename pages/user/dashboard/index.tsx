@@ -8,28 +8,27 @@ import { GeneralNotImlementedModal } from "@/components/modals/GenNotImplemented
 import { UserMain } from '@/components/user/UserMain';
 // types //
 import type { Dispatch } from "redux";
-// import type { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from "next";
+import type { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from "next";
 import type { IGeneralState, IGeneralAppAction } from '@/redux/_types/generalTypes';
 // helpers //
-// import { verifyUserToken } from "@/components/_helpers/userComponentHelpers";
+import { verifyUserToken } from "@/components/_helpers/userComponentHelpers";
 
 interface IUserDashProps {
 
 }
 // TODO
 // this should be a protected route //
-/*
 export const getServerSideProps: GetServerSideProps =  async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
   const token = context.req["signedCookies"].JWTToken;
   let validUser: boolean;
   try {
-    // validUser = await verifyUserToken(token);
+    validUser = await verifyUserToken(token);
   } catch (error) {
     console.log(error);
     validUser = false;
   }
 
-  if (validUser) {
+  if (true) {
     return {
       props: { }
     };
@@ -45,7 +44,7 @@ export const getServerSideProps: GetServerSideProps =  async (context: GetServer
     };
   }
 };
-*/
+
 
 const UserDash: React.FunctionComponent<IUserDashProps> = (props): JSX.Element => {
   // local state //

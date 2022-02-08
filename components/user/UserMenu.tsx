@@ -44,14 +44,14 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
     switch (option) {
       case "post": {
         if (!checkEmptyObjVals(currentBlogPost)) BlogPostActions.handleClearCurrentBlogPost(dispatch);
-        router.push("/user/dashboard/posts/new");
+        router.push("/user/dashboard/posts/editor");
         break;
       }
       default: return;
     }
     // clear current blog post if any //
     if (!checkEmptyObjVals(currentBlogPost)) BlogPostActions.handleClearCurrentBlogPost(dispatch);
-    router.push("/user/dashboard/posts/new");
+    router.push("/user/dashboard/posts/editor");
   };
   const handleMenuItemClick = (_, data: MenuItemProps ) => {
     const name = data.name as MenuItemVal;

@@ -90,7 +90,6 @@ class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
   public render () {
     const { Component, pageProps } = this.props;
     const { firebaseContInstance, layoutRender } = this.state;
-    console.log(this.state)
 
     if (layoutRender === "admin") {
       return (

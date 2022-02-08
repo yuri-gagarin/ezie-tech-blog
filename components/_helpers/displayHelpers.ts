@@ -70,7 +70,7 @@ export const capitalizeString = (stringToCapitalize: string): string => {
 };
 
 export const setPostAuthor = (authState: IAuthState): string => {
-  const { firstName, lastName } = authState.currentUser;
+  const { firstName, lastName } = authState.currentUser ? authState.currentUser : { firstName: "", lastName: "" };
   if (firstName && lastName) {
     return `${capitalizeString(firstName)} ${capitalizeString(lastName)}`
   } else if (firstName || lastName) {

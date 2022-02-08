@@ -1,4 +1,5 @@
 import * as firebaseAdmin from "firebase-admin";
+import { decode } from "jsonwebtoken";
 // models //
 import User from "../models/User";
 import Admin from "../models/Admin";
@@ -18,6 +19,7 @@ import { trimRegistrationData } from "./_helpers/authControllerHelperts";
 export enum LoginCookies {
   JWTToken = "JWTToken"
 };
+
 
 export default class AuthController {
   login = async (req: Request, res: Response<LoginResponse | ErrorResponse>): Promise<Response> => {
@@ -120,6 +122,21 @@ export default class AuthController {
 
   verifyAdmin = async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).json({ responseMsg: "All ok "});
+  }
+
+  verifyUser = async (req: Request, res: Response): Promise<Response> => {
+    const { JWTToken } = req.cookies;
+    // if (!user_token) return this.sendErrorRes(res, { status: 400, responseMsg: "Could not resolve user token", error: new Error("Auth Error"), errorMessages: [ "Could not resolve user token"]  });
+
+    try {
+      console.log(req.cookies);
+      console.log(req.signedCookies);
+      return res.status(200).json({
+        responseMsg: "Valid User"
+      })
+    } catch (error) {
+      return await this.sendErrorRes(res, { status: 500, error, errorMessages: [ "Server error" ] });
+    }
   }
 
   // PRIVATE HELPERS //

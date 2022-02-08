@@ -20,6 +20,19 @@ import type { Request, Response } from "express";
 import type { CorsOptions } from "cors";
 
 
+['log', 'warn'].forEach(function(method) {
+  var old = console[method];
+  console[method] = function() {
+    var stack = (new Error()).stack.split(/\n/);
+    // Chrome includes a single "Error" line, FF doesn't.
+    if (stack[0].indexOf('Error') === 0) {
+      stack = stack.slice(1);
+    }
+    var args = [].slice.apply(arguments).concat([stack[1].trim()]);
+    return old.apply(console, args);
+  };
+});
+
 export const PassportContInstance = new PassportController().initialize();
 /*
 const dev = process.env.NODE_ENV !== "production";
@@ -129,7 +142,6 @@ export class Server {
     return await mongoSetup();
   }
   private launchFirebaseAdmin(): void {
-    console.log("called")
     try {
       new FirebaseServerController();
     } catch (error) {

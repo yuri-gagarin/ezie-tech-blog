@@ -21,6 +21,7 @@ export default class AuthRoutes {
     this.registerRoute();
     this.logoutRoute();
     this.verifyAdminRoute();
+    this.verifyUserRoute();
   }
 
   private loginRoute() {
@@ -45,6 +46,14 @@ export default class AuthRoutes {
       .get([ 
         PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }) ,
         this.controller.verifyAdmin 
+      ]);
+  }
+  // NOT fully implemented //
+  private verifyUserRoute() {
+    this.router
+      .route("/api/verify_user")
+      .get([
+        this.controller.verifyUser
       ]);
   }
 };

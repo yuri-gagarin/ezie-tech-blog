@@ -1,0 +1,9 @@
+.navRow {
+  margin-top: 0.5em;
+}
+
+@media screen and (min-width: 551px) {
+  .navRow {
+    margin-top: 1.5em;
+  }
+}
