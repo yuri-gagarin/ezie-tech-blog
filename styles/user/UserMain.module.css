@@ -1,6 +1,10 @@
 .userMainRow {
   margin-top: 0.5em;
 }
+.leftColumn {
+  max-height: calc(100vh - 90px);
+  overflow-y: scroll;
+}
 
 
 @media screen and (min-width: 550px) {

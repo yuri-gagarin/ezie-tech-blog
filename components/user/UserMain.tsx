@@ -8,13 +8,19 @@ import userMainStyles from "@/styles/user/UserMain.module.css";
 import type { IGeneralAppAction, IGeneralState } from '@/redux/_types/generalTypes';
 import type { Dispatch } from "redux";
 
+/**
+ * NOTES
+ * <View> butons not implemented yet
+ * <Go To Stats> button not implemented yet
+ */
 
 interface IUserMainProps {
   generalState: IGeneralState;
   dispatch: Dispatch<IGeneralAppAction>;
+  openNotImpModal(): void;
 }
 
-export const UserMain: React.FunctionComponent<IUserMainProps> = ({ generalState }): JSX.Element => {
+export const UserMain: React.FunctionComponent<IUserMainProps> = ({ generalState, openNotImpModal }): JSX.Element => {
   const { blogPostsState } = generalState;
   return (
     <Grid.Row className={ userMainStyles.userMainRow } data-test-id="user-main-page"> 
@@ -27,6 +33,9 @@ export const UserMain: React.FunctionComponent<IUserMainProps> = ({ generalState
             <Card.Content textAlign="center">
               {blogPostsState.blogPosts.length}
             </Card.Content>
+            <Card.Content textAlign="center">
+              <Button basic color="teal" content="View" onClick={ openNotImpModal } /> 
+            </Card.Content>
           </Card>
           <Card fluid color="blue">
             <Card.Content textAlign="center">
@@ -34,6 +43,9 @@ export const UserMain: React.FunctionComponent<IUserMainProps> = ({ generalState
             </Card.Content>
             <Card.Content textAlign="center">
               {blogPostsState.blogPosts.length}
+            </Card.Content>
+            <Card.Content textAlign="center">
+              <Button basic color="teal" content="View" onClick={ openNotImpModal } />
             </Card.Content>
           </Card>
           <Card fluid color="blue">
@@ -43,6 +55,9 @@ export const UserMain: React.FunctionComponent<IUserMainProps> = ({ generalState
             <Card.Content textAlign="center">
               {blogPostsState.blogPosts.length}
             </Card.Content>
+            <Card.Content textAlign="center">
+              <Button basic color="teal" content="View" onClick={ openNotImpModal } />
+            </Card.Content>
           </Card>
           <Card fluid color="blue">
             <Card.Content textAlign="center">
@@ -51,13 +66,16 @@ export const UserMain: React.FunctionComponent<IUserMainProps> = ({ generalState
             <Card.Content textAlign="center">
               {blogPostsState.blogPosts.length}
             </Card.Content>
+            <Card.Content textAlign="center">
+              <Button basic color="teal" content="View" onClick={ openNotImpModal } />
+            </Card.Content>
           </Card>
           <Card fluid color="teal">
             <Card.Content textAlign="center">
               <Card.Header>Statistics</Card.Header>
             </Card.Content>
             <Card.Content textAlign="center">
-              <Button content={"Go To Stats"} />
+              <Button basic color="olive" content="Go To Stats" onClick={ openNotImpModal } />
             </Card.Content>
           </Card>
         </Card.Group>

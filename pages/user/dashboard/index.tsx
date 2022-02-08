@@ -4,11 +4,11 @@ import * as React from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additional components //
-import { UserLayout } from '@/components/layout/UserLayout';
+import { GeneralNotImlementedModal } from "@/components/modals/GenNotImplementedModal";
 import { UserMain } from '@/components/user/UserMain';
 // types //
 import type { Dispatch } from "redux";
-import type { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from "next";
+// import type { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from "next";
 import type { IGeneralState, IGeneralAppAction } from '@/redux/_types/generalTypes';
 // helpers //
 // import { verifyUserToken } from "@/components/_helpers/userComponentHelpers";
@@ -48,10 +48,20 @@ export const getServerSideProps: GetServerSideProps =  async (context: GetServer
 */
 
 const UserDash: React.FunctionComponent<IUserDashProps> = (props): JSX.Element => {
+  // local state //
+  const [ notImpModalOpen, setNotImpModalOpen ] = React.useState<boolean>(false);
   // redux hooks and state //
   const state = useSelector((state: IGeneralState) => state);
   const dispatch = useDispatch<Dispatch<IGeneralAppAction>>();
 
+  const openNotImpModal = (): void => {
+    setNotImpModalOpen(true);
+  };
+  const dismissNotImpModal = (): void => {
+    setNotImpModalOpen(false);
+  };
+
+  // lifecycle methods //
   React.useEffect(() => {
     async function getAllData() {
       await BlogPostActions.handleFetchBlogPosts(dispatch);
@@ -60,7 +70,14 @@ const UserDash: React.FunctionComponent<IUserDashProps> = (props): JSX.Element =
   }, [ dispatch ]);
 
   return (
-    <UserMain generalState={ state } dispatch={ dispatch } />
+    <React.Fragment>
+      <GeneralNotImlementedModal modalOpen={ notImpModalOpen } dismissNotImpModal={ dismissNotImpModal } />
+      <UserMain 
+        generalState={ state } 
+        dispatch={ dispatch } 
+        openNotImpModal={ openNotImpModal }
+      />
+    </React.Fragment>
   );
 };
 
