@@ -1,6 +1,6 @@
-import mongoose, { Types, Schema } from "mongoose";
+import mongoose, { Types, Schema} from "mongoose";
 import bcrypt from "bcrypt";
-import type { Document, ObjectId } from "mongoose";
+import type { Document, Model } from "mongoose";
 import type { NextFunction } from "express";
 
 export interface IUser extends Document  {
@@ -56,4 +56,4 @@ UserSchema.methods.validPassword = async function(password: string): Promise<boo
   return await bcrypt.compare(password, this.password);
 }
 
-export default mongoose.models.User ||  mongoose.model<IUser>("User", UserSchema);
+export default mongoose.models.User as Model<IUser> ||  mongoose.model<IUser>("User", UserSchema);

@@ -1,7 +1,5 @@
 
 import { passportLoginMiddleware } from "../controllers/_helpers/authHelpers";
-import { PassportContInstance } from "../server";
-import { StrategyNames } from "../controllers/PassportController";
 // types //
 import type { Router } from "express";
 import type AuthController from "../controllers/AuthController";

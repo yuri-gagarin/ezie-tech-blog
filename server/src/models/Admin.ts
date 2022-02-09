@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 import bcrypt from "bcrypt";
-import type { Document } from "mongoose";
+import type { Document, Model } from "mongoose";
 import type { NextFunction } from "express";
 
 export interface IAdmin extends Document  {
@@ -44,4 +44,4 @@ AdminSchema.methods.hashNewPassword = async function(password: string): Promise<
   return this.save();
 }
 
-export default mongoose.models.Admin || mongoose.model<IAdmin>("Admin", AdminSchema);
+export default mongoose.models.Admin as Model<IAdmin> || mongoose.model<IAdmin>("Admin", AdminSchema);

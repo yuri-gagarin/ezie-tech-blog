@@ -1,6 +1,8 @@
 import Admin from "../../models/Admin";
 import { PassportContInstance } from "../../server";
 import { StrategyNames } from "../PassportController"; 
+// helpers //
+import { AuthNotFoundError } from "./errorHelperts";
 // types //
 import type { Request, Response, NextFunction, CookieOptions } from "express";
 import type { IAdmin } from "../../models/Admin";
@@ -9,9 +11,13 @@ import type { ErrorResponse } from "../../_types/auth/authTypes";
 
 export const passportLoginMiddleware = (req: Request, res: Response, next: NextFunction) => {
   PassportContInstance.authenticate(StrategyNames.LoginAuthStrategy, { session: false }, (err, user: IAdmin | IUser | null, info) => {
-    if (err) return next(err);
-    console.log(13)
-    console.log("here")
+    if (err && err instanceof AuthNotFoundError) {
+      return res.status(400).json({
+        responseMsg: "Invalid Login",
+        error: err,
+        errorMessages: err.getErrorMessages
+      });
+    }
     if(!user) {
       console.log(16)
       return res.status(400).json({

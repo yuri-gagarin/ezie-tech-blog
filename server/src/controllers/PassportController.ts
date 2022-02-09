@@ -5,6 +5,8 @@ import jsonwebtoken from "jsonwebtoken";
 // modals //
 import Admin from "../models/Admin";
 import User from "../models/User";
+// helpers //
+import { AuthNotFoundError } from "./_helpers/errorHelperts";
 // types //
 import type { StrategyOptions } from "passport-jwt";
 import type { IUser } from "../models/User";
@@ -92,7 +94,10 @@ export default class PassportController {
               return done(null, false, { message: "Wrong password" });
             }
           } else {
-            return done(new Error("User not found"), false, { message: "Not found" });
+            // no <User> or <Admin> model found //
+            // 
+            console.log("we here")
+            return done(new AuthNotFoundError("Invalid Login", [ "No account with provided login exists" ]), false, { message: "Not found" });
           }
         }
       } catch (error) {
