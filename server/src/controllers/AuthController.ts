@@ -121,6 +121,7 @@ export default class AuthController {
     );
   }
 
+  /*
   verifyAdmin = async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).json({ responseMsg: "All ok "});
   }
@@ -149,6 +150,7 @@ export default class AuthController {
       return await this.sendErrorRes(res, { status: 500, error, errorMessages: [ "Server error" ] });
     }
   }
+  */
 
   // PRIVATE HELPERS //
   private async sendErrorRes(res: Response<ErrorResponse>, opts?: { status?: number; responseMsg?: string; error?: any; errorMessages?: string[] }): Promise<Response> {

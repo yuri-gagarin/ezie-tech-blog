@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps =  async (context: GetServer
   } else {
     return {
       redirect: {
-        destination: "/401",
+        destination: "/login",
         statusCode: 301,
       },
       props: {
@@ -50,18 +50,24 @@ const AdminDash: React.FunctionComponent<IAdminDashProps> = (props): JSX.Element
   const state = useSelector((state: IGeneralState) => state);
   const dispatch = useDispatch<Dispatch<IGeneralAppAction>>();
 
-  React.useEffect(() => {
-    async function getAllData() {
+  // data fetching //
+  const getAllData = async () => {
+    try {
       await BlogPostActions.handleFetchBlogPosts(dispatch);
+    } catch (error) {
+      BlogPostActions.handleBlogPostError(dispatch, error);
     }
+  };
+  // lifecycle hooks //
+  
+  React.useEffect(() => {
     getAllData();
-    console.log("ran")
   }, [ dispatch ]);
 
   return (
-    <AdminLayout>
+    <React.Fragment>
       <AdminMain generalState={ state } dispatch={ dispatch } />
-    </AdminLayout>
+    </React.Fragment>
   );
 };
 

@@ -1,25 +1,23 @@
-import axios from 'axios';
-import type { GetServerSidePropsResult } from "next";
+import { decode } from "jsonwebtoken";
+import Admin from "@/server/src/models/Admin";
+// type imports //
+import type { IAdmin } from "@/server/src/models/Admin";
+import type { JwtPayload } from "jsonwebtoken";
 
-export const verifyAdminToken = async (JWTToken: string): Promise<boolean> => {
+export const verifyAdminToken = async (JWTToken: string | undefined | null): Promise<boolean> => {
   if (!JWTToken) return false;
 
-  const url = process.env.NODE_ENV === "production" ? process.env.PRODUCTION_URL : process.env.NEXT_PUBLIC_SERVER_BASE_URL;
-  const opts: RequestInit = {
-    method: "GET",
-    headers: {
-      "Authorization": JWTToken
-    }
-  }
-  const opts2: RequestInit = {
-    method: "GET",
-    headers: {
-      "Authorization": JWTToken
-    }
-  }
   try {
-    const res = await fetch(`${url}/api/verify_admin`, opts);
-    return res.status === 200 ? true : false ;
+     // split of the 'Bearer' string value //
+     const [ _, tokenString ] = JWTToken.split(" "); 
+     const JWTPayload: JwtPayload | null = decode(tokenString) as JwtPayload; 
+     // false return if invalid token value //
+     if (!JWTPayload) return false; 
+     //
+    const { sub } = JWTPayload;
+    const foundAdmin: IAdmin | null = await Admin.findById(sub);
+    //
+    return foundAdmin ? true : false;  
   } catch (error) {
     throw error;
   }

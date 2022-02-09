@@ -44,4 +44,4 @@ AdminSchema.methods.hashNewPassword = async function(password: string): Promise<
   return this.save();
 }
 
-export default mongoose.model<IAdmin>("Admin", AdminSchema);
+export default mongoose.models.Admin || mongoose.model<IAdmin>("Admin", AdminSchema);

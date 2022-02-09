@@ -20,8 +20,8 @@ export default class AuthRoutes {
     this.loginRoute();
     this.registerRoute();
     this.logoutRoute();
-    this.verifyAdminRoute();
-    this.verifyUserRoute();
+    // this.verifyAdminRoute();
+    // this.verifyUserRoute();
   }
 
   private loginRoute() {
@@ -40,6 +40,7 @@ export default class AuthRoutes {
       .delete( this.controller.logout );
   }
 
+  /*
   private verifyAdminRoute() {
     this.router
       .route("/api/verify_admin")
@@ -56,4 +57,5 @@ export default class AuthRoutes {
         this.controller.verifyUser
       ]);
   }
+  */
 };

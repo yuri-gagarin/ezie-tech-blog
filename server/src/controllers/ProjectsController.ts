@@ -185,7 +185,7 @@ export default class ProjectsController extends BasicController implements ICRUD
 
   private verifyOwnerAdmin = (user: IAdmin | IUser | null): boolean => {
     if (user) {
-      return (user instanceof Admin && user.role === "owner");
+      return (user instanceof Admin && (user as IAdmin).role === "owner");
     } else {
       return false;
     }

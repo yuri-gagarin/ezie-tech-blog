@@ -33,7 +33,7 @@ export const verifyUserLevel = async (req: Request, res: Response, next: NextFun
     // admin can create, edit, delete //
     return next();
   } else if (user instanceof User) {
-    if (user.userType === "CONTRIBUTOR") {
+    if ((user as IUser).userType === "CONTRIBUTOR") {
       // contributor can CREATE, EDIT DELETE //
       return next();
     } else {
