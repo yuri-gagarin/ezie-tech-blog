@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthActions } from "@/redux/actions/authActions";
 // additional components //
+import { AuthNav } from "@/components/navs/AuthNav";
 import { GenErrorModal } from "@/components/modals/GenErrorModal";
 // style //
 import styles from "@/styles/login/LoginPage.module.css";
@@ -46,7 +47,8 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<AuthAction>>();
   const { error, errorMessages, loggedIn, isAdmin } = useSelector((state: IGeneralState) => state.authState);
-  // action handlers //
+
+  // event listeners //
   const handleEmaiInputChange = (_, data: InputOnChangeData): void => {
     if (data.value.length === 0) {
       setLoginFormState({ ...loginFormState, email: data.value, emailError: "Please enter your email" });
@@ -62,6 +64,13 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
     }
   };
 
+  // action handlers //
+  const handleGoBack = (): void => {
+    router.back();
+  };
+  const handleGoHome = (): void => {
+    router.push("/");
+  };
   const handleErrorModalClose = (): void => {
     if (error || errorMessages) AuthActions.dismissAuthError(dispatch);
     setLoginFormState({ ...loginFormState, errorCompOpen: false, errorMessages: null });
@@ -86,21 +95,17 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
   // lifecycle hooks //
   React.useEffect(() => {
     if (error || errorMessages) setLoginFormState(state => ({ ...state, errorCompOpen: true }));
-  }, [ error, errorMessages ])
-
+  }, [ error, errorMessages ]);
+  
   React.useEffect(() => {
-    console.log(loggedIn);
-    console.log(isAdmin);
-  }, [ loggedIn, isAdmin, router ]);
-
-  /*
-  React.useEffect(() => {
-    if (loggedIn) {
-      if (isAdmin) router.push("/admin/dashboard");
-      else router.push("/");
+    if (loggedIn && isAdmin) {
+      router.push("/admin/dashboard");
+    } else if (loggedIn && !isAdmin) {
+      router.push("/user/dashboard");
+    } else {
+      return;
     }
-  }, [ loggedIn, isAdmin, router ])
-  */
+  }, [ loggedIn, isAdmin, router ]);
 
   return (
     <div className={ styles.loginWrapper }>
@@ -113,6 +118,12 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
         errorMessages={ errorMessages ? errorMessages : loginFormState.errorMessages } 
         position={"fixed-top"}
       />
+      <div className={ styles.loginFormAuthNav }>
+        <AuthNav 
+          handleGoBack={ handleGoBack }
+          handleGoHome={ handleGoHome }
+        />
+      </div>
       <div className={ styles.loginFormHeader } data-test-id="login-page-header">
         <h1>Login</h1>
       </div>

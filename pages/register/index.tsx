@@ -2,17 +2,18 @@ import * as React from 'react';
 import { Button, Form, Icon, Input, Label, Popup } from "semantic-ui-react";
 // next imports //
 import Link from "next/link";
-import type { GetStaticProps, GetStaticPropsResult } from "next";
 import { useRouter } from "next/router";
 // redux and actions //
-import type { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthActions } from "@/redux/actions/authActions";
 // additional components //
+import { AuthNav } from "@/components/navs/AuthNav";
 import { GenErrorModal } from "@/components/modals/GenErrorModal";
 // style //
 import styles from "@/styles/register/RegisterPage.module.css";
 // types //
+import type { Dispatch } from "redux";
+import type { GetStaticProps, GetStaticPropsResult } from "next";
 import type { InputOnChangeData } from "semantic-ui-react";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 import type { AuthAction } from '@/redux/_types/auth/actionTypes';
@@ -53,7 +54,7 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
   // redux hooks and state //
   const dispatch = useDispatch<Dispatch<AuthAction>>();
   const { error, errorMessages, loggedIn, isAdmin } = useSelector((state: IGeneralState) => state.authState);
-  // action handlers //
+  // event/data listeneres //
   const handleEmaiInputChange = (_, data: InputOnChangeData): void => {
     if (!data.value) {
       setRegisterFormState({ ...registerFormState, email: data.value, emailError: "Email is required." });
@@ -76,6 +77,13 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
     }
   };
 
+  // action handlers //
+  const handleGoBack = (): void => {
+    router.back();
+  };
+  const handleGoHome = (): void => {
+    router.push("/");
+  };
   const handleErrorModalClose = (): void => {
     if (error || errorMessages) AuthActions.dismissAuthError(dispatch);
     setRegisterFormState({ ...registerFormState, errorFormOpen: false, errorMessages: null });
@@ -121,6 +129,12 @@ const RegisterPage: React.FunctionComponent<IRegisterPageProps> = (): JSX.Elemen
         errorMessages={ (errorMessages ? errorMessages : registerFormState.errorMessages) }
         position={ "fixed-top" }
       />
+      <div className={ styles.registerNav }>
+        <AuthNav 
+          handleGoBack={ handleGoBack }
+          handleGoHome={ handleGoHome }
+        />
+      </div>
       <div className={ styles.registerFormHeader }>
         <h1>Register</h1>
       </div>

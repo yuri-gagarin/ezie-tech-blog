@@ -79,7 +79,7 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
   const handleLogout = async () => {
     try {
       await AuthActions.handleLogout(dispatch);
-      router.push("/");
+      router.push("/login");
     } catch (err) {
       AuthActions.handleAuthError(dispatch, err);
     }
@@ -98,11 +98,11 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
 
   return (
     <Grid.Row className={ userMenuStyles.userMenuRow }>
-      <Menu pointing color="violet" fluid fixed="top" className={ userMenuStyles.fixedUserMenu } data-test-id="User_Main_Menu">
-        <Dropdown text='File' className={ `${userMenuStyles.UserMenuFile} link item` } data-test-id={"Main_File_Dropdown"}>
+      <Menu pointing color="violet" fluid fixed="top" className={ userMenuStyles.fixedUserMenu } data-test-id="user-main-menu">
+        <Dropdown text='File' className={ `${userMenuStyles.UserMenuFile} link item` } data-test-id={"main-file-dropdown"}>
           <Dropdown.Menu style={{ zIndex: 9999 }}>
             <Dropdown.Item>
-              <Dropdown text='New' pointing="left" data-test-id={"New_File_Menu"}>
+              <Dropdown text='New' pointing="left" data-test-id={"new-file-menu"}>
                 <Dropdown.Menu style={{ left: "140px", transform: "translateY(-12px)"}}>
                   <Dropdown.Item onClick={ handleGoToNew } value="post" data-test-id="Go_To_New_Blog_Post_Option">Blog Post</Dropdown.Item>                 
                 </Dropdown.Menu>
@@ -132,7 +132,7 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
           <Menu.Item as="a" onClick={ handleMenuItemClick } name="profile" active={ LocalState.activeMenuItem === "profile" } data-test-id="Main_User_Users_Link">
             View My Profile
           </Menu.Item>
-          <Menu.Item onClick={ handleLogout } data-test-id="User_Main_Logout_Link">
+          <Menu.Item onClick={ handleLogout } data-test-id="user-main-logout-link">
             Logout
           </Menu.Item>
         </Menu.Menu>

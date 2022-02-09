@@ -56,4 +56,4 @@ UserSchema.methods.validPassword = async function(password: string): Promise<boo
   return await bcrypt.compare(password, this.password);
 }
 
-export default mongoose.model<IUser>("User", UserSchema);
+export default mongoose.models.User ||  mongoose.model<IUser>("User", UserSchema);
