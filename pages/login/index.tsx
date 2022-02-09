@@ -77,7 +77,6 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
     
     try {
       await AuthActions.handleLogin(dispatch, { email, password });
-      router.push("/admin/dashboard");
     } catch (error) {
       AuthActions.handleAuthError(dispatch, error)
     }
@@ -88,6 +87,11 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
   React.useEffect(() => {
     if (error || errorMessages) setLoginFormState(state => ({ ...state, errorCompOpen: true }));
   }, [ error, errorMessages ])
+
+  React.useEffect(() => {
+    console.log(loggedIn);
+    console.log(isAdmin);
+  }, [ loggedIn, isAdmin, router ]);
 
   /*
   React.useEffect(() => {

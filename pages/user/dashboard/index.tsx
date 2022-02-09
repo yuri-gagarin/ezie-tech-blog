@@ -28,11 +28,13 @@ export const getServerSideProps: GetServerSideProps =  async (context: GetServer
     validUser = false;
   }
 
-  if (true) {
+  if (validUser) {
     return {
       props: { }
     };
   } else {
+    // TODO //
+    // clear JWT cookies? //
     return {
       redirect: {
         destination: "/401",

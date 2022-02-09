@@ -7,6 +7,7 @@ import Admin from "../models/Admin";
 import { issueJWT } from "./PassportController";
 // types 
 import type { Request, Response, CookieOptions } from "express";
+import type { JwtPayload } from "jsonwebtoken";
 import type { IAdmin } from "../models/Admin";
 import type { IUser } from "../models/User";
 import type { RegisterReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
@@ -125,15 +126,25 @@ export default class AuthController {
   }
 
   verifyUser = async (req: Request, res: Response): Promise<Response> => {
-    const { JWTToken } = req.cookies;
     // if (!user_token) return this.sendErrorRes(res, { status: 400, responseMsg: "Could not resolve user token", error: new Error("Auth Error"), errorMessages: [ "Could not resolve user token"]  });
-
+    const { authorization } = req.headers;
     try {
-      console.log(req.cookies);
-      console.log(req.signedCookies);
-      return res.status(200).json({
-        responseMsg: "Valid User"
-      })
+      const [ _, token ] = authorization ? authorization.split(" ") : [ null, null ];
+      const tokenData: JwtPayload | string | null = decode(token);
+      if (tokenData) {
+        const { sub, exp } = tokenData as JwtPayload;
+        // check exp ? //
+        const user: IUser | null = await User.findById(sub);
+        if (user) {
+          return res.status(200).json({
+            responseMsg: "Valid User"
+          });
+        } else {
+          return await this.sendErrorRes(res, { status: 401, error: new Error("Auth Error"), errorMessages: [ "Invalid user" ] });
+        }
+      } else {
+        return await this.sendErrorRes(res, { status: 401, error: new Error("Auth Error"), errorMessages: [ "Invalid user" ] });
+      }
     } catch (error) {
       return await this.sendErrorRes(res, { status: 500, error, errorMessages: [ "Server error" ] });
     }
