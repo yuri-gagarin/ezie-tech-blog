@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { ProjectActions } from "@/redux/actions/projectActions";
 // additional components //
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { AdminProjectForm } from '@/components/admin/forms/AdminProjectForm';
 // types //
 import type { Dispatch } from "redux";

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from 'react-redux';
 import { UserActions } from "@/redux/actions/userActions";
 // additional components //
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 //
 import styles from "@/styles/user/NewUserComponent.module.css";
 

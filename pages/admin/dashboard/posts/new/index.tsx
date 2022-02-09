@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from 'react-redux';
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additional components //
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { PostForm } from "@/components/admin/forms/PostForm";
 import { AdminPostNav } from '@/components/admin/posts/AdminPostNav';
 import { AdminPostPreview } from '@/components/admin/posts/AdminPostPreview';

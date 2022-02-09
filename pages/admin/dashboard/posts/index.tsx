@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additonal components //
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { BlogViewModal } from "@/components/admin/modals/BlogViewModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 // types //

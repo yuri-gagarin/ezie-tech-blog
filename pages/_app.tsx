@@ -18,7 +18,7 @@ import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
 import "nprogress/nprogress.css";
 import 'react-image-lightbox/style.css'
-import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { UserLayout } from "@/components/layout/UserLayout";
 import { NextComponentType, NextPageContext } from "next";
 

@@ -15,7 +15,7 @@ import type  { IGeneralState } from '../../../../redux/_types/generalTypes';
 import styles from "../../../../styles/admin/users_pages/AdminUsersPage.module.css";
 // helpers //
 import { verifyAdminToken } from "../../../../components/_helpers/adminComponentHelpers";
-import { AdminLayout } from '../../../../components/admin/AdminLayout';
+import { AdminLayout } from '../../../../components/layout/AdminLayout';
 
 
 interface IAdminUsersPageProps {

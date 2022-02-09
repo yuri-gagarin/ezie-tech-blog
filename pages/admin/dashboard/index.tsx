@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additional components //
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { AdminMain } from '@/components/admin/AdminMain';
 // types //
 import type { Dispatch } from "redux";
