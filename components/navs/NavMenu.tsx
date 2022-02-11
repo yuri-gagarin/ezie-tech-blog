@@ -49,7 +49,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
   const handleLogout = async (): Promise<any> => {
     try {
       await AuthActions.handleLogout(dispatch);
-      router.push("/");
+      if (router.route.includes("admin") || router.route.includes("user")) router.push("/login");
     } catch (error) {
       AuthActions.handleAuthError(dispatch, error);
     }
@@ -132,11 +132,11 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
     (
       animMenuState.show
       ?
-      <div className={ navMenuStyle.animatedMenuRow } style={{ transform: `translateY(${animMenuState.transformY})`}} data-test-id="Home_Animated_Menu">
+      <div className={ navMenuStyle.animatedMenuRow } style={{ transform: `translateY(${animMenuState.transformY})`}} data-test-id="home-animated-menu">
         <AnimatedHomeNav handleScrollToContent={ handleScrollToContent } />
       </div>
       :
-      <Grid.Row className={ `${navMenuStyle.menuRow} ${navMenuStyle.fadeIn}` } data-test-id="Main_Menu">
+      <Grid.Row className={ `${navMenuStyle.menuRow} ${navMenuStyle.fadeIn}` } data-test-id="main-menu">
         <GenErrorModal 
           open={ error ? true : false }
           handleErrorModalClose={ handleErrorModalClose }
@@ -151,7 +151,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             active={ navState.activeItem === "home" }
             onClick={ handleNavClick }
             color="purple"
-            data-test-id="Main_Menu_Home_Link"
+            data-test-id="main-menu-home-link"
           />
           <Menu.Item
             className={ navMenuStyle.navMenuItem }
@@ -159,7 +159,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             active={ navState.activeItem === "blog" }
             onClick={ handleNavClick }
             color="purple"
-            data-test-id="Main_Menu_Blog_Link"
+            data-test-id="main-menu-blog-link"
           />
           <Menu.Item
             className={ navMenuStyle.navMenuItem }
@@ -167,7 +167,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             active={ navState.activeItem === "news" }
             onClick={ handleNavClick }
             color="purple"
-            data-test-id="Main_Menu_News_Link"
+            data-test-id="main-menu-news-link"
           />
           <Menu.Item
             className={ navMenuStyle.navMenuItem }
@@ -175,7 +175,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
             active={ navState.activeItem === "projects" }
             onClick={ handleNavClick }
             color="purple"
-            data-test-id="Main_Menu_Projects_Link"
+            data-test-id="main-menu-projects-link"
           />
           <Menu.Item
               className={ navMenuStyle.navMenuItem }
@@ -183,7 +183,7 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
               active={ navState.activeItem === "about" }
               onClick={ handleNavClick }
               color="purple"
-              data-test-id="Main_Menu_About_Link"
+              data-test-id="main-menu-about-link"
           />
           <Menu.Menu position='right'>
             {
@@ -200,15 +200,9 @@ export const NavMenu: React.FC<{}> = (): JSX.Element | null => {
               { 
                 loggedIn && currentUser 
                 ?
-                (
-                  router.pathname.includes("/admin") 
-                  ?
-                  null
-                  :
-                  <Button inverted color="purple" content="Logout" onClick={ handleLogout } data-test-id="Main_Menu_Logout_link" />
-                )
+                <Button inverted color="purple" content="Logout" onClick={ handleLogout } data-test-id="main-menu-logout-link" />
                 :
-                <Button inverted color="purple" content="Login" onClick={ handleGoToLogin } data-test-id="Main_Menu_Login_Link" />
+                <Button inverted color="purple" content="Login" onClick={ handleGoToLogin } data-test-id="main-menu-login-link" />
               }
             </Menu.Item>
           </Menu.Menu>

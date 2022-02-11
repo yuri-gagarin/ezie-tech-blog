@@ -8,7 +8,9 @@ import { wrapper, store } from "../redux/store";
 // firebase for storage //
 import FirebaseController from "../firebase/firebaseSetup";
 // additional components //
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import Layout from '../components/layout/Layout';
+import { UserLayout } from "@/components/layout/UserLayout";
 // types //
 import type { Router } from "next/router";
 import type { Store } from "redux";
@@ -18,8 +20,6 @@ import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
 import "nprogress/nprogress.css";
 import 'react-image-lightbox/style.css'
-import { AdminLayout } from "@/components/layout/AdminLayout";
-import { UserLayout } from "@/components/layout/UserLayout";
 import { NextComponentType, NextPageContext } from "next";
 
 declare global {

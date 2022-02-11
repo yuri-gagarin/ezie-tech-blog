@@ -38,12 +38,15 @@ export const requireAdminAuthentication = (getServerSideProps: any) => {
     const { req } = context;
     const token = req["signedCookies"].JWTToken;
 
+    console.log("Valid token: " + token)
     try {
       validAdmin = await verifyAdminToken(token);
     } catch (error) {
       console.log(error);
       validAdmin = false;
     }
+
+    console.log("Valid admin: "  + validAdmin)
 
     if (!validAdmin) {
       return {

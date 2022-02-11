@@ -30,10 +30,6 @@ export const AdminLayout: React.FunctionComponent<IAdminLayoutProps> = ({ childr
 
   }, [ router ]);
 
-  React.useEffect(() => {
-    if (!authState.loggedIn) router.push("/login");
-  });
-
   return (
     <Grid className={ `${layoutStyles.layoutWrapper} ${ width < 550 ? layoutStyles.mobileView : ""}` }>
       {

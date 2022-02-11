@@ -14,7 +14,7 @@ export const verifyAdminToken = async (JWTToken: string | undefined | null): Pro
     // false return if invalid token value //
     if (!JWTPayload) return false; 
     //
-    const { sub, exp } = JWTPayload;
+    const { sub } = JWTPayload;
     const foundAdmin: IAdmin | null = await Admin.findById(sub);
     //
     return foundAdmin ? true : false;  
