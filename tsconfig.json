@@ -2,10 +2,18 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/styles/*": ["styles/*"],
-      "@/components/*": ["components/*"],
-      "@/redux/*": ["redux/*"],
-      "@/server/*": ["server/*"]
+      "@/styles/*": [
+        "styles/*"
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/redux/*": [
+        "redux/*"
+      ],
+      "@/server/*": [
+        "server/*"
+      ]
     },
     "target": "es5",
     "lib": [
@@ -13,7 +21,9 @@
       "dom.iterable",
       "esnext"
     ],
-    "types": ["cypress"],
+    "types": [
+      "cypress"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -24,13 +34,14 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"  
- ],
+    "**/*.tsx"
+  ],
   "exclude": [
     "node_modules"
   ]

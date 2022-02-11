@@ -11,12 +11,14 @@ import type { Dispatch } from "redux";
 import type { GetServerSideProps, GetServerSidePropsResult, GetServerSidePropsContext } from "next";
 import type { IGeneralState, IGeneralAppAction } from '@/redux/_types/generalTypes';
 // helpers //
+import { requireAdminAuthentication }  from "@/components/_helpers/authHelpers";
 import { verifyAdminToken } from "@/components/_helpers/adminComponentHelpers";
 
 interface IAdminDashProps {
 
 }
 
+/*
 export const getServerSideProps: GetServerSideProps =  async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
   const token = context.req["signedCookies"].JWTToken;
   let validAdmin: boolean;
@@ -43,6 +45,13 @@ export const getServerSideProps: GetServerSideProps =  async (context: GetServer
     };
   }
 };
+*/
+export const getServerSideProps = requireAdminAuthentication( async (context: any) => {
+
+  return {
+    props: {}
+  }
+})
 
 
 const AdminDash: React.FunctionComponent<IAdminDashProps> = (props): JSX.Element => {

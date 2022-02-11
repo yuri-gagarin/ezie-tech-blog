@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { BlogPostActions } from "@/redux/actions/blogPostActions";
 // additonal components //
-import { AdminLayout } from '@/components/layout/AdminLayout';
 import { BlogViewModal } from "@/components/admin/modals/BlogViewModal";
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal";
 // types //
@@ -37,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
   } else {
     return {
       redirect: {
-        destination: "/not_allowed",
+        destination: "/login",
         statusCode: 301,
       },
       props: {
@@ -114,7 +113,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
   }, [ dispatch ]);
 
   return (
-    <AdminLayout>
+    <React.Fragment>
       <BlogViewModal 
         modalOpen={ modalState.blogPostViewModalOpen } 
         blogPostData={ currentBlogPost } 
@@ -165,7 +164,7 @@ const AdminPostsIndex: React.FunctionComponent<IAdminPostsIndexProps> = (props):
         </Grid.Column>
         
       </Grid.Row>
-    </AdminLayout>     
+    </React.Fragment>     
   );
 };
 

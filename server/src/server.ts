@@ -13,7 +13,7 @@ import PassportController from "./controllers/PassportController";
 // firebase //
 import FirebaseServerController from "./controllers/FirebaseController";
 // custom middleware //
-import { checkAndSetUniqueUserId } from "./_helpers/customMiddleware";
+import { checkAndSetUniqueUserId, checkForLoginroute } from "./_helpers/customMiddleware";
 // types //
 import type { NextServer } from "next/dist/server/next";
 import type { Request, Response } from "express";
@@ -75,6 +75,9 @@ const corsOptions: CorsOptions = {
   origin: "*"
 };
 
+// MOVE later //
+
+
 export class Server {
   private server: Express;
   private app: NextServer;
@@ -82,7 +85,8 @@ export class Server {
   // env vars //
   private dev: boolean = process.env.NODE_ENV !== "production";
   private router: Router;
-  private PORT: number | string = process.env.PORT || 3000;
+  private PORT: number = parseInt(process.env.PORT) || 3000;
+  private hostHame: string = process.env.HOST_NAME || "localhost";
 
 
   constructor() {
@@ -114,7 +118,7 @@ export class Server {
     return this.app;
   }
   private configureNextApp(): void {
-    this.app = next({ dev: true });
+    this.app = next({ dev: true, port: this.PORT, hostname: this.hostHame });
     this.handle = this.app.getRequestHandler();
   }
   private configureServer(): void {

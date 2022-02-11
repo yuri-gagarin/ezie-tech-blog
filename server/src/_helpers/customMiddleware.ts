@@ -39,3 +39,13 @@ export const validateUserReadingListAccess = async (req: Request, res: Response,
   }
 }
 
+export const checkForLoginroute = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log(req.url);
+    console.log(req.cookies);
+    next();
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
