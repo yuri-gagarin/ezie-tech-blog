@@ -11,11 +11,13 @@ export enum EuiAuthDisplay {
 }
 
 export const listenForNewAuthStatus = () => {
-  const [ uiAuthStatus, setUiAuthStatus ] = useState<EuiAuthDisplay>(EuiAuthDisplay.None);
+  //const [ uiAuthStatus, setUiAuthStatus ] = useState<EuiAuthDisplay>(EuiAuthDisplay.None);
   const { authState } = useSelector((state: IGeneralState) => state);
-  //
   const loggedInRef: React.MutableRefObject<boolean> = useRef(authState.loggedIn);
 
+  console.log("Now logged in ", loggedInRef.current)
+  console.log("Next logged in ", authState.loggedIn)
+  /*
   useEffect(() => {
     const { loggedIn } = authState;
     // check for user log out //
@@ -29,6 +31,8 @@ export const listenForNewAuthStatus = () => {
       setUiAuthStatus(EuiAuthDisplay.None);
     }
   });
+  */
+  //console.log(loggedInRef.current)
 
-  return uiAuthStatus;
+  return;
 }

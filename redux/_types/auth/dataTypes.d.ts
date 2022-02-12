@@ -6,6 +6,7 @@ export interface IAuthState {
   loading: boolean;
   responseMsg: string;
   loggedIn: boolean;
+  showLoginMsg: boolean;
   authToken: string;
   expires: string;
   isAdmin: boolean;

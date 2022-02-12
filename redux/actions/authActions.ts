@@ -3,7 +3,7 @@ import axios from "../../components/axios/axiosInstance";
 import type { Dispatch } from "redux";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 // actions types //
-import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState } from "../_types/auth/actionTypes";
+import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState } from "../_types/auth/actionTypes";
 // data types //
 import type { AdminData } from "../_types/generalTypes";
 import type { UserData } from "../_types/users/dataTypes";
@@ -78,6 +78,10 @@ export class AuthActions {
     } catch (error) {
       throw error;
     }
+  };
+
+  public static handleClearLoginMsg = async ({ dispatch }: { dispatch: Dispatch<AuthAction>; }): Promise<any> => {
+    dispatch({ type: "ClearLoginMsg", payload: {} });
   };
 
   public static handleRegistration = async (dispatch: Dispatch<AuthAction>, data: { email: string; password: string; confirmPassword: string; }): Promise<any> => {

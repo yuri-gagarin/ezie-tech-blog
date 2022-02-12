@@ -55,6 +55,11 @@ export type AuthLogoutSuccess = {
   };
 };
 
+export type ClearLoginMsg = {
+  readonly type: "ClearLoginMsg";
+  readonly payload: {};
+};
+
 export type ClearLoginState = {
   readonly type: "ClearLoginState";
   readonly payload: {
@@ -88,7 +93,7 @@ export type AuthErrorDismiss = {
 };
 
 export type AuthAction = (
-    AuthAPIRequest | AuthLoginSuccess | AuthLogoutSuccess | AuthRegisterSuccess | ClearLoginState | AuthFailure | AuthErrorDismiss
+    AuthAPIRequest | AuthLoginSuccess | AuthLogoutSuccess | ClearLoginMsg | AuthRegisterSuccess | ClearLoginState | AuthFailure | AuthErrorDismiss
 );
 
 

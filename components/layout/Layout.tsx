@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Grid } from "semantic-ui-react";
 // redux imports //
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
 // components which are to be always displayed //
 import { NavMenu } from '../navs/NavMenu';
 import { MobileMenuSidebar } from '../sidebars/MobileMenuSidebar';
@@ -11,9 +12,9 @@ import { LoginStatusModal } from "@/components/modals/LoginStatusModal";
 import layoutStyles from "@/styles/layout/LayoutStyle.module.css";
 // helpers //
 import { useWindowSize } from "@/components/_helpers/monitorWindowSize";
-import { listenForNewAuthStatus } from "@/components/_helpers/custom_hooks/listenForNewAuthStatus";
 // type imports //
-import type { EuiAuthDisplay } from "@/components/_helpers/custom_hooks/listenForNewAuthStatus";
+import type { IGeneralAppAction, IGeneralState } from '@/redux/_types/generalTypes';
+import type { Dispatch } from "redux";
 
 
 interface ILayoutProps {
@@ -27,14 +28,16 @@ const Layout: React.FunctionComponent<ILayoutProps> = ({ children, pageProps }):
   // custom hooks //
   const { width } = useWindowSize();
   // redux hooks //
+  const authState = useSelector((state: IGeneralState) => state.authState, shallowEqual)
+  const dispatch: Dispatch<IGeneralAppAction> = useDispatch();
   // lifecycle hooks //
-  const loginStatus = listenForNewAuthStatus();
+  //const loginStatus = listenForNewAuthStatus();
 
   return (
     <React.Fragment>
       <LoginStatusModal
-        loginStatus={ loginStatus }
-        dismissLoggedOut={ () => {} }
+        authState={ authState }
+        dispatch={ dispatch }
       />
       <Grid className={ `${layoutStyles.layoutWrapper} ${ width < 550 ? layoutStyles.mobileView : ""}` }>
         {
