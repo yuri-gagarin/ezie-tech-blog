@@ -3,12 +3,14 @@ import { Grid } from "semantic-ui-react";
 // next imports //
 import { useRouter } from "next/router";
 // redux hooks //
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 // additional components //
-import { MobileMenuSidebar } from '../sidebars/MobileMenuSidebar';
 import { AdminMenu } from '../admin/AdminMenu';
+import { LoginStatusModal } from "@/components/modals/LoginStatusModal";
+import { MobileMenuSidebar } from '../sidebars/MobileMenuSidebar';
 // types //
-import type { IGeneralState } from "@/redux/_types/generalTypes";
+import type { Dispatch } from 'redux';
+import type { IGeneralAppAction, IGeneralState } from '@/redux/_types/generalTypes';
 // styles //
 import layoutStyles from "@/styles/layout/LayoutStyle.module.css";
 // helpers //
@@ -23,7 +25,9 @@ export const AdminLayout: React.FunctionComponent<IAdminLayoutProps> = ({ childr
   const { width } = useWindowSize();
   // next hooks //
   const router = useRouter();
+  // redux hooks //
   const { authState } = useSelector((state: IGeneralState) => state);
+  const dispatch: Dispatch<IGeneralAppAction> = useDispatch();
 
   // lifecycle hooks //
   React.useEffect(() => {
@@ -32,6 +36,10 @@ export const AdminLayout: React.FunctionComponent<IAdminLayoutProps> = ({ childr
 
   return (
     <Grid className={ `${layoutStyles.layoutWrapper} ${ width < 550 ? layoutStyles.mobileView : ""}` }>
+      <LoginStatusModal
+        authState={ authState }
+        dispatch={ dispatch }
+      />
       {
         width > 550 
         ?

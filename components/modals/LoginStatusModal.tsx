@@ -46,10 +46,11 @@ export const LoginStatusModal: React.FunctionComponent<ILoginStatusModalProps> =
       });
     }
     return () => {
-      console.log("ran clear timeout")
       clearTimeout(localState.messageTimeout);
     };
   }, [ authState ]);
+
+
 
   
 
@@ -57,7 +58,7 @@ export const LoginStatusModal: React.FunctionComponent<ILoginStatusModalProps> =
     localState.showMessage 
     ?
       <Label size="big" color="purple" onClick={ clearLoginStatusMessage } style={{ position: "fixed", right: "10px", top: "50px", zIndex: 999999 }}>
-        <Icon name="log out" />
+        <Icon name="lock" />
         { localState.messageContent }
       </Label>
     :
