@@ -1,7 +1,7 @@
 import React from "react";
 import NProgress from "nprogress";
 // next imports //
-import App, { AppInitialProps, AppContext } from "next/app";
+import { AppProps, AppContext } from "next/app";
 import NextRouter, { useRouter } from "next/router";
 // redux imports //
 import { wrapper, store } from "../redux/store";
@@ -12,6 +12,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import Layout from '../components/layout/Layout';
 import { UserLayout } from "@/components/layout/UserLayout";
 // types //
+import type { NextPage } from "next";
 import type { Router } from "next/router";
 import type { Store } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
@@ -31,6 +32,87 @@ interface IAppInitialState {
   layoutRender: "user" | "admin" | "public";
 }
 
+const App: NextPage<AppProps & any> = ({ Component, pageProps, }) => {
+  const [ initialState, setInitialState ] = React.useState<IAppInitialState>({ firebaseContInstance: new FirebaseController(), layoutRender: "public" });
+  // next hooks //
+  const router = useRouter();
+
+  React.useEffect(() => {
+    NProgress.configure({ showSpinner: true, easing: "ease", speed: 500 });
+    router.events.on("routeChangeStart", () => {
+      NProgress.start();
+    });
+    router.events.on("routeChangeComplete", () => {
+      NProgress.done();
+    });
+    router.events.on("routeChangeError", () => {
+      NProgress.done();
+    });
+    if (window && window.Cypress) {
+      window.store = store; 
+    }
+
+    if(router.route.includes("user")) {
+      setInitialState((s) => ({ ...s, layoutRender: "user" }));
+    } else if (router.route.includes("admin")) {
+      setInitialState((s) => ({ ...s, layoutRender: "admin" }));
+    } else {
+      setInitialState((s) => ({ ...s, layoutRender: "public" }));
+    }
+  }, [ router ]);
+
+  React.useEffect(() => {
+    if(router.route.includes("user") && initialState.layoutRender !== "user") {
+      setInitialState((s) => ({ ...s, layoutRender: "user" }));
+    } else if (router.route.includes("admin") && initialState.layoutRender !== "admin") {
+      setInitialState((s) => ({ ...s, layoutRender: "admin" }));
+    } else if ((!router.route.includes("admin") && !router.route.includes("user")) && initialState.layoutRender !== "public") {
+      setInitialState((s) => ({ ...s, layoutRender: "public" }));
+    }
+
+  }, [ router.route, initialState ])
+
+  if (initialState.layoutRender === "admin") {
+    return (
+      <AdminLayout { ...pageProps }>
+        <Component 
+          firebaseContInstance={ initialState.firebaseContInstance }  
+          { ...pageProps } 
+        />
+      </AdminLayout>
+    );
+  } else if (initialState.layoutRender === "user") {
+    return (
+      <UserLayout { ...pageProps }>
+        <Component 
+          firebaseContInstance={ initialState.firebaseContInstance } 
+          { ...pageProps } 
+        />
+      </UserLayout>
+    );
+  } else {
+    return (
+      <Layout { ...pageProps }>
+        <Component 
+          firebaseContInstance={ initialState.firebaseContInstance } 
+          { ...pageProps } 
+        />
+      </Layout>
+    );
+  }
+};
+
+App.getInitialProps = wrapper.getInitialAppProps((store) => async ({ Component, ctx }) => {
+  return {
+    pageProps: {
+      ...(Component.getInitialProps ? await Component.getInitialProps({...ctx, store}) : {}),
+      pathname: ctx.pathname
+    },
+  };
+});
+
+export default wrapper.withRedux(App);
+/*
 class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
   constructor(props: any) {
     super(props)
@@ -123,3 +205,6 @@ class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
 }
 
 export default wrapper.withRedux(WrappedApp);
+*/
+
+

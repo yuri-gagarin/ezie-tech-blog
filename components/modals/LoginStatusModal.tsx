@@ -45,14 +45,21 @@ export const LoginStatusModal: React.FunctionComponent<ILoginStatusModalProps> =
         messageTimeout: setMessageTimeout()
       });
     }
-    return () => {
-      clearTimeout(localState.messageTimeout);
-    };
   }, [ authState ]);
 
+  React.useEffect(() => {
+    return () => {
+      clearTimeout(localState.messageTimeout);
+    }
+  }, []);
+
+  /*
+  React.useEffect(() => {
+    console.log(localState)
+  }, [ localState ])
 
 
-  
+  */
 
   return (
     localState.showMessage 

@@ -29,11 +29,6 @@ export const AdminLayout: React.FunctionComponent<IAdminLayoutProps> = ({ childr
   const { authState } = useSelector((state: IGeneralState) => state);
   const dispatch: Dispatch<IGeneralAppAction> = useDispatch();
 
-  // lifecycle hooks //
-  React.useEffect(() => {
-
-  }, [ router ]);
-
   return (
     <Grid className={ `${layoutStyles.layoutWrapper} ${ width < 550 ? layoutStyles.mobileView : ""}` }>
       <LoginStatusModal
