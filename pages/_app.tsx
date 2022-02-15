@@ -1,8 +1,8 @@
 import React from "react";
 import NProgress from "nprogress";
 // next imports //
-import { AppProps, AppContext } from "next/app";
-import NextRouter, { useRouter } from "next/router";
+import { AppProps } from "next/app";
+import { useRouter } from "next/router";
 // redux imports //
 import { wrapper, store } from "../redux/store";
 // firebase for storage //
@@ -13,7 +13,6 @@ import Layout from '../components/layout/Layout';
 import { UserLayout } from "@/components/layout/UserLayout";
 // types //
 import type { NextPage } from "next";
-import type { Router } from "next/router";
 import type { Store } from "redux";
 import type { IGeneralState } from "@/redux/_types/generalTypes";
 // styles //
@@ -21,7 +20,6 @@ import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
 import "nprogress/nprogress.css";
 import 'react-image-lightbox/style.css'
-import { NextComponentType, NextPageContext } from "next";
 
 declare global {
   interface Window { Cypress: any; store: Store<IGeneralState>  }

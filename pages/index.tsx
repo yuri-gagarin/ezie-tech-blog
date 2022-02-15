@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Ref } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 // next js imports //
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -23,7 +23,7 @@ import type { IGeneralState } from '@/redux/_types/generalTypes';
 import type { BlogPostData } from "@/redux/_types/blog_posts/dataTypes";
 import type { BlogPostAction } from '@/redux/_types/blog_posts/actionTypes';
 import type { RSSSources } from "@/redux/_types/rss/dataTypes";
-import { RSSAction } from '@/redux/_types/rss/actionTypes';
+import type { RSSAction } from '@/redux/_types/rss/actionTypes';
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
 

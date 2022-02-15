@@ -110,12 +110,11 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
   // lifecycle hooks //
   React.useEffect(() => {
     const { loggedIn, authToken: JWTToken } = authState;
-    const { source } = rssState;
     let loaded = true;
     if (loaded) {
       (async function(): Promise<any> {
         try {
-          if (!source) await RssActions.getRSSFeed({ dispatch, optsData: { option: "reddit" } });
+          if (!rssState.source) await RssActions.getRSSFeed({ dispatch, optsData: { option: "reddit" } });
           if (loggedIn && JWTToken) await RssActions.handleGetReadingList({ dispatch, JWTToken });
         } catch (error) {
           RssActions.handleRssFeedError(error, dispatch)
@@ -123,7 +122,7 @@ const NewsMainPage: React.FunctionComponent<INewsMainPageProps> = (props): JSX.E
       })();
     }
     return () => { loaded = false };
-  }, [ dispatch, authState, rssState ]);
+  }, [ dispatch, authState, rssState.source ]);
   // clear info modal if open //
   React.useEffect(() => {
     if (infoModalState.open) {
