@@ -11,6 +11,7 @@ import FirebaseController from "../firebase/firebaseSetup";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import Layout from '../components/layout/Layout';
 import { UserLayout } from "@/components/layout/UserLayout";
+import { LoginStatusModal } from "@/components/modals/LoginStatusModal";
 // types //
 import type { NextPage } from "next";
 import type { Store } from "redux";
@@ -34,6 +35,11 @@ const App: NextPage<AppProps & any> = ({ Component, pageProps, }) => {
   const [ initialState, setInitialState ] = React.useState<IAppInitialState>({ firebaseContInstance: new FirebaseController(), layoutRender: "public" });
   // next hooks //
   const router = useRouter();
+
+  React.useEffect(() => {
+    console.log("rendered")
+  }, []);
+
 
   React.useEffect(() => {
     NProgress.configure({ showSpinner: true, easing: "ease", speed: 500 });
@@ -68,36 +74,40 @@ const App: NextPage<AppProps & any> = ({ Component, pageProps, }) => {
       setInitialState((s) => ({ ...s, layoutRender: "public" }));
     }
 
-  }, [ router.route, initialState ])
+  }, [ router.route, initialState ]);
 
-  if (initialState.layoutRender === "admin") {
-    return (
-      <AdminLayout { ...pageProps }>
-        <Component 
-          firebaseContInstance={ initialState.firebaseContInstance }  
-          { ...pageProps } 
-        />
-      </AdminLayout>
-    );
-  } else if (initialState.layoutRender === "user") {
-    return (
-      <UserLayout { ...pageProps }>
-        <Component 
-          firebaseContInstance={ initialState.firebaseContInstance } 
-          { ...pageProps } 
-        />
-      </UserLayout>
-    );
-  } else {
-    return (
-      <Layout { ...pageProps }>
-        <Component 
-          firebaseContInstance={ initialState.firebaseContInstance } 
-          { ...pageProps } 
-        />
-      </Layout>
-    );
-  }
+  return (
+    <React.Fragment>
+      {
+        initialState.layoutRender === "public" 
+        ?
+        <Layout { ...pageProps }>
+          <Component 
+            firebaseContInstance={ initialState.firebaseContInstance } 
+            { ...pageProps } 
+          />
+        </Layout>
+        :
+        (
+          initialState.layoutRender === "admin" 
+          ? 
+            <AdminLayout { ...pageProps }>
+              <Component 
+                firebaseContInstance={ initialState.firebaseContInstance }  
+                { ...pageProps } 
+              />
+            </AdminLayout>
+          :
+            <UserLayout { ...pageProps }>
+              <Component 
+                firebaseContInstance={ initialState.firebaseContInstance } 
+                { ...pageProps } 
+              />
+            </UserLayout>
+        )
+      }
+    </React.Fragment>
+  )
 };
 
 App.getInitialProps = wrapper.getInitialAppProps((store) => async ({ Component, ctx }) => {
@@ -110,6 +120,7 @@ App.getInitialProps = wrapper.getInitialAppProps((store) => async ({ Component, 
 });
 
 export default wrapper.withRedux(App);
+
 /*
 class WrappedApp extends App<AppInitialProps, any, IAppInitialState> {
   constructor(props: any) {
