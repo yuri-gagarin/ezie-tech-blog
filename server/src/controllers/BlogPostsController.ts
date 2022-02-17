@@ -232,7 +232,6 @@ export default class BlogPostsController extends BasicController implements ICRU
       // can only see published posts //
       if (publishedStatus === "published") {
         blogPosts = await BlogPost.find({}).byPublishedStatus(publishedStatus).byCategory(category).sort({ createdAt }).limit(parseInt(limit));
-        console.log(blogPosts.length)
       } else {
         return this.notAllowedErrorResponse(res, [ "Not allowed to fetch this Blog Post query" ]);
       }

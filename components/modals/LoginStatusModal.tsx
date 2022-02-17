@@ -26,14 +26,17 @@ type LocalState = {
 export const LoginStatusModal: React.FunctionComponent<ILoginStatusModalProps> = ({ authState, dispatch }): JSX.Element => {
   const [ localState, setLocalState ] = React.useState<LocalState>({ showMessage: false, messageContent: "", messageTimeout: null });
 
-  const setMessageTimeout = (): NodeJS.Timeout => {
-    return setTimeout(() => {
-      AuthActions.handleClearLoginMsg({ dispatch });
-    }, 3000);
-  };
+  
   const clearLoginStatusMessage = (): void => {
     clearTimeout(localState.messageTimeout);
     setLocalState({ showMessage: false, messageContent: "", messageTimeout: null });
+  };
+
+  const setMessageTimeout = (): NodeJS.Timeout => {
+    return setTimeout(() => {
+      AuthActions.handleClearLoginMsg({ dispatch });
+      clearLoginStatusMessage();
+    }, 3000);
   };
 
   // lifecycle hooks //
@@ -45,21 +48,11 @@ export const LoginStatusModal: React.FunctionComponent<ILoginStatusModalProps> =
         messageTimeout: setMessageTimeout()
       });
     }
-  }, [ authState ]);
+  }, [ authState.showLoginMsg ]);
 
-  React.useEffect(() => {
-    return () => {
-      clearTimeout(localState.messageTimeout);
-    }
-  }, []);
-
-  /*
   React.useEffect(() => {
     console.log(localState)
-  }, [ localState ])
-
-
-  */
+  },  [ localState ]);
 
   return (
     localState.showMessage 

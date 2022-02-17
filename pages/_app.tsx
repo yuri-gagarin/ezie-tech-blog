@@ -4,6 +4,7 @@ import NProgress from "nprogress";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
 // redux imports //
+import { useDispatch, useSelector } from "react-redux";
 import { wrapper, store } from "../redux/store";
 // firebase for storage //
 import FirebaseController from "../firebase/firebaseSetup";
@@ -14,8 +15,8 @@ import { UserLayout } from "@/components/layout/UserLayout";
 import { LoginStatusModal } from "@/components/modals/LoginStatusModal";
 // types //
 import type { NextPage } from "next";
-import type { Store } from "redux";
-import type { IGeneralState } from "@/redux/_types/generalTypes";
+import type { Dispatch, Store } from "redux";
+import type { IGeneralAppAction, IGeneralState } from "@/redux/_types/generalTypes";
 // styles //
 import '../styles/globals.css';
 import 'semantic-ui-css/semantic.min.css';
@@ -33,13 +34,12 @@ interface IAppInitialState {
 
 const App: NextPage<AppProps & any> = ({ Component, pageProps, }) => {
   const [ initialState, setInitialState ] = React.useState<IAppInitialState>({ firebaseContInstance: new FirebaseController(), layoutRender: "public" });
+  const [ loginstStatusModal, setLoginStatusModal ] = React.useState<boolean>(false);
   // next hooks //
   const router = useRouter();
-
-  React.useEffect(() => {
-    console.log("rendered")
-  }, []);
-
+  // redux hooks //
+  const dispatch: Dispatch<IGeneralAppAction> = useDispatch();
+  const { authState } = useSelector((s: IGeneralState) => s);
 
   React.useEffect(() => {
     NProgress.configure({ showSpinner: true, easing: "ease", speed: 500 });
@@ -78,6 +78,10 @@ const App: NextPage<AppProps & any> = ({ Component, pageProps, }) => {
 
   return (
     <React.Fragment>
+      <LoginStatusModal 
+        authState={ authState }
+        dispatch={ dispatch }
+      />
       {
         initialState.layoutRender === "public" 
         ?
