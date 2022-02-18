@@ -4,7 +4,8 @@ import { CreateBlogPostRes } from "../_types/blog_posts/dataTypes";
 type AnyObj = {
   [key: string]: any;
 }
-export const checkEmptyObjVals = (obj: AnyObj): boolean => {
+export const checkEmptyObjVals = (obj: AnyObj | null | undefined): boolean => {
+  if (!obj) return true;
   const keys: string[] = Object.keys(obj);
   if (keys.length > 0) {
     for (const key of keys) {

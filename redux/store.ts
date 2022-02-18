@@ -8,7 +8,7 @@ import combinedReducer from './reducers/combinedReducer';
 import type { IGeneralAppAction, IGeneralState } from "./_types/generalTypes";
 // helpers //
 import { generateEmptyAdminState, generateEmptyAuthState, generateEmptyPostState, generateEmptyProjectsState, generateEmptyRssState, generateEmptyUserState } from "./_helpers/mockData";
-//import { checkEmptyObjVals } from './_helpers/dataHelpers';
+import { checkEmptyObjVals } from './_helpers/dataHelpers';
 
 const initialState: IGeneralState = {
   authState: generateEmptyAuthState(),
@@ -38,6 +38,7 @@ const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IG
       //if (action.payload.usersState && checkEmptyObjVals(action.payload.usersState)) delete action.payload.usersStatePostsState;
       //if (action.payload.blogPostsState && checkEmptyObjVals(action.payload.blogPostsState)) delete action.payload.blogPostsState;
       //console.log(action.payload)
+      if (checkEmptyObjVals(action.payload.authState) && !checkEmptyObjVals(state.authState)) delete action.payload.authState; // guard against overwrite of authstate //
       return { ...state, ...action.payload };
     default:
       return combinedReducer(state, action);
