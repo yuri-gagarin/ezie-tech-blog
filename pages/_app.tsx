@@ -117,7 +117,7 @@ const App: NextPage<AppProps & any> = ({ Component, pageProps, }) => {
 App.getInitialProps = wrapper.getInitialAppProps((store) => async ({ Component, ctx }) => {
   return {
     pageProps: {
-      ...(Component.getInitialProps ? await Component.getInitialProps({...ctx, store}) : {}),
+      ...(Component.getInitialProps ? await Component.getInitialProps({...ctx, store }) : {}),
       pathname: ctx.pathname
     },
   };

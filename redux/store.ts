@@ -24,22 +24,18 @@ const initialState: IGeneralState = {
 const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IGeneralAppAction): IGeneralState => {
   switch (action.type) {
     case HYDRATE:
-      //let nextState: IGeneralState;
-      /*
-      if (checkEmptyObjVals(state.blogPostsState) && checkEmptyObjVals(action.payload)) {
-        nextState = { ...state, ...action.payload };
-      } else {
-        console.log(24);
-        console.log(state.blogPostsState);
-        nextState = { ...state, ...action.payload, ...state.blogPostsState };
-
-      }
-      */
       //if (action.payload.usersState && checkEmptyObjVals(action.payload.usersState)) delete action.payload.usersStatePostsState;
       //if (action.payload.blogPostsState && checkEmptyObjVals(action.payload.blogPostsState)) delete action.payload.blogPostsState;
-      //console.log(action.payload)
-      if (checkEmptyObjVals(action.payload.authState) && !checkEmptyObjVals(state.authState)) delete action.payload.authState; // guard against overwrite of authstate //
-      return { ...state, ...action.payload };
+      // if (checkEmptyObjVals(action.payload.authState) && !checkEmptyObjVals(state.authState)) delete action.payload.authState; // guard against overwrite of authstate //
+      const nextState: IGeneralState = {
+        ...state,
+        ...action.payload
+      };
+      if (checkEmptyObjVals(action.payload.authState) && !checkEmptyObjVals(state.authState)) {
+        console.log(action.payload.authState);
+        console.log(state.authState);
+      }
+      return nextState;
     default:
       return combinedReducer(state, action);
   }
