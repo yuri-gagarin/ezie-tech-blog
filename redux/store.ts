@@ -27,6 +27,7 @@ const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IG
       //if (action.payload.usersState && checkEmptyObjVals(action.payload.usersState)) delete action.payload.usersStatePostsState;
       //if (action.payload.blogPostsState && checkEmptyObjVals(action.payload.blogPostsState)) delete action.payload.blogPostsState;
       // if (checkEmptyObjVals(action.payload.authState) && !checkEmptyObjVals(state.authState)) delete action.payload.authState; // guard against overwrite of authstate //
+      console.log(action.payload)
       const nextState: IGeneralState = {
         ...state,
         ...action.payload
