@@ -20,6 +20,7 @@
 }
 .userLevelContent {
   height: 3em;
+  width: 267px;
   font-size: 1.25em;
   font-weight: bold;
 }
@@ -52,7 +53,8 @@
     width: 100%;
   }
   .dataContent {
-    height: 3em;
+    min-height: 3em;
+    border: 3px solid green !important;
   }
   .dataLabel {
     width: 100%;
@@ -66,4 +68,8 @@
     height: 100%;
     margin: 0 !important;
   }
+  .userLevelContent {
+    width: 100%;
+  }
+  
 }

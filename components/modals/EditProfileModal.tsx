@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Button, Input, Label, Modal } from "semantic-ui-react";
+import { Form, Button, Input, Label, Modal, Reveal, InputOnChangeData } from "semantic-ui-react";
 // next imports //
 // styles //
 import styles from "@/styles/modals/EditProfileModal.module.css";
@@ -14,17 +14,37 @@ interface EditProfileModalProps {
   userData: UserData;
 }
 
-type FormState = {
+type FormFirstNameState = {
   firstName: string;
-  lastName: string;
-  email: string;
+  firstNameError: string | null;
   editingFirstName: boolean;
+};
+type FormLastNameState = {
+  lastName: string;
+  lastNameError: string | null;
   editingLastName: boolean;
+};
+type FormEmailState = {
+  email: string;
+  emailError: string | null;
   editingEmail: boolean;
-}
+};
 
 export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, handleCloseModal, handleTriggerModelDelete, handleModelUpdate }): JSX.Element => {
-  const [ formState, setFormState ] = React.useState<FormState>({ firstName: "First", lastName: "Last", email: "Email", editingFirstName: false, editingLastName: false, editingEmail: false  });
+  // local state //
+  const [ formFirstNameState, setFormFirstNameState ] = React.useState<FormFirstNameState>({ firstName: "First", editingFirstName: true, firstNameError: null });
+  const [ formLastNameState, setFormLastNameState ] = React.useState<FormLastNameState>({ lastName: "Last", editingLastName: true, lastNameError: null });
+  const [ formEmailState, setFormEmailState ] = React.useState<FormEmailState>({ email: "user@email.com", editingEmail: true, emailError: null });
+
+  const listenForFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFormFirstNameState({ ...formFirstNameState, firstName: e.currentTarget.value });
+  };
+  const listenForLastNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFormLastNameState({ ...formLastNameState, lastName: e.currentTarget.value });
+  };
+  const listenForEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFormEmailState({ ...formEmailState, email: e.currentTarget.value });
+  };
 
   return (
     <Modal className={ styles.editProfileModal } closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "edit-profile-modal" }>
@@ -39,45 +59,56 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
       </Modal.Content>
       <Modal.Content>
         <Form>
-          <Form.Field inline>
+          <Form.Field inline={ !formFirstNameState.editingFirstName }>
             <Label className={ styles.dataLabel } color="teal">First Name:</Label>
-            <div className={ styles.dataContent} >
-              {
-                formState.editingFirstName
-                ?
-                <input value={ formState.firstName } />
-                :
-                <div className={ styles.dataSpan }>{ formState.firstName }</div>
-              }
-              <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />
-            </div>
-
+            {
+              formFirstNameState.editingFirstName
+              ?
+              <Form.Input 
+                error={{ content: "Unavailable", pointing: "below" }}
+                value={ formFirstNameState.firstName } 
+                onChange={ listenForFirstNameChange }
+              />
+              :
+              <div className={ styles.dataContent}>
+                <div className={ styles.dataSpan }>{ formFirstNameState.firstName }</div>
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />                
+              </div>
+            }
           </Form.Field>
-          <Form.Field inline>
+          <Form.Field inline={ !formLastNameState.editingLastName }>
             <Label className={ styles.dataLabel } color="teal">Last Name:</Label>
-            <div className={ styles.dataContent}>
-              {
-                formState.editingLastName
-                ?
-                <input value={ formState.lastName} />
-                :
-                <div className={ styles.dataSpan }>{ formState.lastName }</div>
-              }
-              <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />
-            </div>
+            {
+              formLastNameState.editingLastName
+              ?
+              <Form.Input 
+                error={{ content: "Unavailable", pointing: "below" }}
+                value={ formLastNameState.lastName } 
+                onChange={ listenForLastNameChange }
+              />
+              :
+              <div className={ styles.dataContent}>
+                <div className={ styles.dataSpan }>{ formLastNameState.lastName }</div>
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />
+              </div>
+            }
           </Form.Field>
-          <Form.Field inline>
+          <Form.Field inline={ !formEmailState.editingEmail }>
             <Label className={ styles.dataLabel } color="teal">Email:</Label>
-            <div className={ styles.dataContent}>
-              {
-                formState.editingEmail
-                ?
-                <input value={ formState.email } />
-                :
-                <div className={ styles.dataSpan }>{ formState.email }</div>
-              }
-              <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />
-            </div>
+            {
+              formEmailState.editingEmail
+              ?
+              <Form.Input 
+                error={{ content: "Unavailable", pointing: "below" }}
+                value={ formEmailState.email } 
+                onChange={ listenForEmailChange }
+              />
+              :
+              <div className={ styles.dataContent}>
+                <div className={ styles.dataSpan }>{ formEmailState.email }</div>
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />
+              </div>
+            }
           </Form.Field>
           <Form.Field inline>
             <Label className={ styles.dataLabel } color="teal">User Level:</Label>

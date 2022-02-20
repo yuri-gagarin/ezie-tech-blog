@@ -50,10 +50,6 @@ export const LoginStatusModal: React.FunctionComponent<ILoginStatusModalProps> =
     }
   }, [ authState.showLoginMsg ]);
 
-  React.useEffect(() => {
-    console.log(localState)
-  },  [ localState ]);
-
   return (
     localState.showMessage 
     ?
