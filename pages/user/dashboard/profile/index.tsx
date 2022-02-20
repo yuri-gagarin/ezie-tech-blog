@@ -4,12 +4,15 @@ import { Button, Card, Grid, Label, Segment } from "semantic-ui-react";
 import { useRouter } from "next/router";
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
+// additional components //
+import { EditProfileModal } from "@/components/modals/EditProfileModal";
 // heplers //
 
 // styles //
 import styles from "@/styles/user/UserProfileIndex.module.css";
 // type imports //
 import type { IGeneralState } from '@/redux/_types/generalTypes';
+import type { UserData } from "@/redux/_types/users/dataTypes";
 
 interface IUserProfileIndexProps {
 }
@@ -21,14 +24,26 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const { authState } = useSelector((state: IGeneralState) => state);
   const { currentUser } = authState;
 
-  const handleOpenEditModal = (): void => {
-    setEditModalOpen(false);
+  const handleTriggerEditModal = (): void => {
+    setEditModalOpen(!editModalOpen);
   };
-  
+  const handleUserUpdate = async (): Promise<void> => {
 
+  };
+  const handleTriggerModelDelete = (): void => {
+
+  };
 
   return (
     <React.Fragment>
+      <EditProfileModal
+        modalOpen={ true }
+        handleCloseModal={ handleTriggerEditModal }
+        handleModelUpdate={ handleUserUpdate }
+        handleTriggerModelDelete={ handleTriggerModelDelete }
+        userData={ currentUser as UserData }
+
+      />
       <Grid.Row className={ styles.headerRow }> 
         <Segment style={{ heigth: "100%", width: "100%"}} textAlign="center">User Profile Section</Segment>
       </Grid.Row>
