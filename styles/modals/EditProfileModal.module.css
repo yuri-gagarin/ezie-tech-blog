@@ -1,6 +1,7 @@
 .editProfileControls {
   margin-left: 10px !important;
 }
+
 .dataLabel {
   width: 8em;
 }
@@ -31,6 +32,13 @@
   height: 100%;
   background-color: gainsboro;
 }
+
+@media screen and (min-width: 551px) {
+  .formInput {
+    width: 268px;
+  }
+}
+
 @media screen and (max-width: 550px) {
   
   .editProfileModal > i {
@@ -52,6 +60,7 @@
     margin: 0 !important;
     width: 100%;
   }
+  
   .dataContent {
     min-height: 3em;
     border: 3px solid green !important;

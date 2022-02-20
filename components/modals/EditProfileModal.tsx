@@ -37,13 +37,28 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   const [ formEmailState, setFormEmailState ] = React.useState<FormEmailState>({ email: "user@email.com", editingEmail: true, emailError: null });
 
   const listenForFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setFormFirstNameState({ ...formFirstNameState, firstName: e.currentTarget.value });
+    const { value } = e.currentTarget;
+    if (!value) {
+      setFormFirstNameState({ ...formFirstNameState, firstName: value, firstNameError: "First name can't be blank" })
+    } else {
+      setFormFirstNameState({ ...formFirstNameState, firstName: value, firstNameError: null });
+    }
   };
   const listenForLastNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setFormLastNameState({ ...formLastNameState, lastName: e.currentTarget.value });
+    const { value } = e.currentTarget;
+    if (!value) {
+      setFormLastNameState({ ...formLastNameState, lastName: value, lastNameError: "Last name can't be blank" });
+    } else {
+      setFormLastNameState({ ...formLastNameState, lastName: value, lastNameError: null });
+    }
   };
   const listenForEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setFormEmailState({ ...formEmailState, email: e.currentTarget.value });
+    const { value } = e.currentTarget;
+    if (!value) {
+      setFormEmailState({ ...formEmailState, email: value, emailError: "Email can't be blank" });
+    } else {
+      setFormEmailState({ ...formEmailState, email: value, emailError: null });
+    }
   };
 
   return (
@@ -65,7 +80,8 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               formFirstNameState.editingFirstName
               ?
               <Form.Input 
-                error={{ content: "Unavailable", pointing: "below" }}
+                className={ styles.formInput }
+                error={ formFirstNameState.firstNameError ? { content: formFirstNameState.firstNameError, pointing: "below" } : false }
                 value={ formFirstNameState.firstName } 
                 onChange={ listenForFirstNameChange }
               />
@@ -82,7 +98,8 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               formLastNameState.editingLastName
               ?
               <Form.Input 
-                error={{ content: "Unavailable", pointing: "below" }}
+                className={ styles.formInput }
+                error={ formLastNameState.lastNameError ? { content: formLastNameState.lastNameError, pointing: "below" } : false }
                 value={ formLastNameState.lastName } 
                 onChange={ listenForLastNameChange }
               />
@@ -99,6 +116,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               formEmailState.editingEmail
               ?
               <Form.Input 
+                className={ styles.formInput }
                 error={{ content: "Unavailable", pointing: "below" }}
                 value={ formEmailState.email } 
                 onChange={ listenForEmailChange }
