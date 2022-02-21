@@ -121,6 +121,17 @@ export default class AuthController {
     );
   }
 
+  uniqueEmail = async (req: Request, res: Response): Promise<Response> => {
+    const { email } = req.query as { email: string };
+    if (!email) return await this.sendErrorRes(res, { status: 400, error: new Error("Invalid Input"), errorMessages: [ "No email provided" ] });
+    try {
+      console.log(email)
+      const { exists, message } = await this.validateUniqueEmail(email);
+      return res.status(200).json({ responseMsg: message, exists });
+    } catch (error) {
+      return await this.sendErrorRes(res, { status: 500, error, errorMessages: [ "Server error" ] });
+    }
+  }
   /*
   verifyAdmin = async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).json({ responseMsg: "All ok "});

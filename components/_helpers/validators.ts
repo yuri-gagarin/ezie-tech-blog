@@ -104,9 +104,9 @@ export const validateProjectForm = (data: { title?: string; description?: string
 
 export const validateUniqueEmail =  async (email: string): Promise<{ status: number; responseMsg: string; exists: boolean }> => {
   const axiosReq: AxiosRequestConfig = {
-    url: "/api/validate_email",
+    url: "/api/unique_email",
     method: "get",
-    data: {
+    params: {
       email
     }
   };

@@ -3,6 +3,8 @@ import { Form, Button, Input, Label, Modal, Reveal, InputOnChangeData } from "se
 // next imports //
 // styles //
 import styles from "@/styles/modals/EditProfileModal.module.css";
+// helpers //
+import { validateUniqueEmail } from "@/components/_helpers/validators";
 // type imports //
 import { UserData } from '@/redux/_types/users/dataTypes';
 
@@ -38,9 +40,17 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   const [ formLastNameState, setFormLastNameState ] = React.useState<FormLastNameState>({ lastName: "Last", editingLastName: true, lastNameError: null });
   const [ formEmailState, setFormEmailState ] = React.useState<FormEmailState>({ email: "user@email.com", editingEmail: true, emailError: null, active: false, APItimeout: null });
 
-  const setAPICallTimeout = (): NodeJS.Timeout => {
-    return setTimeout(() => {
+  const setAPICallTimeout = (email: string): NodeJS.Timeout => {
+    return setTimeout(async () => {
       console.log("do an email check api call here");
+      try {
+        const { responseMsg, exists } = await validateUniqueEmail(email);
+        if (exists) {
+          setFormEmailState({ ...formEmailState, email, emailError: responseMsg });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }, 3000);
   };
   // form value change listeneres //
@@ -66,7 +76,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
     if (!value) {
       setFormEmailState({ ...formEmailState, email: value, emailError: "Email can't be blank", APItimeout: null });
     } else {
-      setFormEmailState({ ...formEmailState, email: value, emailError: null, APItimeout: setAPICallTimeout() });
+      setFormEmailState({ ...formEmailState, email: value, emailError: null, APItimeout: setAPICallTimeout(value) });
     }
   };
 
@@ -131,7 +141,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               ?
               <Form.Input 
                 className={ styles.formInput }
-                error={{ content: "Unavailable", pointing: "below" }}
+                error={ formEmailState.emailError ? { content: formEmailState.emailError, pointing: "below" }: false }
                 value={ formEmailState.email } 
                 onChange={ listenForEmailChange }
               />

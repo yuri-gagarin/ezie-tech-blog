@@ -18,6 +18,7 @@ export default class AuthRoutes {
     this.loginRoute();
     this.registerRoute();
     this.logoutRoute();
+    this.uniqueEmailRoute();
     // this.verifyAdminRoute();
     // this.verifyUserRoute();
   }
@@ -36,6 +37,11 @@ export default class AuthRoutes {
     this.router
       .route("/api/logout")
       .delete( this.controller.logout );
+  }
+  private uniqueEmailRoute() {
+    this.router
+      .route("/api/unique_email")
+      .get(this.controller.uniqueEmail);
   }
 
   /*
