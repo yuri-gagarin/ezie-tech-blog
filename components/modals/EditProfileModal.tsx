@@ -34,11 +34,15 @@ type FormEmailState = {
   APItimeout: NodeJS.Timeout | null;
 };
 
-export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, handleCloseModal, handleTriggerModelDelete, handleModelUpdate }): JSX.Element => {
+export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, handleCloseModal, handleTriggerModelDelete, handleModelUpdate, userData }): JSX.Element => {
+  // userdata from redux state //
+  const { firstName, lastName, email, userType } = userData;
   // local state //
-  const [ formFirstNameState, setFormFirstNameState ] = React.useState<FormFirstNameState>({ firstName: "First", editingFirstName: true, firstNameError: null });
-  const [ formLastNameState, setFormLastNameState ] = React.useState<FormLastNameState>({ lastName: "Last", editingLastName: true, lastNameError: null });
-  const [ formEmailState, setFormEmailState ] = React.useState<FormEmailState>({ email: "user@email.com", editingEmail: true, emailError: null, active: false, APItimeout: null });
+  const [ formFirstNameState, setFormFirstNameState ] = React.useState<FormFirstNameState>({ firstName, editingFirstName: false, firstNameError: null });
+  const [ formLastNameState, setFormLastNameState ] = React.useState<FormLastNameState>({ lastName, editingLastName: false, lastNameError: null });
+  const [ formEmailState, setFormEmailState ] = React.useState<FormEmailState>({ email, editingEmail: false, emailError: null, active: false, APItimeout: null });
+  const [ submitBtnDisabled, setSubmitBtnDisable ] = React.useState<boolean>(false);
+  
 
   const setAPICallTimeout = (email: string): NodeJS.Timeout => {
     return setTimeout(async () => {
@@ -54,6 +58,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
     }, 3000);
   };
   // form value change listeneres //
+  // first name related //
   const listenForFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.currentTarget;
     if (!value) {
@@ -62,6 +67,14 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
       setFormFirstNameState({ ...formFirstNameState, firstName: value, firstNameError: null });
     }
   };
+  const setFirstNameEdit = (): void => {
+    setFormFirstNameState({ ...formFirstNameState, editingFirstName: true });
+  }
+  const revertFirstNameData = (): void => {
+    setFormFirstNameState({ ...formFirstNameState, firstName, editingFirstName: false, firstNameError: null });
+  }
+  // end first name related //
+  // last name related //
   const listenForLastNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.currentTarget;
     if (!value) {
@@ -70,6 +83,14 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
       setFormLastNameState({ ...formLastNameState, lastName: value, lastNameError: null });
     }
   };
+  const setLastNameEdit = (): void => {
+    setFormLastNameState({ ...formLastNameState, editingLastName: true });
+  };
+  const reverLastNameData = (): void => {
+    setFormLastNameState({ ...formLastNameState, lastName, editingLastName: false, lastNameError: null });
+  };
+  // end last name related //
+  // email related //
   const listenForEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.currentTarget;
     clearTimeout(formEmailState.APItimeout);
@@ -79,11 +100,23 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
       setFormEmailState({ ...formEmailState, email: value, emailError: null, APItimeout: setAPICallTimeout(value) });
     }
   };
+  const setEmailEdit = (): void => {
+    setFormEmailState({ ...formEmailState, editingEmail: true });
+  };  
+  const reverEmailData = (): void => {
+    setFormEmailState({ ...formEmailState, email, editingEmail: false, emailError: null });
+  };
+  // end email related //
+  // end form value change listeners //
 
   // lifecycle hooks //
   React.useEffect(() => {
-
-  }, [ ]);
+    if (formFirstNameState.firstNameError || formLastNameState.lastNameError || formEmailState.emailError) {
+      setSubmitBtnDisable(true);
+    } else {
+      setSubmitBtnDisable(false);
+    }
+  }, [ formFirstNameState.firstNameError, formLastNameState.lastNameError, formEmailState.emailError ]);
 
   return (
     <Modal className={ styles.editProfileModal } closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "edit-profile-modal" }>
@@ -92,7 +125,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
           <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal } data-test-id={ "edit-profile-modal-cancel-btn" } />
         </Button.Group>
         <Button.Group className={ styles.editProfileControls }>
-          <Button basic color="green" content="Update" icon="save outling" onClick={ handleModelUpdate } />
+          <Button basic color="green" content="Update" icon="save outling" onClick={ handleModelUpdate } disabled={ submitBtnDisabled } />
           <Button color="red" content="Delete" icon="trash" onClick={ handleTriggerModelDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
         </Button.Group>
       </Modal.Content>
@@ -104,15 +137,17 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               formFirstNameState.editingFirstName
               ?
               <Form.Input 
+                autoFocus
                 className={ styles.formInput }
                 error={ formFirstNameState.firstNameError ? { content: formFirstNameState.firstNameError, pointing: "below" } : false }
                 value={ formFirstNameState.firstName } 
                 onChange={ listenForFirstNameChange }
+                onBlur={ revertFirstNameData }
               />
               :
               <div className={ styles.dataContent}>
                 <div className={ styles.dataSpan }>{ formFirstNameState.firstName }</div>
-                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />                
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setFirstNameEdit } />                
               </div>
             }
           </Form.Field>
@@ -122,15 +157,17 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               formLastNameState.editingLastName
               ?
               <Form.Input 
+                autoFocus
                 className={ styles.formInput }
                 error={ formLastNameState.lastNameError ? { content: formLastNameState.lastNameError, pointing: "below" } : false }
                 value={ formLastNameState.lastName } 
                 onChange={ listenForLastNameChange }
+                onBlur={ reverLastNameData }
               />
               :
               <div className={ styles.dataContent}>
                 <div className={ styles.dataSpan }>{ formLastNameState.lastName }</div>
-                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setLastNameEdit } />
               </div>
             }
           </Form.Field>
@@ -140,15 +177,17 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               formEmailState.editingEmail
               ?
               <Form.Input 
+                autoFocus
                 className={ styles.formInput }
                 error={ formEmailState.emailError ? { content: formEmailState.emailError, pointing: "below" }: false }
                 value={ formEmailState.email } 
                 onChange={ listenForEmailChange }
+                onBlur={ reverEmailData }
               />
               :
               <div className={ styles.dataContent}>
                 <div className={ styles.dataSpan }>{ formEmailState.email }</div>
-                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" />
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setEmailEdit } />
               </div>
             }
           </Form.Field>
