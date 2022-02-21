@@ -12,7 +12,7 @@ interface EditProfileModalProps {
   handleModelUpdate(): Promise<any>;
   handleTriggerModelDelete(): void;
   userData: UserData;
-}
+};
 
 type FormFirstNameState = {
   firstName: string;
@@ -27,15 +27,23 @@ type FormLastNameState = {
 type FormEmailState = {
   email: string;
   emailError: string | null;
+  active: boolean;
   editingEmail: boolean;
+  APItimeout: NodeJS.Timeout | null;
 };
 
 export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, handleCloseModal, handleTriggerModelDelete, handleModelUpdate }): JSX.Element => {
   // local state //
   const [ formFirstNameState, setFormFirstNameState ] = React.useState<FormFirstNameState>({ firstName: "First", editingFirstName: true, firstNameError: null });
   const [ formLastNameState, setFormLastNameState ] = React.useState<FormLastNameState>({ lastName: "Last", editingLastName: true, lastNameError: null });
-  const [ formEmailState, setFormEmailState ] = React.useState<FormEmailState>({ email: "user@email.com", editingEmail: true, emailError: null });
+  const [ formEmailState, setFormEmailState ] = React.useState<FormEmailState>({ email: "user@email.com", editingEmail: true, emailError: null, active: false, APItimeout: null });
 
+  const setAPICallTimeout = (): NodeJS.Timeout => {
+    return setTimeout(() => {
+      console.log("do an email check api call here");
+    }, 3000);
+  };
+  // form value change listeneres //
   const listenForFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.currentTarget;
     if (!value) {
@@ -54,12 +62,18 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   };
   const listenForEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.currentTarget;
+    clearTimeout(formEmailState.APItimeout);
     if (!value) {
-      setFormEmailState({ ...formEmailState, email: value, emailError: "Email can't be blank" });
+      setFormEmailState({ ...formEmailState, email: value, emailError: "Email can't be blank", APItimeout: null });
     } else {
-      setFormEmailState({ ...formEmailState, email: value, emailError: null });
+      setFormEmailState({ ...formEmailState, email: value, emailError: null, APItimeout: setAPICallTimeout() });
     }
   };
+
+  // lifecycle hooks //
+  React.useEffect(() => {
+
+  }, [ ]);
 
   return (
     <Modal className={ styles.editProfileModal } closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "edit-profile-modal" }>
@@ -68,7 +82,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
           <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal } data-test-id={ "edit-profile-modal-cancel-btn" } />
         </Button.Group>
         <Button.Group className={ styles.editProfileControls }>
-          <Button baisc color="green" content="Update" icon="save outling" onClick={ handleModelUpdate } />
+          <Button basic color="green" content="Update" icon="save outling" onClick={ handleModelUpdate } />
           <Button color="red" content="Delete" icon="trash" onClick={ handleTriggerModelDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
         </Button.Group>
       </Modal.Content>

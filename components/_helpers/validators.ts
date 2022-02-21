@@ -1,4 +1,8 @@
+import axios, { AxiosResponse } from "axios";
+//
 import { BlogPostFormData } from "../../redux/_types/blog_posts/dataTypes";
+// type imports //
+import { AxiosRequestConfig } from "axios";
 
 export type ValidationResponse = {
   valid: boolean;
@@ -98,3 +102,19 @@ export const validateProjectForm = (data: { title?: string; description?: string
 }
 
 
+export const validateUniqueEmail =  async (email: string): Promise<{ status: number; responseMsg: string; exists: boolean }> => {
+  const axiosReq: AxiosRequestConfig = {
+    url: "/api/validate_email",
+    method: "get",
+    data: {
+      email
+    }
+  };
+
+  try {
+    const { status, data }: AxiosResponse<{ responseMsg: string; exists: boolean }> = await axios(axiosReq);
+    return  { ...data, status };
+  } catch (error) {
+    throw error;
+  }
+}
