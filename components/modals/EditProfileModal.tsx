@@ -36,7 +36,7 @@ type FormEmailState = {
 
 export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, handleCloseModal, handleTriggerModelDelete, handleModelUpdate, userData }): JSX.Element => {
   // userdata from redux state //
-  const { firstName, lastName, email, userType } = userData;
+  const { _id, firstName, lastName, email, userType } = userData;
   // local state //
   const [ formFirstNameState, setFormFirstNameState ] = React.useState<FormFirstNameState>({ firstName, editingFirstName: false, firstNameError: null });
   const [ formLastNameState, setFormLastNameState ] = React.useState<FormLastNameState>({ lastName, editingLastName: false, lastNameError: null });
@@ -109,6 +109,10 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   // end email related //
   // end form value change listeners //
 
+  // update functionality //
+  const updateUserProfile = async () => {
+    // first validate input //
+  };
   // lifecycle hooks //
   React.useEffect(() => {
     if (formFirstNameState.firstNameError || formLastNameState.lastNameError || formEmailState.emailError) {

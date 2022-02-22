@@ -1,7 +1,7 @@
 import type { BlogPostData } from "./blog_posts/dataTypes";
 import type { BlogPostAction } from "./blog_posts/actionTypes";
 // users //
-import type { GenUserData } from "./users/dataTypes";
+import type { UserData } from "./users/dataTypes";
 import type { UserAction } from "./users/actionTypes";
 // auth //
 import type { AuthAction } from "./auth/actionTypes";
@@ -37,8 +37,8 @@ export interface IUserState {
   status: number | null;
   responseMsg: string;
   loading: boolean;
-  selectedUserData: GenUserData;
-  usersArr: GenUserData[];
+  selectedUserData: UserData;
+  usersArr: UserData[];
   error: any | null;
   errorMessages: string[] | null;
 };

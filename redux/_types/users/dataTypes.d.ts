@@ -33,8 +33,8 @@ export type GetOneUserOpts = {
   handle?: string;
 };
 export type UserFormData = {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
   firstName?: string;
   lastName?: string;
   handle?: string;

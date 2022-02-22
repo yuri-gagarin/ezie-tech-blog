@@ -11,8 +11,10 @@ import { EditProfileModal } from "@/components/modals/EditProfileModal";
 // styles //
 import styles from "@/styles/user/UserProfileIndex.module.css";
 // type imports //
+import type { Dispatch } from "redux";
 import type { IGeneralState } from '@/redux/_types/generalTypes';
-import type { UserData } from "@/redux/_types/users/dataTypes";
+import type { UserData, UserFormData } from "@/redux/_types/users/dataTypes";
+import type { UserAction } from '@/redux/_types/users/actionTypes';
 
 interface IUserProfileIndexProps {
 }
@@ -21,6 +23,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // local component state //
   const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
   // redux hooks //
+  const dispatch: Dispatch<UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
   const { currentUser } = authState;
 
@@ -33,6 +36,14 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const handleTriggerModelDelete = (): void => {
 
   };
+
+  const handleEditUserProfile = async (formData: UserFormData) => {
+    const { _id: userId } = currentUser;
+    const { authToken: JWTToken } = authState;
+    try {
+    } catch (error) {
+    }
+  }
 
   return (
     <React.Fragment>

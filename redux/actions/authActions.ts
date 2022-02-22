@@ -80,6 +80,16 @@ export class AuthActions {
     }
   };
 
+  public static handleUpdateUserProfile = async ({ }: { dispatch: Dispatch<AuthAction>; }): Promise<any> => {
+    const axiosOpts: AxiosRequestConfig = {
+      method: "PATCH",
+      url: "/api/update_user_profile"
+    };
+    
+  }
+  public static handleUpdateAdminProfile = async () => {
+
+  }
   public static handleClearLoginMsg = async ({ dispatch }: { dispatch: Dispatch<AuthAction>; }): Promise<any> => {
     dispatch({ type: "ClearLoginMsg", payload: {} });
   };
