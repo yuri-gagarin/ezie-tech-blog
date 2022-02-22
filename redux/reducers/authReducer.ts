@@ -15,6 +15,34 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         errorMessages: null
       };
     }
+    case "ProfileAPIRequest": {
+      return {
+        ...state,
+        loading: action.payload.loading
+      };
+    }
+    case "UpdateUserProfile": {
+      return {
+        ...state,
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        currentUser: {
+          ...action.payload.currentUser
+        }
+      };
+    }
+    case "UpdateAdminProfile": {
+      return {
+        ...state,
+        status: action.payload.status,
+        loading: action.payload.loading,
+        responseMsg: action.payload.responseMsg,
+        currentUser: {
+          ...action.payload.currentUser
+        }
+      };
+    }
     case "AuthLoginSuccess": {
       return {
         status: action.payload.status,
