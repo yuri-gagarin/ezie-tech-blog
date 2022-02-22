@@ -6,7 +6,7 @@ import type { AxiosResponse, AxiosRequestConfig } from "axios";
 import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState } from "../_types/auth/actionTypes";
 // data types //
 import type { AdminData } from "../_types/generalTypes";
-import type { UserData } from "../_types/users/dataTypes";
+import type { UserData, UserFormData } from "../_types/users/dataTypes";
 import type { LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
 // helpers //
 import { processAxiosError } from '../_helpers/dataHelpers';
@@ -80,12 +80,20 @@ export class AuthActions {
     }
   };
 
-  public static handleUpdateUserProfile = async ({ }: { dispatch: Dispatch<AuthAction>; }): Promise<any> => {
+  public static handleUpdateUserProfile = async ({ dispatch, userId, formData }: { dispatch: Dispatch<AuthAction>; userId: string; JWTToken: string; formData: UserFormData }): Promise<any> => {
     const axiosOpts: AxiosRequestConfig = {
       method: "PATCH",
-      url: "/api/update_user_profile"
+      url: `/api/users/${userId}`,
+      data: {
+        
+      }
     };
-    
+    dispatch({ type: "ProfileAPIRequest", payload: { loading: true } });
+    try {
+
+    } catch (error) {
+      throw error;
+    }
   }
   public static handleUpdateAdminProfile = async () => {
 
