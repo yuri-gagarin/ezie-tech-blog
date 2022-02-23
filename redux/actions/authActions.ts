@@ -8,8 +8,10 @@ import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg
 import type { AdminData } from "../_types/generalTypes";
 import type { UserData, UserFormData } from "../_types/users/dataTypes";
 import type { LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
+import type { EditUserRes } from "../_types/users/dataTypes";
 // helpers //
 import { processAxiosError } from '../_helpers/dataHelpers';
+import { AdminFormData, EditAdminRes } from "../_types/admins/dataTypes";
 
 // TODO //
 // rewrite as a class //
@@ -80,24 +82,50 @@ export class AuthActions {
     }
   };
 
-  public static handleUpdateUserProfile = async ({ dispatch, userId, formData }: { dispatch: Dispatch<AuthAction>; userId: string; JWTToken: string; formData: UserFormData }): Promise<any> => {
+  public static handleUpdateUserProfile = async ({ dispatch, userId, formData }: { dispatch: Dispatch<AuthAction>; userId: string; JWTToken: string; formData: UserFormData }): Promise<AuthAction> => {
+    const { firstName, lastName, email } = formData;
     const axiosOpts: AxiosRequestConfig = {
       method: "PATCH",
       url: `/api/users/${userId}`,
       data: {
-        
+        userData: { firstName, lastName, email }
       }
     };
     dispatch({ type: "ProfileAPIRequest", payload: { loading: true } });
     try {
-
+      const { status, data }: AxiosResponse<EditUserRes> = await axios(axiosOpts);
+      const { responseMsg, editedUser: currentUser } = data;
+      return dispatch({
+        type: "UpdateUserProfile",
+        payload: { status, responseMsg, currentUser, loading: false }
+      });
     } catch (error) {
       throw error;
     }
-  }
-  public static handleUpdateAdminProfile = async () => {
+  };
 
-  }
+  public static handleUpdateAdminProfile = async ({ dispatch, userId, formData }: { dispatch: Dispatch<AuthAction>; userId: string; JWTToken: string; formData: AdminFormData }): Promise<AuthAction> => {
+    const { firstName, lastName, email, handle } = formData;
+    const axiosOpts: AxiosRequestConfig = {
+      method: "PATCH",
+      url: `/api/admins/${userId}`,
+      data: {
+        adminData: { firstName,lastName, email, handle }
+      }
+    };
+    dispatch({ type: "ProfileAPIRequest", payload: { loading: true } });
+    try {
+      const { status, data }: AxiosResponse<EditAdminRes> = await axios(axiosOpts);
+      const { responseMsg, editedAdmin: currentUser } = data;
+      return dispatch({
+        type: "UpdateAdminProfile",
+        payload: { status, responseMsg, currentUser, loading: false }
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+  
   public static handleClearLoginMsg = async ({ dispatch }: { dispatch: Dispatch<AuthAction>; }): Promise<any> => {
     dispatch({ type: "ClearLoginMsg", payload: {} });
   };
