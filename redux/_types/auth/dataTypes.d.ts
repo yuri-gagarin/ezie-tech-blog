@@ -14,7 +14,7 @@ export interface IAuthState {
   loggedInAt: number | null;
   currentUser: UserData | AdminData | null;
   error: any | null;
-  errorMessages: any | string[];
+  errorMessages: string[] | null;
 };
 
 export type LoginRes = {

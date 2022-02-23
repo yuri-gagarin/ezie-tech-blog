@@ -6,12 +6,12 @@ import styles from "@/styles/modals/EditProfileModal.module.css";
 // helpers //
 import { validateUniqueEmail } from "@/components/_helpers/validators";
 // type imports //
-import { UserData } from '@/redux/_types/users/dataTypes';
+import { UserData, UserFormData } from '@/redux/_types/users/dataTypes';
 
 interface EditProfileModalProps {
   modalOpen: boolean;
   handleCloseModal(): void;
-  handleModelUpdate(): Promise<any>;
+  handleUpdateUserProfile(formData: UserFormData): Promise<any>;
   handleTriggerModelDelete(): void;
   userData: UserData;
 };
@@ -34,7 +34,7 @@ type FormEmailState = {
   APItimeout: NodeJS.Timeout | null;
 };
 
-export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, handleCloseModal, handleTriggerModelDelete, handleModelUpdate, userData }): JSX.Element => {
+export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, handleCloseModal, handleTriggerModelDelete, handleUpdateUserProfile, userData }): JSX.Element => {
   // userdata from redux state //
   const { _id, firstName, lastName, email, userType } = userData;
   // local state //
@@ -110,8 +110,11 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   // end form value change listeners //
 
   // update functionality //
-  const updateUserProfile = async () => {
-    // first validate input //
+  const _handleUpdateUserProfile = async () => {
+    const { firstName } = formFirstNameState;
+    const { lastName } = formLastNameState;
+    const { email } = formEmailState
+    return handleUpdateUserProfile({ firstName, lastName, email })
   };
   // lifecycle hooks //
   React.useEffect(() => {
@@ -129,7 +132,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
           <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal } data-test-id={ "edit-profile-modal-cancel-btn" } />
         </Button.Group>
         <Button.Group className={ styles.editProfileControls }>
-          <Button basic color="green" content="Update" icon="save outling" onClick={ handleModelUpdate } disabled={ submitBtnDisabled } />
+          <Button basic color="green" content="Update" icon="save outling" onClick={ _handleUpdateUserProfile } disabled={ submitBtnDisabled } />
           <Button color="red" content="Delete" icon="trash" onClick={ handleTriggerModelDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
         </Button.Group>
       </Modal.Content>

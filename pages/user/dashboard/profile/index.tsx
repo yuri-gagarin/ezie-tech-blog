@@ -4,8 +4,10 @@ import { Button, Card, Grid, Label, Segment } from "semantic-ui-react";
 import { useRouter } from "next/router";
 // redux imports //
 import { useDispatch, useSelector } from "react-redux";
+import { AuthActions } from '@/redux/actions/authActions';
 // additional components //
 import { EditProfileModal } from "@/components/modals/EditProfileModal";
+import { GenErrorModal } from "@/components/modals/GenErrorModal";
 // heplers //
 
 // styles //
@@ -15,6 +17,7 @@ import type { Dispatch } from "redux";
 import type { IGeneralState } from '@/redux/_types/generalTypes';
 import type { UserData, UserFormData } from "@/redux/_types/users/dataTypes";
 import type { UserAction } from '@/redux/_types/users/actionTypes';
+import { AuthAction } from '@/redux/_types/auth/actionTypes';
 
 interface IUserProfileIndexProps {
 }
@@ -22,14 +25,16 @@ interface IUserProfileIndexProps {
 const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props): JSX.Element => {
   // local component state //
   const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
-  // redux hooks //
-  const dispatch: Dispatch<UserAction> = useDispatch();
+  // redux hooks and state //
+  const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
-  const { currentUser } = authState;
+  const { responseMsg, currentUser, error, errorMessages } = authState;
 
+  //
   const handleTriggerEditModal = (): void => {
     setEditModalOpen(!editModalOpen);
   };
+  // user update functionaliy //
   const handleUserUpdate = async (): Promise<void> => {
 
   };
@@ -37,24 +42,37 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
 
   };
 
-  const handleEditUserProfile = async (formData: UserFormData) => {
+  const handleUpdateUserProfile = async (formData: UserFormData) => {
     const { _id: userId } = currentUser;
     const { authToken: JWTToken } = authState;
     try {
+      await AuthActions.handleUpdateUserProfile({ dispatch, userId, JWTToken, formData })
     } catch (error) {
+      AuthActions.handleAuthError(dispatch, error);
     }
   }
+
+  const handleDismissErrorModal = (): void => {
+
+  };
 
   return (
     <React.Fragment>
       <EditProfileModal
         modalOpen={ true }
         handleCloseModal={ handleTriggerEditModal }
-        handleModelUpdate={ handleUserUpdate }
+        handleUpdateUserProfile={ handleUpdateUserProfile }
         handleTriggerModelDelete={ handleTriggerModelDelete }
         userData={ currentUser as UserData }
 
       />
+      <GenErrorModal 
+        open={ authState.error ? true : false } 
+        position="fixed-top"
+        handleErrorModalClose={ handleDismissErrorModal } 
+        errorMessages={ authState.errorMessages }
+      />
+
       <Grid.Row className={ styles.headerRow }> 
         <Segment style={{ heigth: "100%", width: "100%"}} textAlign="center">User Profile Section</Segment>
       </Grid.Row>

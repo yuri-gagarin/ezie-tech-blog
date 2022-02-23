@@ -43,3 +43,8 @@
   z-index: 9999;
   background-color: white;
 }
+
+.dismissBtnDiv {
+  display: flex;
+  justify-content: center;
+}

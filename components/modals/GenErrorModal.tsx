@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { TransitionablePortal } from "semantic-ui-react";
+import { Button, TransitionablePortal } from "semantic-ui-react";
 // types //
 import type { SemanticTRANSITIONS } from "semantic-ui-react";
 // styles //
-import styles from "../../styles/modals/GenErrorModal.module.css";
+import styles from "@/styles/modals/GenErrorModal.module.css";
 
 interface IGenErrorModalProps {
   open: boolean;
@@ -34,18 +34,21 @@ export const GenErrorModal: React.FunctionComponent<IGenErrorModalProps> = ({ op
       transition={{ animation, duration }}
       onClose={ handleErrorModalClose }
     >
-      <div className={( position ? postStyle : styles.errorSegment)} data-test-id="Gen_Error_Modal">
+      <div className={( position ? postStyle : styles.errorSegment)} data-test-id="gen-error-modal">
         <div className={ styles.errorHeader }>{ header ? header : "An Error Occured" }</div>
         <div className={ styles.errorMessagesWrapper }>
           <ul className={ styles.errorMessagesList }>
             {
               (errorMessages && errorMessages.length > 0) 
               ? 
-                errorMessages.map((msg) => <li key={msg} className={ styles.message } data-test-id="Gen_Error_Modal_Msg">{ msg }</li>)
+                errorMessages.map((msg) => <li key={msg} className={ styles.message } data-test-id="gen-rrror-modal-msg">{ msg }</li>)
               :
-              <li key="msg" className={ styles.message } data-test-id="Gen_Error_Modal_Msg">Seems like something went wrong.</li>
+              <li key="msg" className={ styles.message } data-test-id="gen-error-modal-msg">Seems like something went wrong.</li>
             }
           </ul>
+        </div>
+        <div className={ styles.dismissBtnDiv }>
+          <Button basic color="orange" content="Dismiss" onClick={ handleErrorModalClose } />
         </div>
       </div>
 
