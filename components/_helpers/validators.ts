@@ -101,6 +101,23 @@ export const validateProjectForm = (data: { title?: string; description?: string
   return res;
 }
 
+// USER Model validators //
+export const validateUserForm = (data: { firstName?: string; lastName?: string; email?: string; }): ValidationResponse => {
+  const { firstName, lastName, email } = data;
+  const res: ValidationResponse = { valid: false, errorMessages: [] };
+  if (!firstName) {
+    res.errorMessages.push("First name is required");
+  }
+  if (!lastName) {
+    res.errorMessages.push("Last name is equired");
+  }
+  if (!email) {
+    res.errorMessages.push("Email is required");
+  }
+
+  return res.errorMessages.length > 0 ? { ...res, valid: false } : { ...res, valid: true };
+};
+
 
 export const validateUniqueEmail =  async (email: string): Promise<{ status: number; responseMsg: string; exists: boolean }> => {
   const axiosReq: AxiosRequestConfig = {
