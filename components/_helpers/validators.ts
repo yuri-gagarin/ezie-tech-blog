@@ -118,8 +118,25 @@ export const validateUserForm = (data: { firstName?: string; lastName?: string; 
   return res.errorMessages.length > 0 ? { ...res, valid: false } : { ...res, valid: true };
 };
 
+export const valdateAdminForm = async (data: { firstName?: string; lastName?: string; email?: string; handle?: string; }) => {
+  const { firstName, lastName, email } = data;
+  const res: ValidationResponse = { valid: false, errorMessages: [] };
 
-export const validateUniqueEmail =  async (email: string): Promise<{ status: number; responseMsg: string; exists: boolean }> => {
+  if (!firstName) {
+    res.errorMessages.push("First name is required");
+  }
+  if (!lastName) {
+    res.errorMessages.push("Last name is equired");
+  }
+  if (!email) {
+    res.errorMessages.push("Email is required");
+  }
+
+  return res.errorMessages.length > 0 ? { ...res, valid: false } : { ...res, valid: true };
+}
+
+
+export const validateUniqueEmail =  async (email: string): Promise<{ status: number; responseMsg: string; exists: boolean; }> => {
   const axiosReq: AxiosRequestConfig = {
     url: "/api/unique_email",
     method: "get",
