@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AuthActions } from '@/redux/actions/authActions';
 // additional components //
 import { EditProfileModal } from "@/components/modals/EditProfileModal";
+import { ConfirmProfileDeleteModal } from "@/components/modals/ConfirmProfileDeleteModal";
 import { GenErrorModal } from "@/components/modals/GenErrorModal";
 // heplers //
 
@@ -25,6 +26,7 @@ interface IUserProfileIndexProps {
 const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props): JSX.Element => {
   // local component state //
   const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
+  const [ confirmDeleteProfileOpen, setConfirmDeleteProfileOpen ] = React.useState<boolean>(false);
   // redux hooks and state //
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
@@ -55,6 +57,17 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const handleDismissErrorModal = (): void => {
 
   };
+  // Profile delete functionality //
+  const triggerProfileDelete = (): void => {
+
+  };
+  const cancelProfileDelete = (): void => {
+
+  };
+  const handleProfileDelete = async (): Promise<void> => {
+
+  };
+
 
   return (
     <React.Fragment>
@@ -65,6 +78,11 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
         handleTriggerModelDelete={ handleTriggerModelDelete }
         userData={ currentUser as UserData }
 
+      />
+      <ConfirmProfileDeleteModal 
+        modalOpen={ true }
+        handleCloseModal={ cancelProfileDelete }
+        handleProfileDelete={ handleProfileDelete }
       />
       <GenErrorModal 
         open={ authState.error ? true : false } 
