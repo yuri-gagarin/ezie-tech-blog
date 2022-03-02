@@ -81,6 +81,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
       />
       <ConfirmProfileDeleteModal 
         modalOpen={ true }
+        authState={ authState }
         handleCloseModal={ cancelProfileDelete }
         handleProfileDelete={ handleProfileDelete }
       />

@@ -1,0 +1,29 @@
+.modal > i {
+  color: white !important;
+}
+.confirmDelPassInput {
+  width: 100%;
+}
+.confirmDelPassLabel {
+  width: 100%;
+}
+.modalHeader {
+  background-color: red !important;
+  color: white !important;
+}
+.controlBtns {
+  width: 100%;
+}
+@media screen and (min-width: 551px) {
+  .confirmDelPassInput {
+    width: 50%;
+  }
+  .controlBtns {
+    width: auto;
+  }
+}
+@media screen and (min-width: 720px) {
+  .confirmDelPassInput {
+    width: 200px;
+  }
+}
