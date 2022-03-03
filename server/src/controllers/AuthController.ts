@@ -10,7 +10,7 @@ import type { Request, Response, CookieOptions } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 import type { IAdmin } from "../models/Admin";
 import type { IUser } from "../models/User";
-import type { RegisterReqBody, DeleteUserProfileReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
+import type { RegisterReqBody, DeleteProfileReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
 import type { AdminData } from "../_types/admins/adminTypes";
 import type { UserData } from "../_types/users/userTypes";
 // helpers //
@@ -109,7 +109,7 @@ export default class AuthController {
       return await this.sendErrorRes(res, { error, errorMessages: [ "Oops something went seriously wrong..." ]});
     }
   }
-  deleteUserProfile = async (req: Request<any, any, DeleteUserProfileReqBody>, res: Response): Promise<Response> => {
+  deleteUserProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response): Promise<Response> => {
     const { email, password } = req.body;
 
     try {
@@ -119,6 +119,36 @@ export default class AuthController {
         if (user.validPassword(password)) {
           // archive all users posts later ? //
           const deletedUser = await User.findOneAndDelete({ email });
+          // 
+          const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
+          const cookieOpts: CookieOptions = { maxAge: 0, httpOnly: true, domain, signed: true, sameSite: "strict" };
+          return (
+            res
+              .status(200)
+              .cookie(LoginCookies.JWTToken, "", cookieOpts)
+              .json({ responseMsg: "Deleted profile and logged out" })
+          );
+        } else {
+          const error = new AuthWrongPassError();
+          return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
+        }
+      } else {
+        const error = new AuthNotFoundError();
+        return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
+      }
+    } catch (error) {
+      return this.sendErrorRes(res, { status: 500, error, errorMessages: [ "A server error has occured" ] });
+    }
+  }
+  deleteAdminProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response): Promise<Response>  => {
+    const { email, password } = req.body;
+    try {
+      // needs validation //
+      const admin = await Admin.findOne({ email });
+      if (admin) {
+        if (admin.validPassword(password)) {
+          // archive all admins posts later ? //
+          const deletedAdmin = await Admin.findOneAndDelete({ email });
           // 
           const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
           const cookieOpts: CookieOptions = { maxAge: 0, httpOnly: true, domain, signed: true, sameSite: "strict" };

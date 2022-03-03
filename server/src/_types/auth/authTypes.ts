@@ -6,7 +6,7 @@ export type RegisterReqBody = {
   readonly password?: string;
   readonly confirmPassword?: string;
 };
-export type DeleteUserProfileReqBody = {
+export type DeleteProfileReqBody = {
   readonly email?: string;
   readonly password?: string;
 };
