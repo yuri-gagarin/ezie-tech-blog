@@ -10,12 +10,13 @@ import type { Request, Response, CookieOptions } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 import type { IAdmin } from "../models/Admin";
 import type { IUser } from "../models/User";
-import type { RegisterReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
+import type { RegisterReqBody, DeleteUserProfileReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
 import type { AdminData } from "../_types/admins/adminTypes";
 import type { UserData } from "../_types/users/userTypes";
 // helpers //
 import { validateRegistrationData } from "./_helpers/validationHelpers";
 import { trimRegistrationData } from "./_helpers/authControllerHelperts";
+import { AuthNotFoundError, AuthWrongPassError } from "./_helpers/errorHelperts";
 
 export enum LoginCookies {
   JWTToken = "JWTToken"
@@ -106,6 +107,37 @@ export default class AuthController {
       );
     } catch (error) {
       return await this.sendErrorRes(res, { error, errorMessages: [ "Oops something went seriously wrong..." ]});
+    }
+  }
+  deleteUserProfile = async (req: Request<any, any, DeleteUserProfileReqBody>, res: Response): Promise<Response> => {
+    const { email, password } = req.body;
+
+    try {
+      // needs validation //
+      const user = await User.findOne({ email });
+      if (user) {
+        if (user.validPassword(password)) {
+          // archive all users posts later ? //
+          const deletedUser = await User.findOneAndDelete({ email });
+          // 
+          const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
+          const cookieOpts: CookieOptions = { maxAge: 0, httpOnly: true, domain, signed: true, sameSite: "strict" };
+          return (
+            res
+              .status(200)
+              .cookie(LoginCookies.JWTToken, "", cookieOpts)
+              .json({ responseMsg: "Deleted profile and logged out" })
+          );
+        } else {
+          const error = new AuthWrongPassError();
+          return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
+        }
+      } else {
+        const error = new AuthNotFoundError();
+        return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
+      }
+    } catch (error) {
+      return this.sendErrorRes(res, { status: 500, error, errorMessages: [ "A server error has occured" ] });
     }
   }
   logout = async (req: Request, res: Response): Promise<Response> => {

@@ -5,7 +5,11 @@ export type RegisterReqBody = {
   readonly email?: string;
   readonly password?: string;
   readonly confirmPassword?: string;
-}
+};
+export type DeleteUserProfileReqBody = {
+  readonly email?: string;
+  readonly password?: string;
+};
 export type LoginResponse = {
   readonly responseMsg: string;
   readonly success: boolean;

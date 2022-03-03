@@ -18,3 +18,10 @@ export class AuthNotFoundError extends GeneralServerError {
   }
 };
 
+export class AuthWrongPassError extends GeneralServerError {
+  constructor(message: string = "Auth Wrong Password Error", customMessages?: string[]) {
+    super(message, customMessages || [ "Password entered for this user is incorrect" ]);
+    Object.setPrototypeOf(this, AuthWrongPassError.prototype);
+  }
+};
+
