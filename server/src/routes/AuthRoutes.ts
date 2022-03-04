@@ -1,8 +1,11 @@
 
 import { passportLoginMiddleware } from "../controllers/_helpers/authHelpers";
+// helpers //
+import { verifyAdminModelAccess } from "../controllers/_helpers/adminsControllerHelpers";
 // types //
 import type { Router } from "express";
 import type AuthController from "../controllers/AuthController";
+
 
 export default class AuthRoutes {
   private router: Router;
@@ -19,6 +22,8 @@ export default class AuthRoutes {
     this.registerRoute();
     this.logoutRoute();
     this.uniqueEmailRoute();
+    this.deleteAdminProfileRoute();
+    this.deleteUserProfileRoute();
     // this.verifyAdminRoute();
     // this.verifyUserRoute();
   }
@@ -37,6 +42,16 @@ export default class AuthRoutes {
     this.router
       .route("/api/logout")
       .delete( this.controller.logout );
+  }
+  private deleteAdminProfileRoute() {
+    this.router
+      .route("/api/delete_admin_profile")
+      .delete(this.controller.deleteAdminProfile);
+  }
+  private deleteUserProfileRoute() {
+    this.router
+      .route("/api/delete_user_profile")
+      .delete(this.controller.deleteUserProfile);
   }
   private uniqueEmailRoute() {
     this.router
