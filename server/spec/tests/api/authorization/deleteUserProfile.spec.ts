@@ -40,7 +40,7 @@ describe("AuthController:Register - User Registration API tests", () => {
       it("Should NOT delete User profile and return a correct response", (done) => {
         chai.request(server)
           .post("/api/register")
-          .send({ email: "", password: "password", confirmPassword: "password" })
+          .send({ email: {}, password: "password", confirmPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -52,6 +52,37 @@ describe("AuthController:Register - User Registration API tests", () => {
           });
       });
     });
+    describe(" POST /api/delete_user_profile - User Delete with an INVALID PASSWORD field", () => {
+      it("Should NOT delete User profile with invalid PASSWORD TYPE and return a correct response", (done) => {
+        chai.request(server)
+          .post("/api/register")
+          .send({ email: "email@email.com", password: {} })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT delete User profile with EMPTY PASSWORD filed and return a correct response", (done) => {
+        chai.request(server)
+          .post("/api/register")
+          .send({ email: "email@email.com", password: "" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+    });
+    
    
   });
 
