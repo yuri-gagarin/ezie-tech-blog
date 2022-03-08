@@ -80,7 +80,7 @@ describe("AuthController:Register - User Registration API tests", () => {
           });
       });
     });
-    describe(" POST /api/delete_user_profile - User Delete with an INVALID PASSWORD field", () => {
+    describe("DELETE /api/delete_user_profile - User Delete with an INVALID PASSWORD field", () => {
       it("Should NOT delete User profile with invalid PASSWORD TYPE and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
@@ -95,10 +95,24 @@ describe("AuthController:Register - User Registration API tests", () => {
             done();
           });
       });
-      it("Should NOT delete User profile with EMPTY PASSWORD filed and return a correct response", (done) => {
+      it("Should NOT delete User profile with EMPTY PASSWORD field and return a correct response", (done) => {
         chai.request(server)
-          .post("/api/register")
-          .send({ email: "email@email.com", password: "" })
+        .delete("/api/delete_user_profile")
+        .send({ email: "email@email.com", password: "" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT delete User profile with EINVALID PASSWORD field and return a correct response", (done) => {
+        chai.request(server)
+        .delete("/api/delete_user_profile")
+        .send({ email: "email@email.com", password: "notavalidpassword" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
