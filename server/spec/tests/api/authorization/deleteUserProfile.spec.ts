@@ -21,6 +21,8 @@ describe("AuthController:Register - User Registration API tests", () => {
   let adminUser: IAdmin;
   let regUser: IUser;
   let secondRegUser: IUser;
+  //
+  let numOfUserModels: number = 0;
 
   before(async () => {
     try {
@@ -29,6 +31,8 @@ describe("AuthController:Register - User Registration API tests", () => {
       await generateMockUsers({ number: 2, confirmed: true });
       adminUser = await Admin.findOne({});
       ([ regUser, secondRegUser ] = await User.find({}));
+      // count models //
+      numOfUserModels = await User.countDocuments();
     } catch (error) {
       throw(error);
     }
@@ -128,6 +132,36 @@ describe("AuthController:Register - User Registration API tests", () => {
    
   });
 
+  // CONTEXT User profile delete valid data //
+  context("User Profile - DELETE - valalid data", () => {
+    describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
+      it("Should CORRECTLY delete User profile and return a correct response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_user_profile")
+          .set({ Authorization: "needatokenhere" })
+          .send({ email: {}, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should DECREMENT the number of User models by 1", async () => {
+        try {
+          const numOfUsers: number = await User.countDocuments();
+          expect(numOfUsers).to.equal(numOfUserModels - 1);
+          //
+          numOfUserModels = numOfUsers;
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    });
+  })
   after(async () => {
     try {
       await Admin.deleteMany({});
