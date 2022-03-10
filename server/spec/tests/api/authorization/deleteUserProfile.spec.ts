@@ -54,6 +54,36 @@ describe("AuthController:Register - User Registration API tests", () => {
     ({ userJWTToken: secondRegUserToken } = await loginUser({ chai, server, email: secondRegUserEmail }));
   });
 
+  // CONTEXT User profile delete no login //
+  context("User Profile - DELETE - User NOT logged in", () => {
+    describe("DELETE /api/delete_user_profile - User Delete VALID data NOT logged in", () => {
+      it("Should NOT delete User profile with WITHOUT a login and return a correct response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_user_profile")
+          .set({ Authorization: "" })
+          .send({ email: regUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <User> models in the database", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          expect(numOfUserModels).to.equal(updatedNumOfUsers);
+        } catch (error) {
+          throw error;
+        }
+      });
+    })
+  });
+  // END CONTEXT User proile delete no login //
+
   // CONTEXT User profile delete invalid data //
   context("User Profile - DELETE - invalid data", () => {
     describe("DELETE /api/delete_user_profile - User Delete with an INVALID EMAIL field", () => {
