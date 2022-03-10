@@ -13,14 +13,20 @@ import type { IUser } from "@/server/src/models/User";
 import type { LoginRes, RegisterRes } from "@/redux/_types/auth/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
+import { loginUser } from "../../../hepers/testHelpers";
+
 
 chai.use(chaiHTTP);
 
 describe("AuthController:Register - User Registration API tests", () => {
   let server: Express;
+  //
   let adminUser: IAdmin;
   let regUser: IUser;
   let secondRegUser: IUser;
+  //
+  let adminUserEmail: string; let regUserEmail: string; let secondRegUserEmail: string;
+  let adminUserToken: string; let regUserToken: string; let secondRegUserToken: string;
   //
   let numOfUserModels: number = 0;
 
@@ -36,6 +42,16 @@ describe("AuthController:Register - User Registration API tests", () => {
     } catch (error) {
       throw(error);
     }
+  });
+  // login tokens //
+  before(async () => {
+    ({ email: adminUserEmail } = adminUser);
+    ({ email: regUserEmail } = regUser);
+    ({ email: secondRegUserEmail } = secondRegUser);
+    // login tokens //
+    ({ userJWTToken: adminUserToken } = await loginUser({ chai, server, email: adminUserEmail }));
+    ({ userJWTToken: regUserToken } = await loginUser({ chai, server, email: regUserEmail }));
+    ({ userJWTToken: secondRegUserToken } = await loginUser({ chai, server, email: secondRegUserEmail }));
   });
 
   // CONTEXT User profile delete invalid data //
