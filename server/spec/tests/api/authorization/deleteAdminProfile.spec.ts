@@ -1,0 +1,56 @@
+import chai, { expect } from "chai";
+import chaiHTTP from "chai-http";
+// server //
+import { ServerInstance } from "../../../../src/server";
+// models //
+import Admin from "@/server/src/models/Admin";
+import User from "@/server/src/models/User";
+// server //
+// types //
+import type { Express } from "express";
+import type { IAdmin } from "@/server/src/models/Admin";
+import type { IUser } from "@/server/src/models/User";
+import type { LoginRes, RegisterRes } from "@/redux/_types/auth/dataTypes";
+// helpers //
+import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
+import { loginUser } from "../../../hepers/testHelpers";
+
+chai.use(chaiHTTP);
+
+describe("AuthController:deleteAdminProfile - Admin registration DELETE API tests", () => {
+  let server: Express;
+  //
+  let adminUser: IAdmin;
+  let regUser: IUser;
+  let secondRegUser: IUser;
+  //
+  let adminUserEmail: string; let regUserEmail: string; let secondRegUserEmail: string;
+  let adminUserToken: string; let regUserToken: string; let secondRegUserToken: string;
+  //
+  let numOfUserModels: number = 0;
+
+  before(async () => {
+    try {
+      server = ServerInstance.getExpressServer();
+      await generateMockAdmins(1);
+      await generateMockUsers({ number: 2, confirmed: true });
+      adminUser = await Admin.findOne({});
+      ([ regUser, secondRegUser ] = await User.find({}));
+      // count models //
+      numOfUserModels = await User.countDocuments();
+    } catch (error) {
+      throw(error);
+    }
+  });
+  // login tokens //
+  before(async () => {
+    ({ email: adminUserEmail } = adminUser);
+    ({ email: regUserEmail } = regUser);
+    ({ email: secondRegUserEmail } = secondRegUser);
+    // login tokens //
+    ({ userJWTToken: adminUserToken } = await loginUser({ chai, server, email: adminUserEmail }));
+    ({ userJWTToken: regUserToken } = await loginUser({ chai, server, email: regUserEmail }));
+    ({ userJWTToken: secondRegUserToken } = await loginUser({ chai, server, email: secondRegUserEmail }));
+  });
+
+});
