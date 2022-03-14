@@ -125,8 +125,10 @@ export const generateMockAdmins = async (num?: number, role?: "admin" | "owner")
   } 
   return admins;
 }
-export const generateMockUsers = async ({ number, confirmed, type }: { number?: number; confirmed?: boolean; type?: "READER" | "CONTRIBUTOR" }): Promise<void> => {
+export const generateMockUsers = async ({ number, confirmed, type }: { number?: number; confirmed?: boolean; type?: "READER" | "CONTRIBUTOR" }): Promise<IUser[]> => {
   const numToGenerate: number = number ? number : 10;
+  const users: IUser[] = [];
+
   for (let i = 0; i < numToGenerate; i++) {
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
@@ -142,12 +144,13 @@ export const generateMockUsers = async ({ number, confirmed, type }: { number?: 
       userType
     });
     try {
-      await user.save();
+      users.push(await user.save());
     } catch (error) {
       console.log(error);
       process.exit(1);
     }
   } 
+  return users;
 }
 
 
