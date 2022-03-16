@@ -90,17 +90,40 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
       it("Should NOT delete Admin profile with an INVALID EMAIL FIELD TYPE", (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
-          .set({ Authorization: "" })
-          .send({ email: adminUserEmail, password: "password" })
+          .set({ Authorization: adminUserToken })
+          .send({ email: {}, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(401);
+            expect(response.status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
+      });
+      it("Should NOT delete Admin profile with an EMPTY EMAIL FIELD", (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: adminUserToken })
+          .send({ email: "", password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of Admin models in the database", async () => {
+        try {
+          const adminModelCount = await Admin.countDocuments();
+          expect(adminModelCount).to.equal(numOfAdminModels);
+        } catch (error) {
+          console.log(error);
+        }
       });
     });
   })
