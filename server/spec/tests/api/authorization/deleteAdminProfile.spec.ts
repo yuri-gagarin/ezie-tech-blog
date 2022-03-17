@@ -117,10 +117,57 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
             done();
           });
       });
-      it("Should NOT alter the number of Admin models in the database", async () => {
+      it("Should NOT delete Admin profile with an WRONG PASSWORD FIELD TYPE", (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: adminUserToken })
+          .send({ email: adminUserEmail, password: {} })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT delete Admin profile with an EMPTY PASSWORD FIELD", (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: adminUserToken })
+          .send({ email: adminUserEmail, password: "" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT delete Admin profile with an INCORRECT PASSWORD FIELD", (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: adminUserToken })
+          .send({ email: adminUserEmail, password: "notacorrectpassword" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of Admin nor User models in the database", async () => {
         try {
           const adminModelCount = await Admin.countDocuments();
+          const userModelCount = await User.countDocuments();
           expect(adminModelCount).to.equal(numOfAdminModels);
+          expect(userModelCount).to.equal(numOfUserModels);
         } catch (error) {
           console.log(error);
         }
@@ -130,6 +177,9 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
 
   // END TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
 
+  // TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
+
+  // END TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
   // TEST Cleanup //
   after(async () => {
     try {
