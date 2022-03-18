@@ -178,8 +178,42 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   // END TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
 
   // TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
-
+  context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
+    describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
+      it("Should CORRECTLY delete Admin profile with and return the CORRECT response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: adminUserToken })
+          .send({ email: adminUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+      it("Should decrement the number of User models by 1", async () => {
+        try {
+          const adminModelCount = await Admin.countDocuments();
+          const userModelCount = await User.countDocuments();
+          const nonExistingUser: IUser | null = await User.findOne({ email: adminUserEmail });
+          //
+          expect(adminModelCount).to.equal(numOfAdminModels);
+          expect(userModelCount).to.equal(numOfUserModels - 1);
+          expect(nonExistingUser).to.be.null;
+          //
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    });
+  });
   // END TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
+  
   // TEST Cleanup //
   after(async () => {
     try {
