@@ -10,7 +10,7 @@ import User from "@/server/src/models/User";
 import type { Express } from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { LoginRes, RegisterRes } from "@/redux/_types/auth/dataTypes";
+import type { RegisterRes } from "@/redux/_types/auth/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser } from "../../../hepers/testHelpers";
@@ -18,27 +18,28 @@ import { loginUser } from "../../../hepers/testHelpers";
 
 chai.use(chaiHTTP);
 
-describe("AuthController:Register - User Registration API tests", () => {
+describe("AuthController:deleteUserProfile - Userregistration DELETE API tests", () => {
   let server: Express;
   //
-  let adminUser: IAdmin;
-  let regUser: IUser;
-  let secondRegUser: IUser;
+  let adminUser: IAdmin; let ownerAdminUser: IAdmin;
+  let regUser: IUser; let secondRegUser: IUser;
   //
-  let adminUserEmail: string; let regUserEmail: string; let secondRegUserEmail: string;
-  let adminUserToken: string; let regUserToken: string; let secondRegUserToken: string;
+  let adminUserEmail: string; let ownerUserEmail: string;
+  let regUserEmail: string; let secondRegUserEmail: string;
+  let adminUserToken: string; let ownerUserToken: string;
+  let regUserToken: string; let secondRegUserToken: string;
   //
-  let numOfUserModels: number = 0;
+  let numOfUserModels: number = 0; let numOfAdminModels: number = 0;
 
   before(async () => {
     try {
       server = ServerInstance.getExpressServer();
-      await generateMockAdmins(1);
-      await generateMockUsers({ number: 2, confirmed: true });
-      adminUser = await Admin.findOne({});
-      ([ regUser, secondRegUser ] = await User.find({}));
+      adminUser = await generateMockAdmins(1, "admin")[0];
+      ownerAdminUser = await generateMockAdmins(1, "owner")[0];
+      ([ regUser, secondRegUser ] = await generateMockUsers({ number: 2, confirmed: true }));
       // count models //
       numOfUserModels = await User.countDocuments();
+      numOfAdminModels = await Admin.countDocuments();
     } catch (error) {
       throw(error);
     }
@@ -46,6 +47,7 @@ describe("AuthController:Register - User Registration API tests", () => {
   // login tokens //
   before(async () => {
     ({ email: adminUserEmail } = adminUser);
+    ({ email: ownerUserEmail } = ownerAdminUser);
     ({ email: regUserEmail } = regUser);
     ({ email: secondRegUserEmail } = secondRegUser);
     // login tokens //

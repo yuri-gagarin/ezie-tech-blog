@@ -20,8 +20,7 @@ chai.use(chaiHTTP);
 describe("AuthController:deleteAdminProfile - Admin registration DELETE API tests", () => {
   let server: Express;
   //
-  let ownerLevelUser: IAdmin;
-  let adminLevelUser: IAdmin;
+  let ownerLevelUser: IAdmin; let adminLevelUser: IAdmin;
   let regularUser: IUser;
   //
   let adminUserEmail: string; let ownerUserEmail: string; let regUserEmail: string;
@@ -35,7 +34,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
       adminLevelUser = (await generateMockAdmins(2, "admin"))[0];
       ownerLevelUser = (await generateMockAdmins(2, "owner"))[0];
       //
-      const regUser = (await generateMockUsers({ number: 1, confirmed: true }))[0];
+      regularUser = (await generateMockUsers({ number: 1, confirmed: true }))[0];
       // count models //
       numOfAdminModels = await Admin.countDocuments();
       numOfUserModels = await User.countDocuments();
@@ -54,7 +53,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     ({ userJWTToken: regUserToken } = await loginUser({ chai, server, email: regUserEmail }));
   });
 
-  // TEST DELETE /api/delete_admin_profile NO Login //
+  // CONTEXT Admin profile delete no login //
   context("Admin Profile - DELETE - Admin NOT logged in", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data NOT logged in", () => {
       it("Should NOT delete Admin profile with WITHOUT a login and return a correct response", (done) => {
@@ -72,17 +71,20 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
             done();
           });
       });
-      it("Should NOT alter the number of <User> models in the database", async () => {
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
         try {
-          const updatedNumOfUsers: number = await Admin.countDocuments();
-          expect(numOfUserModels).to.equal(updatedNumOfUsers);
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const updatedNumOfUsers: number = await User.countDocuments();
+          //
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
         } catch (error) {
           throw error;
         }
       });
-    })
+    });
   });
-  // END TEST DELETE /api/delete_addmin_profile NO Login //
+  // END CONTEXT Admin profile delete no login //
 
   // TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
   context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
@@ -213,7 +215,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     });
   });
   // END TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
-  
+
   // TEST Cleanup //
   after(async () => {
     try {
