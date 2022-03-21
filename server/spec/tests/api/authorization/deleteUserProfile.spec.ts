@@ -74,10 +74,13 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
-      it("Should NOT alter the number of <User> models in the database", async () => {
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
-          expect(numOfUserModels).to.equal(updatedNumOfUsers);
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          //
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
         } catch (error) {
           throw error;
         }
@@ -86,8 +89,9 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   });
   // END CONTEXT User proile delete no login //
 
-  // CONTEXT User profile delete invalid data //
-  context("User Profile - DELETE - invalid data", () => {
+  // TEST CONTEXT User profile delete WITH LOGIN invalid data //
+  context("User Profile - DELETE - User LOGGED IN - INVALID", () => {
+    // invalid email //
     describe("DELETE /api/delete_user_profile - User Delete with an INVALID EMAIL field", () => {
       it("Should NOT delete User profile with an INVALID EMAIL TYPE and return a correct response", (done) => {
         chai.request(server)
@@ -131,7 +135,19 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          //
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+        } catch (error) {
+          throw error;
+        }
+      });
     });
+    // invalid password //
     describe("DELETE /api/delete_user_profile - User Delete with an INVALID PASSWORD field", () => {
       it("Should NOT delete User profile with invalid PASSWORD TYPE and return a correct response", (done) => {
         chai.request(server)
@@ -161,7 +177,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
-      it("Should NOT delete User profile with EINVALID PASSWORD field and return a correct response", (done) => {
+      it("Should NOT delete User profile with and INVALID PASSWORD field and return a correct response", (done) => {
         chai.request(server)
         .delete("/api/delete_user_profile")
         .send({ email: "email@email.com", password: "notavalidpassword" })
@@ -175,13 +191,23 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          //
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+        } catch (error) {
+          throw error;
+        }
+      });
     });
-    
-   
   });
+  // END TEST CONTEXT User profile delete WITH LOGIN invalid data //
 
   // CONTEXT User profile delete valid data //
-  context("User Profile - DELETE - valalid data", () => {
+  context("User Profile - DELETE - valid data", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
       it("Should CORRECTLY delete User profile and return a correct response", (done) => {
         chai.request(server)
