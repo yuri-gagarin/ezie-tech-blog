@@ -10,7 +10,7 @@ import User from "@/server/src/models/User";
 import type { Express } from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { RegisterRes } from "@/redux/_types/auth/dataTypes";
+import type { RegisterRes, DeleteUserRes } from "@/redux/_types/auth/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser } from "../../../hepers/testHelpers";
@@ -206,6 +206,40 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   });
   // END TEST CONTEXT User profile delete WITH LOGIN invalid data //
 
+  // CONTEXT LOGGED IN USER trying to delete another User's profile //
+  context("User Profile - DELETE - VALID DATA - Deleting other User's profile", () => {
+    describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
+      it("Should NOT delete the User profile and return a correct error response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_user_profile")
+          .set({ Authorization: regUserToken })
+          .send({ email: secondRegUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as DeleteUserRes;
+            expect(response.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <User> or <Admin< models", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins = await Admin.countDocuments();
+          ///
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          //
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    });
+  })
+  // END CONTEXT LOGGED IN USER trying to delete another User's profile //
+  
   // CONTEXT User profile delete valid data //
   context("User Profile - DELETE - valid data", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
@@ -226,16 +260,20 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       });
       it("Should DECREMENT the number of User models by 1", async () => {
         try {
-          const numOfUsers: number = await User.countDocuments();
-          expect(numOfUsers).to.equal(numOfUserModels - 1);
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins = await Admin.countDocuments();
+          ///
+          expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
           //
-          numOfUserModels = numOfUsers;
+          numOfUserModels = updatedNumOfUsers;
         } catch (error) {
           console.log(error);
         }
       });
     });
-  })
+  });
+
   after(async () => {
     try {
       await Admin.deleteMany({});
