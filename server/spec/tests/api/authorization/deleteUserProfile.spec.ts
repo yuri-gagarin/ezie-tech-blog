@@ -34,8 +34,8 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   before(async () => {
     try {
       server = ServerInstance.getExpressServer();
-      adminUser = await generateMockAdmins(1, "admin")[0];
-      ownerAdminUser = await generateMockAdmins(1, "owner")[0];
+      adminUser = (await generateMockAdmins(1, "admin"))[0];
+      ownerAdminUser = (await generateMockAdmins(1, "owner"))[0];
       ([ regUser, secondRegUser ] = await generateMockUsers({ number: 2, confirmed: true }));
       // count models //
       numOfUserModels = await User.countDocuments();
@@ -67,6 +67,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            console.log(response);
             expect(response.status).to.equal(401);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -89,6 +90,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   });
   // END CONTEXT User proile delete no login //
 
+  /*
   // TEST CONTEXT User profile delete WITH LOGIN invalid data //
   context("User Profile - DELETE - User LOGGED IN - INVALID", () => {
     // invalid email //
@@ -273,7 +275,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       });
     });
   });
-
+  */
   after(async () => {
     try {
       await Admin.deleteMany({});

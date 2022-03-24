@@ -31,6 +31,28 @@ export const passportLoginMiddleware = (req: Request, res: Response, next: NextF
   })(req, res, next);
 };
 
+export const passportGeneralAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }, (err, user: IAdmin | IUser | null, info) => {
+    if (err) {
+      return res.status(400).json({
+        responseMsg: "An error occurred ",
+        error: err,
+        errorMessages: [ "A server error occurred" ]
+      });
+    }
+    if(!user) {
+      console.log("AAAAAHHHHHHHH")
+      return res.status(401).json({
+        responseMsg: "Not Logged in",
+        error: err ? err : new Error("Login Error"),
+        errorMessages: [ "You must be logged in to perform this action" ]
+      });
+    } 
+    req.user = user;
+    return next();
+  })(req, res, next);
+}
+
 /**
  * Checks for a login, assigns a user object if logged in otherwise req.user === null. Does NOT protect an API route 
  */

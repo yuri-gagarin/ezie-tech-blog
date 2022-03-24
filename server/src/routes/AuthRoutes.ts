@@ -1,5 +1,7 @@
 
-import { passportLoginMiddleware } from "../controllers/_helpers/authHelpers";
+import { PassportContInstance } from "../server";
+import { passportLoginMiddleware, passportGeneralAuthMiddleware } from "../controllers/_helpers/authHelpers";
+import { StrategyNames } from "../controllers/PassportController";
 // helpers //
 import { verifyAdminModelAccess } from "../controllers/_helpers/adminsControllerHelpers";
 // types //
@@ -51,7 +53,12 @@ export default class AuthRoutes {
   private deleteUserProfileRoute() {
     this.router
       .route("/api/delete_user_profile")
-      .delete(this.controller.deleteUserProfile);
+      .delete(
+        [
+          passportGeneralAuthMiddleware
+        ],
+        this.controller.deleteUserProfile
+      );
   }
   private uniqueEmailRoute() {
     this.router

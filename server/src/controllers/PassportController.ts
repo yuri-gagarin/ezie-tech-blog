@@ -57,7 +57,7 @@ export default class PassportController {
           if (user) {
             return done(null, user);
           } else {
-            return done(null, false);
+            return done(null, false, { message: "Login is equired for this action" });
           }
         }
       } catch (err) {
