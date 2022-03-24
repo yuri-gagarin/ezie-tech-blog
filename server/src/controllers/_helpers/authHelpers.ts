@@ -2,7 +2,7 @@ import Admin from "../../models/Admin";
 import { PassportContInstance } from "../../server";
 import { StrategyNames } from "../PassportController"; 
 // helpers //
-import { AuthNotFoundError } from "./errorHelperts";
+import { AuthNotFoundError, AuthNotLoggedInError } from "./errorHelperts";
 // types //
 import type { Request, Response, NextFunction, CookieOptions } from "express";
 import type { IAdmin } from "../../models/Admin";
@@ -33,19 +33,30 @@ export const passportLoginMiddleware = (req: Request, res: Response, next: NextF
 
 export const passportGeneralAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
   PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }, (err, user: IAdmin | IUser | null, info) => {
+    console.log(36)
+    console.log(err)
+    console.log(user)
     if (err) {
-      return res.status(400).json({
-        responseMsg: "An error occurred ",
-        error: err,
-        errorMessages: [ "A server error occurred" ]
-      });
+      if (err instanceof AuthNotLoggedInError) {
+        return res.status(401).json({
+          responseMsg: "An error occurred ",
+          error: err,
+          errorMessages: err.getErrorMessages
+        });
+      } else {
+        return res.status(500).json({
+          responseMsg: "An error occurred ",
+          error: err,
+          errorMessages: [ err.message ]
+        })
+      }
     }
+
     if(!user) {
-      console.log("AAAAAHHHHHHHH")
       return res.status(401).json({
-        responseMsg: "Not Logged in",
+        responseMsg: "Not Found",
         error: err ? err : new Error("Login Error"),
-        errorMessages: [ "You must be logged in to perform this action" ]
+        errorMessages: [ "User found" ]
       });
     } 
     req.user = user;

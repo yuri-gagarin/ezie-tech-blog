@@ -67,7 +67,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            console.log(response);
+            console.log(response.body);
             expect(response.status).to.equal(401);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");

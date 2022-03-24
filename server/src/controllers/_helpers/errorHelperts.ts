@@ -11,6 +11,12 @@ export class GeneralServerError extends Error {
   }
 };
 
+export class AuthNotLoggedInError extends GeneralServerError {
+  constructor(message: string = "Auth Not Logged In Error", customMessages?: string[]) {
+    super(message, customMessages || ["You must be logged in to perform this action"]);
+    Object.setPrototypeOf(this, AuthNotLoggedInError.prototype);
+  }
+};
 export class AuthNotFoundError extends GeneralServerError {
   constructor(message: string = "Auth Not Found Error", customMessages?: string[]) {
     super(message, customMessages || ["Queried user was not found" ]);

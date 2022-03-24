@@ -6,7 +6,7 @@ import jsonwebtoken from "jsonwebtoken";
 import Admin from "../models/Admin";
 import User from "../models/User";
 // helpers //
-import { AuthNotFoundError } from "./_helpers/errorHelperts";
+import { AuthNotFoundError, AuthNotLoggedInError } from "./_helpers/errorHelperts";
 // types //
 import type { StrategyOptions } from "passport-jwt";
 import type { IUser } from "../models/User";
@@ -48,6 +48,8 @@ export default class PassportController {
 
   public initialize() {
     this.passport.use(StrategyNames.AuthStrategy, new JWTStrategy(this.opts, async (jwtPayload, done) => {
+      console.log(51);
+      console.log(jwtPayload)
       try {
         const admin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
         if (admin) {
@@ -57,10 +59,13 @@ export default class PassportController {
           if (user) {
             return done(null, user);
           } else {
-            return done(null, false, { message: "Login is equired for this action" });
+            console.log("Should be here")
+            return done(new AuthNotLoggedInError());
           }
         }
       } catch (err) {
+        console.log("here in err")
+        console.log(err)
         return done(err);
       }
     }));
