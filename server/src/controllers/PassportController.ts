@@ -60,12 +60,10 @@ export default class PassportController {
             return done(null, user);
           } else {
             console.log("Should be here")
-            return done(new AuthNotLoggedInError());
+            return done(new AuthNotFoundError("Invalid Login", [ "No account with provided login exists" ]), false, { message: "Not found" });
           }
         }
       } catch (err) {
-        console.log("here in err")
-        console.log(err)
         return done(err);
       }
     }));

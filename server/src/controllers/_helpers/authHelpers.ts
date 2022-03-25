@@ -1,3 +1,5 @@
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+//
 import Admin from "../../models/Admin";
 import { PassportContInstance } from "../../server";
 import { StrategyNames } from "../PassportController"; 
@@ -33,11 +35,31 @@ export const passportLoginMiddleware = (req: Request, res: Response, next: NextF
 
 export const passportGeneralAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
   PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }, (err, user: IAdmin | IUser | null, info) => {
-    console.log(36)
-    console.log(err)
-    console.log(user)
+    console.log(38)
+    if (info && info instanceof Error) {
+      if(info instanceof JsonWebTokenError || info instanceof TokenExpiredError) {
+        return res.status(401).json({
+          responseMsg: "An error occurred ",
+          error: info,
+          errorMessages: [ info.message ]
+        });
+      } else if (info.message && info.message.toLowerCase() === "no auth token") {
+        return res.status(401).json({
+          responseMsg: "An error occurred ",
+          error: info as Error,
+          errorMessages: [ "Auth token not received" ]
+        });
+      } else {
+        return res.status(500).json({
+          responseMsg: "An error occurred ",
+          error: info as Error,
+          errorMessages: [ "Something went wrong on our end" ]
+        });
+      }    
+    }
+
     if (err) {
-      if (err instanceof AuthNotLoggedInError) {
+      if (err instanceof AuthNotFoundError) {
         return res.status(401).json({
           responseMsg: "An error occurred ",
           error: err,
@@ -56,9 +78,10 @@ export const passportGeneralAuthMiddleware = (req: Request, res: Response, next:
       return res.status(401).json({
         responseMsg: "Not Found",
         error: err ? err : new Error("Login Error"),
-        errorMessages: [ "User found" ]
+        errorMessages: [ "User not found" ]
       });
     } 
+
     req.user = user;
     return next();
   })(req, res, next);

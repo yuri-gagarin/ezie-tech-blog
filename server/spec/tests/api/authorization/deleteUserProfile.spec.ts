@@ -62,7 +62,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it("Should NOT delete User profile with WITHOUT a login and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: "" })
+          .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
           .send({ email: regUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
