@@ -14,9 +14,9 @@ import type { RegisterReqBody, DeleteProfileReqBody, LoginResponse, RegisterResp
 import type { AdminData } from "../_types/admins/adminTypes";
 import type { UserData } from "../_types/users/userTypes";
 // helpers //
-import { validateRegistrationData } from "./_helpers/validationHelpers";
+import { validateRegistrationData, validateProfileDeleteData } from "./_helpers/validationHelpers";
 import { trimRegistrationData } from "./_helpers/authControllerHelperts";
-import { AuthNotFoundError, AuthWrongPassError } from "./_helpers/errorHelperts";
+import { AuthNotFoundError, AuthWrongPassError, InvalidDataError } from "./_helpers/errorHelperts";
 
 export enum LoginCookies {
   JWTToken = "JWTToken"
@@ -112,8 +112,16 @@ export default class AuthController {
   deleteUserProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response): Promise<Response> => {
     const { email, password } = req.body;
 
+    // check for valid data //
     try {
-      // needs validation //
+      const { valid, errorMessages } = validateProfileDeleteData({ email, password });
+      const error = new InvalidDataError("Invalid Input", errorMessages);
+      if (!valid) return this.sendErrorRes(res, { status: 400, responseMsg: "User Input Error", error, errorMessages });
+    } catch (error) {
+      return this.sendErrorRes(res, { error });
+    }
+
+    try {
       const user = await User.findOne({ email });
       if (user) {
         if (user.validPassword(password)) {
@@ -130,7 +138,7 @@ export default class AuthController {
           );
         } else {
           const error = new AuthWrongPassError();
-          return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
+          return this.sendErrorRes(res, { status: 401, error, errorMessages: error.getErrorMessages });
         }
       } else {
         const error = new AuthNotFoundError();

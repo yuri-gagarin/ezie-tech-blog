@@ -31,3 +31,12 @@ export class AuthWrongPassError extends GeneralServerError {
   }
 };
 
+export class InvalidDataError extends GeneralServerError {
+  constructor(message: string = "Invalid Data Error", customMEssages?: string[]) {
+    super(message, customMEssages || [ "Invalid client input" ]);
+    Object.setPrototypeOf(this, InvalidDataError.prototype);
+  }
+};
+
+
+

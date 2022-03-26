@@ -35,7 +35,6 @@ export const passportLoginMiddleware = (req: Request, res: Response, next: NextF
 
 export const passportGeneralAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
   PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }, (err, user: IAdmin | IUser | null, info) => {
-    console.log(38)
     if (info && info instanceof Error) {
       if(info instanceof JsonWebTokenError || info instanceof TokenExpiredError) {
         return res.status(401).json({

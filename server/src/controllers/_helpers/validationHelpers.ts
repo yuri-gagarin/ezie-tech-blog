@@ -113,6 +113,28 @@ export const validateUserData = (data: { email?: string; password?: string; conf
   return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
 };
 
+export const validateProfileDeleteData = (data: { email?: string; password?: string}): ValidationRes => {
+  const res: ValidationRes = { valid: false, errorMessages: [] };
+
+  if (data.email) {
+    if (typeof data.email !== "string") {
+      res.errorMessages.push("Wrong input type for email field");
+    }
+  } else {
+    res.errorMessages.push("Email field is required");
+  }
+
+  if (data.password) {
+    if (typeof data.password !== "string") {
+      res.errorMessages.push("Wrong input type for password field");
+    }
+  } else {
+    res.errorMessages.push("Passwrod field is required");
+  }
+
+  return res.errorMessages.length === 0 ? { ...res, valid: true } : res;
+}
+
 // blog post model validators //
 export const validateBlogPostModelData = (data: BlogPostFormData): ValidationRes => {
   const errorMessages: string[] = [];

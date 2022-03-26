@@ -10,7 +10,7 @@ import User from "@/server/src/models/User";
 import type { Express } from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { RegisterRes, DeleteUserRes } from "@/redux/_types/auth/dataTypes";
+import type { RegisterRes, DeleteUserRegRes } from "@/redux/_types/auth/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser } from "../../../hepers/testHelpers";
@@ -59,7 +59,22 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   // CONTEXT User profile delete no login //
   context("User Profile - DELETE - User NOT logged in", () => {
     describe("DELETE /api/delete_user_profile - User Delete VALID data NOT logged in", () => {
-      it("Should NOT delete User profile with WITHOUT a login and return a correct response", (done) => {
+      it("Should NOT delete User profile with WITHOUT a login token and return a correct response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_user_profile")
+          .set({ Authorization: "" })
+          .send({ email: regUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT delete User profile with WITH and INCORRECT TOKEN SIGNATURE and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
@@ -67,7 +82,6 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            console.log(response.body);
             expect(response.status).to.equal(401);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -90,7 +104,6 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   });
   // END CONTEXT User proile delete no login //
 
-  /*
   // TEST CONTEXT User profile delete WITH LOGIN invalid data //
   context("User Profile - DELETE - User LOGGED IN - INVALID", () => {
     // invalid email //
@@ -98,10 +111,12 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it("Should NOT delete User profile with an INVALID EMAIL TYPE and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
+          .set({ Authorization: regUserToken })
           .send({ email: {}, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            console.log(response.body)
             expect(response.status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -109,9 +124,11 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
+      /*
       it("Should NOT delete User profile with an EMPTY EMAIL FIELD and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
+          .set({ Authorization: regUserToken })
           .send({ email: "", password: "password" })
           .end((err, response) => {
             if(err) done(err);
@@ -126,6 +143,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it("Should NOT delete User profile with an NON EXISTING EMAIL and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
+          .set({ Authorization: regUserToken })
           .send({ email: "notexisting@email.com", password: "password" })
           .end((err, response) => {
             if(err) done(err);
@@ -148,8 +166,10 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           throw error;
         }
       });
+      */
     });
     // invalid password //
+    /*
     describe("DELETE /api/delete_user_profile - User Delete with an INVALID PASSWORD field", () => {
       it("Should NOT delete User profile with invalid PASSWORD TYPE and return a correct response", (done) => {
         chai.request(server)
@@ -205,9 +225,11 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         }
       });
     });
+    */
   });
   // END TEST CONTEXT User profile delete WITH LOGIN invalid data //
 
+  /*
   // CONTEXT LOGGED IN USER trying to delete another User's profile //
   context("User Profile - DELETE - VALID DATA - Deleting other User's profile", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {

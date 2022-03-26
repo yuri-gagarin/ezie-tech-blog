@@ -48,7 +48,7 @@ export type LogoutRes = {
   readonly responseMsg: string;
 };
 
-export type DeleteUserRes = {
+export type DeleteUserRegRes = {
   readonly responseMsg: string;
   readonly error: any;
   readonly errorMessages?: string[];
