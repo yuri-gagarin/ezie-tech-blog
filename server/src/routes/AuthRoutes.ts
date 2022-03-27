@@ -2,8 +2,9 @@
 import { PassportContInstance } from "../server";
 import { passportLoginMiddleware, passportGeneralAuthMiddleware } from "../controllers/_helpers/authHelpers";
 import { StrategyNames } from "../controllers/PassportController";
-// helpers //
+// helpers and extra middleware //
 import { verifyAdminModelAccess } from "../controllers/_helpers/adminsControllerHelpers";
+import { verifyUserProfileAccess, userProfileDeleteDataMiddleware } from "../controllers/_helpers/authControllerHelperts"
 // types //
 import type { Router } from "express";
 import type AuthController from "../controllers/AuthController";
@@ -55,7 +56,9 @@ export default class AuthRoutes {
       .route("/api/delete_user_profile")
       .delete(
         [
-          passportGeneralAuthMiddleware
+          passportGeneralAuthMiddleware,      // login auth with custom error //
+          userProfileDeleteDataMiddleware,    // veriffies correct data input //
+          verifyUserProfileAccess             // verifies correct user //
         ],
         this.controller.deleteUserProfile
       );

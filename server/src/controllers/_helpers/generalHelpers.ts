@@ -1,21 +1,40 @@
 import { Types } from "mongoose";
+// type imports //
 import type { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import type { ErrorResponse } from "../../_types/auth/authTypes";
+import { AuthNotLoggedInError, InvalidDataError } from "./errorHelperts";
 
-export const respondWithNoModelIdError = (res: Response, customMessages?: string[]) => {
+export const respondWithNoModelIdError = (res: Response<ErrorResponse>, customMessages?: string[]) => {
   return res.status(400).json({
     responseMsg: "Input error",
     error: new Error("Client error"),
     errorMessages: customMessages ? customMessages : [ "Could not resolve model id" ]
   });
 };
-export const respondWithNotAllowedError = (res: Response, customMessages?: string[]) => {
+export const respondWithNotAllowedError = (res: Response<ErrorResponse>, customMessages?: string[]) => {
   return res.status(401).json({
     responseMsg: "Not allowed",
     error: new Error("Client not allowed error"),
     errorMessages: customMessages ? customMessages : [ "Could not resolve model id" ]
   });
 };
+export const respondWithWrongInputError = (res: Response<ErrorResponse>, { responseMsg, error, customMessages }: { responseMsg?: string; error?: Error; customMessages?: string[]; }) => {
+  const err = error || new InvalidDataError("Invalid Input", customMessages || [ "Invalid data sent by user" ]);
+  return res.status(400).json({
+    responseMsg: responseMsg || "Invalid User Input",
+    error: err,
+    errorMessages: customMessages || [ "Invalid data sent by user" ]
+  });
+};
+export const respondWithNoUserError = (res: Response<ErrorResponse>, { responseMsg, error, errorMessages }: { responseMsg?: string; error?: Error; errorMessages?: string[]; }) => {
+  const err = error || new AuthNotLoggedInError("Login Error", [ "Logged in user data could not be resolved" ]);
+  return res.status(401).json({
+    responseMsg: responseMsg || "Auth Login Error",
+    error: err,
+    errorMessages: errorMessages || [ "Logged in user data could not be resolved" ]
+  });
+};
+
 export const objectIsEmtpy = (obj: any): boolean => {
   return obj && Object.keys(obj).length === 0  && Object.getPrototypeOf(obj) === Object.prototype;
 };
