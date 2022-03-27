@@ -124,7 +124,8 @@ export default class AuthController {
     try {
       const user = await User.findOne({ email });
       if (user) {
-        if (user.validPassword(password)) {
+        const validPass: boolean = await user.validPassword(password);
+        if (validPass) {
           // archive all users posts later ? //
           const deletedUser = await User.findOneAndDelete({ email });
           // 
