@@ -2,7 +2,16 @@ import { Types } from "mongoose";
 // type imports //
 import type { NextFunction, Request, Response } from "express";
 import type { ErrorResponse } from "../../_types/auth/authTypes";
-import { AuthNotLoggedInError, InvalidDataError } from "./errorHelperts";
+import { AuthNotLoggedInError, AuthNotFoundError, InvalidDataError } from "./errorHelperts";
+
+export const respondWithNotFoundError = (res: Response<ErrorResponse>, customMessages?: string[]) => {
+  const error = new AuthNotFoundError("Auth Not Found Error", customMessages);
+  return res.status(404).json({
+    responseMsg: "Not Found Error",
+    error,
+    errorMessages: error.getErrorMessages
+  });
+};
 
 export const respondWithNoModelIdError = (res: Response<ErrorResponse>, customMessages?: string[]) => {
   return res.status(400).json({

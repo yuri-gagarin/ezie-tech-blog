@@ -1,11 +1,12 @@
 import { validateProfileDeleteData } from "./validationHelpers";
 import { InvalidDataError } from "./errorHelperts";
-import { respondWithNotAllowedError, respondWithNoUserError, respondWithWrongInputError } from "./generalHelpers";
+import { respondWithNotAllowedError, respondWithNotFoundError, respondWithNoUserError, respondWithWrongInputError } from "./generalHelpers";
 // type imports //
 import type { Request, Response, NextFunction, CookieOptions } from "express";
 import type { ErrorResponse } from "../../_types/auth/authTypes";
 import type { IAdmin } from "../../models/Admin";
 import type { IUser} from "../../models/User";
+import User from "../../models/User";
 
 export const trimRegistrationData = ({ email, password, confirmPassword }: { email: string; password: string; confirmPassword: string }) => {
   email = email.trim();
@@ -38,7 +39,13 @@ export const verifyUserProfileAccess = async (req: Request, res: Response, next:
   const { email } = req.body;
   const user = req.user as IAdmin | IUser;
   try {
-    if (!user) return respondWithNoUserError(res, { responseMsg: "Logged in user could not be resolved" });
+    if (!user) {
+      return respondWithNoUserError(res, { responseMsg: "Logged in user could not be resolved" });
+    }
+    const foundUser: IUser | null = await User.findOne({ email }).exec();
+    if (!foundUser) {
+      return respondWithNotFoundError(res, [ "User with the queried email was not found" ]);
+    }
     if (user.email !== email) {
       return respondWithNotAllowedError(res, [ "Not allowed to change this profile" ]);
     } else {
