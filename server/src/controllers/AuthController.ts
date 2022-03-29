@@ -109,17 +109,11 @@ export default class AuthController {
       return await this.sendErrorRes(res, { error, errorMessages: [ "Oops something went seriously wrong..." ]});
     }
   }
+
+  // correct middleware should run for login check //
+  // data should be validated and email checked by midlleware //
   deleteUserProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response): Promise<Response> => {
     const { email, password } = req.body;
-
-    // check for valid data //
-    try {
-      const { valid, errorMessages } = validateProfileDeleteData({ email, password });
-      const error = new InvalidDataError("Invalid Input", errorMessages);
-      if (!valid) return this.sendErrorRes(res, { status: 400, responseMsg: "User Input Error", error, errorMessages });
-    } catch (error) {
-      return this.sendErrorRes(res, { error });
-    }
 
     try {
       const user = await User.findOne({ email });
