@@ -50,6 +50,6 @@ export type LogoutRes = {
 
 export type DeleteUserRegRes = {
   readonly responseMsg: string;
-  readonly error: any;
+  readonly error?: any;
   readonly errorMessages?: string[];
 };

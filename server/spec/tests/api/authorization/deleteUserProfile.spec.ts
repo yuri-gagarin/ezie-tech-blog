@@ -36,7 +36,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       server = ServerInstance.getExpressServer();
       adminUser = (await generateMockAdmins(1, "admin"))[0];
       ownerAdminUser = (await generateMockAdmins(1, "owner"))[0];
-      ([ regUser, secondRegUser ] = await generateMockUsers({ number: 2, confirmed: true }));
+      ([ regUser, secondRegUser ] = await generateMockUsers({ number: 4, confirmed: true }));
       // count models //
       numOfUserModels = await User.countDocuments();
       numOfAdminModels = await Admin.countDocuments();
@@ -116,7 +116,6 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            console.log(response.body)
             expect(response.status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -262,32 +261,34 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   })
   // END CONTEXT LOGGED IN USER trying to delete another User's profile //
   
-  /*
-  // CONTEXT User profile delete valid data //
-  context("User Profile - DELETE - valid data", () => {
+  // CONTEXT User profile delete LOGGED IN and VALID DATA //
+  context("User Profile - DELETE - valid data - Deleting OWN profile", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
       it("Should CORRECTLY delete User profile and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: "needatokenhere" })
-          .send({ email: {}, password: "password" })
+          .set({ Authorization: regUserToken })
+          .send({ email: regUserEmail , password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
+            expect(response.status).to.equal(200);
             expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
+            // 
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
             done();
           });
       });
-      it("Should DECREMENT the number of User models by 1", async () => {
+      it("Should DECREMENT the number of User models by 1 and correctly delete the queried User model", async () => {
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins = await Admin.countDocuments();
+          const deletedUser: IUser | null = await User.findOne({ email: regUserEmail }).exec();
           ///
           expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(deletedUser).to.be.null;
           //
           numOfUserModels = updatedNumOfUsers;
         } catch (error) {
@@ -296,7 +297,46 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       });
     });
   });
-  */
+  // END CONTEXT User profile delete LOGGED IN and VALID DATA //
+
+  // CONTEXT User profile delete LOGGED IN ADMIN //
+  context("User Profile - DELETE - valid data - ADMIN Deleting another User", () => {
+    describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
+      it("Should CORRECTLY delete User profile and return a correct response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_user_profile")
+          .set({ Authorization: adminUserToken })
+          .send({ email: secondRegUserEmail })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            // 
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+      it("Should DECREMENT the number of User models by 1 and correctly delete the queried User model", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins = await Admin.countDocuments();
+          const deletedUser: IUser | null = await User.findOne({ email: regUserEmail }).exec();
+          ///
+          expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(deletedUser).to.be.null;
+          //
+          numOfUserModels = updatedNumOfUsers;
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    });
+  });
+  // CONTEXT User profile delete LOGGED IN ADMIN //
+
   after(async () => {
     try {
       await Admin.deleteMany({});
