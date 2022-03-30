@@ -56,6 +56,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
     ({ userJWTToken: secondRegUserToken } = await loginUser({ chai, server, email: secondRegUserEmail }));
   });
 
+  /*
   // CONTEXT User profile delete no login //
   context("User Profile - DELETE - User NOT logged in", () => {
     describe("DELETE /api/delete_user_profile - User Delete VALID data NOT logged in", () => {
@@ -298,7 +299,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
     });
   });
   // END CONTEXT User profile delete LOGGED IN and VALID DATA //
-
+  */
   // CONTEXT User profile delete LOGGED IN ADMIN //
   context("User Profile - DELETE - valid data - ADMIN Deleting another User", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
@@ -306,7 +307,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: adminUserToken })
-          .send({ email: secondRegUserEmail })
+          .send({ email: secondRegUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes

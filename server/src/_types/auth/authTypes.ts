@@ -10,6 +10,15 @@ export type DeleteProfileReqBody = {
   readonly email?: string;
   readonly password?: string;
 };
+export type DeleteUserProfileRes = {
+  readonly responseMsg: string;
+  readonly deletedUser?: UserData;
+};
+export type DeleteAdminProfileRes = {
+  readonly responseMsf: string;
+  readonly deletedAdmin?: AdminData;
+};
+
 export type LoginResponse = {
   readonly responseMsg: string;
   readonly success: boolean;

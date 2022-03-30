@@ -10,7 +10,7 @@ import type { Request, Response, CookieOptions } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 import type { IAdmin } from "../models/Admin";
 import type { IUser } from "../models/User";
-import type { RegisterReqBody, DeleteProfileReqBody, LoginResponse, RegisterResponse, ErrorResponse } from "../_types/auth/authTypes";
+import type { RegisterReqBody, DeleteProfileReqBody, LoginResponse, RegisterResponse, DeleteAdminProfileRes, DeleteUserProfileRes, ErrorResponse } from "../_types/auth/authTypes";
 import type { AdminData } from "../_types/admins/adminTypes";
 import type { UserData } from "../_types/users/userTypes";
 // helpers //
@@ -112,17 +112,23 @@ export default class AuthController {
 
   // correct middleware should run for login check //
   // data should be validated and email checked by midlleware //
-  deleteUserProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response): Promise<Response> => {
+  // current logged in user password and permissions should be checked by middleware as well //
+  deleteUserProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response<DeleteUserProfileRes>): Promise<Response<DeleteUserProfileRes>> => {
     const { email, password } = req.body;
+    const user = req.user as IAdmin | IUser;
 
-    try {
-      const user = await User.findOne({ email });
-      if (user) {
-        const validPass: boolean = await user.validPassword(password);
-        if (validPass) {
-          // archive all users posts later ? //
-          const deletedUser = await User.findOneAndDelete({ email });
-          // 
+    try {     
+      const isAdmin: boolean = user instanceof Admin;     
+      // archive all users posts later ? //
+      const deletedUser: IUser | null = await User.findOneAndDelete({ email }).exec();
+      if (deletedUser) {
+        // admin should stay logged in and get back the deleted user data //
+        if (isAdmin) {
+          return res.status(200).json({
+            responseMsg: "User profile deleted", deletedUser
+          })
+        } else {
+          // regular user should be logged out and have JWT token cookie deleted //
           const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
           const cookieOpts: CookieOptions = { maxAge: 0, httpOnly: true, domain, signed: true, sameSite: "strict" };
           return (
@@ -131,18 +137,16 @@ export default class AuthController {
               .cookie(LoginCookies.JWTToken, "", cookieOpts)
               .json({ responseMsg: "Deleted profile and logged out" })
           );
-        } else {
-          const error = new AuthWrongPassError();
-          return this.sendErrorRes(res, { status: 401, error, errorMessages: error.getErrorMessages });
-        }
+        } 
       } else {
-        const error = new AuthNotFoundError();
+        const error = new AuthNotFoundError("Model Not Found", [ "User profile to delete was not found" ]);
         return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
       }
     } catch (error) {
       return this.sendErrorRes(res, { status: 500, error, errorMessages: [ "A server error has occured" ] });
     }
   }
+
   deleteAdminProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response): Promise<Response>  => {
     const { email, password } = req.body;
     try {
