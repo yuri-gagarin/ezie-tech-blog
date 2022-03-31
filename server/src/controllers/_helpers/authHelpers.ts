@@ -21,7 +21,6 @@ export const passportLoginMiddleware = (req: Request, res: Response, next: NextF
       });
     }
     if(!user) {
-      console.log(16)
       return res.status(400).json({
         responseMsg: "Invalid login",
         error: err ? err : new Error("Login Error"),
@@ -32,6 +31,60 @@ export const passportLoginMiddleware = (req: Request, res: Response, next: NextF
     return next();
   })(req, res, next);
 };
+
+export const passportAdminAuthMiddleware = async (req: Request, res: Response<ErrorResponse>, next: NextFunction) => {
+  PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }, (err, user: IAdmin | null, info: any) => {
+    if (info && info instanceof Error) {
+      if(info instanceof JsonWebTokenError || info instanceof TokenExpiredError) {
+        return res.status(401).json({
+          responseMsg: "An error occurred ",
+          error: info,
+          errorMessages: [ info.message ]
+        });
+      } else if (info.message && info.message.toLowerCase() === "no auth token") {
+        return res.status(401).json({
+          responseMsg: "An error occurred ",
+          error: info as Error,
+          errorMessages: [ "Auth token not received" ]
+        });
+      } else {
+        return res.status(500).json({
+          responseMsg: "An error occurred ",
+          error: info as Error,
+          errorMessages: [ "Something went wrong on our end" ]
+        });
+      }
+    }
+
+    if (err) {
+      if (err instanceof AuthNotFoundError) {
+        return res.status(401).json({
+          responseMsg: "An error occurred ",
+          error: err,
+          errorMessages: err.getErrorMessages
+        });
+      } else {
+        return res.status(500).json({
+          responseMsg: "An error occurred ",
+          error: err,
+          errorMessages: [ err.message ]
+        })
+      }
+    }
+
+    if(!user) {
+      return res.status(401).json({
+        responseMsg: "Not Found",
+        error: err ? err : new Error("Login Error"),
+        errorMessages: [ "User not found" ]
+      });
+    } 
+
+    req.user = user;
+    return next();
+  
+  })
+}
 
 export const passportGeneralAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
   PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }, (err, user: IAdmin | IUser | null, info) => {
