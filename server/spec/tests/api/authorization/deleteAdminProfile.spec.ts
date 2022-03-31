@@ -34,7 +34,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
       adminLevelUser = (await generateMockAdmins(2, "admin"))[0];
       ownerLevelUser = (await generateMockAdmins(2, "owner"))[0];
       //
-      regularUser = (await generateMockUsers({ number: 1, confirmed: true }))[0];
+      regularUser = (await generateMockUsers({ number: 5, confirmed: true }))[0];
       // count models //
       numOfAdminModels = await Admin.countDocuments();
       numOfUserModels = await User.countDocuments();
@@ -85,7 +85,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     });
   });
   // END CONTEXT Admin profile delete no login //
-
+  /*
   // TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
   context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete - INVALID EMAIL DATA", () => {
@@ -215,7 +215,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     });
   });
   // END TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
-
+  */
   // TEST Cleanup //
   after(async () => {
     try {

@@ -13,10 +13,14 @@ export type DeleteProfileReqBody = {
 export type DeleteUserProfileRes = {
   readonly responseMsg: string;
   readonly deletedUser?: UserData;
+  readonly error?: any;
+  readonly errorMessages?: string[];
 };
 export type DeleteAdminProfileRes = {
-  readonly responseMsf: string;
+  readonly responseMsg: string;
   readonly deletedAdmin?: AdminData;
+  readonly error?: any;
+  readonly errorMessages?: string[];
 };
 
 export type LoginResponse = {

@@ -147,16 +147,19 @@ export default class AuthController {
     }
   }
 
-  deleteAdminProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response): Promise<Response>  => {
-    const { email, password } = req.body;
+  // correct middleware should run for login check //
+  // data should be validated and email checked by midlleware //
+  // only admin level user should be able to delete admin profile, owner level admins should be able to delete other admins //
+  deleteAdminProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response<DeleteAdminProfileRes>): Promise<Response>  => {
+    const { email: adminEmailProfToDelete } = req.body;
     try {
-      // needs validation //
-      const admin = await Admin.findOne({ email });
-      if (admin) {
-        if (admin.validPassword(password)) {
-          // archive all admins posts later ? //
-          const deletedAdmin = await Admin.findOneAndDelete({ email });
-          // 
+      const deletingOwn: boolean = adminEmailProfToDelete === (req.user as IAdmin).email
+      const deletedAdmin = await Admin.findOneAndDelete({ email: adminEmailProfToDelete }).exec();
+      if (deletedAdmin) {
+        // archive all admins posts later ? //
+        // 
+        if (deletingOwn) {
+          // needs to be logged out as well
           const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;
           const cookieOpts: CookieOptions = { maxAge: 0, httpOnly: true, domain, signed: true, sameSite: "strict" };
           return (
@@ -166,17 +169,20 @@ export default class AuthController {
               .json({ responseMsg: "Deleted profile and logged out" })
           );
         } else {
-          const error = new AuthWrongPassError();
-          return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
+          return res.status(200).json({
+            responseMsg: "Deleted admin profile",
+            deletedAdmin
+          })
         }
       } else {
-        const error = new AuthNotFoundError();
-        return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
-      }
+          const error = new AuthNotFoundError("Not Found", [ "Queried Admin profile to delete was not found" ]);
+          return this.sendErrorRes(res, { status: 404, error, errorMessages: error.getErrorMessages });
+        }
     } catch (error) {
       return this.sendErrorRes(res, { status: 500, error, errorMessages: [ "A server error has occured" ] });
     }
   }
+  
   logout = async (req: Request, res: Response): Promise<Response> => {
     
     const domain: string = process.env.NODE_ENV === "production" ? process.env.PROD_DOMAIN : null;

@@ -56,7 +56,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
     ({ userJWTToken: secondRegUserToken } = await loginUser({ chai, server, email: secondRegUserEmail }));
   });
 
-  /*
+
   // CONTEXT User profile delete no login //
   context("User Profile - DELETE - User NOT logged in", () => {
     describe("DELETE /api/delete_user_profile - User Delete VALID data NOT logged in", () => {
@@ -106,7 +106,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   // END CONTEXT User proile delete no login //
 
   // TEST CONTEXT User profile delete WITH LOGIN invalid data //
-  context("User Profile - DELETE - User LOGGED IN - INVALID", () => {
+  context("User Profile - DELETE - User LOGGED IN - INVALID DATA", () => {
     // invalid email //
     describe("DELETE /api/delete_user_profile - User Delete with an INVALID EMAIL field", () => {
       it("Should NOT delete User profile with an INVALID EMAIL TYPE and return a correct response", (done) => {
@@ -299,7 +299,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
     });
   });
   // END CONTEXT User profile delete LOGGED IN and VALID DATA //
-  */
+  
   // CONTEXT User profile delete LOGGED IN ADMIN //
   context("User Profile - DELETE - valid data - ADMIN Deleting another User", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
@@ -323,7 +323,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins = await Admin.countDocuments();
-          const deletedUser: IUser | null = await User.findOne({ email: regUserEmail }).exec();
+          const deletedUser: IUser | null = await User.findOne({ email: secondRegUserEmail }).exec();
           ///
           expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);

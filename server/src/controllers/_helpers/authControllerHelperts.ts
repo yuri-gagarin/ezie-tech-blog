@@ -37,6 +37,28 @@ export const userProfileDeleteDataMiddleware = async (req: Request, res: Respons
   }
 };
 
+export const veridyAdminProfileAccess = async (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body as { email: string; password: string; };
+  const loggedInAdmin = req.user as IAdmin;
+
+  try {
+    if (!loggedInAdmin) {
+      respondWithNoUserError(res, { responseMsg: "Logged in user could not be resolved" });
+    }
+    // validate password //
+    const validAdminPassConfirm: boolean = await loggedInAdmin.validPassword(password);
+    if (!validAdminPassConfirm) {
+      return respondWithNotAllowedError(res, [ "Your account password is invalid" ]);
+    }
+    if (loggedInAdmin.role === "owner") {
+
+    } else {
+
+    }
+  } catch (error) {
+
+  }
+}
 export const verifyUserProfileAccess = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   const loggedInUser = req.user as IAdmin | IUser;
