@@ -56,15 +56,16 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   // CONTEXT Admin profile delete no login //
   context("Admin Profile - DELETE - Admin NOT logged in", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data NOT logged in", () => {
-      it("Should NOT delete Admin profile with WITHOUT a login and return a correct response", (done) => {
+      it("Should NOT delete Admin profile with WITHOUT a login TOKEN and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
-          .set({ Authorization: "" })
+          .set({ Authorization: "hgfdtdjjvcf" })
           .send({ email: adminUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(401);
+            console.info(response.body);
+            expect(response.status).to.equal(405);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
