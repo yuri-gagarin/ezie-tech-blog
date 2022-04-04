@@ -1,3 +1,8 @@
+export type CustomErrorParams = {
+  readonly message?: string;
+  readonly errorMessages?: string[];
+}
+
 export class GeneralServerError extends Error {
   protected customErrorMessages: string[];
   constructor(message: string="General Server Error", customErrorMessages?: string[]) {
@@ -30,6 +35,13 @@ export class AuthWrongPassError extends GeneralServerError {
     Object.setPrototypeOf(this, AuthWrongPassError.prototype);
   }
 };
+
+export class AuthAccessLevelError extends GeneralServerError {
+  constructor(data?: CustomErrorParams) {
+    super(data && data.message || "Access Level Error", data && data.errorMessages || [ "Insufgicient access level "]);
+    Object.setPrototypeOf(this, AuthAccessLevelError.prototype);
+  }
+}
 
 export class InvalidDataError extends GeneralServerError {
   constructor(message: string = "Invalid Data Error", customMEssages?: string[]) {

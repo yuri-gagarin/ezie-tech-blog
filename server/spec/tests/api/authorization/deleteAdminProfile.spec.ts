@@ -100,6 +100,39 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     });
   });
   // END CONTEXT Admin profile delete no login //
+  // TEST CONTEXT Admin profile delete WITH Login Regular user //
+  context("Admin Profile - DELETE - Regular User logged in", () => {
+    describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data REGULAR User logged in", () => {
+      it("Should NOT delete Admin profile with WITH a REGULAR USER TOKEN and return a correct response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: regUserToken })
+          .send({ email: adminUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            console.log(response.body)
+            expect(response.status).to.equal(401);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const updatedNumOfUsers: number = await User.countDocuments();
+          //
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+  // END TEST CONTEXT Admin profile delete WIH Login Regular user //
   /*
   // TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
   context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
