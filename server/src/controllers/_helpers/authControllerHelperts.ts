@@ -51,9 +51,15 @@ export const veridyAdminProfileAccess = async (req: Request, res: Response, next
       return respondWithNotAllowedError(res, [ "Your account password is invalid" ]);
     }
     if (loggedInAdmin.role === "owner") {
-
+      next();
     } else {
-
+      const { email: currentAdminEmail } = loggedInAdmin;
+      if (currentAdminEmail === email) {
+        next();
+      } else {
+        // admin cannot delete another admins profile //
+        return respondWithNotAllowedError(res, [ "Not allowed to delete another admins email" ]);
+      }
     }
   } catch (error) {
 
