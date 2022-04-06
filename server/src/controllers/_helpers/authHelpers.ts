@@ -66,6 +66,8 @@ export const passportAdminAuthMiddleware = async (req: Request, res: Response<Er
           responseMsg: "Authorization Error", error, errorMessages:  error.getErrorMessages
         });
       } else if (error instanceof AuthAccessLevelError) {
+        console.log(69)
+        console.log(error.toString())
         return res.status(403).json({
           responseMsg: "Access Not Allowed", error, errorMessages: error.getErrorMessages
         });

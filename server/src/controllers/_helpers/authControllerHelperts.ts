@@ -37,7 +37,7 @@ export const userProfileDeleteDataMiddleware = async (req: Request, res: Respons
   }
 };
 
-export const veridyAdminProfileAccess = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyAdminProfileAccess = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body as { email: string; password: string; };
   const loggedInAdmin = req.user as IAdmin;
 
@@ -62,7 +62,11 @@ export const veridyAdminProfileAccess = async (req: Request, res: Response, next
       }
     }
   } catch (error) {
-
+    return res.status(500).json({
+      responseMsg: "Server Error",
+      error,
+      errorMessages: [ "A server error on our end" ]
+    });
   }
 }
 export const verifyUserProfileAccess = async (req: Request, res: Response, next: NextFunction) => {

@@ -20,18 +20,18 @@ chai.use(chaiHTTP);
 describe("AuthController:deleteAdminProfile - Admin registration DELETE API tests", () => {
   let server: Express;
   //
-  let ownerLevelUser: IAdmin; let adminLevelUser: IAdmin;
+  let ownerLevelUser: IAdmin; let adminLevelUser: IAdmin; let secondAdminLevelUser: IAdmin;
   let regularUser: IUser;
   //
-  let adminUserEmail: string; let ownerUserEmail: string; let regUserEmail: string;
-  let ownerUserToken: string; let adminUserToken: string; let regUserToken: string; let secondRegUserToken: string;
+  let adminUserEmail: string; let secondAdminEmail: string; let ownerUserEmail: string; let regUserEmail: string;
+  let ownerUserToken: string; let adminUserToken: string; let secondAdminUserToken: string; let regUserToken: string; let secondRegUserToken: string;
   //
   let numOfUserModels: number = 0; let numOfAdminModels: number = 0;
 
   before(async () => {
     try {
       server = ServerInstance.getExpressServer();
-      adminLevelUser = (await generateMockAdmins(2, "admin"))[0];
+      ([ adminLevelUser, secondAdminLevelUser ] = (await generateMockAdmins(2, "admin")));
       ownerLevelUser = (await generateMockAdmins(2, "owner"))[0];
       //
       regularUser = (await generateMockUsers({ number: 5, confirmed: true }))[0];
@@ -46,6 +46,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   before(async () => {
     ({ email: ownerUserEmail } = ownerLevelUser);
     ({ email: adminUserEmail } = adminLevelUser);
+    ({ email: secondAdminEmail } = secondAdminLevelUser);
     ({ email: regUserEmail } = regularUser);
     // login tokens //
     ({ userJWTToken: ownerUserToken } = await loginUser({ chai, server, email: ownerUserEmail }));
@@ -135,7 +136,6 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   });
   // END TEST CONTEXT Admin profile delete WIH Login Regular user //
 
-  /*
   // TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
   context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete - INVALID EMAIL DATA", () => {
@@ -207,7 +207,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            expect(response.status).to.equal(401);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -226,10 +226,43 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         }
       });
     });
-  })
-
+  });
   // END TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
 
+  // TEST CONTEXT Admin profile delete WITH Login Regular user //
+  context("Admin Profile - DELETE - Admin logged in <ADMIN> LEVEL Admin", () => {
+    describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data <ADMIN> LEVEL trying to delete another Admin", () => {
+      it("Should NOT delete other Admin profile  and return a correct response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: adminUserToken })
+          .send({ email: secondAdminUserToken, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            console.log(response.body)
+            expect(response.status).to.equal(403);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const updatedNumOfUsers: number = await User.countDocuments();
+          //
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+  });
+
+  /*
   // TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
   context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {

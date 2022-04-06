@@ -4,7 +4,7 @@ import { passportLoginMiddleware, passportGeneralAuthMiddleware, passportAdminAu
 import { StrategyNames } from "../controllers/PassportController";
 // helpers and extra middleware //
 import { verifyAdminModelAccess } from "../controllers/_helpers/adminsControllerHelpers";
-import { verifyUserProfileAccess, userProfileDeleteDataMiddleware } from "../controllers/_helpers/authControllerHelperts"
+import { verifyAdminProfileAccess, verifyUserProfileAccess, userProfileDeleteDataMiddleware } from "../controllers/_helpers/authControllerHelperts"
 // types //
 import type { Router } from "express";
 import type AuthController from "../controllers/AuthController";
@@ -52,7 +52,8 @@ export default class AuthRoutes {
       .delete(
         [
           passportAdminAuthMiddleware,        // login auth to check for logged in admin with custom error handling //
-          userProfileDeleteDataMiddleware,
+          userProfileDeleteDataMiddleware,    // verifies correct data input //
+          verifyAdminProfileAccess            // verifies correct admin //
         ],
         this.controller.deleteAdminProfile)
       ;
