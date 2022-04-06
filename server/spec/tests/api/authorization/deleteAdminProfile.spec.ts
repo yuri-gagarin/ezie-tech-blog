@@ -100,6 +100,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     });
   });
   // END CONTEXT Admin profile delete no login //
+
   // TEST CONTEXT Admin profile delete WITH Login Regular user //
   context("Admin Profile - DELETE - Regular User logged in", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data REGULAR User logged in", () => {
@@ -112,7 +113,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
             console.log(response.body)
-            expect(response.status).to.equal(401);
+            expect(response.status).to.equal(403);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -134,6 +135,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   });
   // END TEST CONTEXT Admin profile delete WIH Login Regular user //
 
+  /*
   // TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
   context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete - INVALID EMAIL DATA", () => {
@@ -264,7 +266,8 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     });
   });
   // END TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
-  
+  */
+
   // TEST Cleanup //
   after(async () => {
     try {

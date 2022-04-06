@@ -6,7 +6,7 @@ import jsonwebtoken from "jsonwebtoken";
 import Admin from "../models/Admin";
 import User from "../models/User";
 // helpers //
-import { AuthNotFoundError, AuthNotLoggedInError } from "./_helpers/errorHelperts";
+import { AuthNotFoundError, AuthAccessLevelError, AuthNotLoggedInError } from "./_helpers/errorHelperts";
 // types //
 import type { StrategyOptions } from "passport-jwt";
 import type { IUser } from "../models/User";
@@ -67,9 +67,22 @@ export default class PassportController {
     }));
     this.passport.use(StrategyNames.AdminAuthStrategy, new JWTStrategy(this.opts, async (jwtPayload, done) => {
       try { 
-        const admin: IAdmin = await Admin.findOne({ _id: jwtPayload.sub }).exec();
-        if (admin) return done(null, admin);
-        else return done(null, false);
+        const admin: IAdmin | null = await Admin.findOne({ _id: jwtPayload.sub }).exec();
+        if (admin) {
+          return done(null, admin);
+        } else {
+          // try a user to throw a correct error //
+          const user: IUser | null = await User.findOne({ _id: jwtPayload.sub }).exec();
+          if (user) {
+            // throw a 403 to tell the user about wrong access level //
+            const error = new AuthAccessLevelError();
+            return done(error);
+          } else {
+            // neither admin nor user is found with that token //
+            const error = new AuthNotFoundError();
+            return done(error);
+          }
+        } 
       } catch (err) {
         return done (err);
       }

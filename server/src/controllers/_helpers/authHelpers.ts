@@ -4,7 +4,7 @@ import Admin from "../../models/Admin";
 import { PassportContInstance } from "../../server";
 import { StrategyNames } from "../PassportController"; 
 // helpers //
-import { AuthNotFoundError, AuthNotLoggedInError } from "./errorHelperts";
+import { AuthAccessLevelError, AuthNotFoundError, AuthNotLoggedInError } from "./errorHelperts";
 // types //
 import type { Request, Response, NextFunction, CookieOptions } from "express";
 import type { IAdmin } from "../../models/Admin";
@@ -55,23 +55,23 @@ export const passportLoginMiddleware = (req: Request, res: Response, next: NextF
 };
 
 export const passportAdminAuthMiddleware = async (req: Request, res: Response<ErrorResponse>, next: NextFunction) => {
-  PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }, (err, user: IAdmin | null, info: any) => {
+  PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }, (error, user: IAdmin | null, info: any) => {
     if (info && info instanceof Error) {
       return processPassportError({ error: info, response: res });
     }
 
-    if (err) {
-      if (err instanceof AuthNotFoundError) {
+    if (error) {
+      if (error instanceof AuthNotFoundError) {
         return res.status(401).json({
-          responseMsg: "An error occurred ",
-          error: err,
-          errorMessages: err.getErrorMessages
+          responseMsg: "Authorization Error", error, errorMessages:  error.getErrorMessages
+        });
+      } else if (error instanceof AuthAccessLevelError) {
+        return res.status(403).json({
+          responseMsg: "Access Not Allowed", error, errorMessages: error.getErrorMessages
         });
       } else {
         return res.status(500).json({
-          responseMsg: "An error occurred ",
-          error: err,
-          errorMessages: [ err.message ]
+          responseMsg: "An error occurred ", error, errorMessages: [ error.message ]
         })
       }
     }
@@ -79,7 +79,7 @@ export const passportAdminAuthMiddleware = async (req: Request, res: Response<Er
     if(!user) {
       return res.status(401).json({
         responseMsg: "Not Found",
-        error: err ? err : new Error("Login Error"),
+        error: error ? error : new Error("Login Error"),
         errorMessages: [ "User not found" ]
       });
     } 

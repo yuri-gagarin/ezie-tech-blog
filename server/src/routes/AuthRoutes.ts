@@ -51,7 +51,8 @@ export default class AuthRoutes {
       .route("/api/delete_admin_profile")
       .delete(
         [
-          passportAdminAuthMiddleware
+          passportAdminAuthMiddleware,        // login auth to check for logged in admin with custom error handling //
+          userProfileDeleteDataMiddleware,
         ],
         this.controller.deleteAdminProfile)
       ;
