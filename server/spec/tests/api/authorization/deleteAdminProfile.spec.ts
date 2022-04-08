@@ -113,7 +113,6 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            console.log(response.body)
             expect(response.status).to.equal(403);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -233,10 +232,12 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   context("Admin Profile - DELETE - Admin logged in <ADMIN> LEVEL Admin", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data <ADMIN> LEVEL trying to delete another Admin", () => {
       it("Should NOT delete other Admin profile  and return a correct response", (done) => {
+        console.log(adminUserEmail);
+        console.log(secondAdminEmail);
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
-          .send({ email: secondAdminUserToken, password: "password" })
+          .send({ email: secondAdminEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
