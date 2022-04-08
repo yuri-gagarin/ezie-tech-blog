@@ -228,7 +228,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   });
   // END TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
 
-  // TEST CONTEXT Admin profile delete WITH Login Regular user //
+  // TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
   context("Admin Profile - DELETE - Admin logged in <ADMIN> LEVEL Admin", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data <ADMIN> LEVEL trying to delete another Admin", () => {
       it("Should NOT delete other Admin profile  and return a correct response", (done) => {
@@ -262,6 +262,8 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
       });
     });
   });
+  // END TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
+
 
   /*
   // TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
