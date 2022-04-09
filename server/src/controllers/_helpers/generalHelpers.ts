@@ -20,8 +20,8 @@ export const respondWithNoModelIdError = (res: Response<ErrorResponse>, customMe
     errorMessages: customMessages ? customMessages : [ "Could not resolve model id" ]
   });
 };
-export const respondWithNotAllowedError = (res: Response<ErrorResponse>, customMessages?: string[]) => {
-  return res.status(401).json({
+export const respondWithNotAllowedError = (res: Response<ErrorResponse>, customMessages?: string[], status?: number) => {
+  return res.status(status || 401).json({
     responseMsg: "Not allowed",
     error: new Error("Client not allowed error"),
     errorMessages: customMessages ? customMessages : [ "Could not resolve model id" ]

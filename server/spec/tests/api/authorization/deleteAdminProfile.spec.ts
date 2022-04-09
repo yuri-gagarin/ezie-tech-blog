@@ -20,19 +20,19 @@ chai.use(chaiHTTP);
 describe("AuthController:deleteAdminProfile - Admin registration DELETE API tests", () => {
   let server: Express;
   //
-  let ownerLevelUser: IAdmin; let adminLevelUser: IAdmin; let secondAdminLevelUser: IAdmin;
+  let ownerLevelUser: IAdmin; let secondOwnerLevelUser: IAdmin; let adminLevelUser: IAdmin; let secondAdminLevelUser: IAdmin;
   let regularUser: IUser;
   //
-  let adminUserEmail: string; let secondAdminEmail: string; let ownerUserEmail: string; let regUserEmail: string;
-  let ownerUserToken: string; let adminUserToken: string; let secondAdminUserToken: string; let regUserToken: string; let secondRegUserToken: string;
+  let adminUserEmail: string; let secondAdminEmail: string; let ownerUserEmail: string; let secondOwnerUserEmail: string; let regUserEmail: string;
+  let ownerUserToken: string; let secondOwnerUserToken: string; let adminUserToken: string; let secondAdminUserToken: string; let regUserToken: string; let secondRegUserToken: string;
   //
   let numOfUserModels: number = 0; let numOfAdminModels: number = 0;
 
   before(async () => {
     try {
       server = ServerInstance.getExpressServer();
-      ([ adminLevelUser, secondAdminLevelUser ] = (await generateMockAdmins(2, "admin")));
-      ownerLevelUser = (await generateMockAdmins(2, "owner"))[0];
+      ([ adminLevelUser, secondAdminLevelUser ] = await generateMockAdmins(2, "admin"));
+      ([ ownerLevelUser, secondOwnerLevelUser ] = await generateMockAdmins(2, "owner"));
       //
       regularUser = (await generateMockUsers({ number: 5, confirmed: true }))[0];
       // count models //
@@ -45,15 +45,18 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   // login tokens //
   before(async () => {
     ({ email: ownerUserEmail } = ownerLevelUser);
+    ({ email: secondOwnerUserEmail } = secondOwnerLevelUser);
     ({ email: adminUserEmail } = adminLevelUser);
     ({ email: secondAdminEmail } = secondAdminLevelUser);
     ({ email: regUserEmail } = regularUser);
     // login tokens //
     ({ userJWTToken: ownerUserToken } = await loginUser({ chai, server, email: ownerUserEmail }));
+    ({ userJWTToken: secondAdminUserToken } = await loginUser({ chai, server, email: secondOwnerUserEmail }));
     ({ userJWTToken: adminUserToken } = await loginUser({ chai, server, email: adminUserEmail }));
     ({ userJWTToken: regUserToken } = await loginUser({ chai, server, email: regUserEmail }));
   });
 
+  /*
   // CONTEXT Admin profile delete no login //
   context("Admin Profile - DELETE - Admin NOT logged in", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data NOT logged in", () => {
@@ -227,13 +230,11 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     });
   });
   // END TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
-
+  */
   // TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
   context("Admin Profile - DELETE - Admin logged in <ADMIN> LEVEL Admin", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data <ADMIN> LEVEL trying to delete another Admin", () => {
       it("Should NOT delete other Admin profile  and return a correct response", (done) => {
-        console.log(adminUserEmail);
-        console.log(secondAdminEmail);
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
@@ -241,7 +242,6 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            console.log(response.body)
             expect(response.status).to.equal(403);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -264,10 +264,8 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   });
   // END TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
 
-
-  /*
-  // TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
-  context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
+  // TEST DELETE Admin profile delete WITH Login VALID DATA own profile //
+  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - OWN PROFILE", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
       it("Should CORRECTLY delete Admin profile with and return the CORRECT response", (done) => {
         chai.request(server)
@@ -289,11 +287,12 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         try {
           const adminModelCount = await Admin.countDocuments();
           const userModelCount = await User.countDocuments();
-          const nonExistingUser: IUser | null = await User.findOne({ email: adminUserEmail });
           //
-          expect(adminModelCount).to.equal(numOfAdminModels);
-          expect(userModelCount).to.equal(numOfUserModels - 1);
-          expect(nonExistingUser).to.be.null;
+          const nonExistingAdmin: IAdmin | null = await Admin.findOne({ email: adminUserEmail });
+          //
+          expect(adminModelCount).to.equal(numOfAdminModels - 1);
+          expect(userModelCount).to.equal(numOfUserModels);
+          expect(nonExistingAdmin).to.be.null;
           //
         } catch (error) {
           console.log(error);
@@ -301,8 +300,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
       });
     });
   });
-  // END TEST DELETE /api/delete_admin_profile WITH Login VALID DATA //
-  */
+  // END TEST DELETE Admin profile delete WITH Login VALID DATA own profile //
 
   // TEST Cleanup //
   after(async () => {

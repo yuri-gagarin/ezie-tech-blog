@@ -58,7 +58,7 @@ export const verifyAdminProfileAccess = async (req: Request, res: Response, next
         next();
       } else {
         // admin cannot delete another admins profile //
-        return respondWithNotAllowedError(res, [ "Not allowed to delete another admins profile" ]);
+        return respondWithNotAllowedError(res, [ "Not allowed to delete another admins profile" ], 403);
       }
     }
   } catch (error) {
