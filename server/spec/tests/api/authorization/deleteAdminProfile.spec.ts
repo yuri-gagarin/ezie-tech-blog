@@ -233,9 +233,9 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   // END TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
   */
   // TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
-  context("Admin Profile - DELETE - Admin logged in <ADMIN> LEVEL Admin", () => {
+  context("Admin Profile - DELETE - Admin LOGGED IN - <ADMIN> LEVEL Admin - VALID DATA - OTHER ADMINS PROFILE ", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data <ADMIN> LEVEL trying to delete another Admin", () => {
-      it("Should NOT delete other Admin profile  and return a correct response", (done) => {
+      it("Should NOT delete other Admin profile  and return a correct <403> response", (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
@@ -266,9 +266,9 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   // END TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
 
   // TEST DELETE Admin profile delete WITH Login VALID DATA own profile //
-  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - OWN PROFILE", () => {
+  context("Admin Profile - DELETE - Admin LOGGED IN - <ADMIN> LEVEL Admin - VALID DATA - OWN PROFILE", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
-      it("Should CORRECTLY delete Admin profile with and return the CORRECT response", (done) => {
+      it("Should CORRECTLY delete Admin profile with and return a correct <200> response", (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
@@ -307,7 +307,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   // TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA deleting another ADMIN LEVEL ADMIN //
   context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - OWNER ADMIN DELETING another ADMIN LEVEL ADMIN", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
-      it("Should CORRECTLY delete another Admin profile with and return the CORRECT response", (done) => {
+      it("Should CORRECTLY delete another Admin profile with and return a correct <200> response", (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: ownerUserToken })
