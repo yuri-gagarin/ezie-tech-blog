@@ -305,7 +305,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   // END TEST DELETE Admin profile delete WITH Login VALID DATA own profile //
 
   // TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA deleting another ADMIN LEVEL ADMIN //
-  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - OWNER ADMIN DELETING another ADMIN LEVEL ADMIN", () => {
+  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - <OWNER> LEVEL ADMIN - OTHER <ADMIN> LEVEL ADMIN", () => {
     describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
       it("Should CORRECTLY delete another Admin profile with and return a correct <200> response", (done) => {
         chai.request(server)
@@ -334,6 +334,46 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           expect(adminModelCount).to.equal(numOfAdminModels - 1);
           expect(userModelCount).to.equal(numOfUserModels);
           expect(nonExistingAdmin).to.be.null;
+          //
+          numOfAdminModels = adminModelCount;
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    });
+  });
+  // END TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA deleting another ADMIN LEVEL ADMIN //
+
+  // TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA deleting another OWNER LEVEL ADMIN //
+  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - <OWNER> LEVEL ADMIN - OTHER <OWNER> LEVEL ADMIN", () => {
+    describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
+      it("Should NOT delete another Admin profile with and return a correct <403> response", (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: ownerUserToken })
+          .send({ email: secondOwnerUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, deletedAdmin, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(403);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            //
+            expect(deletedAdmin).to.be.undefined;
+            done();
+          });
+      });
+      it("Should NOT change the number of Admin models", async () => {
+        try {
+          const adminModelCount = await Admin.countDocuments();
+          const userModelCount = await User.countDocuments();
+          //
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ email: adminUserEmail });
+          //
+          expect(adminModelCount).to.equal(numOfAdminModels);
+          expect(userModelCount).to.equal(numOfUserModels);
+          expect(queriedAdmin).to.not.be.null;
           //
           numOfAdminModels = adminModelCount;
         } catch (error) {
