@@ -50,8 +50,22 @@ export const verifyAdminProfileAccess = async (req: Request, res: Response, next
     if (!validAdminPassConfirm) {
       return respondWithNotAllowedError(res, [ "Your account password is invalid" ]);
     }
+
     if (loggedInAdmin.role === "owner") {
-      next();
+      // owner level admin should be able to delete all profiles except anothher owner level admin //
+      const adminProfileToDelete: IAdmin | null =  await Admin.findOne({ email }).exec();
+      if (adminProfileToDelete) {
+        if (adminProfileToDelete.role === "owner") {
+          const { email: loggedInAdminEmail } = loggedInAdmin;
+          // owner level admin cannot delete other owner level admins //
+          return loggedInAdminEmail === email ? next() : respondWithNotAllowedError(res, [ "Delete operation denied" ], 403);
+        } else {
+          // owner level admin can delete other admins //
+          return next();
+        }       
+      } else {
+        return respondWithNotFoundError(res, [ "Could not resolve admin profile to delete" ]);
+      }
     } else {
       const { email: currentAdminEmail } = loggedInAdmin;
       if (currentAdminEmail === email) {

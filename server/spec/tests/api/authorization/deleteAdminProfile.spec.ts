@@ -369,13 +369,12 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           const adminModelCount = await Admin.countDocuments();
           const userModelCount = await User.countDocuments();
           //
-          const queriedAdmin: IAdmin | null = await Admin.findOne({ email: adminUserEmail });
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ email: secondOwnerUserEmail });
           //
           expect(adminModelCount).to.equal(numOfAdminModels);
           expect(userModelCount).to.equal(numOfUserModels);
           expect(queriedAdmin).to.not.be.null;
           //
-          numOfAdminModels = adminModelCount;
         } catch (error) {
           console.log(error);
         }
