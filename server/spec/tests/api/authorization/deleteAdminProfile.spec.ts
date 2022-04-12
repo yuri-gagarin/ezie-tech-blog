@@ -319,13 +319,14 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .send({ email: adminUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            const { responseMsg, deletedAdmin, error, errorMessages } = response.body as DeleteAdminProfileRes;
             expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
             // proper logout cookes should be sent //
             // add assertions //
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
+            expect(deletedAdmin).to.be.undefined; //
             done();
           });
       });
@@ -375,7 +376,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           const adminModelCount = await Admin.countDocuments();
           const userModelCount = await User.countDocuments();
           //
-          const nonExistingAdmin: IAdmin | null = await Admin.findOne({ email: adminUserEmail });
+          const nonExistingAdmin: IAdmin | null = await Admin.findOne({ email: secondAdminEmail });
           //
           expect(adminModelCount).to.equal(numOfAdminModels - 1);
           expect(userModelCount).to.equal(numOfUserModels);
@@ -404,7 +405,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             //
-            expect(deletedAdmin).to.be.undefined;
+            expect(deletedAdmin).to.be.undefined; // deletedAdmin object should not be sent back if deleting own profile //
             done();
           });
       });
@@ -424,6 +425,44 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
       });
     });
     // END TEST owner deleting another <owner> level admin //
+
+    // TEST <OWNER> level admin deleting own profile //
+    describe("DELETE /api/delete_admin_profile - VALID FORM DATA - <OWNER> LEVEL Admin deleting own profile", () => {
+      it(`Should CORRECTLY delete another Admin profile with and return a correct <${successResCode}> response`, (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: ownerUserToken })
+          .send({ email: ownerUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, deletedAdmin, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(successResCode);
+            expect(responseMsg).to.be.a("string");
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            expect(deletedAdmin).to.be.undefined; // deletedAdmin object should not be sent back if deleting own profile //
+            done();
+          });
+      });
+      it("Should decrement the number of Admin models by 1", async () => {
+        try {
+          const adminModelCount = await Admin.countDocuments();
+          const userModelCount = await User.countDocuments();
+          //
+          const nonExistingAdmin: IAdmin | null = await Admin.findOne({ email: ownerUserEmail });
+          //
+          expect(adminModelCount).to.equal(numOfAdminModels - 1);
+          expect(userModelCount).to.equal(numOfUserModels);
+          expect(nonExistingAdmin).to.be.null;
+          //
+          numOfAdminModels = adminModelCount;
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    });
+    // END TEST <OWNER> level admin deleting own profile //
   
   });
   // END TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA  //
