@@ -10,11 +10,10 @@ import User from "@/server/src/models/User";
 import type { Express } from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { LoginRes, RegisterRes } from "@/redux/_types/auth/dataTypes";
+import type { DeleteAdminProfileRes } from "@/server/src/_types/auth/authTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 import { loginUser } from "../../../hepers/testHelpers";
-import { DeleteAdminProfileRes } from "@/server/src/_types/auth/authTypes";
 
 chai.use(chaiHTTP);
 
@@ -28,6 +27,11 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   let ownerUserToken: string; let secondOwnerUserToken: string; let adminUserToken: string; let secondAdminUserToken: string; let regUserToken: string; let secondRegUserToken: string;
   //
   let numOfUserModels: number = 0; let numOfAdminModels: number = 0;
+  // response constants //
+  const successResCode: number = 200;
+  const badRequestResCode: number = 400;
+  const unauthorizedResCode: number = 401;
+  const forbiddenAccessCode: number = 403;
 
   before(async () => {
     try {
@@ -57,34 +61,33 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     ({ userJWTToken: regUserToken } = await loginUser({ chai, server, email: regUserEmail }));
   });
 
-  /*
   // CONTEXT Admin profile delete no login //
   context("Admin Profile - DELETE - Admin NOT logged in", () => {
-    describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data NOT logged in", () => {
-      it("Should NOT delete Admin profile with WITHOUT a login TOKEN and return a correct response", (done) => {
+    describe("DELETE /api/delete_admin_profile - VALID DATA - NOT LOGGED IN", () => {
+      it(`Should NOT delete Admin profile with WITHOUT a login TOKEN and return a correct <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
-          .set({ Authorization: "hgfdtdjjvcf" })
+          .set({ Authorization: "" })
           .send({ email: adminUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(401);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(unauthorizedResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete Admin profile with WITH and INCORRECT TOKEN SIGNATURE and return a correct response", (done) => {
+      it(`Should NOT delete Admin profile with WITH and INCORRECT TOKEN SIGNATURE and return a correct <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
           .send({ email: adminUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(401);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(unauthorizedResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -95,9 +98,11 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         try {
           const updatedNumOfAdmins: number = await Admin.countDocuments();
           const updatedNumOfUsers: number = await User.countDocuments();
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ email: adminUserEmail });
           //
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
           expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(queriedAdmin).to.not.be.null;
         } catch (error) {
           throw error;
         }
@@ -108,16 +113,16 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
 
   // TEST CONTEXT Admin profile delete WITH Login Regular user //
   context("Admin Profile - DELETE - Regular User logged in", () => {
-    describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data REGULAR User logged in", () => {
-      it("Should NOT delete Admin profile with WITH a REGULAR USER TOKEN and return a correct response", (done) => {
+    describe("DELETE /api/delete_admin_profile -  VALID DATA - REGULAR User logged in", () => {
+      it(`Should NOT delete Admin profile with WITH a REGULAR USER TOKEN and return a correct ${forbiddenAccessCode} response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: regUserToken })
           .send({ email: adminUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(403);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(forbiddenAccessCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -128,9 +133,11 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         try {
           const updatedNumOfAdmins: number = await Admin.countDocuments();
           const updatedNumOfUsers: number = await User.countDocuments();
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ email: adminUserEmail });
           //
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
           expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(queriedAdmin).to.not.be.null;
         } catch (error) {
           throw error;
         }
@@ -140,77 +147,77 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   // END TEST CONTEXT Admin profile delete WIH Login Regular user //
 
   // TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
-  context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA", () => {
-    describe("DELETE /api/delete_admin_profile - Admin profile Delete - INVALID EMAIL DATA", () => {
-      it("Should NOT delete Admin profile with an INVALID EMAIL FIELD TYPE", (done) => {
+  context("Admin Profile - DELETE - Admin LOGGED IN - INVALID DATA - OWN PROFILE", () => {
+    describe("DELETE /api/delete_admin_profile - INVALID FORM DATA", () => {
+      it(`Should NOT delete Admin profile with an INVALID EMAIL FIELD TYPE and respond with <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
           .send({ email: {}, password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete Admin profile with an EMPTY EMAIL FIELD", (done) => {
+      it(`Should NOT delete Admin profile with an EMPTY EMAIL FIELD and respond with <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
           .send({ email: "", password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete Admin profile with an WRONG PASSWORD FIELD TYPE", (done) => {
+      it(`Should NOT delete Admin profile with an WRONG PASSWORD FIELD TYPE and respond with <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
           .send({ email: adminUserEmail, password: {} })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete Admin profile with an EMPTY PASSWORD FIELD", (done) => {
+      it(`Should NOT delete Admin profile with an EMPTY PASSWORD FIELD and respond with <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
           .send({ email: adminUserEmail, password: "" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete Admin profile with an INCORRECT PASSWORD FIELD", (done) => {
+      it(`Should NOT delete Admin profile with an INCORRECT PASSWORD FIELD and respond with <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
           .send({ email: adminUserEmail, password: "notacorrectpassword" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(401);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(unauthorizedResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -221,9 +228,11 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         try {
           const adminModelCount = await Admin.countDocuments();
           const userModelCount = await User.countDocuments();
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ email: adminUserEmail });
           //
           expect(adminModelCount).to.equal(numOfAdminModels);
           expect(userModelCount).to.equal(numOfUserModels);
+          expect(queriedAdmin).to.not.be.null;
         } catch (error) {
           console.log(error);
         }
@@ -231,19 +240,20 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
     });
   });
   // END TEST DELETE /api/delete_admin_profle WITH Login  INVALID DATA //
-  */
-  // TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
-  context("Admin Profile - DELETE - Admin LOGGED IN - <ADMIN> LEVEL Admin - VALID DATA - OTHER ADMINS PROFILE ", () => {
-    describe("DELETE /api/delete_admin_profile - Admin profile Delete VALID data <ADMIN> LEVEL trying to delete another Admin", () => {
-      it("Should NOT delete other Admin profile  and return a correct <403> response", (done) => {
+  
+  // TEST CONTEXT Admin profile delete WITH Login <ADMIN> level admin logged in with valid data //
+  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - <ADMIN> LEVEL Admin", () => {
+    // TEST DELETE another <ADMIN> level Admin profile //
+    describe("DELETE /api/delete_admin_profile - VALID FORM DATA -  <ADMIN> LEVEL Admin deleting another <ADMIN> LEVEL Admin", () => {
+      it(`Should NOT delete other Admin profile  and return a correct <${forbiddenAccessCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
           .send({ email: secondAdminEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(403);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(forbiddenAccessCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -254,21 +264,21 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         try {
           const updatedNumOfAdmins: number = await Admin.countDocuments();
           const updatedNumOfUsers: number = await User.countDocuments();
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ email: secondAdminEmail });
           //
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
           expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(queriedAdmin).to.not.be.null;
         } catch (error) {
           throw error;
         }
       });
     });
-  });
-  // END TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
+    // END TEST DELETE another <ADMIN> level Admin profile //
+    
 
-  // TEST DELETE Admin profile delete WITH Login VALID DATA own profile //
-  context("Admin Profile - DELETE - Admin LOGGED IN - <ADMIN> LEVEL Admin - VALID DATA - OWN PROFILE", () => {
-    describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
-      it("Should CORRECTLY delete Admin profile with and return a correct <200> response", (done) => {
+    describe("DELETE /api/delete_admin_profile - VALID FORM DATA - <ADMIN> Level Admin deleting own profile", () => {
+      it(`Should CORRECTLY delete Admin profile with and return a correct <${successResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })
@@ -276,9 +286,10 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
-            expect(response.status).to.equal(200);
+            expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
-            //
+            // proper logout cookes should be sent //
+            // add assertions //
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
             done();
@@ -288,7 +299,6 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         try {
           const adminModelCount = await Admin.countDocuments();
           const userModelCount = await User.countDocuments();
-          //
           const nonExistingAdmin: IAdmin | null = await Admin.findOne({ email: adminUserEmail });
           //
           expect(adminModelCount).to.equal(numOfAdminModels - 1);
@@ -301,13 +311,15 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         }
       });
     });
-  });
-  // END TEST DELETE Admin profile delete WITH Login VALID DATA own profile //
 
-  // TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA deleting another ADMIN LEVEL ADMIN //
-  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - <OWNER> LEVEL ADMIN - OTHER <ADMIN> LEVEL ADMIN", () => {
-    describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
-      it("Should CORRECTLY delete another Admin profile with and return a correct <200> response", (done) => {
+  });
+  // END TEST CONTEXT Admin profile delete WITH Login <admin> level admin trying to delete another admin //
+
+  // TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA  //
+  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - <OWNER> LEVEL ADMIN", () => {
+    // TEST owner deleting another admin level admin //
+    describe("DELETE /api/delete_admin_profile - VALID FORM DATA - <OWNER> LEVEL Admin deleting another <ADMIN> LEVEL Admin", () => {
+      it(`Should CORRECTLY delete another Admin profile with and return a correct <${successResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: ownerUserToken })
@@ -315,7 +327,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, deletedAdmin, error, errorMessages } = response.body as DeleteAdminProfileRes;
-            expect(response.status).to.equal(200);
+            expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
             expect(deletedAdmin).to.be.an("object");
             //
@@ -341,13 +353,11 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         }
       });
     });
-  });
-  // END TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA deleting another ADMIN LEVEL ADMIN //
+    // END TEST owner deleting another <owner> level admin //
 
-  // TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA deleting another OWNER LEVEL ADMIN //
-  context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - <OWNER> LEVEL ADMIN - OTHER <OWNER> LEVEL ADMIN", () => {
-    describe("DELETE /api/delete_admin_profile - Admin profile Delete - VALID FORM DATA", () => {
-      it("Should NOT delete another Admin profile with and return a correct <403> response", (done) => {
+    // TEST owner deleting another <owner> level admin //
+    describe("DELETE /api/delete_admin_profile - VALID FORM DATA - <OWNER> LEVEL Admin deleting another <ADMIN> LEVEL Admin", () => {
+      it(`Should NOT delete another Admin profile with and return a correct <${forbiddenAccessCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: ownerUserToken })
@@ -355,7 +365,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, deletedAdmin, error, errorMessages } = response.body as DeleteAdminProfileRes;
-            expect(response.status).to.equal(403);
+            expect(response.status).to.equal(forbiddenAccessCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -368,7 +378,6 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         try {
           const adminModelCount = await Admin.countDocuments();
           const userModelCount = await User.countDocuments();
-          //
           const queriedAdmin: IAdmin | null = await Admin.findOne({ email: secondOwnerUserEmail });
           //
           expect(adminModelCount).to.equal(numOfAdminModels);
@@ -380,9 +389,11 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
         }
       });
     });
-  });
-  // END TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA deleting another ADMIN LEVEL ADMIN //
+    // END TEST owner deleting another <owner> level admin //
   
+  });
+  // END TEST DELETE Admin profile delete WITH Login OWNER ADMIN - VALID DATA  //
+
   // TEST Cleanup //
   after(async () => {
     try {
