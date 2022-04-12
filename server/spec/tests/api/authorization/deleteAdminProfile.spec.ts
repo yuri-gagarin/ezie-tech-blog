@@ -243,6 +243,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
   
   // TEST CONTEXT Admin profile delete WITH Login <ADMIN> level admin logged in with valid data //
   context("Admin Profile - DELETE - Admin LOGGED IN - VALID DATA - <ADMIN> LEVEL Admin", () => {
+
     // TEST DELETE another <ADMIN> level Admin profile //
     describe("DELETE /api/delete_admin_profile - VALID FORM DATA -  <ADMIN> LEVEL Admin deleting another <ADMIN> LEVEL Admin", () => {
       it(`Should NOT delete other Admin profile  and return a correct <${forbiddenAccessCode}> response`, (done) => {
@@ -275,8 +276,41 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
       });
     });
     // END TEST DELETE another <ADMIN> level Admin profile //
-    
 
+    // TEST DELETE another <OWNER> level Admin profile //
+    describe("DELETE /api/delete_admin_profile - VALID FORM DATA -  <ADMIN> LEVEL Admin deleting another <OWNER> LEVEL Admin", () => {
+      it(`Should NOT delete other Admin profile  and return a correct <${forbiddenAccessCode}> response`, (done) => {
+        chai.request(server)
+          .delete("/api/delete_admin_profile")
+          .set({ Authorization: adminUserToken })
+          .send({ email: ownerUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            expect(response.status).to.equal(forbiddenAccessCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const queriedAdmin: IAdmin | null = await Admin.findOne({ email: ownerUserEmail });
+          //
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(queriedAdmin).to.not.be.null;
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST DELETE another <OWNER> level Admin profile //
+    
+    // TEST DELETE OWN <ADMIN> level Admin profile //
     describe("DELETE /api/delete_admin_profile - VALID FORM DATA - <ADMIN> Level Admin deleting own profile", () => {
       it(`Should CORRECTLY delete Admin profile with and return a correct <${successResCode}> response`, (done) => {
         chai.request(server)
