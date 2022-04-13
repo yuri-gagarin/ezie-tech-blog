@@ -1,5 +1,7 @@
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
+import cookie from "cookie";
+import parseHeaders from "parse-headers";
 // server //
 import { ServerInstance } from "../../../../src/server";
 // models //
@@ -320,13 +322,17 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, deletedAdmin, error, errorMessages } = response.body as DeleteAdminProfileRes;
+            const [ userIdCookie, jwtCookie ] = response.header['set-cookie'];
+            const parsedJWTCookie = cookie.parse(jwtCookie);
             expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
-            // proper logout cookes should be sent //
-            // add assertions //
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
-            expect(deletedAdmin).to.be.undefined; //
+            expect(deletedAdmin).to.be.undefined;
+            // logout token should be sent //
+            expect(parsedJWTCookie).to.be.an("object");
+            expect(parsedJWTCookie.JWTToken).to.be.a("string");
+            expect(parsedJWTCookie['Max-Age']).to.eq(0)
             done();
           });
       });
