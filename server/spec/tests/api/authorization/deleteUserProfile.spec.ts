@@ -30,6 +30,13 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   let regUserToken: string; let secondRegUserToken: string;
   //
   let numOfUserModels: number = 0; let numOfAdminModels: number = 0;
+  // status codes constants //
+  // response constants //
+  const successResCode: number = 200;
+  const badRequestResCode: number = 400;
+  const unauthorizedResCode: number = 401;
+  const forbiddenAccessCode: number = 403;
+  const notFoundAccessCode: number = 404;
 
   before(async () => {
     try {
@@ -59,8 +66,8 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
 
   // CONTEXT User profile delete no login //
   context("User Profile - DELETE - User NOT logged in", () => {
-    describe("DELETE /api/delete_user_profile - User Delete VALID data NOT logged in", () => {
-      it("Should NOT delete User profile with WITHOUT a login token and return a correct response", (done) => {
+    describe("DELETE /api/delete_user_profile - VALID DATA - USER NOT LOGGED IN", () => {
+      it(`Should NOT delete User profile with WITHOUT a login token and return a correct <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: "" })
@@ -68,14 +75,14 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(401);
+            expect(response.status).to.equal(unauthorizedResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete User profile with WITH and INCORRECT TOKEN SIGNATURE and return a correct response", (done) => {
+      it(`Should NOT delete User profile with WITH an INCORRECT TOKEN SIGNATURE and return a correct <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
@@ -83,7 +90,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(401);
+            expect(response.status).to.equal(unauthorizedResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -94,9 +101,11 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const queriedUser: IUser | null = await User.findOne({ email: regUserEmail });
           //
           expect(updatedNumOfUsers).to.equal(numOfUserModels);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(queriedUser).to.not.be.null;
         } catch (error) {
           throw error;
         }
@@ -106,10 +115,11 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   // END CONTEXT User proile delete no login //
 
   // TEST CONTEXT User profile delete WITH LOGIN invalid data //
-  context("User Profile - DELETE - User LOGGED IN - INVALID DATA", () => {
-    // invalid email //
+  context("User Profile - DELETE - User LOGGED IN - INVALID DATA - OWN PROFILE", () => {
+    // TEST invalid email fields //
     describe("DELETE /api/delete_user_profile - User Delete with an INVALID EMAIL field", () => {
-      it("Should NOT delete User profile with an INVALID EMAIL TYPE and return a correct response", (done) => {
+      // invalid email type //
+      it(`Should NOT delete User profile with an INVALID EMAIL TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: regUserToken })
@@ -117,14 +127,15 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete User profile with an EMPTY EMAIL FIELD and return a correct response", (done) => {
+      // empty email //
+      it(`Should NOT delete User profile with an EMPTY EMAIL FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: regUserToken })
@@ -139,7 +150,8 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
-      it("Should NOT delete User profile with an NON EXISTING EMAIL and return a correct response", (done) => {
+      // non existing email //
+      it(`Should NOT delete User profile with an NON EXISTING EMAIL and return a correct <${notFoundAccessCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: regUserToken })
@@ -166,9 +178,10 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         }
       });
     });
-    // invalid password //
+    // END TEST invalid email fields //
+    // TEST invalid password fields //
     describe("DELETE /api/delete_user_profile - User Delete with an INVALID PASSWORD field", () => {
-      it("Should NOT delete User profile with invalid PASSWORD TYPE and return a correct response", (done) => {
+      it(`Should NOT delete User profile with invalid PASSWORD TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: regUserToken })
@@ -176,14 +189,14 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete User profile with EMPTY PASSWORD field and return a correct response", (done) => {
+      it(`Should NOT delete User profile with EMPTY PASSWORD field and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
         .delete("/api/delete_user_profile")
         .set({ Authorization: regUserToken })
@@ -191,14 +204,14 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(400);
+            expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should NOT delete User profile with and INVALID PASSWORD field and return a correct response", (done) => {
+      it(`Should NOT delete User profile with and INVALID PASSWORD field and return a correct <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
         .delete("/api/delete_user_profile")
         .set({ Authorization: regUserToken })
@@ -206,7 +219,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(401);
+            expect(response.status).to.equal(unauthorizedResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -217,19 +230,22 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins: number = await Admin.countDocuments();
+          const queriedUser: IUser | null = await User.findOne({ email: regUserEmail });
           //
           expect(updatedNumOfUsers).to.equal(numOfUserModels);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(queriedUser).to.not.be.null;
         } catch (error) {
           throw error;
         }
       });
     });
+    // END TEST invalid password fields //
   });
   // END TEST CONTEXT User profile delete WITH LOGIN invalid data //
 
-  // CONTEXT LOGGED IN USER trying to delete another User's profile //
-  context("User Profile - DELETE - VALID DATA - Deleting other User's profile", () => {
+  // TEST CONTEXT LOGGED IN USER trying to delete another User's profile //
+  context("User Profile - DELETE - User LOGGED IN - VALID DATA", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
       it("Should NOT delete the User profile and return a correct error response", (done) => {
         chai.request(server)

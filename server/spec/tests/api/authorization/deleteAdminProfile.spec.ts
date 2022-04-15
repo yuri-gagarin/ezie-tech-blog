@@ -81,7 +81,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
             done();
           });
       });
-      it(`Should NOT delete Admin profile with WITH and INCORRECT TOKEN SIGNATURE and return a correct <${unauthorizedResCode}> response`, (done) => {
+      it(`Should NOT delete Admin profile with WITH an INCORRECT TOKEN SIGNATURE and return a correct <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
