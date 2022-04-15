@@ -22,12 +22,16 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   let server: Express;
   //
   let adminUser: IAdmin; let ownerAdminUser: IAdmin;
-  let regUser: IUser; let secondRegUser: IUser;
-  //
+  let readerUser: IUser; let secondReaderUser: IUser;
+  let contributorUser: IUser; let secondContributorUser: IUser;
+  // email strings //
   let adminUserEmail: string; let ownerUserEmail: string;
-  let regUserEmail: string; let secondRegUserEmail: string;
+  let readerUserEmail: string; let secondReaderUserEmail: string;
+  let contributorUserEmail: string; let secondContributorUserEmail: string;
+  // login tokens //
   let adminUserToken: string; let ownerUserToken: string;
-  let regUserToken: string; let secondRegUserToken: string;
+  let readerUserToken: string; let secondReaderUserToken: string;
+  let contributorUserToken: string; let secondContributorUserToken: string;
   //
   let numOfUserModels: number = 0; let numOfAdminModels: number = 0;
   // status codes constants //
@@ -43,7 +47,8 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       server = ServerInstance.getExpressServer();
       adminUser = (await generateMockAdmins(1, "admin"))[0];
       ownerAdminUser = (await generateMockAdmins(1, "owner"))[0];
-      ([ regUser, secondRegUser ] = await generateMockUsers({ number: 4, confirmed: true }));
+      ([ readerUser, secondReaderUser ] = await generateMockUsers({ number: 4, type: "READER", confirmed: true }));
+      ([ contributorUser, secondContributorUser ] = await generateMockUsers({ number: 4, type: "CONTRIBUTOR", confirmed: true }));
       // count models //
       numOfUserModels = await User.countDocuments();
       numOfAdminModels = await Admin.countDocuments();
@@ -55,12 +60,16 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   before(async () => {
     ({ email: adminUserEmail } = adminUser);
     ({ email: ownerUserEmail } = ownerAdminUser);
-    ({ email: regUserEmail } = regUser);
-    ({ email: secondRegUserEmail } = secondRegUser);
+    ({ email: readerUserEmail } = readerUser);
+    ({ email: secondReaderUserEmail } = secondReaderUser);
+    ({ email: contributorUserEmail } = contributorUser);
+    ({ email: secondContributorUserEmail } = secondContributorUser);
     // login tokens //
     ({ userJWTToken: adminUserToken } = await loginUser({ chai, server, email: adminUserEmail }));
-    ({ userJWTToken: regUserToken } = await loginUser({ chai, server, email: regUserEmail }));
-    ({ userJWTToken: secondRegUserToken } = await loginUser({ chai, server, email: secondRegUserEmail }));
+    ({ userJWTToken: readerUserToken } = await loginUser({ chai, server, email: readerUserEmail }));
+    ({ userJWTToken: secondReaderUserToken } = await loginUser({ chai, server, email: secondReaderUserEmail }));
+    ({ userJWTToken: contributorUserToken } = await loginUser({ chai, server, email: contributorUserEmail }));
+    ({ userJWTToken: secondContributorUserToken } = await loginUser({ chai, server, email: secondContributorUserEmail }));
   });
 
 
@@ -71,7 +80,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: "" })
-          .send({ email: regUserEmail, password: "password" })
+          .send({ email: readerUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -86,7 +95,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
-          .send({ email: regUserEmail, password: "password" })
+          .send({ email: readerUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -101,7 +110,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins: number = await Admin.countDocuments();
-          const queriedUser: IUser | null = await User.findOne({ email: regUserEmail });
+          const queriedUser: IUser | null = await User.findOne({ email: readerUserEmail });
           //
           expect(updatedNumOfUsers).to.equal(numOfUserModels);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
@@ -122,7 +131,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it(`Should NOT delete User profile with an INVALID EMAIL TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: regUserToken })
+          .set({ Authorization: readerUserToken })
           .send({ email: {}, password: "password" })
           .end((err, response) => {
             if(err) done(err);
@@ -138,7 +147,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it(`Should NOT delete User profile with an EMPTY EMAIL FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: regUserToken })
+          .set({ Authorization: readerUserToken })
           .send({ email: "", password: "password" })
           .end((err, response) => {
             if(err) done(err);
@@ -154,7 +163,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it(`Should NOT delete User profile with an NON EXISTING EMAIL and return a correct <${notFoundAccessCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: regUserToken })
+          .set({ Authorization: readerUserToken })
           .send({ email: "notexisting@email.com", password: "password" })
           .end((err, response) => {
             if(err) done(err);
@@ -184,8 +193,8 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it(`Should NOT delete User profile with invalid PASSWORD TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: regUserToken })
-          .send({ email: regUserEmail, password: {} })
+          .set({ Authorization: readerUserToken })
+          .send({ email: secondReaderUserEmail, password: {} })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -199,8 +208,8 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it(`Should NOT delete User profile with EMPTY PASSWORD field and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
         .delete("/api/delete_user_profile")
-        .set({ Authorization: regUserToken })
-        .send({ email: regUserEmail, password: "" })
+        .set({ Authorization: readerUserToken })
+        .send({ email: secondReaderUserEmail, password: "" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -214,8 +223,8 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it(`Should NOT delete User profile with and INVALID PASSWORD field and return a correct <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
         .delete("/api/delete_user_profile")
-        .set({ Authorization: regUserToken })
-        .send({ email: regUserEmail, password: "notavalidpassword" })
+        .set({ Authorization: readerUserToken })
+        .send({ email: secondReaderUserEmail, password: "notavalidpassword" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -230,7 +239,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins: number = await Admin.countDocuments();
-          const queriedUser: IUser | null = await User.findOne({ email: regUserEmail });
+          const queriedUser: IUser | null = await User.findOne({ email: readerUserEmail });
           //
           expect(updatedNumOfUsers).to.equal(numOfUserModels);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
@@ -250,8 +259,8 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       it("Should NOT delete the User profile and return a correct error response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: regUserToken })
-          .send({ email: secondRegUserEmail, password: "password" })
+          .set({ Authorization: readerUserToken })
+          .send({ email: secondReaderUserToken, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes;
@@ -278,14 +287,14 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   })
   // END CONTEXT LOGGED IN USER trying to delete another User's profile //
   
-  // CONTEXT User profile delete LOGGED IN and VALID DATA //
+  // TEST CONTEXT User profile delete LOGGED IN and VALID DATA Regular user //
   context("User Profile - DELETE - valid data - Deleting OWN profile", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
       it("Should CORRECTLY delete User profile and return a correct response", (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: regUserToken })
-          .send({ email: regUserEmail , password: "password" })
+          .set({ Authorization: readerUserToken })
+          .send({ email: readerUserEmail , password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
@@ -301,7 +310,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins = await Admin.countDocuments();
-          const deletedUser: IUser | null = await User.findOne({ email: regUserEmail }).exec();
+          const deletedUser: IUser | null = await User.findOne({ email: readerUserEmail }).exec();
           ///
           expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
@@ -323,7 +332,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: adminUserToken })
-          .send({ email: secondRegUserEmail, password: "password" })
+          .send({ email: secondReaderUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
@@ -339,7 +348,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins = await Admin.countDocuments();
-          const deletedUser: IUser | null = await User.findOne({ email: secondRegUserEmail }).exec();
+          const deletedUser: IUser | null = await User.findOne({ email: secondReaderUserEmail }).exec();
           ///
           expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
