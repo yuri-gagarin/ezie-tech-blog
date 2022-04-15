@@ -322,17 +322,21 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, deletedAdmin, error, errorMessages } = response.body as DeleteAdminProfileRes;
-            const [ userIdCookie, jwtCookie ] = response.header['set-cookie'];
-            const parsedJWTCookie = cookie.parse(jwtCookie);
             expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
             expect(deletedAdmin).to.be.undefined;
-            // logout token should be sent //
+            // logout cookie should be sent //
+            const [ _, jwtCookie ] = response.header['set-cookie'];
+            const parsedJWTCookie = cookie.parse(jwtCookie);
+            // current time for comparison ../
+            const currentTime: number = new Date().getTime();
+            const cookieExpiration: number = new Date(parsedJWTCookie.Expires as string).getTime();
             expect(parsedJWTCookie).to.be.an("object");
             expect(parsedJWTCookie.JWTToken).to.be.a("string");
-            expect(parsedJWTCookie['Max-Age']).to.eq(0)
+            expect(cookieExpiration).to.be.lessThanOrEqual(currentTime);
+            expect(parseInt(parsedJWTCookie['Max-Age'])).to.eq(0);
             done();
           });
       });
@@ -371,9 +375,15 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
             expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
             expect(deletedAdmin).to.be.an("object");
-            //
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
+            // logout cookie should not be sent //
+            expect(response.header["set-cookie"]).to.be.an("array");
+            expect(response.header["set-cookie"]).to.have.lengthOf(1);
+            //
+            const userIdCookie = cookie.parse(response.header["set-cookie"][0]);
+            expect(userIdCookie.uniqueUserId).to.be.a("string");
+            expect(userIdCookie.JWTToken).to.be.undefined;
             done();
           });
       });
@@ -410,8 +420,14 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
-            //
             expect(deletedAdmin).to.be.undefined; // deletedAdmin object should not be sent back if deleting own profile //
+            // logout cookie should not be sent //
+            expect(response.header["set-cookie"]).to.be.an("array");
+            expect(response.header["set-cookie"]).to.have.lengthOf(1);
+            //
+            const userIdCookie = cookie.parse(response.header["set-cookie"][0]);
+            expect(userIdCookie.uniqueUserId).to.be.a("string");
+            expect(userIdCookie.JWTToken).to.be.undefined;
             done();
           });
       });
@@ -444,10 +460,19 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
             const { responseMsg, deletedAdmin, error, errorMessages } = response.body as DeleteAdminProfileRes;
             expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
-            //
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
             expect(deletedAdmin).to.be.undefined; // deletedAdmin object should not be sent back if deleting own profile //
+            // logout cookie should be sent //
+            const [ _, jwtCookie ] = response.header['set-cookie'];
+            const parsedJWTCookie = cookie.parse(jwtCookie);
+            // current time for comparison ../
+            const currentTime: number = new Date().getTime();
+            const cookieExpiration: number = new Date(parsedJWTCookie.Expires as string).getTime();
+            expect(parsedJWTCookie).to.be.an("object");
+            expect(parsedJWTCookie.JWTToken).to.be.a("string");
+            expect(cookieExpiration).to.be.lessThanOrEqual(currentTime);
+            expect(parseInt(parsedJWTCookie['Max-Age'])).to.eq(0);
             done();
           });
       });
