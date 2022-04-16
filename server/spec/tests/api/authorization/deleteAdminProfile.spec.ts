@@ -248,7 +248,7 @@ describe("AuthController:deleteAdminProfile - Admin registration DELETE API test
 
     // TEST DELETE another <ADMIN> level Admin profile //
     describe("DELETE /api/delete_admin_profile - VALID FORM DATA -  <ADMIN> LEVEL Admin deleting another <ADMIN> LEVEL Admin", () => {
-      it(`Should NOT delete other Admin profile  and return a correct <${forbiddenAccessCode}> response`, (done) => {
+      it(`Should NOT delete other Admin profile and return a correct <${forbiddenAccessCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_admin_profile")
           .set({ Authorization: adminUserToken })

@@ -105,7 +105,7 @@ export const verifyUserProfileAccess = async (req: Request, res: Response, next:
     } else {
       // regular users can only delete their own accounts //
       if (loggedInUser.email !== email) {
-        return respondWithNotAllowedError(res, [ "Not allowed to change this profile" ]);
+        return respondWithNotAllowedError(res, [ "Not allowed to change this profile" ], 403);
       } else {
         next();
       }
