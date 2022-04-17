@@ -360,46 +360,45 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   });
   // END TEST CONTEXT LOGGED IN USER, <READER> level User DELETE API calls //
   
-  /*
-  // TEST CONTEXT User profile delete LOGGED IN and VALID DATA Regular user //
-  context("User Profile - DELETE - valid data - Deleting OWN profile", () => {
-    describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
-      it("Should CORRECTLY delete User profile and return a correct response", (done) => {
+  // TEST CONTEXT LOGGED IN USER, <CONTRIBUTOR> level - User DELETE API calls //
+  context("User Profile - DELETE - User LOGGED IN - VALID DATA - <CONTRIBUTOR> LEVEL User", () => {
+
+    // TEST DELETE another <READER> level User profile // 
+    describe("DELETE /api/delete_user_profile - VALID FORM DATA - <CONTRIBUTOR> LEVEL User deleting another <READER> LEVEL User", () => {
+      it(`Should NOT delete the User profile and return a correct <${forbiddenAccessCode}> error response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
-          .set({ Authorization: readerUserToken })
-          .send({ email: readerUserEmail , password: "password" })
+          .set({ Authorization: contributorUserToken })
+          .send({ email: secondReaderUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
-            expect(response.status).to.equal(200);
+            const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes;
+            expect(response.status).to.equal(forbiddenAccessCode);
             expect(responseMsg).to.be.a("string");
-            // 
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
             done();
           });
       });
-      it("Should DECREMENT the number of User models by 1 and correctly delete the queried User model", async () => {
+      it("Should NOT alter the number of <User> or <Admin< models", async () => {
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins = await Admin.countDocuments();
-          const deletedUser: IUser | null = await User.findOne({ email: readerUserEmail }).exec();
+          const queriedUser: IUser | null = await User.findOne({ email: secondReaderUserEmail });
           ///
-          expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
-          expect(deletedUser).to.be.null;
-          //
-          numOfUserModels = updatedNumOfUsers;
+          expect(queriedUser).to.not.be.null;
         } catch (error) {
           console.log(error);
         }
       });
     });
+    // END TEST DELETE another <READER> level User profile //
   });
-  // END CONTEXT User profile delete LOGGED IN and VALID DATA //
-  */
-  /*
+  // END TEST CONTEXT LOGGED IN USER, <CONTRIBUTOR> level - User DELETE API calls //
+  
+
   // CONTEXT User profile delete LOGGED IN ADMIN //
   context("User Profile - DELETE - valid data - ADMIN Deleting another User", () => {
     describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
@@ -437,7 +436,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
     });
   });
   // CONTEXT User profile delete LOGGED IN ADMIN //
-  */
+
   after(async () => {
     try {
       await Admin.deleteMany({});
