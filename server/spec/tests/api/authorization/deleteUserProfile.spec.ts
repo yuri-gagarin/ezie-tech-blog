@@ -395,6 +395,39 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       });
     });
     // END TEST DELETE another <READER> level User profile //
+
+    // TEST DELETE another <CONTRIBUTOR> level User profile // 
+    describe("DELETE /api/delete_user_profile - VALID FORM DATA - <CONTRIBUTOR> LEVEL User deleting another <CONTRIBUTOR> LEVEL User", () => {
+      it(`Should NOT delete the User profile and return a correct <${forbiddenAccessCode}> error response`, (done) => {
+        chai.request(server)
+          .delete("/api/delete_user_profile")
+          .set({ Authorization: contributorUserToken })
+          .send({ email: secondContributorUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes;
+            expect(response.status).to.equal(forbiddenAccessCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <User> or <Admin< models", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins = await Admin.countDocuments();
+          const queriedUser: IUser | null = await User.findOne({ email: secondContributorUserEmail });
+          ///
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(queriedUser).to.not.be.null;
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    });
+    // END TEST DELETE another <READER> level User profile //
   });
   // END TEST CONTEXT LOGGED IN USER, <CONTRIBUTOR> level - User DELETE API calls //
   
