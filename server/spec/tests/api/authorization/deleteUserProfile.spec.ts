@@ -427,7 +427,43 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         }
       });
     });
-    // END TEST DELETE another <READER> level User profile //
+    // END TEST DELETE another <CONTRIBUTOR> level User profile //
+
+    // TEST DELETE <CONRIBUTOR> Level User deleting own profile //
+    describe("DELETE /api/delete_user_profile -  VALID FORM DATA - <CONTRIBUTOR> LEVEL User deleting OWN profile", () => {
+      it(`Should CORRECTLY delete User profile and return a correct ${successResCode} response`, (done) => {
+        chai.request(server)
+          .delete("/api/delete_user_profile")
+          .set({ Authorization: secondContributorUserToken })
+          .send({ email: secondContributorUserEmail, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
+            expect(response.status).to.equal(200);
+            expect(responseMsg).to.be.a("string");
+            // 
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+      it("Should DECREMENT the number of User models by 1 and correctly delete the queried User model", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins = await Admin.countDocuments();
+          const deletedUser: IUser | null = await User.findOne({ email: secondContributorUserEmail }).exec();
+          ///
+          expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(deletedUser).to.be.null;
+          //
+          numOfUserModels = updatedNumOfUsers;
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    });
+    // END TEST DELETE <READER> Level User deleting own profile //
   });
   // END TEST CONTEXT LOGGED IN USER, <CONTRIBUTOR> level - User DELETE API calls //
   
