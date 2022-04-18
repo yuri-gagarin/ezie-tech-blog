@@ -12,7 +12,6 @@ import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
 import type { LoginRes } from "@/redux/_types/auth/dataTypes";
 import type { AdminData } from "@/redux/_types/generalTypes";
-import type { UserData } from "@/redux/_types/users/dataTypes";
 // helpers //
 import { generateMockAdmins, generateMockUsers } from "../../../../src/_helpers/mockDataGeneration";
 
