@@ -1,5 +1,6 @@
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
+import cookie from "cookie";
 // server //
 import { ServerInstance } from "../../../../src/server";
 // models //
@@ -335,9 +336,18 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
             expect(response.status).to.equal(200);
             expect(responseMsg).to.be.a("string");
-            // 
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
+            // logout cookie should be sent //
+            const [ _, jwtCookie ] = response.header['set-cookie'];
+            const parsedJWTCookie = cookie.parse(jwtCookie);
+            // current time for comparison ../
+            const currentTime: number = new Date().getTime();
+            const cookieExpiration: number = new Date(parsedJWTCookie.Expires as string).getTime();
+            expect(parsedJWTCookie).to.be.an("object");
+            expect(parsedJWTCookie.JWTToken).to.be.a("string");
+            expect(cookieExpiration).to.be.lessThanOrEqual(currentTime);
+            expect(parseInt(parsedJWTCookie['Max-Age'])).to.eq(0);
             done();
           });
       });
@@ -442,9 +452,18 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
             expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
-            // 
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
+            // logout cookie should be sent //
+            const [ _, jwtCookie ] = response.header['set-cookie'];
+            const parsedJWTCookie = cookie.parse(jwtCookie);
+            // current time for comparison ../
+            const currentTime: number = new Date().getTime();
+            const cookieExpiration: number = new Date(parsedJWTCookie.Expires as string).getTime();
+            expect(parsedJWTCookie).to.be.an("object");
+            expect(parsedJWTCookie.JWTToken).to.be.a("string");
+            expect(cookieExpiration).to.be.lessThanOrEqual(currentTime);
+            expect(parseInt(parsedJWTCookie['Max-Age'])).to.eq(0);
             done();
           });
       });
@@ -483,9 +502,15 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
             expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
-            // 
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
+            // logout cookie should not be sent //
+            expect(response.header["set-cookie"]).to.be.an("array");
+            expect(response.header["set-cookie"]).to.have.lengthOf(1);
+            //
+            const userIdCookie = cookie.parse(response.header["set-cookie"][0]);
+            expect(userIdCookie.uniqueUserId).to.be.a("string");
+            expect(userIdCookie.JWTToken).to.be.undefined;
             done();
           });
       });
@@ -519,9 +544,15 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
             expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
-            // 
             expect(error).to.be.undefined;
             expect(errorMessages).to.be.undefined;
+            // logout cookie should not be sent //
+            expect(response.header["set-cookie"]).to.be.an("array");
+            expect(response.header["set-cookie"]).to.have.lengthOf(1);
+            //
+            const userIdCookie = cookie.parse(response.header["set-cookie"][0]);
+            expect(userIdCookie.uniqueUserId).to.be.a("string");
+            expect(userIdCookie.JWTToken).to.be.undefined;
             done();
           });
       });
