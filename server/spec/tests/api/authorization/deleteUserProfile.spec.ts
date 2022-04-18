@@ -439,7 +439,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
-            expect(response.status).to.equal(200);
+            expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
             // 
             expect(error).to.be.undefined;
@@ -468,10 +468,11 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   // END TEST CONTEXT LOGGED IN USER, <CONTRIBUTOR> level - User DELETE API calls //
   
 
-  // CONTEXT User profile delete LOGGED IN ADMIN //
-  context("User Profile - DELETE - valid data - ADMIN Deleting another User", () => {
-    describe("DELETE /api/delete_user_profile - User Delete with with ALL VALID FIELDS", () => {
-      it("Should CORRECTLY delete User profile and return a correct response", (done) => {
+  // TEST CONTEXT User profile delete LOGGED IN ADMIN //
+  context("User Profile - DELETE - VALID DATA - Admin LOGGED IN - Deleting another User", () => {
+    // TEST DELETE Admin User <ADMIN> Level deleting a User Profile //
+    describe("DELETE /api/delete_user_profile - VALID FORM DATA - <ADMIN> LEVEL Admin deleting another User profile", () => {
+      it(`Should CORRECTLY delete User profile and return a correct <${successResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: adminUserToken })
@@ -479,7 +480,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
-            expect(response.status).to.equal(200);
+            expect(response.status).to.equal(successResCode);
             expect(responseMsg).to.be.a("string");
             // 
             expect(error).to.be.undefined;
@@ -503,8 +504,10 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         }
       });
     });
+    // END TEST DELETE Admin User <ADMIN> Level deleting a User Profile //
+
   });
-  // CONTEXT User profile delete LOGGED IN ADMIN //
+  // END TEST CONTEXT User profile delete LOGGED IN ADMIN //
 
   after(async () => {
     try {
