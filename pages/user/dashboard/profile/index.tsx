@@ -9,8 +9,8 @@ import { AuthActions } from '@/redux/actions/authActions';
 import { EditProfileModal } from "@/components/modals/EditProfileModal";
 import { ConfirmProfileDeleteModal } from "@/components/modals/ConfirmProfileDeleteModal";
 import { GenErrorModal } from "@/components/modals/GenErrorModal";
-// heplers //
-
+// helpers //
+import { UserDashHelpers } from "@/components/_helpers/displayHelpers";
 // styles //
 import styles from "@/styles/user/UserProfileIndex.module.css";
 // type imports //
@@ -30,8 +30,9 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // redux hooks and state //
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
-  const { responseMsg, currentUser, error, errorMessages } = authState;
-
+  const { responseMsg, error, errorMessages } = authState;
+  const currentUser: UserData = authState.currentUser as UserData || UserDashHelpers.defaultUserInfo;
+  console.log(currentUser)
   //
   const handleTriggerEditModal = (): void => {
     setEditModalOpen(!editModalOpen);
@@ -72,7 +73,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   return (
     <React.Fragment>
       <EditProfileModal
-        modalOpen={ true }
+        modalOpen={ editModalOpen }
         handleCloseModal={ handleTriggerEditModal }
         handleUpdateUserProfile={ handleUpdateUserProfile }
         handleTriggerModelDelete={ handleTriggerModelDelete }
@@ -80,7 +81,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
 
       />
       <ConfirmProfileDeleteModal 
-        modalOpen={ true }
+        modalOpen={ confirmDeleteProfileOpen }
         authState={ authState }
         handleCloseModal={ cancelProfileDelete }
         handleProfileDelete={ handleProfileDelete }

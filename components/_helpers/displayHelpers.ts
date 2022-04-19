@@ -1,10 +1,10 @@
 import type { BlogPostData } from "../../redux/_types/blog_posts/dataTypes";
 import type { IAuthState } from "@/redux/_types/auth/dataTypes";
+import { UserData } from "@/redux/_types/users/dataTypes";
 
 export const trimStringToSpecificLength = (stringToTrim: string, numOfChars?: number): string => {
   return `${stringToTrim.slice(0, numOfChars ? numOfChars : 10)}...`;
 };
-
 
 type FormatTimeStringOpts = {
   yearOnly?: boolean;
@@ -39,6 +39,7 @@ export const formatTimeString = (timeString: string, opts?: FormatTimeStringOpts
   }
 };
 
+// 
 export const setDefaultBlogPosts = (blogPostData: BlogPostData[]): BlogPostData[] => {
   const defaultPostData: BlogPostData[] = [];
   for (let i = 0; i < 4; i++) {
@@ -113,3 +114,23 @@ export const checkEmptyObjVals = (obj: AnyObj): boolean => {
     return true;
   }
 };
+
+
+// helpers related to users dashboard //
+export class UserDashHelpers {
+  private static readonly MOCK_OBJECT_ID: string = "625ee6f484359c25844ab1b7";
+
+  public static get defaultUserInfo(): UserData {
+    console.log("ran getter")
+    return {
+      _id: this.MOCK_OBJECT_ID,
+      firstName: "John",
+      lastName: "Doe",
+      email: "john_doe@email.com",
+      userType: "READER",
+      confirmed: true,
+      editedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    }
+  }
+}

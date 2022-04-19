@@ -82,6 +82,7 @@ describe("AdminsController:Delete DELETE API tests", function() {
     }
   });
   // CONTEXT client no Login //
+  // NO LOGIN //
   context(("Guest Client - NOT Logged in"), function() {
     let regAdminId: string;
 
