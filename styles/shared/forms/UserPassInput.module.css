@@ -1,0 +1,9 @@
+.inputLabel {
+  display: inline-flex;
+  background-color: var(--twitter-blue);
+  justify-content: center;
+  align-items: center;
+  color: white;
+  width: 200px;
+  padding-left: 2em;
+}

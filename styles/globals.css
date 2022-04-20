@@ -25,6 +25,7 @@ a {
   --header-purple-hue: #8E2DE2;
   --header-violet-dark-hue: #61045F;
   --header-violet-light-hue: #AA076B;
+  --twitter-blue: #1DA1F2;
 }
 
 :global(.dimmed.dimmable > .ui.modals.dimmer.visible) {

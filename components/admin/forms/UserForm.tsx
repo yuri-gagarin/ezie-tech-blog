@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Dropdown, Form, Icon, Radio } from 'semantic-ui-react';
 // additional components //
 import { AdminUserNav } from "@/components/admin/users/AdminUsersNav";
-import { UserPassInput } from "@/components/admin/forms/UserPassInput";
+import { UserPassInput } from "@/components/shared/forms/UserPassInput";
 // styles //
 import styles from "@/styles/admin/forms/UserForm.module.css";
 // types //
@@ -11,7 +11,7 @@ import type { DropdownItemProps, DropdownProps } from "semantic-ui-react";
 // helpers //
 import { checkEmptyObjVals } from "@/components/_helpers/displayHelpers"
 import { UserActions } from '@/redux/actions/userActions';
-import { UserPassGenerator } from './UserPassGenerator';
+import { UserPassGenerator } from '../../shared/forms/UserPassGenerator';
 
 interface IUserFormProps {
   usersState: IUserState;

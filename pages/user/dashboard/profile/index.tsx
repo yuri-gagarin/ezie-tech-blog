@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Card, Grid, Label, Segment } from "semantic-ui-react";
+import { Button, Grid, Form, Label, Segment } from "semantic-ui-react";
 // next imports //
 import { useRouter } from "next/router";
 // redux imports //
@@ -9,6 +9,7 @@ import { AuthActions } from '@/redux/actions/authActions';
 import { EditProfileModal } from "@/components/modals/EditProfileModal";
 import { ConfirmProfileDeleteModal } from "@/components/modals/ConfirmProfileDeleteModal";
 import { GenErrorModal } from "@/components/modals/GenErrorModal";
+import { UserPassInput} from "@/components/shared/forms/UserPassInput";
 // helpers //
 import { UserDashHelpers } from "@/components/_helpers/displayHelpers";
 // styles //
@@ -18,7 +19,7 @@ import type { Dispatch } from "redux";
 import type { IGeneralState } from '@/redux/_types/generalTypes';
 import type { UserData, UserFormData } from "@/redux/_types/users/dataTypes";
 import type { UserAction } from '@/redux/_types/users/actionTypes';
-import { AuthAction } from '@/redux/_types/auth/actionTypes';
+import type { AuthAction } from '@/redux/_types/auth/actionTypes';
 
 interface IUserProfileIndexProps {
 }
@@ -44,7 +45,17 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const handleTriggerModelDelete = (): void => {
 
   };
+  // END User update functionality //
+  // Password update change listeners //
 
+  // End Password update change listeners //
+  const handlePassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+
+  };
+  const handleeConfirmPassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+
+  };
+  // REDUX dispatches //
   const handleUpdateUserProfile = async (formData: UserFormData) => {
     const { _id: userId } = currentUser;
     const { authToken: JWTToken } = authState;
@@ -116,6 +127,12 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
             <Label className={ styles.userContentLabel }>Registered:</Label><span>{ currentUser.createdAt }</span>
           </div>
           <Button content="Change Password" />
+          <Form>
+            <UserPassInput 
+              handlePassChange={ handlePassChange }
+              handleConfirmPassChange={ handleeConfirmPassChange }
+            />
+          </Form>
         </Segment>
       </Grid.Row>
     </React.Fragment>
