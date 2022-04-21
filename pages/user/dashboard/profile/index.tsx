@@ -21,6 +21,18 @@ import type { UserData, UserFormData } from "@/redux/_types/users/dataTypes";
 import type { UserAction } from '@/redux/_types/users/actionTypes';
 import type { AuthAction } from '@/redux/_types/auth/actionTypes';
 
+// 
+type EditPasswordState = {
+  componentOpen: boolean;
+  password: {
+    value: string;
+    errorMsg: string | null;
+  };
+  passwordConfirm:{
+    value: string;
+    errorMsg: string | null;
+  };
+}
 interface IUserProfileIndexProps {
 }
 
@@ -28,12 +40,12 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // local component state //
   const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
   const [ confirmDeleteProfileOpen, setConfirmDeleteProfileOpen ] = React.useState<boolean>(false);
+  const [ editPasswordState, setEditPasswordState ] = React.useState<EditPasswordState>({ componentOpen: true, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: null } }); 
   // redux hooks and state //
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
   const { responseMsg, error, errorMessages } = authState;
   const currentUser: UserData = authState.currentUser as UserData || UserDashHelpers.defaultUserInfo;
-  console.log(currentUser)
   //
   const handleTriggerEditModal = (): void => {
     setEditModalOpen(!editModalOpen);
@@ -46,15 +58,25 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
 
   };
   // END User update functionality //
+
   // Password update change listeners //
-
-  // End Password update change listeners //
   const handlePassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-
+    console.log(e.currentTarget.value)
+    if (e.currentTarget.value.length === 0) {
+      setEditPasswordState({ ...editPasswordState, password: { value: e.currentTarget.value, errorMsg: "Field cannot be empty" } });
+    } else {
+      setEditPasswordState({ ...editPasswordState, password: { value: e.currentTarget.value, errorMsg: null } });
+    }
   };
-  const handleeConfirmPassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-
+  const handleConfirmPassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.currentTarget.value.length === 0) {
+      setEditPasswordState({ ...editPasswordState, passwordConfirm: { value: e.currentTarget.value, errorMsg: "Field cannot be empty" } });
+    } else {
+      setEditPasswordState({ ...editPasswordState, passwordConfirm: { value: e.currentTarget.value, errorMsg: null } });
+    }
   };
+  // End Password update change listeners //
+
   // REDUX dispatches //
   const handleUpdateUserProfile = async (formData: UserFormData) => {
     const { _id: userId } = currentUser;
@@ -130,7 +152,9 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
           <Form>
             <UserPassInput 
               handlePassChange={ handlePassChange }
-              handleConfirmPassChange={ handleeConfirmPassChange }
+              handleConfirmPassChange={ handleConfirmPassChange }
+              passwordErrMsg={ editPasswordState.password.errorMsg }
+              passwordConfErrMsg={ editPasswordState.passwordConfirm.errorMsg }
             />
           </Form>
         </Segment>

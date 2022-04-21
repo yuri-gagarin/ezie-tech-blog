@@ -3,22 +3,29 @@ import { Form, Icon, Input, Label } from 'semantic-ui-react';
 // styles //
 import styles from "@/styles/shared/forms/UserPassInput.module.css";
 
+// Local types and interfaces //
+type UserPassErrorState = {
+  passwordErrorText: string | null;
+  passwordConfirmErrorText: string | null;
+}
 interface IUserPassInputProps {
   changePassword?: boolean;
   handleOldPassChange?: React.ChangeEventHandler<HTMLInputElement>;
   handlePassChange: React.ChangeEventHandler<HTMLInputElement>;
   handleConfirmPassChange: React.ChangeEventHandler<HTMLInputElement>;
+  passwordErrMsg?: string | null;
+  passwordConfErrMsg?: string | null;
 }
+//
 
-export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ changePassword, handleOldPassChange, handlePassChange, handleConfirmPassChange }) => {
-  
-  const passInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ changePassword, handleOldPassChange, handlePassChange, handleConfirmPassChange, passwordErrMsg, passwordConfErrMsg }): JSX.Element => {
 
-  };
-  const passConfirmInputChange= (e: React.ChangeEvent<HTMLInputElement>): void => {
 
-  };
+  React.useEffect(() => {
 
+    console.log("Pass error: ", passwordConfErrMsg);
+    console.log("Pass confirm error: ", passwordConfErrMsg);
+  }, [ passwordErrMsg, passwordConfErrMsg ]);
   return (
     <React.Fragment>
       {
@@ -31,19 +38,21 @@ export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ ch
       <Form.Group className={ styles.passInputGroup }>
         <label className={ styles.inputLabel }>{ changePassword ? "New Password:" : "Password:"}</label>
         <Form.Input
-          error={{ content: "Field cannot be blank", pointing: "below" }} 
+          error={ passwordErrMsg ? { content: passwordErrMsg, pointing: "below" } : false } 
           icon="lock"
           onChange={ handlePassChange } 
           type="password"
+          placeholder={ "New Password" }
         />
       </Form.Group>
       <Form.Group className={ styles.passInputGroup }>
       <label className={ styles.inputLabel }>{ changePassword ? "Confirm New Password:" : "Confirm Password:" }</label>
         <Form.Input
-          error={{ content: "Field cannot be blank", pointing: 'below' }}
+          error={ passwordConfErrMsg ? { content: passwordConfErrMsg, pointing: "below" } : false }
           icon="lock"
           onChange={ handleConfirmPassChange } 
           type="password"
+          placeholder={ "New Password" }
         />
       </Form.Group>
     </React.Fragment>     
