@@ -148,8 +148,33 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
           <div>
             <Label className={ styles.userContentLabel }>Registered:</Label><span>{ currentUser.createdAt }</span>
           </div>
-          <Button content="Change Password" />
-          <Form>
+          <div className={ styles.passChangeControls }>
+            {
+              editPasswordState.componentOpen 
+              ?
+              <Button.Group className={ styles.passChangeBtns }>
+                <Button 
+                  icon="save" 
+                  color="green" 
+                  content="Update Password" 
+                />
+                <Button 
+                  basic 
+                  icon="cancel" 
+                  color="orange" 
+                  content="Cancel" 
+                />
+              </Button.Group>
+              :
+              <Button 
+                basic 
+                icon="lock"
+                color="facebook"
+                content="Change Password" 
+              />
+            }
+          </div>
+          <Form className={ styles.passChangeForm }>
             <UserPassInput 
               handlePassChange={ handlePassChange }
               handleConfirmPassChange={ handleConfirmPassChange }

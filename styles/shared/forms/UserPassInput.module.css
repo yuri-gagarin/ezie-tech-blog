@@ -1,9 +1,27 @@
-.inputLabel {
+.passInputGroup {
+  border: 2px solid red !important;
+}
+
+.passInputLabel {
   display: inline-flex;
   background-color: var(--twitter-blue);
   justify-content: center;
   align-items: center;
   color: white;
-  width: 200px;
-  padding-left: 2em;
+  width: 100%;
+  padding: 0.5em 2em;
+  margin: 0 0.5em;
+}
+.passInput {
+  width: 100%;
+}
+
+
+@media screen and (min-width: 551px) {
+  .passInputLabel {
+    width: 200px;
+  }
+  .passInput {
+    width: 300px;
+  }
 }

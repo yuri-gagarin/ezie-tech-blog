@@ -20,12 +20,6 @@ interface IUserPassInputProps {
 
 export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ changePassword, handleOldPassChange, handlePassChange, handleConfirmPassChange, passwordErrMsg, passwordConfErrMsg }): JSX.Element => {
 
-
-  React.useEffect(() => {
-
-    console.log("Pass error: ", passwordConfErrMsg);
-    console.log("Pass confirm error: ", passwordConfErrMsg);
-  }, [ passwordErrMsg, passwordConfErrMsg ]);
   return (
     <React.Fragment>
       {
@@ -36,8 +30,9 @@ export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ ch
         </Form.Field>
       }
       <Form.Group className={ styles.passInputGroup }>
-        <label className={ styles.inputLabel }>{ changePassword ? "New Password:" : "Password:"}</label>
+        <label className={ styles.passInputLabel }>{ changePassword ? "New Password:" : "Password:"}</label>
         <Form.Input
+          className={ styles.passInput }
           error={ passwordErrMsg ? { content: passwordErrMsg, pointing: "below" } : false } 
           icon="lock"
           onChange={ handlePassChange } 
@@ -46,8 +41,9 @@ export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ ch
         />
       </Form.Group>
       <Form.Group className={ styles.passInputGroup }>
-      <label className={ styles.inputLabel }>{ changePassword ? "Confirm New Password:" : "Confirm Password:" }</label>
+      <label className={ styles.passInputLabel }>{ changePassword ? "Confirm New Password:" : "Confirm Password:" }</label>
         <Form.Input
+          className={ styles.passInput }
           error={ passwordConfErrMsg ? { content: passwordConfErrMsg, pointing: "below" } : false }
           icon="lock"
           onChange={ handleConfirmPassChange } 
