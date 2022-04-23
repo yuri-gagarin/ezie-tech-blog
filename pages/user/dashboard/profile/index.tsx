@@ -176,6 +176,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
           </div>
           <Form className={ styles.passChangeForm }>
             <UserPassInput 
+              changePassword={ true }
               handlePassChange={ handlePassChange }
               handleConfirmPassChange={ handleConfirmPassChange }
               passwordErrMsg={ editPasswordState.password.errorMsg }

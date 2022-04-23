@@ -14,21 +14,24 @@
 
 /* */
 .passChangeControls {
-  border: 2px solid salmon;
-  padding: 0 1em;
+  border-top: 2px solid lightblue;
+  padding: 1em 1em 0 1em;  
 }
 .passChangeBtns {
-  border: 3px solid green;
   width: 100%;
 }
 
 /* */
 .passChangeForm {
-  padding: 1em;
+  padding: 2em 1em;
 }
 
 @media screen and (min-width: 551px) {
   .userContentLabel {
     width: 100%;
+  }
+
+  .passChangeBtns {
+    width: 550px;
   }
 }
