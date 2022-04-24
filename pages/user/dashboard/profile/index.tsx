@@ -78,6 +78,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // End Password update change listeners //
 
   // REDUX dispatches //
+  // Update User Profile //
   const handleUpdateUserProfile = async (formData: UserFormData) => {
     const { _id: userId } = currentUser;
     const { authToken: JWTToken } = authState;
@@ -87,6 +88,10 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
       AuthActions.handleAuthError(dispatch, error);
     }
   }
+  // Change User Password //
+  const handleUpdateUserPassword = async (): Promise<void> => {
+
+  };
 
   const handleDismissErrorModal = (): void => {
 

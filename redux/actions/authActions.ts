@@ -7,7 +7,7 @@ import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg
 // data types //
 import type { AdminData } from "../_types/generalTypes";
 import type { UserData, UserFormData } from "../_types/users/dataTypes";
-import type { LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
+import type { IAuthState, LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
 import type { EditUserRes } from "../_types/users/dataTypes";
 // helpers //
 import { processAxiosError } from '../_helpers/dataHelpers';
@@ -162,6 +162,23 @@ export class AuthActions {
 
   public static dismissAuthError = (dispatch: Dispatch<AuthAction>): AuthErrorDismiss => {
     return dispatch({ type: "AuthErrorDismiss", payload: { error: null, errorMessages: null }});
+  }
+
+  public static handleUpdateUserPassword = (dispatch: Dispatch<AuthAction>, data: { oldPassword: string, newPassword: string; authState: IAuthState }): Promise<void> => {
+    const { oldPassword, newPassword, authState } = data;
+    const axiosOpts: AxiosRequestConfig = {
+      method: "PATCH",
+      url: "/api/update_user_password",
+      data: { oldPassword, newPassword }
+    };
+
+    dispatch({ type: "AuthAPIRequest", payload: { loading: true } });
+
+    try {
+      
+    } catch (error) {
+
+    }
   }
 };
 
