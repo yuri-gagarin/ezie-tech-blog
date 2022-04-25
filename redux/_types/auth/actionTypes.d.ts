@@ -13,6 +13,24 @@ export type ProfileAPIRequest = {
     loading: boolean;
   };
 };
+export type UpdateUserPassword = {
+  readonly type: "UpdateUserPassword";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    currentUser: UserData;
+  };
+};
+export type UpdateAdminPassword = {
+  readonly type: "UpdateAdminPassword";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    currentUser: AdminData;
+  };
+}
 export type UpdateUserProfile = {
   readonly type: "UpdateUserProfile";
   readonly payload: {
@@ -116,7 +134,7 @@ export type AuthErrorDismiss = {
 };
 
 export type AuthAction = (
-  AuthAPIRequest | ProfileAPIRequest | UpdateUserProfile | UpdateAdminProfile | 
+  AuthAPIRequest | ProfileAPIRequest | UpdateUserProfile | UpdateAdminProfile | UpdateAdminPassword | UpdateUserPassword |
   AuthLoginSuccess | AuthRegisterSuccess | AuthLogoutSuccess | ClearLoginMsg | ClearLoginState | AuthFailure | AuthErrorDismiss
 );
 

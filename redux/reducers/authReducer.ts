@@ -21,6 +21,22 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         loading: action.payload.loading
       };
     }
+    case "UpdateAdminPassword": {
+      return {
+        ...state,
+        ...action.payload,
+        error: null,
+        errorMessages: null
+      };
+    }
+    case "UpdateUserPassword": {
+      return {
+        ...state,
+        ...action.payload,
+        error: null,
+        errorMessages: null
+      };
+    }
     case "UpdateUserProfile": {
       return {
         ...state,
