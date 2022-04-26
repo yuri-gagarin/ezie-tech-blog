@@ -3,12 +3,12 @@ import axios from "../../components/axios/axiosInstance";
 import type { Dispatch } from "redux";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 // actions types //
-import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState } from "../_types/auth/actionTypes";
+import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState, UpdateUserPassword } from "../_types/auth/actionTypes";
 // data types //
 import type { AdminData } from "../_types/generalTypes";
 import type { UserData, UserFormData } from "../_types/users/dataTypes";
 import type { IAuthState, LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
-import type { EditUserRes } from "../_types/users/dataTypes";
+import type { EditUserRes, EditUserPassRes } from "../_types/users/dataTypes";
 // helpers //
 import { processAxiosError } from '../_helpers/dataHelpers';
 import { AdminFormData, EditAdminRes } from "../_types/admins/dataTypes";
@@ -164,20 +164,24 @@ export class AuthActions {
     return dispatch({ type: "AuthErrorDismiss", payload: { error: null, errorMessages: null }});
   }
 
-  public static handleUpdateUserPassword = (dispatch: Dispatch<AuthAction>, data: { oldPassword: string, newPassword: string; authState: IAuthState }): Promise<void> => {
+  public static handleUpdateUserPassword = async (dispatch: Dispatch<AuthAction>, data: { oldPassword: string, newPassword: string; authState: IAuthState }): Promise<UpdateUserPassword> => {
     const { oldPassword, newPassword, authState } = data;
     const axiosOpts: AxiosRequestConfig = {
       method: "PATCH",
-      url: "/api/update_user_password",
+      url: "/api/users/update_user_password",
       data: { oldPassword, newPassword }
     };
 
     dispatch({ type: "AuthAPIRequest", payload: { loading: true } });
 
     try {
-      
+      const { status, data }: AxiosResponse<EditUserPassRes> = await axios(axiosOpts);
+      const { responseMsg, editedUser: currentUser } = data;
+      return dispatch({
+        type: "UpdateUserPassword", payload: { status, responseMsg, currentUser, loading: false  }
+      })
     } catch (error) {
-
+      throw error;
     }
   }
 };
