@@ -39,6 +39,10 @@ export type UsersEditRes = {
   responseMsg: string;
   editedUser: UserData;
 };
+export type UsersUpdatePassRes = {
+  responseMsg: string;
+  editedUser: UserData;
+};
 export type UsersDeleteRes = {
   responseMsg: string;
   deletedUser: UserData;

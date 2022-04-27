@@ -5,7 +5,7 @@ import Admin, { IAdmin } from "../models/Admin";
 // types //
 import type { Request, Response } from "express";
 import type { ICRUDController } from "../_types/abstracts/DefaultController";
-import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes, ReqUserData } from "../_types/users/userTypes";
+import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes, ReqUserData, UsersUpdatePassRes } from "../_types/users/userTypes";
 // helpers validators //
 import { validateUserData, validateUniqueEmail, validateEditEmail } from "./_helpers/validationHelpers";
 
@@ -122,6 +122,29 @@ export default class UsersController extends BasicController implements ICRUDCon
       }
     } catch (error) {
       return await this.generalErrorResponse(res, { error });
+    }
+  }
+
+  // only Admins level users OR Users editing own model should be able to edit password //
+  // middleware to check edit rights run before controller action //
+  updeteUserPassword = async (req: Request, res: Response<UsersUpdatePassRes>): Promise<Response> => {
+    const { newPassword, oldPassword } = req.body as { newPassword?: string; oldPassword?: string; };
+
+    // validate password //
+
+    try {
+      const updatedUser = await User.findOneAndUpdate({ password: newPassword }).exec();
+      if (updatedUser) {
+        const editedUser = updatedUser.toObject();
+        delete editedUser.password;
+        return res.status(200).json({
+          responseMsg: "Changed password", editedUser
+        });
+      } else {
+        return await this.notFoundErrorResponse(res, [ "Could not resolve queried User model to update" ]);
+      }
+    } catch (error) {
+
     }
   }
   // only Admis level users OR Users deleting own model should be able to delete //
