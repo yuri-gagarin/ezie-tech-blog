@@ -127,7 +127,7 @@ export default class UsersController extends BasicController implements ICRUDCon
 
   // only Admins level users OR Users editing own model should be able to edit password //
   // middleware to check edit rights run before controller action //
-  updeteUserPassword = async (req: Request, res: Response<UsersUpdatePassRes>): Promise<Response> => {
+  updateUserPassword = async (req: Request, res: Response<UsersUpdatePassRes>): Promise<Response> => {
     const { newPassword, oldPassword } = req.body as { newPassword?: string; oldPassword?: string; };
 
     // validate password //

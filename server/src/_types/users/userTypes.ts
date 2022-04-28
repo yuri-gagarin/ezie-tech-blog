@@ -23,6 +23,15 @@ export type UserData = {
   editedAt?: Date;
   createdAt?: Date;
 };
+
+// client request data types //
+export type UpdateUserPassReqData = {
+  oldPassword?: string;
+  newPassword?: string;
+  userId?: string;
+};
+
+// UsersController.ts response types //
 export type UsersIndexRes = {
   responseMsg: string;
   users: UserData[];

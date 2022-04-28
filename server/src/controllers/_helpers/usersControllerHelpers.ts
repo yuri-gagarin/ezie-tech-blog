@@ -3,6 +3,7 @@ import User from "../../models/User";
 //
 import { respondWithNoModelIdError, respondWithNotAllowedError } from "./generalHelpers";
 // types //
+import type { UpdateUserPassReqData } from "../../_types/users/userTypes";
 import type { Request, Response, NextFunction } from "express";
 import type { IAdmin } from "../../models/Admin";
 import type { IUser } from "../../models/User";
@@ -31,3 +32,19 @@ export const verifyUsersModelAccess = async (req: Request, res: Response, next: 
     return respondWithNotAllowedError(res, [ "Could not resolve logged in Users data" ]);
   }
 };
+
+export const userPasswordChangeMiddleware = async (req: Request<{}, {}, UpdateUserPassReqData>, res: Response, next: NextFunction) => {
+  const { oldPassword, newPassword, userId } = req.body;
+  const currentUser = req.user as IAdmin | IUser;
+  if (currentUser) {
+    if (currentUser instanceof Admin) {
+      // admin should be able to set a new password w/o old, only <newPassword> and <userId> fields are needed //
+      const { } = val
+    } else {
+      // regular user //
+    }
+  } else {
+    return respondWithNotAllowedError(res, [ "Could not resolve logged in Users data" ]);
+  }
+  // validate data sent in first //
+}
