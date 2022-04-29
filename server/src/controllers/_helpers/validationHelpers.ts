@@ -12,49 +12,43 @@ export type ValidationRes = {
   errorMessages: string[];
 };
 
-export const validatePasswordChangeData = ({ newPassword, confirmNewPassword, oldPassword }: PasswordChangeData, adminUser?: boolean): ValidationRes => {
-  const errorMessages: string[] = [];
-  if (adminUser) { 
-    // admin user doesnt need an <oldPassword> field //
-    if (newPassword) {
-      if ()
-    } else {
-
-    }
-    if (confirmNewPassword) {
-
-    } else {
-
+export const validatePasswordChangeData = ({ newPassword, confirmNewPassword, oldPassword }: PasswordChangeData, opts?: { oldPassRequired?: boolean; }): ValidationRes => {
+  const res: ValidationRes = { valid: true, errorMessages: [] };
+  // newPassword field must be truthy and be a valid string // 
+  if (newPassword) {
+    if (typeof newPassword !== "string") {
+      res.errorMessages.push("Invalid data type for New Password field");
     }
   } else {
-    // 
-    if (!newPassword) {
-      errorMessages.push("Please enter the new password");
+    res.errorMessages.push("New Password field is required.")
+  }
+  // confirmNewPassword field must be truthy and be a valid string //
+  if (confirmNewPassword) {
+    if (typeof confirmNewPassword !== "string") {
+      res.errorMessages.push("Invalid data type for Confirm New Password field");
     }
-    if (!confirmNewPassword) {
-      errorMessages.push("Please confirm the new password");
-    }
-    if (!oldPassword) {
-      errorMessages.push("Please enter your old password");
-    }
-    // confirm valid data and types //
-    if (newPassword && typeof newPassword !== "string") {
-      errorMessages.push("Wrong data type for new password");
-    }
-    if (confirmNewPassword && typeof confirmNewPassword !== "string") {
-      errorMessages.push("Wrong data type for new password confirm");
-    }
-    if (oldPassword && typeof oldPassword !== "string") {
-      errorMessages.push("Wrong type of data type for old password");
-    }
-    // confirm matching new passwords //
-    if (newPassword && confirmNewPassword) {
-      if (newPassword !== confirmNewPassword) {
-        errorMessages.push("New passwords do not match");
-      }
+  } else {
+    res.errorMessages.push("Confirm New Password field is required.")
+  }
+  // confirm matching new passwords //
+  if (newPassword && confirmNewPassword) {
+    if (newPassword !== confirmNewPassword) {
+      res.errorMessages.push("Passwords do not match");
     }
   }
-  return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
+  // if an authorized admin user is resetting another users password old password is not needed //
+  // otherswise if <opts.oldPassRequired>, Old Password filed is required //
+  if (opts && opts.oldPassRequired) {
+    // oldPasswrod field must be truthy and be a valid string //
+    if (oldPassword) {
+      if (typeof oldPassword !== "string") {
+        res.errorMessages.push("Invalid data type for Current Password field");
+      }
+    } else {
+      res.errorMessages.push("Your current password is required");
+    }
+  }
+  return res.errorMessages.length > 0 ? { valid: false, errorMessages: [ ...res.errorMessages] } : { valid: true, errorMessages: [] };
 };
 
 export const validateRegistrationData = (data: { email?: string; password?: string; confirmPassword?: string; }): ValidationResponse => {
