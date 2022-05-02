@@ -1,12 +1,13 @@
 import Admin from "../../models/Admin";
 import User from "../../models/User";
 //
-import { respondWithNoModelIdError, respondWithNotAllowedError } from "./generalHelpers";
+import { respondWithNoModelIdError, respondWithNotAllowedError, respondWithWrongInputError } from "./generalHelpers";
 // types //
 import type { UpdateUserPassReqData } from "../../_types/users/userTypes";
 import type { Request, Response, NextFunction } from "express";
 import type { IAdmin } from "../../models/Admin";
 import type { IUser } from "../../models/User";
+import { validatePasswordChangeData } from "./validationHelpers";
 
 export const verifyUsersModelAccess = async (req: Request, res: Response, next: NextFunction) => {
   const { user_id } = req.params;
@@ -34,14 +35,22 @@ export const verifyUsersModelAccess = async (req: Request, res: Response, next: 
 };
 
 export const userPasswordChangeMiddleware = async (req: Request<{}, {}, UpdateUserPassReqData>, res: Response, next: NextFunction) => {
-  const { oldPassword, newPassword, userId } = req.body;
+  const { oldPassword, newPassword, confirmNewPassword, userId } = req.body;
   const currentUser = req.user as IAdmin | IUser;
   if (currentUser) {
     if (currentUser instanceof Admin) {
-      // admin should be able to set a new password w/o old, only <newPassword> and <userId> fields are needed //
-      const { } = val
+      // admin should be able to set a new password w/o old, only <newPassword> <confirmNewPassword> and <userId> fields are needed //
+      const { valid, errorMessages } = validatePasswordChangeData({ newPassword, confirmNewPassword });
+      if (!valid) return respondWithWrongInputError(res, { responseMsg: "Invalid input", customMessages: errorMessages });
+      next();
     } else {
       // regular user //
+      // can only edit password on its own model //
+      // can only edit password if <newPassword> <confirmNewPassword> <oldPassword> and <userId> fields are present and <oldPassword> is correct //
+      const { _id: loggedInUserId } = currentUser;
+      const { valid, errorMessages } = validatePasswordChangeData({ newPassword, confirmNewPassword, oldPassword}, { oldPassRequired: true });
+      if (!valid) return respondWithWrongInputError(res, { responseMsg: "Invalid input", customMessages: errorMessages });
+
     }
   } else {
     return respondWithNotAllowedError(res, [ "Could not resolve logged in Users data" ]);

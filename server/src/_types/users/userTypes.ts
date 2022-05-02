@@ -28,6 +28,7 @@ export type UserData = {
 export type UpdateUserPassReqData = {
   oldPassword?: string;
   newPassword?: string;
+  confirmNewPassword?: string;
   userId?: string;
 };
 
