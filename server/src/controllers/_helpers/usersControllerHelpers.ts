@@ -50,7 +50,22 @@ export const userPasswordChangeMiddleware = async (req: Request<{}, {}, UpdateUs
       const { _id: loggedInUserId } = currentUser;
       const { valid, errorMessages } = validatePasswordChangeData({ newPassword, confirmNewPassword, oldPassword}, { oldPassRequired: true });
       if (!valid) return respondWithWrongInputError(res, { responseMsg: "Invalid input", customMessages: errorMessages });
-
+      // check logged in users credentails to change the password //
+      const foundUser: IUser | null = await User.findOne({ _id: loggedInUserId }).exec();
+      if (foundUser) {
+        // validate correct user password //
+        const validPassword: boolean = await foundUser.validPassword(oldPassword);
+        if (validPassword) {
+          // user can change the password, next() // 
+          next();
+        } else {
+          const customMessages: string[] = [ "Curent password is incorrect" ];
+          return respondWithNotAllowedError(res, customMessages, 403);
+        }
+      } else {
+        const customMessages: string[] = [ "Cannot resolve current user", "Please re login" ];
+        return respondWithNotAllowedError(res, customMessages, 401);
+      }
     }
   } else {
     return respondWithNotAllowedError(res, [ "Could not resolve logged in Users data" ]);
