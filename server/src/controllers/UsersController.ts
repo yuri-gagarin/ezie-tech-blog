@@ -128,23 +128,34 @@ export default class UsersController extends BasicController implements ICRUDCon
   // only Admins level users OR Users editing own model should be able to edit password //
   // middleware to check edit rights run before controller action //
   updateUserPassword = async (req: Request, res: Response<UsersUpdatePassRes>): Promise<Response> => {
-    const { newPassword, oldPassword } = req.body as { newPassword?: string; oldPassword?: string; };
+    const { newPassword, userId } = req.body as { newPassword; userId: string; };
 
     // validate password //
 
     try {
-      const updatedUser = await User.findOneAndUpdate({ password: newPassword }).exec();
-      if (updatedUser) {
-        const editedUser = updatedUser.toObject();
-        delete editedUser.password;
+      const userToUpdate: IUser | null = await User.findOne({ _id: userId }).exec();
+      if (userToUpdate) {
+        userToUpdate.password = newPassword;
+        //
+        const updatedPasswordUser: IUser = await userToUpdate.save();
         return res.status(200).json({
-          responseMsg: "Changed password", editedUser
+          responseMsg: "User Password Updated",
+          editedUser: {
+            _id: updatedPasswordUser._id,
+            firstName: updatedPasswordUser.firstName,
+            lastName: updatedPasswordUser.lastName,
+            email: updatedPasswordUser.email,
+            confirmed: updatedPasswordUser.confirmed,
+            editedAt: updatedPasswordUser.editedAt,
+            createdAt: updatedPasswordUser.createdAt
+          }
         });
       } else {
-        return await this.notFoundErrorResponse(res, [ "Could not resolve queried User model to update" ]);
+        const customMessages: string[] = ["Could not resolve User model to update"];
+        return await this.notFoundErrorResponse(res, customMessages);
       }
     } catch (error) {
-
+      return await this.generalErrorResponse(res, { error });
     }
   }
   // only Admis level users OR Users deleting own model should be able to delete //
