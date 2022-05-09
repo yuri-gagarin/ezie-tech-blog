@@ -12,6 +12,11 @@ import type { ProjectData } from "@/server/src/_types/projects/projectTypes";
 // helpers //
 import { setRandBoolean } from "../../src/_helpers/generalHelpers";
 
+export type ServerData = {
+  chai: Chai.ChaiStatic;
+  server: Express;
+};
+
 export const loginUser = async ({ chai, server, email}: { chai: Chai.ChaiStatic; server: Express; email: string }): Promise<{ userJWTToken: string; }> => {
   return new Promise((resolve, reject) => {
     chai.request(server)
@@ -27,6 +32,20 @@ export const loginUser = async ({ chai, server, email}: { chai: Chai.ChaiStatic;
         };
       });
   });
+};
+
+export const loginMultipleUsers = async (serverData: ServerData, loginEmails: string[]): Promise<string[]> => {
+  const loginTokens: string[] = [];
+  try {
+    const { server, chai } = serverData;
+    for (const email of loginEmails) {
+      const { userJWTToken } = await loginUser({ server, chai, email });
+      loginTokens.push(userJWTToken);
+    }
+  } catch (error) {
+    throw error;
+  }
+  return loginTokens;
 };
 
 export const countBlogPosts = async ({ all, published, unpublished, specificUserId }: { all?: boolean; published?: boolean; unpublished?: boolean; specificUserId?: string; }): Promise<number> => {
