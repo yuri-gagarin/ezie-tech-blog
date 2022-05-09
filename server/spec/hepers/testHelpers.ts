@@ -15,6 +15,7 @@ import { setRandBoolean } from "../../src/_helpers/generalHelpers";
 export type ServerData = {
   chai: Chai.ChaiStatic;
   server: Express;
+  loginEmails: string[];
 };
 
 export const loginUser = async ({ chai, server, email}: { chai: Chai.ChaiStatic; server: Express; email: string }): Promise<{ userJWTToken: string; }> => {
@@ -34,10 +35,10 @@ export const loginUser = async ({ chai, server, email}: { chai: Chai.ChaiStatic;
   });
 };
 
-export const loginMultipleUsers = async (serverData: ServerData, loginEmails: string[]): Promise<string[]> => {
+export const loginMultipleUsers = async (serverData: ServerData): Promise<string[]> => {
   const loginTokens: string[] = [];
   try {
-    const { server, chai } = serverData;
+    const { server, chai, loginEmails } = serverData;
     for (const email of loginEmails) {
       const { userJWTToken } = await loginUser({ server, chai, email });
       loginTokens.push(userJWTToken);
