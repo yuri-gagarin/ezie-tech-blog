@@ -1,9 +1,21 @@
 import { Types } from "mongoose";
-import { AuthNotLoggedInError, AuthNotFoundError, InvalidDataError } from "./errorHelperts";
+import { GeneralServerError, AuthNotLoggedInError, AuthNotFoundError, InvalidDataError } from "./errorHelperts";
 // type imports //
 import type { NextFunction, Request, Response } from "express";
 import type { ErrorResponse } from "../../_types/auth/authTypes";
 
+/* helper for a general server error */
+export const respondWithGeneralServerError = (data: { res: Response<ErrorResponse>; responseMsg?: string; error?: Error; message?: string; errorMessages?: string[]; status?: number; }): Response<ErrorResponse> => {
+  const { res, responseMsg = "Server Error",  status = 500, message = "General Server Error", errorMessages } = data;
+  const error = data.error || new GeneralServerError(message, errorMessages);
+  return res.status(status || 500).json({
+    responseMsg, 
+    error, 
+    errorMessages: error instanceof GeneralServerError ? error.getErrorMessages : [ "A server error has occured" ]
+   });
+};
+
+/* helper for a general not found error response */
 export const respondWithNotFoundError = (res: Response<ErrorResponse>, customMessages?: string[]) => {
   const error = new AuthNotFoundError("Auth Not Found Error", customMessages);
   return res.status(404).json({
@@ -13,6 +25,7 @@ export const respondWithNotFoundError = (res: Response<ErrorResponse>, customMes
   });
 };
 
+/* helper for a general no model id error response */
 export const respondWithNoModelIdError = (res: Response<ErrorResponse>, customMessages?: string[]) => {
   return res.status(400).json({
     responseMsg: "Input error",
@@ -44,6 +57,8 @@ export const respondWithNoUserError = (res: Response<ErrorResponse>, { responseM
   });
 };
 
+/* data helpers */
+// check if an arg is an object and is empty //
 export const objectIsEmtpy = (obj: any): boolean => {
   return obj && Object.keys(obj).length === 0  && Object.getPrototypeOf(obj) === Object.prototype;
 };
@@ -52,33 +67,43 @@ export const getBooleanFromString = (string: string) => {
   return (string === "true" || string === "TRUE" || string === "True") ? true : false; 
 };
 
+
+/* general middleware helpers */
+//
 export const validateRequiredParams = (requiredParameters: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const errorMessages: string[] = [];
-    for (const requiredParam of requiredParameters) {
-      if (!req.params[requiredParam]) {
-        errorMessages.push(`Required parameter: ${requiredParameters} is missing from the Request`);
+    try {
+      const errorMessages: string[] = [];
+      for (const requiredParam of requiredParameters) {
+        if (!req.params[requiredParam]) {
+          errorMessages.push(`Required parameter: ${requiredParameters} is missing from the Request`);
+        }
       }
-    }
 
-    return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
+      return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
+    } catch (error) {
+      return respondWithGeneralServerError({ res, error })
+    }
   }
 };
+/* middleware to validate required fields in <req.body> object */
 export const validateRequiredDataFieds = (requiredDataFields: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): Response<ErrorResponse> | void => {
     try {
       const errorMessages: string[] = [];
       for (const requiredField of requiredDataFields) {
         if (!req.body[requiredField]) {
-          errorMessages.push(`Required data: ${requiredField} is missing from the Request`);
+          errorMessages.push(`Required data field: <${requiredField}> is missing from the Request`);
         }
       }
-      return errorMessages.length === 0 ? next() : respondWithNoModelIdError(res, errorMessages);
+      return errorMessages.length === 0 ? next() : respondWithWrongInputError(res, { customMessages: errorMessages });
     } catch (error) {
-      next(error);
+      return respondWithGeneralServerError({ res, error })
     }
   }
 };
+
+
 export const validateObjectIdParams = (requiredParams: string []) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {

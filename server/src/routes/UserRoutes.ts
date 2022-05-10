@@ -6,7 +6,7 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router } from "express";
 import type { IGenericClientController } from "@/server/src/_types/abstracts/DefaultController";
 // helpers, middleware //
-import { validateRequiredDataFieds, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
+import { validateRequiredDataFieds, validateReqBodyData, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
 import { checkforLogin, verifyAdmin, passportGeneralAuthMiddleware } from "../controllers/_helpers/authHelpers"
 import { verifyUsersModelAccess } from "../controllers/_helpers/usersControllerHelpers";
 
@@ -56,7 +56,8 @@ export default class UserRoutes extends CRUDRoutesController {
       .route(route)
       .patch(
         [
-          passportGeneralAuthMiddleware
+          passportGeneralAuthMiddleware,
+          validateRequiredDataFieds([ "passwordData", "userId" ])
         ],
         this.controller.changePassword
       )
