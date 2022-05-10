@@ -56,8 +56,10 @@ export type EditUserRes = {
   editedUser: UserData;
 };
 export type EditUserPassRes = {
-  responseMsg: string;
-  editedUser: UserData;
+  responseMsg?: string;
+  editedUser?: UserData;
+  error?: any;
+  errorMessages?: string[];
 };
 export type DeleteUserRes = {
   responseMsg: string;

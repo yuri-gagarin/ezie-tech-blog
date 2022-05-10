@@ -4,12 +4,12 @@ import User, { IUser } from "../models/User";
 import Admin, { IAdmin } from "../models/Admin";
 // types //
 import type { Request, Response } from "express";
-import type { ICRUDController } from "../_types/abstracts/DefaultController";
+import type { ICRUDController, IGenericClientController } from "../_types/abstracts/DefaultController";
 import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes, ReqUserData, UsersUpdatePassRes } from "../_types/users/userTypes";
 // helpers validators //
 import { validateUserData, validateUniqueEmail, validateEditEmail } from "./_helpers/validationHelpers";
 
-export default class UsersController extends BasicController implements ICRUDController {
+export default class UsersController extends BasicController implements IGenericClientController {
   index = async (req: Request, res: Response<UsersIndexRes>): Promise<Response<UsersIndexRes>> => {
     const { limit = 10, confirmed } = req.query as { limit?: number; confirmed?: string; };
     const user = req.user as IUser | IAdmin | null;
@@ -127,7 +127,7 @@ export default class UsersController extends BasicController implements ICRUDCon
 
   // only Admins level users OR Users editing own model should be able to edit password //
   // middleware to check edit rights run before controller action //
-  updateUserPassword = async (req: Request, res: Response<UsersUpdatePassRes>): Promise<Response> => {
+  changePassword = async (req: Request, res: Response<UsersUpdatePassRes>): Promise<Response> => {
     const { newPassword, userId } = req.body as { newPassword; userId: string; };
 
     // validate password //

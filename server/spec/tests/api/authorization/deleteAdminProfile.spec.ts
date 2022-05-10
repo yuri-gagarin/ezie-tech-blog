@@ -1,7 +1,6 @@
 import chai, { expect } from "chai";
 import chaiHTTP from "chai-http";
 import cookie from "cookie";
-import parseHeaders from "parse-headers";
 // server //
 import { ServerInstance } from "../../../../src/server";
 // models //

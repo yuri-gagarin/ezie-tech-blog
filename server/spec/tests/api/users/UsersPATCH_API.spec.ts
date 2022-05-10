@@ -17,7 +17,7 @@ import { loginUser, generateMockUserData } from "../../../hepers/testHelpers";
 
 chai.use(chaiHTTP);
 
-describe("UsersController:Edit PATCH API Tests", () => {
+describe("UsersController:edit - PATCH - API Tests", () => {
   const notValidObjectId = "notavalidbsonobjectid";
   // models //
   let adminUser: IAdmin;

@@ -4,14 +4,14 @@ import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
 import { StrategyNames } from "../controllers/PassportController";
 // types //
 import type { Router } from "express";
-import type { ICRUDController } from "@/server/src/_types/abstracts/DefaultController";
+import type { IGenericClientController } from "@/server/src/_types/abstracts/DefaultController";
 // helpers, middleware //
 import { validateRequiredDataFieds, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
-import { checkforLogin, verifyAdmin } from "../controllers/_helpers/authHelpers"
+import { checkforLogin, verifyAdmin, passportGeneralAuthMiddleware } from "../controllers/_helpers/authHelpers"
 import { verifyUsersModelAccess } from "../controllers/_helpers/usersControllerHelpers";
 
 export default class UserRoutes extends CRUDRoutesController {
-  constructor(router: Router, controller: ICRUDController) {
+  constructor(router: Router, controller: IGenericClientController) {
     super(router, controller);
     this.initialize();
   }
@@ -20,6 +20,7 @@ export default class UserRoutes extends CRUDRoutesController {
     this.index("/api/users");
     this.getOne("/api/users/:user_id");
     this.create("/api/users");
+    this.changePassword("/api/users/change_password");
     this.edit("/api/users/:user_id");
     this.delete("/api/users/:user_id");
   }
@@ -50,6 +51,16 @@ export default class UserRoutes extends CRUDRoutesController {
       validateObjectIdParams([ "user_id" ]) 
     ]);
   } 
+  protected changePassword(route: string): void {
+    this.router
+      .route(route)
+      .patch(
+        [
+          passportGeneralAuthMiddleware
+        ],
+        this.controller.changePassword
+      )
+  }
   protected delete(route: string): void {
     super.delete(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),

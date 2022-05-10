@@ -195,7 +195,7 @@ export default class AuthController {
       .json({ responseMsg: "Logged out" })
     );
   }
-  /*
+
   uniqueEmail = async (req: Request, res: Response): Promise<Response> => {
     const { email } = req.query as { email: string };
     if (!email) return await this.sendErrorRes(res, { status: 400, error: new Error("Invalid Input"), errorMessages: [ "No email provided" ] });
@@ -207,7 +207,7 @@ export default class AuthController {
       return await this.sendErrorRes(res, { status: 500, error, errorMessages: [ "Server error" ] });
     }
   }
-  */
+
   /*
   verifyAdmin = async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).json({ responseMsg: "All ok "});

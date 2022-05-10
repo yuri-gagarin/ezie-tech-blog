@@ -12,13 +12,14 @@ import { loginMultipleUsers } from "../../../hepers/testHelpers";
 import type { Express} from "express";
 import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
-import type { EditUserRes, ErrorUserRes, UserData } from "@/redux/_types/users/dataTypes";
+import type { EditUserPassRes, UserData } from "@/redux/_types/users/dataTypes";
 import type { ReqUserData } from "@/server/src/_types/users/userTypes";
 
-describe("UsersController:updateUserPassword - PATCH - API Tests", () => {
+describe("UsersController:changePassword - PATCH - API Tests", () => {
   //
   let server: Express;
   const notValidObjectId = "notavalidbsonobjectid";
+  const invalidJWTToken = "notavalidjwt"
   // user models //
   let firstReaderUser: IUser; let secondReaderUser: IUser; let firstContributorUser: IUser; let secondContributorUser: IUser;
   // admin models //
@@ -63,6 +64,46 @@ describe("UsersController:updateUserPassword - PATCH - API Tests", () => {
       throw error;
     }
   });
+
+  // CONTEXT UsersContreller:updateUserPassword no login //
+  context("UsersController:updateUserPassword - NO LOGIN", () => {
+    describe(`PATCH /api/users/change_password - VALID DATA - USER NOT LOGGED IN`, () => {
+      it(`Should NOT delete User profile with WITHOUT a login token and return a correct <${unauthorizedResCode}> response`, (done) => {
+        const userId: string = firstContributorUser._id.toHexString();
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .send({ newPassword: "newPassword", confirmNewPassword: "newPassword", oldPassword: "password", userId })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            console.log(response.body)
+            expect(response.status).to.equal(unauthorizedResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it(`Should NOT delete User profile with WITH an invalid login token and return a correct <${unauthorizedResCode}> response`, (done) => {
+        const userId: string = firstContributorUser._id.toHexString();
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
+          .send({ newPassword: "newPassword", confirmNewPassword: "newPassword", oldPassword: "password", userId })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            console.log(response.body)
+            expect(response.status).to.equal(unauthorizedResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      })
+    })
+  });
+  // END CONTEXT UsersContreller:updateUserPassword no login //
 
 
 
