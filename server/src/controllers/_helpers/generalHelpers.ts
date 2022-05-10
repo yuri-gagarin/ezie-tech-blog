@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
+import { AuthNotLoggedInError, AuthNotFoundError, InvalidDataError } from "./errorHelperts";
 // type imports //
 import type { NextFunction, Request, Response } from "express";
 import type { ErrorResponse } from "../../_types/auth/authTypes";
-import { AuthNotLoggedInError, AuthNotFoundError, InvalidDataError } from "./errorHelperts";
 
 export const respondWithNotFoundError = (res: Response<ErrorResponse>, customMessages?: string[]) => {
   const error = new AuthNotFoundError("Auth Not Found Error", customMessages);
@@ -120,7 +120,7 @@ export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
             } else if (allowedQueryParams[queryKey] === "number") {
               // should be able to parase to number //
               if(!/^\d+$/.test(req.query[queryKey] as string)) {
-                return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <boolean>. Received: ${req.query[queryKey]}` ]);
+                return respondWithNoModelIdError(res, [ `Invalid query param: ${queryKey} for request. Expected: <number>. Received: ${req.query[queryKey]}` ]);
               }
             } else if (allowedQueryParams[queryKey] === "objectid") {
               if (!Types.ObjectId.isValid(req.query[queryKey] as string)) {
@@ -144,6 +144,70 @@ export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
       }
     } catch (error) {
       next(error);
+    }
+  }
+};
+
+export type ValidReqBodyType = "string" | "number" | "boolean" | "objectid" | "object";
+export type ValidReqBodyData = { [key: string]: ValidReqBodyType; }
+export const validateReqBodyData = (allowedReqBodyData: ValidReqBodyData) => {
+  return (req: Request, res: Response<ErrorResponse>, next: NextFunction): Response<ErrorResponse> | void => {
+    try {
+      const errorMessages: string[] = [];
+      const reqBodyKeys: string[] = Object.keys(req.body);
+      if (reqBodyKeys.length > 0) {
+        // validate req.body data types //
+        for (const reqBodyKey of reqBodyKeys) {
+          if (req.body[reqBodyKey]) {
+            // check for correct data type //
+            switch(allowedReqBodyData[reqBodyKey]) {
+              case "string": {
+                if (!/^[a-zA-Z]+$/.test(req.body[reqBodyKey] as string)) {
+                  errorMessages.push(`Data field <${reqBodyKey}> should be a STRING. Received <${req.body[reqBodyKey]}>`);
+                }
+                continue;
+              }
+              case "number": {
+                if (!/^\d+$/.test(req.body[reqBodyKey] as string)) {
+                  errorMessages.push(`Data field <${reqBodyKey}> should be a NUMBER. Received <${req.body[reqBodyKey]}>`);
+                }
+                continue;
+              }
+              case "boolean": {
+                if (req.body[reqBodyKey] !== "true" || req.body[reqBodyKey] !== "false") {
+                  errorMessages.push(`Data field <${reqBodyKey}> should be a BOOLEAN. Received <${req.body[reqBodyKey]}>`);
+                }
+                continue;
+              }
+              case "objectid": {
+                if (!Types.ObjectId.isValid(req.body[reqBodyKey] as string)) {
+                  errorMessages.push(`Data field <${reqBodyKey}> should be an OBJECTID. Received <${req.body[reqBodyKey]}>`);
+                }
+                continue;
+              }
+              case "object": {
+                console.log(typeof req.body[reqBodyKey])
+                console.log(req.body[reqBodyKey])
+                errorMessages.push(`Could not validate data type of <#${reqBodyKey}> at <191>`);
+              }
+              default: {
+                errorMessages.push(`Could not validate data type of <#${reqBodyKey}>`);
+              }
+            }
+          } else {
+            errorMessages.push(`Data field <${reqBodyKey}> is NOT ALLOWED`);
+          }
+        }
+        // return result here //
+        // check if <errorMessages> array is empty //
+        return errorMessages.length === 0 ? respondWithWrongInputError(res, { responseMsg: "Wrong data input", customMessages: errorMessages }) : next();
+      } else {
+        return next();
+      }
+    } catch (error) {
+      return res.status(500).json({
+        responseMsg: "An error on our end", error, errorMessages: [ "Server error. Please try again later" ]
+      })
     }
   }
 }

@@ -105,7 +105,73 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   });
   // END CONTEXT UsersContreller:updateUserPassword no login //
 
-
+  // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls INVALID DATA //
+  context("User Change Password - PATCH - User LOGGED IN - INVALID DATA - OWN PROFILE", () => {
+    // TEST invalid userId fields //
+    describe("PATCH /api/users/change_password - User Delete with an INVALID <userId> field", () => {
+      // invalid email type //
+      it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .delete("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId: {}, password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // empty email //
+      it(`Should NOT delete User profile with an EMPTY <userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .delete("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ email: "", password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(400);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // non existing email //
+      it(`Should NOT delete User profile with an NON EXISTING EMAIL and return a correct <${notFoundAccessCode}> response`, (done) => {
+        chai.request(server)
+          .delete("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ email: "notexisting@email.com", password: "password" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(404);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          //
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST invalid email fields //
+  });
+  // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls  INVALID DATA //
 
   // cleanup models //
   after(async () => {

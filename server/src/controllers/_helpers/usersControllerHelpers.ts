@@ -10,7 +10,7 @@ import type { IUser } from "../../models/User";
 import { validatePasswordChangeData } from "./validationHelpers";
 
 export const verifyUsersModelAccess = async (req: Request, res: Response, next: NextFunction) => {
-  const { user_id } = req.params;
+  const { user_id } = req.params || req.query as { userId?: string; };
   const currentUser = req.user as IAdmin | IUser;
   if (!user_id) {
     return respondWithNoModelIdError(res, [ "Could not resolve a User id" ]);

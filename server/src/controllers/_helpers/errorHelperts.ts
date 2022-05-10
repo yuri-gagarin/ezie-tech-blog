@@ -44,8 +44,8 @@ export class AuthAccessLevelError extends GeneralServerError {
 }
 
 export class InvalidDataError extends GeneralServerError {
-  constructor(message: string = "Invalid Data Error", customMEssages?: string[]) {
-    super(message, customMEssages || [ "Invalid client input" ]);
+  constructor(message: string = "Invalid Data Error", customMessages?: string[]) {
+    super(message, customMessages || [ "Invalid client input" ]);
     Object.setPrototypeOf(this, InvalidDataError.prototype);
   }
 };
