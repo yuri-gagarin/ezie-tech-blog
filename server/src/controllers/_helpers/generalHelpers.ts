@@ -190,55 +190,49 @@ export const validateReqBodyData = (allowedReqBodyData: ValidReqBodyData) => {
       }
       if (errorMessages.length > 0) return respondWithWrongInputError(res, { customMessages: errorMessages });
       //
-      //
       if (reqBodyKeys.length > 0) {
         // validate req.body data types //
         for (const reqBodyKey of reqBodyKeys) {
-          if (req.body[reqBodyKey]) {
-            // check for correct data type //
-            console.log(req.body[reqBodyKey]);
-            console.log(typeof req.body[reqBodyKey]);
-            switch(allowedReqBodyData[reqBodyKey]) {
-              case "string": {
-                if (!/^[a-zA-Z]+$/.test(req.body[reqBodyKey] as string)) {
-                  errorMessages.push(`Data field <${reqBodyKey}> should be a STRING. Received <${req.body[reqBodyKey]}>`);
-                }
-                continue;
+          // check for correct data type //
+          switch(allowedReqBodyData[reqBodyKey]) {
+            case "string": {
+              if (!/^[a-zA-Z]+$/.test(req.body[reqBodyKey] as string)) {
+                errorMessages.push(`Data field <${reqBodyKey}> should be a STRING. Received <${req.body[reqBodyKey]}>`);
               }
-              case "number": {
-                if (!/^\d+$/.test(req.body[reqBodyKey] as string)) {
-                  errorMessages.push(`Data field <${reqBodyKey}> should be a NUMBER. Received <${req.body[reqBodyKey]}>`);
-                }
-                continue;
-              }
-              case "boolean": {
-                if (req.body[reqBodyKey] !== "true" || req.body[reqBodyKey] !== "false") {
-                  errorMessages.push(`Data field <${reqBodyKey}> should be a BOOLEAN. Received <${req.body[reqBodyKey]}>`);
-                }
-                continue;
-              }
-              case "objectid": {
-                if (!Types.ObjectId.isValid(req.body[reqBodyKey] as string)) {
-                  errorMessages.push(`Data field <${reqBodyKey}> should be an OBJECTID. Received <${req.body[reqBodyKey]}>`);
-                }
-                continue;
-              }
-              case "object": {
-                console.log(typeof req.body[reqBodyKey])
-                console.log(req.body[reqBodyKey])
-                errorMessages.push(`Could not validate data type of <#${reqBodyKey}> at <191>`);
-              }
-              default: {
-                errorMessages.push(`Could not validate data type of <#${reqBodyKey}>`);
-              }
+              continue;
             }
-          } else {
-            errorMessages.push(`Data field <${reqBodyKey}> is NOT ALLOWED`);
+            case "number": {
+              if (!/^\d+$/.test(req.body[reqBodyKey] as string)) {
+                errorMessages.push(`Data field <${reqBodyKey}> should be a NUMBER. Received <${req.body[reqBodyKey]}>`);
+              }
+              continue;
+            }
+            case "boolean": {
+              if (req.body[reqBodyKey] !== "true" || req.body[reqBodyKey] !== "false") {
+                errorMessages.push(`Data field <${reqBodyKey}> should be a BOOLEAN. Received <${req.body[reqBodyKey]}>`);
+              }
+              continue;
+            }
+            case "objectid": {
+              if (!Types.ObjectId.isValid(req.body[reqBodyKey] as string)) {
+                errorMessages.push(`Data field <${reqBodyKey}> should be an OBJECTID. Received <${req.body[reqBodyKey]}>`);
+              }
+              continue;
+            }
+            case "object": {
+              if (typeof req.body[reqBodyKey] !== "object") {
+                errorMessages.push(`Data field <${reqBodyKey}> should be an <OBJECT>. Received <${String(typeof req.body[reqBodyKey]).toUpperCase()}>`);
+              }
+              continue;
+            }
+            default: {
+              errorMessages.push(`Could not validate data type of <#${reqBodyKey}>`);
+            }
           }
         }
         // return result here //
         // check if <errorMessages> array is empty //
-        return errorMessages.length === 0 ? respondWithWrongInputError(res, { responseMsg: "Wrong data input", customMessages: errorMessages }) : next();
+        return errorMessages.length === 0  ? next() : respondWithWrongInputError(res, { responseMsg: "Wrong data input", customMessages: errorMessages });
       } else {
         return next();
       }

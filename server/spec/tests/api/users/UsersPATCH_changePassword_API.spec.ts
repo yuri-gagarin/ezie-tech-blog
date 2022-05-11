@@ -167,7 +167,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
-            console.log(response.body);
             expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -181,7 +180,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
     // TEST invalid userId fields //
     describe("PATCH /api/users/change_password - User Delete with an INVALID <userId> field", () => {
       // invalid userId type //
-      /*
       it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
@@ -197,17 +195,15 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
             done();
           });
       });
-      */
-      /*
-       // invalid userId BSON type //
-       it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+      // invalid userId BSON type //
+      it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
           .send({ userId: notValidObjectId, passwordData: { oldPassword: "password", newPassword: "newPassword", confirmNewPassword: "newPassword" } })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;;
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
             expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -223,7 +219,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           .send({ userId: "", passwordData: { oldPassword: "password", newPassword: "newPassword", confirmNewPassword: "newPassword" } })
           .end((err, response) => {
             if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;;
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
             expect(response.status).to.equal(400);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -231,7 +227,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
             done();
           });
       });
-      */
       it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
         try {
           const updatedNumOfUsers: number = await User.countDocuments();

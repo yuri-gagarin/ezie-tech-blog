@@ -58,7 +58,7 @@ export default class UserRoutes extends CRUDRoutesController {
         [
           passportGeneralAuthMiddleware,
           validateRequiredDataFields([ "passwordData", "userId" ]),
-          validateReqBodyData({ passwordData: "string", userId: "objectid"  })
+          validateReqBodyData({ passwordData: "object", userId: "objectid"  })
         ],
         this.controller.changePassword
       )
