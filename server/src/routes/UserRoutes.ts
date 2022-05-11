@@ -6,7 +6,7 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router } from "express";
 import type { IGenericClientController } from "@/server/src/_types/abstracts/DefaultController";
 // helpers, middleware //
-import { validateRequiredDataFieds, validateReqBodyData, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
+import { validateRequiredDataFields, validateReqBodyData, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
 import { checkforLogin, verifyAdmin, passportGeneralAuthMiddleware } from "../controllers/_helpers/authHelpers"
 import { verifyUsersModelAccess } from "../controllers/_helpers/usersControllerHelpers";
 
@@ -40,14 +40,14 @@ export default class UserRoutes extends CRUDRoutesController {
     super.create(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
       verifyAdmin,
-      validateRequiredDataFieds([ "userData" ])
+      validateRequiredDataFields([ "userData" ])
     ]);
   }
   protected edit(route: string): void {
     super.edit(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
       verifyUsersModelAccess,
-      validateRequiredDataFieds([ "userData" ]),
+      validateRequiredDataFields([ "userData" ]),
       validateObjectIdParams([ "user_id" ]) 
     ]);
   } 
@@ -57,7 +57,8 @@ export default class UserRoutes extends CRUDRoutesController {
       .patch(
         [
           passportGeneralAuthMiddleware,
-          validateRequiredDataFieds([ "passwordData", "userId" ])
+          validateRequiredDataFields([ "passwordData", "userId" ]),
+          validateReqBodyData({ passwordData: "string", userId: "objectid"  })
         ],
         this.controller.changePassword
       )

@@ -2,7 +2,7 @@ import { PassportContInstance } from "../server";
 import { CRUDRoutesController } from "../_types/abstracts/RoutesTypes";
 import { StrategyNames } from "../controllers/PassportController";
 // custom middleware //
-import { validateQueryParams, validateObjectIdParams, validateRequiredDataFieds } from "../controllers/_helpers/generalHelpers";
+import { validateQueryParams, validateObjectIdParams, validateRequiredDataFields } from "../controllers/_helpers/generalHelpers";
 import { checkforLogin } from "../controllers/_helpers/authHelpers"
 import { verifyUserModelAndPostId, verifyBlogPostModelAccess, verifyUserLevel } from "../controllers/_helpers/blogPostControllerHelpers";
 // types //
@@ -40,14 +40,14 @@ export default class PostRoutes extends CRUDRoutesController {
     super.create(route, [ 
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
       verifyUserLevel,
-      validateRequiredDataFieds([ "blogPostData" ]),
+      validateRequiredDataFields([ "blogPostData" ]),
     ]);
   }
   protected edit(route: string): void {
     super.edit(route, [ 
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
       verifyUserLevel,
-      validateRequiredDataFieds([ "blogPostData" ]),
+      validateRequiredDataFields([ "blogPostData" ]),
       validateObjectIdParams([ "post_id" ]),
       verifyBlogPostModelAccess
     ]);

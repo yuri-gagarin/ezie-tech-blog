@@ -7,7 +7,7 @@ import type { ICRUDController } from "../_types/abstracts/DefaultController";
 // helpers middleware //
 import { verifyOwnerLevelAccess } from "../controllers/_helpers/adminsControllerHelpers";
 import { checkforLogin } from "../controllers/_helpers/authHelpers";
-import { validateRequiredDataFieds, validateObjectIdParams, validateQueryParams } from "../controllers/_helpers/generalHelpers";
+import { validateRequiredDataFields, validateObjectIdParams, validateQueryParams } from "../controllers/_helpers/generalHelpers";
 
 export default class ProjectRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: ICRUDController) {
@@ -49,7 +49,7 @@ export default class ProjectRoutes extends CRUDRoutesController {
     super.edit(route, [ 
       PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
       verifyOwnerLevelAccess,
-      validateRequiredDataFieds([ "projectData"]),
+      validateRequiredDataFields([ "projectData"]),
       validateObjectIdParams([ "project_id" ])
     ]);
   } 

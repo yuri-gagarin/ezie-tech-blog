@@ -87,7 +87,7 @@ export const validateRequiredParams = (requiredParameters: string[]) => {
   }
 };
 /* middleware to validate required fields in <req.body> object */
-export const validateRequiredDataFieds = (requiredDataFields: string[]) => {
+export const validateRequiredDataFields = (requiredDataFields: string[]) => {
   return (req: Request, res: Response, next: NextFunction): Response<ErrorResponse> | void => {
     try {
       const errorMessages: string[] = [];
@@ -180,11 +180,24 @@ export const validateReqBodyData = (allowedReqBodyData: ValidReqBodyData) => {
     try {
       const errorMessages: string[] = [];
       const reqBodyKeys: string[] = Object.keys(req.body);
+      const allowedKeys: string[] = Object.keys(allowedReqBodyData);
+      // first we ensure that a client is not sending any 'weird' data in req.body //
+      for (const reqBodyKey of reqBodyKeys) {
+        // should we break at first ?? //
+        if (!allowedKeys.includes(reqBodyKey)) {
+          errorMessages.push(`Data field <${reqBodyKey}> is NOT ALLOWED`);
+        }
+      }
+      if (errorMessages.length > 0) return respondWithWrongInputError(res, { customMessages: errorMessages });
+      //
+      //
       if (reqBodyKeys.length > 0) {
         // validate req.body data types //
         for (const reqBodyKey of reqBodyKeys) {
           if (req.body[reqBodyKey]) {
             // check for correct data type //
+            console.log(req.body[reqBodyKey]);
+            console.log(typeof req.body[reqBodyKey]);
             switch(allowedReqBodyData[reqBodyKey]) {
               case "string": {
                 if (!/^[a-zA-Z]+$/.test(req.body[reqBodyKey] as string)) {

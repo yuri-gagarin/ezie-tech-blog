@@ -106,8 +106,8 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls INVALID DATA //
   context("User Change Password - PATCH - User LOGGED IN - INVALID DATA - OWN PROFILE", () => {
 
-    // TEST missing data fields //
-    describe("PATCH /api/users/change_password - User Delete with missing data fields", () => {
+    // TEST missing or not allowed data fields //
+    describe("PATCH /api/users/change_password - User Delete with MISSING OR NOT ALLOWED data fields", () => {
       // missing <req.body.userId> field //
       it(`Should NOT delete User profile with a missing <req.body.userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
@@ -117,7 +117,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
-            console.log(response.body);
             expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -135,7 +134,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
-            console.log(response.body);
             expect(response.status).to.equal(badRequestResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -144,12 +142,28 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
       // missing <req.body.userId> AND <req.body.passwordData> fields //
-      it(`Should NOT delete User profile with a missing <req.body.paswordData> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
-        const userId: string = firstReaderUser._id.toHexString();
+      it(`Should NOT delete User profile with a missing <req.body.paswordData> AND <req.body.userId> FIELDS and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
           .send()
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // PRESENT <req.body.userId> AND <req.body.passwordData> fields WITH EXTRA NOT ALLOWED field //
+      it(`Should NOT delete User profile with a NOT ALLOWED FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        const userId: string = firstReaderUser._id.toHexString();
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { oldPassword: "password", newPassword: "newPassword", confirmNewPassword: "newPassword" }, notAllowedField: "this is not allowed" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
@@ -162,7 +176,8 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
     });
-    // END TEST missing data fields //
+    // END TEST missing or not allowed data fields //
+
     // TEST invalid userId fields //
     describe("PATCH /api/users/change_password - User Delete with an INVALID <userId> field", () => {
       // invalid userId type //

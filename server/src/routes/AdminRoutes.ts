@@ -5,7 +5,7 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router  } from "express";
 import type { IGenericClientController } from "../_types/abstracts/DefaultController";
 // helpers //
-import { validateObjectIdParams, validateRequiredDataFieds } from "../controllers/_helpers/generalHelpers";
+import { validateObjectIdParams, validateRequiredDataFields } from "../controllers/_helpers/generalHelpers";
 import { verifyOwnerLevelAccess, verifyAdminModelAccess, verifyAdminRoleOrConfirmationChange } from "../controllers/_helpers/adminsControllerHelpers";
 
 export default class AdminRoutes extends CRUDRoutesController {
@@ -37,7 +37,7 @@ export default class AdminRoutes extends CRUDRoutesController {
     super.create(route, [
       PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
       verifyOwnerLevelAccess,
-      validateRequiredDataFieds([ "adminData" ])
+      validateRequiredDataFields([ "adminData" ])
     ]);
   }
   // Admins should be able to edit their OWN models //
@@ -47,7 +47,7 @@ export default class AdminRoutes extends CRUDRoutesController {
       PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
       verifyAdminModelAccess,
       validateObjectIdParams([ "admin_id" ]),
-      validateRequiredDataFieds([ "adminData" ]),
+      validateRequiredDataFields([ "adminData" ]),
       verifyAdminRoleOrConfirmationChange,  // only <owner> level admin can change <Admin.role> or <Admin.confirmation> //
     ]);
   } 
@@ -70,7 +70,7 @@ export default class AdminRoutes extends CRUDRoutesController {
           PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
           verifyAdminModelAccess,
           validateObjectIdParams([ "admin_id" ]),
-          validateRequiredDataFieds([ "passwordChangeData" ]),
+          validateRequiredDataFields([ "passwordChangeData" ]),
         ],
         this.controller.changePassword
       );
@@ -86,7 +86,7 @@ export default class AdminRoutes extends CRUDRoutesController {
           PassportContInstance.authenticate(StrategyNames.AdminAuthStrategy, { session: false }),
           verifyOwnerLevelAccess,
           validateObjectIdParams([ "admin_id" ]),
-          validateRequiredDataFieds([ "roleChange" ]),
+          validateRequiredDataFields([ "roleChange" ]),
         ],
         this.controller.changeRole
       );
