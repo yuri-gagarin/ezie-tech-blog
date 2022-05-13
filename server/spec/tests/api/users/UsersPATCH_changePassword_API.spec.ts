@@ -103,9 +103,9 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   });
   // END CONTEXT UsersContreller:updateUserPassword no login //
 
+  /*
   // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls INVALID DATA //
   context("User Change Password - PATCH - User LOGGED IN - INVALID DATA(OR MISSING FIELDS) - OWN PROFILE", () => {
-    /*
     // TEST missing or not allowed data fields //
     describe("PATCH /api/users/change_password - Change Password - with MISSING OR NOT ALLOWED data fields", () => {
       // missing <req.body.userId> field //
@@ -291,10 +291,9 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
         });
     });
     // END TEST invalid <passwordData> fields //
-    */
     // testing with wrong password data //
     // TEST invalid <req.body.passwordData.oldPassword> field //
-    describe("PATCH /api/users/change_password - User with an INVALID/INCORRECT/MISSING in <req.body.paswordData> field", () => {
+    describe("PATCH /api/users/change_password - User with an INVALID or MISSING DATA in <req.body.paswordData> field", () => {
       let userId: string;
       before(() => {
         userId = firstReaderUser._id.toHexString();
@@ -405,7 +404,73 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
     // END TEST invalid <req.body.passwrodDAta.oldPassword> field //
   });
   // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls  INVALID DATA //
+  */
 
+  // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS //
+  context(" User Change Password - PATCH - User LOGGED IN - VALID DATA - OWN PROFILE", () => {
+    let userId: string;
+    let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; }; 
+    before(() => {
+      userId = firstReaderUser._id.toHexString();
+      passwordData = { oldPassword: "password", newPassword: "newPassword", confirmNewPassword: "newPassword" };
+    });
+    // TEST either invalid <oldPassword> field or mismatching <newPassword> and <confirmNewPassword> fields //
+    describe("PATCH /api/users/change_password - User entered EITHER a wrong OLD PASSWORD or MISMATCHING <req.body.passwordData.newPassword> and <req.body.passwordData.confirmNewPassword>", () => {
+      // wrong <oldPassworD> field //
+      it(`Should NOT change User password with a WRONG <req.body.passwordData.oldPassword> FIELD and return a correct <${forbiddenAccessCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { ...passwordData, oldPassword: "thisiswrong" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(forbiddenAccessCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(1);
+            done();
+          });
+      });
+      // mismatching <newPassword> field //
+      it(`Should NOT change User password with a MISMATCHING <req.body.passwordData.newPassword> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { ...passwordData, newPassword: "doesntmatch" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(1);
+            done();
+          });
+      });
+      // mismatching <confirmNewPassword> field //
+      it(`Should NOT change User password with a MISMATCHING <req.body.passwordData.confirmNewPassword> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { ...passwordData, confirmNewPassword: "doesntmatch" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(1);
+            done();
+          });
+      });
+    });
+    // END TEST either invalid <oldPassword> field or mismatching <newPassword> and <confirmNewPassword> fields //
+
+  });
   // cleanup models //
   after(async () => {
     try {
