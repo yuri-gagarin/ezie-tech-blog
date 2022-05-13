@@ -66,9 +66,9 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   });
 
   // CONTEXT UsersContreller:updateUserPassword no login //
-  context("UsersController:updateUserPassword - NO LOGIN", () => {
-    describe(`PATCH /api/users/change_password - VALID DATA - USER NOT LOGGED IN`, () => {
-      it(`Should NOT delete User profile with WITHOUT a login token and return a correct <${unauthorizedResCode}> response`, (done) => {
+  context("User Change Password - PATCH - User NOT LOGGED IN - VALID DATA", () => {
+    describe(`PATCH /api/users/change_password - Change Password - WITH VALID REQUEST DATA`, () => {
+      it(`Should NOT change User password with WITHOUT a login token and return a correct <${unauthorizedResCode}> response`, (done) => {
         const userId: string = firstContributorUser._id.toHexString();
         chai.request(server)
           .patch("/api/users/change_password")
@@ -83,7 +83,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
             done();
           });
       });
-      it(`Should NOT delete User profile with WITH an invalid login token and return a correct <${unauthorizedResCode}> response`, (done) => {
+      it(`Should NOT change User password with WITH an invalid login token and return a correct <${unauthorizedResCode}> response`, (done) => {
         const userId: string = firstContributorUser._id.toHexString();
         chai.request(server)
           .patch("/api/users/change_password")
@@ -98,18 +98,18 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
             expect(errorMessages).to.be.an("array");
             done();
           });
-      })
-    })
+      });
+    });
   });
   // END CONTEXT UsersContreller:updateUserPassword no login //
 
   // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls INVALID DATA //
-  context("User Change Password - PATCH - User LOGGED IN - INVALID DATA - OWN PROFILE", () => {
-
+  context("User Change Password - PATCH - User LOGGED IN - INVALID DATA(OR MISSING FIELDS) - OWN PROFILE", () => {
+    /*
     // TEST missing or not allowed data fields //
-    describe("PATCH /api/users/change_password - User Delete with MISSING OR NOT ALLOWED data fields", () => {
+    describe("PATCH /api/users/change_password - Change Password - with MISSING OR NOT ALLOWED data fields", () => {
       // missing <req.body.userId> field //
-      it(`Should NOT delete User profile with a missing <req.body.userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+      it(`Should NOT change User password with a missing <req.body.userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
@@ -125,7 +125,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
       // missing <req.body.passwordData> field //
-      it(`Should NOT delete User profile with a missing <req.body.paswordData> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+      it(`Should NOT change User password with a missing <req.body.paswordData> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         const userId: string = firstReaderUser._id.toHexString();
         chai.request(server)
           .patch("/api/users/change_password")
@@ -142,7 +142,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
       // missing <req.body.userId> AND <req.body.passwordData> fields //
-      it(`Should NOT delete User profile with a missing <req.body.paswordData> AND <req.body.userId> FIELDS and return a correct <${badRequestResCode}> response`, (done) => {
+      it(`Should NOT change User password with a missing <req.body.paswordData> AND <req.body.userId> FIELDS and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
@@ -158,7 +158,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
       // PRESENT <req.body.userId> AND <req.body.passwordData> fields WITH EXTRA NOT ALLOWED field //
-      it(`Should NOT delete User profile with a NOT ALLOWED FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+      it(`Should NOT change User password with a NOT ALLOWED FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         const userId: string = firstReaderUser._id.toHexString();
         chai.request(server)
           .patch("/api/users/change_password")
@@ -178,9 +178,9 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
     // END TEST missing or not allowed data fields //
 
     // TEST invalid userId fields //
-    describe("PATCH /api/users/change_password - User Delete with an INVALID <userId> field", () => {
+    describe("PATCH /api/users/change_password - User with an INVALID <req.body.userId> field", () => {
       // invalid userId type //
-      it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+      it(`Should NOT change User password with an INVALID <req.body.userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
@@ -196,7 +196,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
       // invalid userId BSON type //
-      it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+      it(`Should NOT change User password with an INVALID <req.body.userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
@@ -212,7 +212,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
       // empty UserId //
-      it(`Should NOT delete User profile with an EMPTY <userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+      it(`Should NOT change User password with an EMPTY <req.body.userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
@@ -240,6 +240,169 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
       });
     });
     // END TEST invalid userId fields //
+    // TEST invalid <passwordData> fields //
+    describe("PATCH /api/users/change_password - User with an INVALID <req.body.paswordData> field", () => {
+      let userId: string;
+      before(() => {
+        userId = firstReaderUser._id.toHexString();
+      });
+      // invalid <passwordData> type //
+      it(`Should NOT change User password with an INVALID <req.body.passwordData> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: "should be an object" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+       // empty <passwordData> type //
+       it(`Should NOT change User password with an EMPTY <req.body.passwordData> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: "" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+        });
+        it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+          try {
+            const updatedNumOfUsers: number = await User.countDocuments();
+            const updatedNumOfAdmins: number = await Admin.countDocuments();
+            //
+            expect(updatedNumOfUsers).to.equal(numOfUserModels);
+            expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          } catch (error) {
+            throw error;
+          }
+        });
+    });
+    // END TEST invalid <passwordData> fields //
+    */
+    // testing with wrong password data //
+    // TEST invalid <req.body.passwordData.oldPassword> field //
+    describe("PATCH /api/users/change_password - User with an INVALID/INCORRECT/MISSING in <req.body.paswordData> field", () => {
+      let userId: string;
+      before(() => {
+        userId = firstReaderUser._id.toHexString();
+      });
+      // invalid <req.body.passwordData.oldPasswrod> type //
+      it(`Should NOT change User password with an INVALID <req.body.passwordData.oldPassword> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { oldPassword: {}, newPassword: "newPassword", confirmNewPassword: "newPassword" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(1);
+            done();
+          });
+      });
+      // empty <req.body.passwordData.oldPassword> field //
+      it(`Should NOT change User password with an EMPTY <req.body.passwordData.oldPassword> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { oldPassword: "", newPassword: "newPassword", confirmNewPassword: "newPassword" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(1);
+            done();
+          });
+      });
+      // invalid <req.body.passwordData.newPassword> type //
+      it(`Should NOT change User password with an INVALID <req.body.passwordData.newPasswowrd> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { oldPassword: "password", newPassword: {}, confirmNewPassword: "newPassword" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(2);
+            done();
+          });
+      });
+      // empty <req.body.passwordData.newPassword> field //
+      it(`Should NOT change User password with an EMPTY <req.body.passwordData.newPassword> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { oldPassword: "password", newPassword: "", confirmNewPassword: "newPassword" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(1);
+            done();
+          });
+      });
+      // invalid <req.body.passwordData.confirmPassword> type //
+      it(`Should NOT change User password with an INVALID <req.body.passwordData.confirmNewPassword> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { oldPassword: "password", newPassword: "newPasswrod", confirmNewPassword: {} } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(2);
+            done();
+          });
+      });
+      // empty <req.body.passwordData.confirmPassword> field //
+      it(`Should NOT change User password with an EMPTY <req.body.passwordData.confirmNewPassword> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData: { oldPassword: "password", newPassword: "newPasswrod", confirmNewPassword: "" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            expect(errorMessages.length).to.equal(1);
+            done();
+          });
+      });
+    });
+    // END TEST invalid <req.body.passwrodDAta.oldPassword> field //
   });
   // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls  INVALID DATA //
 

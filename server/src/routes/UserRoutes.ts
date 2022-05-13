@@ -6,9 +6,9 @@ import { StrategyNames } from "../controllers/PassportController";
 import type { Router } from "express";
 import type { IGenericClientController } from "@/server/src/_types/abstracts/DefaultController";
 // helpers, middleware //
-import { validateRequiredDataFields, validateReqBodyData, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
+import { validateRequiredDataFields, validateAllowedReqBodyData, validateObjectIdParams } from "../controllers/_helpers/generalHelpers";
 import { checkforLogin, verifyAdmin, passportGeneralAuthMiddleware } from "../controllers/_helpers/authHelpers"
-import { verifyUsersModelAccess } from "../controllers/_helpers/usersControllerHelpers";
+import { userPasswordChangeMiddleware, verifyUsersModelAccess } from "../controllers/_helpers/usersControllerHelpers";
 
 export default class UserRoutes extends CRUDRoutesController {
   constructor(router: Router, controller: IGenericClientController) {
@@ -58,7 +58,8 @@ export default class UserRoutes extends CRUDRoutesController {
         [
           passportGeneralAuthMiddleware,
           validateRequiredDataFields([ "passwordData", "userId" ]),
-          validateReqBodyData({ passwordData: "object", userId: "objectid"  })
+          validateAllowedReqBodyData({ passwordData: "object", userId: "objectid"  }),
+          userPasswordChangeMiddleware
         ],
         this.controller.changePassword
       )

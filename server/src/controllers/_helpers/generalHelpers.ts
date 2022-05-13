@@ -91,8 +91,9 @@ export const validateRequiredDataFields = (requiredDataFields: string[]) => {
   return (req: Request, res: Response, next: NextFunction): Response<ErrorResponse> | void => {
     try {
       const errorMessages: string[] = [];
+      const presentReqBodyFields: string[] = Object.keys(req.body);
       for (const requiredField of requiredDataFields) {
-        if (!req.body[requiredField]) {
+        if (!presentReqBodyFields.includes(requiredField)) {
           errorMessages.push(`Required data field: <${requiredField}> is missing from the Request`);
         }
       }
@@ -175,7 +176,7 @@ export const validateQueryParams = (allowedQueryParams: ValidateQueryOpts) => {
 
 export type ValidReqBodyType = "string" | "number" | "boolean" | "objectid" | "object";
 export type ValidReqBodyData = { [key: string]: ValidReqBodyType; }
-export const validateReqBodyData = (allowedReqBodyData: ValidReqBodyData) => {
+export const validateAllowedReqBodyData = (allowedReqBodyData: ValidReqBodyData) => {
   return (req: Request, res: Response<ErrorResponse>, next: NextFunction): Response<ErrorResponse> | void => {
     try {
       const errorMessages: string[] = [];

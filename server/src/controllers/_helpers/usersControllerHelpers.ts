@@ -35,8 +35,10 @@ export const verifyUsersModelAccess = async (req: Request, res: Response, next: 
 };
 
 export const userPasswordChangeMiddleware = async (req: Request<{}, {}, UpdateUserPassReqData>, res: Response, next: NextFunction) => {
-  const { oldPassword, newPassword, confirmNewPassword, userId } = req.body;
+  const { userId, passwordData } = req.body;
+  const { oldPassword, newPassword, confirmNewPassword } = passwordData;
   const currentUser = req.user as IAdmin | IUser;
+  
   if (currentUser) {
     if (currentUser instanceof Admin) {
       // admin should be able to set a new password w/o old, only <newPassword> <confirmNewPassword> and <userId> fields are needed //

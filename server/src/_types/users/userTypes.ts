@@ -26,10 +26,12 @@ export type UserData = {
 
 // client request data types //
 export type UpdateUserPassReqData = {
-  oldPassword?: string;
-  newPassword?: string;
-  confirmNewPassword?: string;
-  userId?: string;
+  userId: string;
+  passwordData: {
+    oldPassword?: string;
+    newPassword?: string;
+    confirmNewPassword?: string;
+  }
 };
 
 // UsersController.ts response types //
