@@ -406,7 +406,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls  INVALID DATA //
   */
 
-  // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS //
+  // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS - OWN ACCOUNT //
   context(" User Change Password - PATCH - User LOGGED IN - VALID DATA - OWN PROFILE", () => {
     let userId: string;
     let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; }; 
@@ -513,7 +513,63 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
     });
     // END TEST user password change with all valid/correct fields //
   });
-  // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS //
+  // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS - OWN ACCOUNT //
+
+  // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS - OTHER USERS ACCOUNT //
+  /**
+   * User should only be able to change password on their own account
+   * Admin can change/reset password for regular users 
+   */
+  context(" User Change Password - PATCH - User LOGGED IN - VALID DATA - OTHER USERS PROFILE", () => {
+    let secondUsersId: string;
+    let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; }; 
+    //
+    before(() => {
+      secondUsersId = secondReaderUser._id.toHexString();
+      passwordData = { oldPassword: "password", newPassword: "newPassword", confirmNewPassword: "newPassword" };
+    });
+
+    // TEST user password change with all valid/correct fields //
+    describe("PATCH /api/users/change_password - User entered all correct information in <req.body.passwordData> field", () => {
+      let editedUserData: UserData;
+      it(`Should NOT update the User password and return a correct <${forbiddenAccessCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId: secondUsersId, passwordData })
+          .end((err, response) => {
+            if(err) done(err);
+            console.log(response.body);
+            done();
+          });
+      });
+      // it should return proper data in <editedUser> response object //
+      /*
+      it(`Should return correct <editedUser> information in the response object changing only <passo`, () => {
+        expect(editedUserData._id).to.equal(firstReaderUser._id.toHexString());
+        expect(editedUserData.firstName).to.equal(firstReaderUser.firstName);
+        expect(editedUserData.lastName).to.equal(firstReaderUser.lastName);
+        expect(editedUserData.email).to.equal(firstReaderUser.email);
+        expect(editedUserData.createdAt).to.equal(firstReaderUser.createdAt.toISOString());
+      });
+      */
+    });
+    it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+      try {
+        const updatedNumOfUsers: number = await User.countDocuments();
+        const updatedNumOfAdmins: number = await Admin.countDocuments();
+        //
+        expect(updatedNumOfUsers).to.equal(numOfUserModels);
+        expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+      } catch (error) {
+        throw error;
+      }
+    });
+    // END TEST user password change with all valid/correct fields //
+  });
+
+  // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS - OTHER USERS ACCOUNT //
+
 
   // cleanup models //
   after(async () => {

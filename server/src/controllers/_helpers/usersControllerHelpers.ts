@@ -62,6 +62,10 @@ export const userPasswordChangeMiddleware = async (req: Request<{}, {}, UpdateUs
       // can only edit password on its own model //
       // can only edit password if <newPassword> <confirmNewPassword> <oldPassword> and <userId> fields are present and <oldPassword> is correct //
       const { _id: loggedInUserId } = currentUser;
+      // first ensure <req.body.userId> === <loggedInUserId>;
+      if (userId !== loggedInUserId.toHexString()) {
+        return respondWithNotAllowedError(res, [ "Not allowed to edit another profile" ], 403);
+      }
       const { valid, errorMessages } = validatePasswordChangeData({ newPassword, confirmNewPassword, oldPassword}, { oldPassRequired: true });
       if (!valid) return respondWithWrongInputError(res, { responseMsg: "Invalid input", customMessages: errorMessages });
       // check logged in users credentails to change the password //
