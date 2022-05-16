@@ -14,6 +14,7 @@ export interface IUser extends Document  {
   editedAt: Date;
   createdAt: Date;
   validPassword: (password: string) => Promise<boolean>;
+  updatePassword: (password: string) => Promise<boolean>;
 };
 
 const UserSchema = new Schema<IUser>({
@@ -54,6 +55,6 @@ UserSchema.pre("save", async function(next: NextFunction) {
 });
 UserSchema.methods.validPassword = async function(password: string): Promise<boolean> {
   return await bcrypt.compare(password, this.password);
-}
+};
 
 export default mongoose.models.User as Model<IUser> ||  mongoose.model<IUser>("User", UserSchema);

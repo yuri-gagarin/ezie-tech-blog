@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+// data models //
 import Admin from "../../models/Admin";
 import User from "../../models/User";
 //
@@ -8,6 +10,16 @@ import type { Request, Response, NextFunction } from "express";
 import type { IAdmin } from "../../models/Admin";
 import type { IUser } from "../../models/User";
 import { validatePasswordChangeData } from "./validationHelpers";
+
+export const hashUserPassword = async (passwordString: string): Promise<string> => {
+  const SALT_ROUNDS = 10
+  try {
+    const hashedPassword = await bcrypt.hash(passwordString, SALT_ROUNDS);
+    return hashedPassword;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const verifyUsersModelAccess = async (req: Request, res: Response, next: NextFunction) => {
   const { user_id } = req.params || req.query as { userId?: string; };
@@ -38,7 +50,7 @@ export const userPasswordChangeMiddleware = async (req: Request<{}, {}, UpdateUs
   const { userId, passwordData } = req.body;
   const { oldPassword, newPassword, confirmNewPassword } = passwordData;
   const currentUser = req.user as IAdmin | IUser;
-  
+
   if (currentUser) {
     if (currentUser instanceof Admin) {
       // admin should be able to set a new password w/o old, only <newPassword> <confirmNewPassword> and <userId> fields are needed //

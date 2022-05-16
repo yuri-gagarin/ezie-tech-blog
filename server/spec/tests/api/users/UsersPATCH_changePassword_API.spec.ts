@@ -470,7 +470,29 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
     });
     // END TEST either invalid <oldPassword> field or mismatching <newPassword> and <confirmNewPassword> fields //
 
+    // TEST user password change with all valid/correct fields //
+    describe("PATCH /api/users/change_password - User entered all correct information in <req.body.passwordData> field", () => {
+      it(`Should NOT change User password with a WRONG <req.body.passwordData.oldPassword> FIELD and return a correct <${forbiddenAccessCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: firstReaderUserJWTToken })
+          .send({ userId, passwordData })
+          .end((err, response) => {
+            if(err) done(err);
+            const { editedUser, responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            console.log(response.body)
+            expect(response.status).to.equal(successResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+    });
+    // END TEST user password change with all valid/correct fields //
   });
+  // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS //
+
   // cleanup models //
   after(async () => {
     try {

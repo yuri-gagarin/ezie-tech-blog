@@ -5,8 +5,9 @@ import Admin, { IAdmin } from "../models/Admin";
 // types //
 import type { Request, Response } from "express";
 import type { ICRUDController, IGenericClientController } from "../_types/abstracts/DefaultController";
-import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes, ReqUserData, UsersUpdatePassRes } from "../_types/users/userTypes";
+import type { UsersIndexRes, UsersGetOneRes, UsersCreateRes, UsersEditRes, UsersDeleteRes, ReqUserData, UpdateUserPassReqData, UsersUpdatePassRes } from "../_types/users/userTypes";
 // helpers validators //
+import { hashUserPassword } from "./_helpers/usersControllerHelpers";
 import { validateUserData, validateUniqueEmail, validateEditEmail } from "./_helpers/validationHelpers";
 
 export default class UsersController extends BasicController implements IGenericClientController {
@@ -127,27 +128,27 @@ export default class UsersController extends BasicController implements IGeneric
 
   // only Admins level users OR Users editing own model should be able to edit password //
   // middleware to check edit rights run before controller action //
+  // all request data and access level should be validated and checked by this point //
   changePassword = async (req: Request, res: Response<UsersUpdatePassRes>): Promise<Response> => {
-    const { newPassword, userId } = req.body as { newPassword; userId: string; };
-
-    // validate password //
+    const { userId, passwordData } = req.body as UpdateUserPassReqData;
+    const newPasswordStringLiteral: string = passwordData.newPassword!;
 
     try {
-      const userToUpdate: IUser | null = await User.findOne({ _id: userId }).exec();
-      if (userToUpdate) {
-        userToUpdate.password = newPassword;
+      const hashedPassword: string = await hashUserPassword(newPasswordStringLiteral);
+      const updatedUser: IUser | null = await User.findOneAndUpdate({ _id: userId }, { password: hashedPassword, editedAt: new Date() }, { new: true }).exec()
+      if (updatedUser) {
         //
-        const updatedPasswordUser: IUser = await userToUpdate.save();
         return res.status(200).json({
           responseMsg: "User Password Updated",
           editedUser: {
-            _id: updatedPasswordUser._id,
-            firstName: updatedPasswordUser.firstName,
-            lastName: updatedPasswordUser.lastName,
-            email: updatedPasswordUser.email,
-            confirmed: updatedPasswordUser.confirmed,
-            editedAt: updatedPasswordUser.editedAt,
-            createdAt: updatedPasswordUser.createdAt
+            _id: updatedUser._id,
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            email: updatedUser.email,
+            confirmed: updatedUser.confirmed,
+            editedAt: updatedUser.editedAt,
+            createdAt: updatedUser.createdAt,
+            password: updatedUser.password
           }
         });
       } else {
@@ -155,6 +156,7 @@ export default class UsersController extends BasicController implements IGeneric
         return await this.notFoundErrorResponse(res, customMessages);
       }
     } catch (error) {
+      console.log(error)
       return await this.generalErrorResponse(res, { error });
     }
   }
