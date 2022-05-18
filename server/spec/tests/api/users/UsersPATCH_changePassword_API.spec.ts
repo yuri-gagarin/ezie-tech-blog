@@ -14,6 +14,7 @@ import type { IAdmin } from "@/server/src/models/Admin";
 import type { IUser } from "@/server/src/models/User";
 import type { EditUserPassRes, UserData } from "@/redux/_types/users/dataTypes";
 import type { ReqUserData } from "@/server/src/_types/users/userTypes";
+import type { ErrorResponse } from "@/server/src/_types/auth/authTypes";
 
 describe("UsersController:changePassword - PATCH - API Tests", () => {
   //
@@ -30,12 +31,14 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   // data counts //
   let numOfUserModels: number = 0;
   let numOfAdminModels: number = 0;
+  // password constants //
+  const oldPassword: string = "password"; const newPassword: string = "newPassword"; const wrongPassword: string = "wrongPassword";
   // response constants //
-  const successResCode: number = 200;
-  const badRequestResCode: number = 400;
-  const unauthorizedResCode: number = 401;
-  const forbiddenAccessCode: number = 403;
-  const notFoundAccessCode: number = 404;
+  const successResCode: 200 = 200;
+  const badRequestResCode: 400 = 400;
+  const unauthorizedResCode: 401 = 401;
+  const forbiddenAccessCode: 403 = 403;
+  const notFoundAccessCode: 404 = 404;
 
   // generate mock models //
   before(async () => {
@@ -72,7 +75,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
         const userId: string = firstContributorUser._id.toHexString();
         chai.request(server)
           .patch("/api/users/change_password")
-          .send({ newPassword: "newPassword", confirmNewPassword: "newPassword", oldPassword: "password", userId })
+          .send({ userId, passwordData: { newPassword, confirmNewPassword: newPassword, oldPassword } })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
@@ -88,7 +91,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
-          .send({ newPassword: "newPassword", confirmNewPassword: "newPassword", oldPassword: "password", userId })
+          .send({ userId, passwordData: { newPassword, confirmNewPassword: newPassword, oldPassword } })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
@@ -412,7 +415,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
     let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; }; 
     before(() => {
       userId = firstReaderUser._id.toHexString();
-      passwordData = { oldPassword: "password", newPassword: "newPassword", confirmNewPassword: "newPassword" };
+      passwordData = { oldPassword, newPassword, confirmNewPassword: newPassword };
     });
     // TEST either invalid <oldPassword> field or mismatching <newPassword> and <confirmNewPassword> fields //
     describe("PATCH /api/users/change_password - User entered EITHER a wrong OLD PASSWORD or MISMATCHING <req.body.passwordData.newPassword> and <req.body.passwordData.confirmNewPassword>", () => {
@@ -492,24 +495,43 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
       // it should return proper data in <editedUser> response object //
-      it(`Should return correct <editedUser> information in the response object changing only <passo`, () => {
+      it(`Should return correct <editedUser> information in the response object changing only <password> field`, () => {
         expect(editedUserData._id).to.equal(firstReaderUser._id.toHexString());
         expect(editedUserData.firstName).to.equal(firstReaderUser.firstName);
         expect(editedUserData.lastName).to.equal(firstReaderUser.lastName);
         expect(editedUserData.email).to.equal(firstReaderUser.email);
         expect(editedUserData.createdAt).to.equal(firstReaderUser.createdAt.toISOString());
+        // <editedAt> should be changed>
+        expect(editedUserData.editedAt).to.not.equal(firstReaderUser.editedAt.toISOString());
+        // password should not be changed anot not sent back in <editedUser> object //
+        expect(editedUserData.password).to.be.undefined;
+      });
+      // user should not be able to log in with old password anymore //
+      it(`Should NOT alow login with the previous users password and send back the correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .post("/api/login")
+          .send({ email: firstReaderUser.email, password: oldPassword })
+          .end((err, response) => {
+            if (err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as ErrorResponse;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          })
       })
-    });
-    it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
-      try {
-        const updatedNumOfUsers: number = await User.countDocuments();
-        const updatedNumOfAdmins: number = await Admin.countDocuments();
-        //
-        expect(updatedNumOfUsers).to.equal(numOfUserModels);
-        expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
-      } catch (error) {
-        throw error;
-      }
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          //
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+        } catch (error) {
+          throw error;
+        }
+      });
     });
     // END TEST user password change with all valid/correct fields //
   });
@@ -539,7 +561,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           .send({ userId: secondUsersId, passwordData })
           .end((err, response) => {
             if(err) done(err);
-            console.log(response.body);
             done();
           });
       });

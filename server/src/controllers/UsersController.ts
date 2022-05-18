@@ -148,7 +148,6 @@ export default class UsersController extends BasicController implements IGeneric
             confirmed: updatedUser.confirmed,
             editedAt: updatedUser.editedAt,
             createdAt: updatedUser.createdAt,
-            password: updatedUser.password
           }
         });
       } else {
