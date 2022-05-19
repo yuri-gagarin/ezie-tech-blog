@@ -631,6 +631,68 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
 
   // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS - OTHER USERS ACCOUNT //
 
+  // TEST CONTEXT LOGGED IN ADMIN UsersControler:changePassword API calls INVALID DATA FIELDS - OTHER USERS ACCOUNT //
+  context("User Change Password - PATCH - ADMIN LOGGED IN - INVALID DATA - OTHER USERS PROFILE", () => {
+    let secondUsersId: string;
+    let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; }; 
+    //
+    before(() => {
+      secondUsersId = secondReaderUser._id.toHexString();
+      passwordData = { oldPassword, newPassword, confirmNewPassword: newPassword };
+    });
+
+    describe("PATCH /api/users/change_password - Admin editing password - MISSING or NOT ALLOWED <req.body.fields> - OTHER USER PROFILE", () => {
+      // missing <req.body.userId> field //
+      it(`Should NOT change User password with a missing <req.body.userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ passwordData: { oldPassword: "password", newPassword: "newPassword", confirmNewPassword: "newPassword" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // missing <req.body.passwordData> field //
+      it(`Should NOT change User password with a missing <req.body.passwordData> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // not allowed <req.body.thisIsNotAllowed> field //
+      it(`Should NOT change User password with a NOT ALLOWED <req.body.thisIsNotAllowed> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId, passwordData, thisIsNotAllowed: "shoudn't be allowed" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+    });
+  });
+  // END TEST CONTEXT LOGGED IN ADMIN UsersControler:changePassword API calls INVALID DATA FIELDS - OTHER USERS ACCOUNT //
 
   // cleanup models //
   after(async () => {
