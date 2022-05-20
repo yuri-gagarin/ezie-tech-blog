@@ -640,14 +640,14 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
       secondUsersId = secondReaderUser._id.toHexString();
       passwordData = { oldPassword, newPassword, confirmNewPassword: newPassword };
     });
-
+    // TEST missing or not allowed <req.body> fields //
     describe("PATCH /api/users/change_password - Admin editing password - MISSING or NOT ALLOWED <req.body.fields> - OTHER USER PROFILE", () => {
       // missing <req.body.userId> field //
       it(`Should NOT change User password with a missing <req.body.userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: adminUserJWTToken })
-          .send({ passwordData: { oldPassword: "password", newPassword: "newPassword", confirmNewPassword: "newPassword" } })
+          .send({ passwordData })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
@@ -691,6 +691,77 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           });
       });
     });
+    // END TEST missing or not allowed <req.body.fields> //
+
+    // TEST empty or wrong type <req.body> fields //
+    describe("PATCH /api/users/change_password - Admin editing password - EMTPY or WRONG TYPE <req.body.fields> - OTHER USER PROFILE", () => {
+
+      // invalid <req.body.userId> field //
+      it(`Should NOT change User password with an INVALID <req.body.userId> FIELD TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: "notvaliduserid", passwordData })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // empty <req.body.userId> field //
+      it(`Should NOT change User password with an EMPTY <req.body.userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: "", passwordData })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // invalid <req.body.passwordData> field //
+      it(`Should NOT change User password with an INVALID <req.body.passwordData> FIELD TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: "notvaliduserid", passwordData: "notavalidobject" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // empty <req.body.passwordData> field //
+      it(`Should NOT change User password with an EMPTY <req.body.passwordData> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId, passwordData: "" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+    });
+    // END TEST empty or wrong type <req.body> fields //
   });
   // END TEST CONTEXT LOGGED IN ADMIN UsersControler:changePassword API calls INVALID DATA FIELDS - OTHER USERS ACCOUNT //
 
