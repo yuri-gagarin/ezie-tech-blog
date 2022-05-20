@@ -762,8 +762,135 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
       });
     });
     // END TEST empty or wrong type <req.body> fields //
+
+    // TEST empty, wrong type or incorrect <req.body.passwordData> fields //
+    describe("PATCH /api/users/change_password - Admin editing password - EMTPY or WRONG TYPE or INCORRECT <req.body.passwordData> FIELDS - OTHER USER PROFILE", () => {
+      // invalid <req.body.passwordData.newPassword field //
+      it(`Should NOT change User password with an INVALID <req.body.passwordData.newPassword> FIELD TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId, passwordData: { newPassword: {}, confirmNewPassword: newPassword } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // empty <req.body.passwordData.newPassword field //
+      it(`Should NOT change User password with an EMPTY <req.body.passwordData.newPassword> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId, passwordData: { newPassword: "", confirmNewPassword: newPassword } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // invalid <req.body.passwordData.confirmNewPassword field //
+      it(`Should NOT change User password with an INVALID <req.body.passwordData.confirmNewPassword> FIELD TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId, passwordData: { newPassword, confirmNewPassword: {} } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // empty <req.body.passwordData.confirmNewPassword field //
+      it(`Should NOT change User password with an EMPTY <req.body.passwordData.confirmNewPassword> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId, passwordData: { newPassword, confirmNewPassword: "" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      // mismatching <req.body.passwordData.newPassword> and <req.body.passwordData.confirmNewPassword> fields //
+      it(`Should NOT change User password with MISMATCHING <passwordData.newPassword> and <passwordData.confirmNewPassword> FIELDS and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId, passwordData: { newPassword, confirmNewPassword: "doesnotmatch" } })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+    });
+    // END TEST empty, wrong type or incorrect <req.body.passwordData> fields //
+    // retry login and ensure model was not changed //
+    describe("Test LOGIN action with the queried User model and ensure no changes were made", () => {
+      // ensure user can still login with the old password //
+      it(`Should successfully LOGIN IN with the UNCHANGED User password and send back a correct <${successResCode}> response`, (done) => {
+        chai.request(server)
+          .post("/api/login")
+          .send({ email: secondReaderUser.email, password: oldPassword })
+          .end((err, response) => {
+            const { responseMsg, userData, jwtToken, success, isAdmin, error, errorMessages } = response.body as LoginRes;
+            if (err) done(err);
+            expect(response.status).to.equal(successResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(userData).to.be.an("object");
+            expect(jwtToken).to.be.an("object");
+            expect(success).to.equal(true);
+            expect(isAdmin).to.equal(false);
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });   
+      // ensure that the queried User model is unchanged //
+      it("Should NOT alter any <User> or <Admin> models in the database in any way", async () => {
+        try {
+          const queriedUser: IUser = await User.findOne({ email: secondReaderUser.email });
+          const updatedNumOfAdminModels: number = await Admin.countDocuments();
+          const updatedNumOfUserModels: number = await User.countDocuments();
+          //
+          expect(queriedUser.toObject()).to.eql(secondReaderUser.toObject());
+          expect(updatedNumOfAdminModels).to.equal(numOfAdminModels);
+          expect(updatedNumOfUserModels).to.equal(numOfUserModels);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
   });
   // END TEST CONTEXT LOGGED IN ADMIN UsersControler:changePassword API calls INVALID DATA FIELDS - OTHER USERS ACCOUNT //
+
+  // TEST CONTEXT LOGGED IN ADMIN UsersController:changePassword API calls VALID DATA FIELDS - OTHER USERS ACCOUNT //
+  context("User Change Password - PATCH - ADMIN LOGGED IN - VALID DATA - OTHER USERS PROFILE", () => {
+  });
+  // END TEST CONTEXT LOGGED IN ADMIN UsersController:changePassword API calls VALID DATA FIELDS - OTHER USERS ACCOUNT //
 
   // cleanup models //
   after(async () => {
