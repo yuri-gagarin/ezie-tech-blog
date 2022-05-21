@@ -34,6 +34,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   let numOfAdminModels: number = 0;
   // password constants //
   const oldPassword: string = "password"; const newPassword: string = "newPassword"; const wrongPassword: string = "wrongPassword";
+  let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; } = { oldPassword, newPassword, confirmNewPassword: newPassword };
   // response constants //
   const successResCode: 200 = 200;
   const badRequestResCode: 400 = 400;
@@ -107,9 +108,12 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   });
   // END CONTEXT UsersContreller:updateUserPassword no login //
 
-  /*
   // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls INVALID DATA //
   context("User Change Password - PATCH - User LOGGED IN - INVALID DATA(OR MISSING FIELDS) - OWN PROFILE", () => {
+    let userId: string;
+    before(() => {
+      userId = firstReaderUser._id.toHexString();
+    });
     // TEST missing or not allowed data fields //
     describe("PATCH /api/users/change_password - Change Password - with MISSING OR NOT ALLOWED data fields", () => {
       // missing <req.body.userId> field //
@@ -130,7 +134,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
       });
       // missing <req.body.passwordData> field //
       it(`Should NOT change User password with a missing <req.body.paswordData> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
-        const userId: string = firstReaderUser._id.toHexString();
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
@@ -163,7 +166,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
       });
       // PRESENT <req.body.userId> AND <req.body.passwordData> fields WITH EXTRA NOT ALLOWED field //
       it(`Should NOT change User password with a NOT ALLOWED FIELD and return a correct <${badRequestResCode}> response`, (done) => {
-        const userId: string = firstReaderUser._id.toHexString();
         chai.request(server)
           .patch("/api/users/change_password")
           .set({ Authorization: firstReaderUserJWTToken })
@@ -246,10 +248,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
     // END TEST invalid userId fields //
     // TEST invalid <passwordData> fields //
     describe("PATCH /api/users/change_password - User with an INVALID <req.body.paswordData> field", () => {
-      let userId: string;
-      before(() => {
-        userId = firstReaderUser._id.toHexString();
-      });
       // invalid <passwordData> type //
       it(`Should NOT change User password with an INVALID <req.body.passwordData> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
@@ -298,10 +296,6 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
     // testing with wrong password data //
     // TEST invalid <req.body.passwordData.oldPassword> field //
     describe("PATCH /api/users/change_password - User with an INVALID or MISSING DATA in <req.body.paswordData> field", () => {
-      let userId: string;
-      before(() => {
-        userId = firstReaderUser._id.toHexString();
-      });
       // invalid <req.body.passwordData.oldPasswrod> type //
       it(`Should NOT change User password with an INVALID <req.body.passwordData.oldPassword> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
@@ -406,18 +400,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
       });
     });
     // END TEST invalid <req.body.passwrodDAta.oldPassword> field //
-  });
-  // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls  INVALID DATA //
-  */
 
-  // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS - OWN ACCOUNT //
-  context(" User Change Password - PATCH - User LOGGED IN - VALID DATA - OWN PROFILE", () => {
-    let userId: string;
-    let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; }; 
-    before(() => {
-      userId = firstReaderUser._id.toHexString();
-      passwordData = { oldPassword, newPassword, confirmNewPassword: newPassword };
-    });
     // TEST either invalid <oldPassword> field or mismatching <newPassword> and <confirmNewPassword> fields //
     describe("PATCH /api/users/change_password - User entered EITHER a wrong OLD PASSWORD or MISMATCHING <req.body.passwordData.newPassword> and <req.body.passwordData.confirmNewPassword>", () => {
       // wrong <oldPassworD> field //
@@ -429,6 +412,7 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            console.log(response.body)
             expect(response.status).to.equal(forbiddenAccessCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
@@ -473,6 +457,16 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
       });
     });
     // END TEST either invalid <oldPassword> field or mismatching <newPassword> and <confirmNewPassword> fields //
+
+  });
+  // END TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls  INVALID DATA //
+
+  // TEST CONTEXT LOGGED IN USER UsersControler:changePassword  API calls VALID DATA FIELDS - OWN ACCOUNT //
+  context(" User Change Password - PATCH - User LOGGED IN - VALID DATA - OWN PROFILE", () => {
+    let userId: string;
+    before(() => {
+      userId = firstReaderUser._id.toHexString();
+    });
 
     // TEST user password change with all valid/correct fields //
     describe("PATCH /api/users/change_password - User entered all correct information in <req.body.passwordData> field", () => {
@@ -567,11 +561,9 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
    */
   context(" User Change Password - PATCH - User LOGGED IN - VALID DATA - OTHER USERS PROFILE", () => {
     let secondUsersId: string;
-    let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; }; 
     //
     before(() => {
       secondUsersId = secondReaderUser._id.toHexString();
-      passwordData = { oldPassword, newPassword, confirmNewPassword: newPassword };
     });
 
     // TEST user password change with all valid/correct fields //
@@ -634,11 +626,9 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
   // TEST CONTEXT LOGGED IN ADMIN UsersControler:changePassword API calls INVALID DATA FIELDS - OTHER USERS ACCOUNT //
   context("User Change Password - PATCH - ADMIN LOGGED IN - INVALID DATA - OTHER USERS PROFILE", () => {
     let secondUsersId: string;
-    let passwordData: { oldPassword: string; newPassword: string; confirmNewPassword: string; }; 
     //
     before(() => {
       secondUsersId = secondReaderUser._id.toHexString();
-      passwordData = { oldPassword, newPassword, confirmNewPassword: newPassword };
     });
     // TEST missing or not allowed <req.body> fields //
     describe("PATCH /api/users/change_password - Admin editing password - MISSING or NOT ALLOWED <req.body.fields> - OTHER USER PROFILE", () => {
@@ -889,6 +879,77 @@ describe("UsersController:changePassword - PATCH - API Tests", () => {
 
   // TEST CONTEXT LOGGED IN ADMIN UsersController:changePassword API calls VALID DATA FIELDS - OTHER USERS ACCOUNT //
   context("User Change Password - PATCH - ADMIN LOGGED IN - VALID DATA - OTHER USERS PROFILE", () => {
+    let secondUsersId: string;
+    //
+    before(() => {
+      secondUsersId = secondReaderUser._id.toHexString();
+    });
+    // TEST Admin changing/resetting User password, valid data //
+    describe("PATCH /api/users/change_password - Admin Editing Password - ALL CORRECT FIELDS/DATA - OTHER USER PROFILE", () => {
+      it(`Should correctyle edit Users password and send back the correct <${successResCode}> response`, (done) => {
+        chai.request(server)
+          .patch("/api/users/change_password")
+          .set({ Authorization: adminUserJWTToken })
+          .send({ userId: secondUsersId, passwordData })
+          .end((err, response) => {
+            if(err) done(err);
+            const { editedUser, responseMsg, error, errorMessages } = response.body as EditUserPassRes;
+            expect(response.status).to.equal(successResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(editedUser).to.be.an("object");
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });
+    });
+    // END TEST Admin changing/resetting User password, valid data //
+    // TEST login and ensure User model password was successfully changed //
+    describe("Test LOGIN action with the queried User model and ensure ONlY PASSWROD was successfuly changed", () => {
+      // ensure user can still login with the old password //
+      it(`Should successfully LOGIN IN with the UPDATED User password and send back a correct <${successResCode}> response`, (done) => {
+        chai.request(server)
+          .post("/api/login")
+          .send({ email: secondReaderUser.email, password: newPassword })
+          .end((err, response) => {
+            const { responseMsg, userData, jwtToken, success, isAdmin, error, errorMessages } = response.body as LoginRes;
+            if (err) done(err);
+            expect(response.status).to.equal(successResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(userData).to.be.an("object");
+            expect(jwtToken).to.be.an("object");
+            expect(success).to.equal(true);
+            expect(isAdmin).to.equal(false);
+            //
+            expect(error).to.be.undefined;
+            expect(errorMessages).to.be.undefined;
+            done();
+          });
+      });   
+      // ensure that the queried User model is unchanged //
+      it("Should alter the queried User model and update only <password> and <editedAt> fields", async () => {
+        try {
+          const queriedUser: IUser = await User.findOne({ email: secondReaderUser.email });
+          const updatedNumOfAdminModels: number = await Admin.countDocuments();
+          const updatedNumOfUserModels: number = await User.countDocuments();
+          // test what fields needed to be edited //
+          expect(queriedUser._id.toHexString()).to.equal(secondReaderUser._id.toHexString());
+          expect(queriedUser.email).to.equal(secondReaderUser.email);
+          expect(queriedUser.firstName).to.equal(secondReaderUser.firstName);
+          expect(queriedUser.lastName).to.equal(secondReaderUser.lastName);
+          expect(queriedUser.createdAt.toString()).to.equal(secondReaderUser.createdAt.toString());
+          // <editedAt> and <password> fields 
+          expect(Date.parse(queriedUser.editedAt.toString())).to.be.gt(Date.parse(secondReaderUser.editedAt.toString()));
+          expect(queriedUser.password).to.not.equal(secondReaderUser.password);
+          // num of models shouldn't change //
+          expect(updatedNumOfAdminModels).to.equal(numOfAdminModels);
+          expect(updatedNumOfUserModels).to.equal(numOfUserModels);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
   });
   // END TEST CONTEXT LOGGED IN ADMIN UsersController:changePassword API calls VALID DATA FIELDS - OTHER USERS ACCOUNT //
 
