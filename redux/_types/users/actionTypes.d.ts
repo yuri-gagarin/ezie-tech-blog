@@ -51,6 +51,15 @@ export type DeleteUser = {
     status: number; loading: boolean; responseMsg: string; updatedSelectedUserData: UserData;  updatedUsersArr: UserData[];
   };
 };
+export type UpdateUserPassword = {
+  readonly type: "UpdateUserPassword";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    currentUser: UserData;
+  };
+};
 
 // ERROR HANDLING //
 export type SetUserError = {
@@ -67,7 +76,7 @@ export type ClearUserError = {
 };
 
 export type UserAction = (
-  UserAPIRequest | GetUsers | GetOneUser | EditUser | CreateUser | DeleteUser |
+  UserAPIRequest | GetUsers | GetOneUser | EditUser | CreateUser | DeleteUser | UpdateUserPassword |
   SetUser | ClearUser | SetUserError | ClearUserError
 );
 
