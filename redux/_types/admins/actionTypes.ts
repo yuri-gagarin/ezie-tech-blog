@@ -51,15 +51,6 @@ export type DeleteAdmin = {
     status: number; loading: boolean; responseMsg: string; updatedSelectedAdminData: AdminData;  updatedAdminsArr: AdminData[];
   };
 };
-export type UpdateAdminPassword = {
-  readonly type: "UpdateAdminPassword";
-  readonly payload: {
-    status: number;
-    responseMsg: string;
-    loading: boolean;
-    currentUser: AdminData;
-  };
-};
 
 // ERROR HANDLING //
 export type SetAdminError = {
@@ -76,7 +67,7 @@ export type ClearAdminError = {
 };
 
 export type AdminAction = (
-  AdminAPIRequest | GetAdmins | GetOneAdmin | EditAdmin | CreateAdmin | DeleteAdmin | UpdateAdminPassword |
+  AdminAPIRequest | GetAdmins | GetOneAdmin | EditAdmin | CreateAdmin | DeleteAdmin |
   SetAdmin | ClearAdmin | SetAdminError | ClearAdminError
 );
 

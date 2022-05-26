@@ -53,3 +53,10 @@ export type DeleteUserRegRes = {
   readonly error?: any;
   readonly errorMessages?: string[];
 };
+
+export type ChangePasswordReqData = {
+  oldPassword?: string;
+  newPassword?: string;
+  confirmNewPassword?: string;
+};
+

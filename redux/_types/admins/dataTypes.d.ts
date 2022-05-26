@@ -52,6 +52,12 @@ export type DeleteAdminRes = {
   errorMessages?: string[];
 };
 
+export type EditAdminPassRes = {
+  responseMsg?: string;
+  editedAdmin?: AdminData;
+  error?: any;
+  errorMessages?: string[];
+};
 export type ErrorAdminRes = {
   responseMsg: string;
   error: any;

@@ -3,15 +3,14 @@ import axios from "../../components/axios/axiosInstance";
 import type { Dispatch } from "redux";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 // actions types //
-import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState, UpdateUserPassword } from "../_types/auth/actionTypes";
+import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState, UpdateCurrentUserPassword, AdminResetUserPassword } from "../_types/auth/actionTypes";
 // data types //
 import type { AdminData } from "../_types/generalTypes";
-import type { UserData, UserFormData } from "../_types/users/dataTypes";
-import type { IAuthState, LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
-import type { EditUserRes, EditUserPassRes } from "../_types/users/dataTypes";
+import type { AdminFormData, EditAdminRes, EditAdminPassRes } from "../_types/admins/dataTypes";
+import type { UserData, UserFormData, EditUserRes, EditUserPassRes } from "../_types/users/dataTypes";
+import type { ChangePasswordReqData, IAuthState, LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
 // helpers //
 import { processAxiosError } from '../_helpers/dataHelpers';
-import { AdminFormData, EditAdminRes } from "../_types/admins/dataTypes";
 
 // TODO //
 // rewrite as a class //
@@ -164,22 +163,58 @@ export class AuthActions {
     return dispatch({ type: "AuthErrorDismiss", payload: { error: null, errorMessages: null }});
   }
 
-  public static handleUpdateUserPassword = async (dispatch: Dispatch<AuthAction>, data: { oldPassword: string, newPassword: string; authState: IAuthState }): Promise<UpdateUserPassword> => {
-    const { oldPassword, newPassword, authState } = data;
+  public static handleUpdateUserPassword = async (data: { dispatch: Dispatch<AuthAction>; passwordData: ChangePasswordReqData; userId?: string; authState: IAuthState; }): Promise<AdminResetUserPassword | UpdateCurrentUserPassword> => {
+    const { authState, dispatch } = data;
+    const { isAdmin, currentUser } = authState;
+    // if current user is admin, updating or resetting user password then <data.userId> should be defined //
+    let userId: string = isAdmin && data.userId || currentUser._id;
+    let adminResetingUserPass: boolean = isAdmin && data.userId && data.userId !== currentUser._id;
+    //
     const axiosOpts: AxiosRequestConfig = {
       method: "PATCH",
-      url: "/api/users/update_user_password",
-      data: { oldPassword, newPassword }
+      url: "/api/users/change_password",
+      data: { userId, passwordData: data.passwordData }
     };
 
     dispatch({ type: "AuthAPIRequest", payload: { loading: true } });
-
     try {
       const { status, data }: AxiosResponse<EditUserPassRes> = await axios(axiosOpts);
-      const { responseMsg, editedUser: currentUser } = data;
+      const { responseMsg, editedUser } = data;
+      // depending on if user updated own pass or admin updated user pass, theres a different end action //
+      if (adminResetingUserPass) {
+        return dispatch({
+          type: "AdminResetUserPassword", payload: { status, responseMsg, loading: false }
+        })
+      } else {
+        // user updating own password, update auth state //
+        return dispatch({
+          type: "UpdateCurrentUserPassword", payload: { status, responseMsg, currentUser: editedUser, loading: false  }
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public static handleUpdatedAdminPassword = async (data: { dispatch: Dispatch<AuthAction>; passwordData: ChangePasswordReqData; authState: IAuthState; }): Promise<UpdateCurrentUserPassword> => {
+    const { dispatch, passwordData, authState } = data;
+    //
+    const adminId: string = authState.currentUser._id;
+    //
+    const axiosOpts: AxiosRequestConfig = {
+      method: "PATCH",
+      url: "/api/admins/change_password",
+      data: { adminId, passwordData: data.passwordData }
+    };
+
+    dispatch({ type: "AuthAPIRequest", payload: { loading: true } });
+    try {
+      const { status, data }: AxiosResponse<EditAdminPassRes> = await axios(axiosOpts);
+      const { responseMsg, editedAdmin } = data;
+      // depending on if user updated own pass or admin updated user pass, theres a different end action //
       return dispatch({
-        type: "UpdateUserPassword", payload: { status, responseMsg, currentUser, loading: false  }
-      })
+        type: "UpdateCurrentUserPassword", payload: { status, responseMsg, currentUser: editedAdmin, loading: false  }
+      });
     } catch (error) {
       throw error;
     }

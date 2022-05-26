@@ -78,6 +78,25 @@ export type AuthLogoutSuccess = {
   };
 };
 
+// password reset or update //
+export type UpdateCurrentUserPassword = {
+  readonly type: "UpdateCurrentUserPassword";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    currentUser: UserData | AdminData;
+  };
+};
+export type AdminResetUserPassword = {
+  readonly type: "AdminResetUserPassword";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+  };
+};
+
 export type ClearLoginMsg = {
   readonly type: "ClearLoginMsg";
   readonly payload: {};
@@ -116,7 +135,7 @@ export type AuthErrorDismiss = {
 };
 
 export type AuthAction = (
-  AuthAPIRequest | ProfileAPIRequest | UpdateUserProfile | UpdateAdminProfile |
+  AuthAPIRequest | ProfileAPIRequest | UpdateUserProfile | UpdateAdminProfile | UpdateCurrentUserPassword | AdminResetUserPassword |
   AuthLoginSuccess | AuthRegisterSuccess | AuthLogoutSuccess | ClearLoginMsg | ClearLoginState | AuthFailure | AuthErrorDismiss
 );
 

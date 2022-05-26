@@ -21,7 +21,8 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         loading: action.payload.loading
       };
     }
-    case "UpdateAdminPassword": {
+    // password updates and reset //
+    case "AdminResetUserPassword": {
       return {
         ...state,
         ...action.payload,
@@ -29,7 +30,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         errorMessages: null
       };
     }
-    case "UpdateUserPassword": {
+    case "UpdateCurrentUserPassword": {
       return {
         ...state,
         ...action.payload,
