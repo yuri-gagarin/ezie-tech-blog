@@ -24,10 +24,13 @@ export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ ch
     <React.Fragment>
       {
         changePassword && handleOldPassChange &&
-        <Form.Field>
-          <label>Old Password: </label>
-          <Input onChange={ handlePassChange } />
-        </Form.Field>
+        <Form.Group className={ styles.passInputGroup }>
+        <label className={ styles.passInputLabel }>Old Password:</label>
+          <Form.Input 
+            className={ styles.passInput }
+            onChange={ handlePassChange } 
+          />
+        </Form.Group>
       }
       <Form.Group className={ styles.passInputGroup }>
         <label className={ styles.passInputLabel }>{ changePassword ? "New Password:" : "Password:"}</label>

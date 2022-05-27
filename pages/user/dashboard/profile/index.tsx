@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Grid, Form, Label, Segment } from "semantic-ui-react";
+import { Button, Grid, Form, Label, Menu, Segment } from "semantic-ui-react";
 // next imports //
 import { useRouter } from "next/router";
 // redux imports //
@@ -33,6 +33,10 @@ type EditPasswordState = {
     errorMsg: string | null;
   };
 }
+
+const setEmptyPasswordState = (): EditPasswordState => {
+  return { componentOpen: false, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: "" }};
+};
 interface IUserProfileIndexProps {
 }
 
@@ -59,9 +63,17 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   };
   // END User update functionality //
 
+  // togglers for password change component //
+  const togglePasswordChangeComponent = (): void => {
+    setEditPasswordState({ ...setEmptyPasswordState(), componentOpen: !editPasswordState.componentOpen })
+  }
+  //
+
   // Password update change listeners //
+  const handleOldPassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    
+  };
   const handlePassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log(e.currentTarget.value)
     if (e.currentTarget.value.length === 0) {
       setEditPasswordState({ ...editPasswordState, password: { value: e.currentTarget.value, errorMsg: "Field cannot be empty" } });
     } else {
@@ -153,6 +165,19 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
           <div>
             <Label className={ styles.userContentLabel }>Registered:</Label><span>{ currentUser.createdAt }</span>
           </div>
+          {
+            editPasswordState.componentOpen &&
+            <Form className={ styles.passChangeForm }>
+              <UserPassInput 
+                changePassword={ true }
+                handleOldPassChange={ handleOldPassChange }
+                handlePassChange={ handlePassChange }
+                handleConfirmPassChange={ handleConfirmPassChange }
+                passwordErrMsg={ editPasswordState.password.errorMsg }
+                passwordConfErrMsg={ editPasswordState.passwordConfirm.errorMsg }
+              />
+            </Form>
+          }
           <div className={ styles.passChangeControls }>
             {
               editPasswordState.componentOpen 
@@ -161,13 +186,14 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
                 <Button 
                   icon="save" 
                   color="green" 
-                  content="Update Password" 
+                  content="Change Password" 
                 />
                 <Button 
                   basic 
                   icon="cancel" 
                   color="orange" 
                   content="Cancel" 
+                  onClick={ togglePasswordChangeComponent }
                 />
               </Button.Group>
               :
@@ -176,18 +202,10 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
                 icon="lock"
                 color="facebook"
                 content="Change Password" 
+                onClick={ togglePasswordChangeComponent }
               />
             }
           </div>
-          <Form className={ styles.passChangeForm }>
-            <UserPassInput 
-              changePassword={ true }
-              handlePassChange={ handlePassChange }
-              handleConfirmPassChange={ handleConfirmPassChange }
-              passwordErrMsg={ editPasswordState.password.errorMsg }
-              passwordConfErrMsg={ editPasswordState.passwordConfirm.errorMsg }
-            />
-          </Form>
         </Segment>
       </Grid.Row>
     </React.Fragment>
