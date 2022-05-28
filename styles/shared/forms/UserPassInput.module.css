@@ -16,9 +16,9 @@
 
 @media screen and (min-width: 551px) {
   .passInputLabel {
-    width: 250px;
+    width: 275px;
   }
   .passInput {
-    width: 300px;
+    width: 275px;
   }
 }

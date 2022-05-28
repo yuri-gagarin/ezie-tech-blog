@@ -116,6 +116,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // Change User Password //
   const handleUpdateUserPassword = async (): Promise<void> => {
     console.log("no")
+    // first ensure that all fields are fillled out //
   };
   const dismissFormErrorMessages = (): void => {
     setEditPassFormErrorMessages({ visible: false, errors: null });
@@ -186,6 +187,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
             true &&
             <Form className={ styles.passChangeForm }>
               <Message 
+                className={ styles.passChangeErrorMessages }
                 visible
                 floating
                 error

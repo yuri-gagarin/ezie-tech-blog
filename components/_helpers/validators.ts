@@ -65,20 +65,42 @@ export const loginFormValidator = (data: { email?: string; password?; emailError
   const res: ValidationResponse =  { valid: true, errorMessages: [] };
 
   if (emailError || passwordError) {
-    res.valid = false;
     if (emailError) res.errorMessages.push(emailError);
     if (passwordError) res.errorMessages.push(passwordError);
     return res;
   }  
   if (!email) {
-    res.valid = false;
     res.errorMessages.push("Email is required to register");
   }
   if (!password) {
-    res.valid = false;
     res.errorMessages.push("Password is required to register");
   }
-  return res;
+  return res.errorMessages.length > 0 ? { ...res, valid: false } : res;
+};
+
+export const validateUserPasswordChange = (data: { oldPassword?: string; newPassword?: string; confirmNewPassword?: string; }, opts?: { oldPassRequired?: boolean }): ValidationResponse => {
+  const { oldPassword, newPassword, confirmNewPassword } = data;
+  const res: ValidationResponse = { valid: true, errorMessages: [] };
+  if (!newPassword) {
+    res.errorMessages.push("Please enter the new password");
+  }
+  if (!confirmNewPassword) {
+    res.errorMessages.push("Please confrim the new password");
+  }
+  if (newPassword && confirmNewPassword) {
+    if (newPassword !== confirmNewPassword) {
+      res.errorMessages.push("New passwords do not match");
+
+    }
+  }
+  // check old password if required //
+  if (opts && opts.oldPassRequired) {
+    if (!oldPassword) {
+      res.errorMessages.push("Please enter your current pasword");
+    }
+  }
+
+  return res.errorMessages.length > 0 ? { ...res, valid: false } : res;
 };
 
 // PROJECT Model validators //
