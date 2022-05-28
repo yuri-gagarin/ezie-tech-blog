@@ -13,22 +13,27 @@ interface IUserPassInputProps {
   handleOldPassChange?: React.ChangeEventHandler<HTMLInputElement>;
   handlePassChange: React.ChangeEventHandler<HTMLInputElement>;
   handleConfirmPassChange: React.ChangeEventHandler<HTMLInputElement>;
+  oldPasswordErrMsg?: string | null;
   passwordErrMsg?: string | null;
   passwordConfErrMsg?: string | null;
 }
 //
 
-export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ changePassword, handleOldPassChange, handlePassChange, handleConfirmPassChange, passwordErrMsg, passwordConfErrMsg }): JSX.Element => {
+export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ changePassword, handleOldPassChange, handlePassChange, handleConfirmPassChange, oldPasswordErrMsg, passwordErrMsg, passwordConfErrMsg }): JSX.Element => {
 
   return (
     <React.Fragment>
       {
         changePassword && handleOldPassChange &&
         <Form.Group className={ styles.passInputGroup }>
-        <label className={ styles.passInputLabel }>Old Password:</label>
+        <label className={ styles.passInputLabel }>Current Password:</label>
           <Form.Input 
             className={ styles.passInput }
-            onChange={ handlePassChange } 
+            error={ oldPasswordErrMsg ? { content: oldPasswordErrMsg, pointing: "below" } : false } 
+            icon="lock"
+            onChange={ handleOldPassChange } 
+            type="password"
+            placeholder={ "Current Password" }
           />
         </Form.Group>
       }
@@ -51,7 +56,7 @@ export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ ch
           icon="lock"
           onChange={ handleConfirmPassChange } 
           type="password"
-          placeholder={ "New Password" }
+          placeholder={ "Confirm New Password" }
         />
       </Form.Group>
     </React.Fragment>     

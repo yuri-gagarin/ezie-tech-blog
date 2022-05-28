@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Grid, Form, Label, Menu, Segment } from "semantic-ui-react";
+import { Button, Grid, Form, Label, Menu, Segment, Message } from "semantic-ui-react";
 // next imports //
 import { useRouter } from "next/router";
 // redux imports //
@@ -24,6 +24,10 @@ import type { AuthAction } from '@/redux/_types/auth/actionTypes';
 // 
 type EditPasswordState = {
   componentOpen: boolean;
+  oldPassword: {
+    value: string;
+    errorMsg: string | null;
+  };
   password: {
     value: string;
     errorMsg: string | null;
@@ -32,10 +36,14 @@ type EditPasswordState = {
     value: string;
     errorMsg: string | null;
   };
+};
+type EditPassFormErrorState = {
+  visible: boolean;
+  errors: string[] | null;
 }
 
 const setEmptyPasswordState = (): EditPasswordState => {
-  return { componentOpen: false, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: "" }};
+  return { componentOpen: false, oldPassword: { value: "", errorMsg: null }, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: "" }};
 };
 interface IUserProfileIndexProps {
 }
@@ -44,7 +52,8 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // local component state //
   const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
   const [ confirmDeleteProfileOpen, setConfirmDeleteProfileOpen ] = React.useState<boolean>(false);
-  const [ editPasswordState, setEditPasswordState ] = React.useState<EditPasswordState>({ componentOpen: true, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: null } }); 
+  const [ editPasswordState, setEditPasswordState ] = React.useState<EditPasswordState>(setEmptyPasswordState()); 
+  const [ editPassFormErrorMessages, setEditPassFormErrorMessages ] = React.useState<EditPassFormErrorState>({ visible: true, errors: null });
   // redux hooks and state //
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
@@ -71,18 +80,22 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
 
   // Password update change listeners //
   const handleOldPassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    
+    if (e.currentTarget.value.length === 0) {
+      setEditPasswordState({ ...editPasswordState, oldPassword: { value: e.currentTarget.value, errorMsg: "Enter your current password" } });
+    } else {
+      setEditPasswordState({ ...editPasswordState, oldPassword: { value: e.currentTarget.value, errorMsg: null } });
+    }
   };
   const handlePassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.currentTarget.value.length === 0) {
-      setEditPasswordState({ ...editPasswordState, password: { value: e.currentTarget.value, errorMsg: "Field cannot be empty" } });
+      setEditPasswordState({ ...editPasswordState, password: { value: e.currentTarget.value, errorMsg: "Enter the new password" } });
     } else {
       setEditPasswordState({ ...editPasswordState, password: { value: e.currentTarget.value, errorMsg: null } });
     }
   };
   const handleConfirmPassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.currentTarget.value.length === 0) {
-      setEditPasswordState({ ...editPasswordState, passwordConfirm: { value: e.currentTarget.value, errorMsg: "Field cannot be empty" } });
+      setEditPasswordState({ ...editPasswordState, passwordConfirm: { value: e.currentTarget.value, errorMsg: "Confirm the new password" } });
     } else {
       setEditPasswordState({ ...editPasswordState, passwordConfirm: { value: e.currentTarget.value, errorMsg: null } });
     }
@@ -102,8 +115,12 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   }
   // Change User Password //
   const handleUpdateUserPassword = async (): Promise<void> => {
-
+    console.log("no")
   };
+  const dismissFormErrorMessages = (): void => {
+    setEditPassFormErrorMessages({ visible: false, errors: null });
+  };
+  //
 
   const handleDismissErrorModal = (): void => {
 
@@ -144,7 +161,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
       />
 
       <Grid.Row className={ styles.headerRow }> 
-        <Segment style={{ heigth: "100%", width: "100%"}} textAlign="center">User Profile Section</Segment>
+        <Segment style={{ heigth: "100%", width: "100%" }} textAlign="center">User Profile Section</Segment>
       </Grid.Row>
       <Grid.Row>
         <Button.Group>
@@ -166,13 +183,22 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
             <Label className={ styles.userContentLabel }>Registered:</Label><span>{ currentUser.createdAt }</span>
           </div>
           {
-            editPasswordState.componentOpen &&
+            true &&
             <Form className={ styles.passChangeForm }>
+              <Message 
+                visible
+                floating
+                error
+                header="Client Error"
+                onDismiss={ dismissFormErrorMessages }
+                list={[]}
+              />
               <UserPassInput 
                 changePassword={ true }
                 handleOldPassChange={ handleOldPassChange }
                 handlePassChange={ handlePassChange }
                 handleConfirmPassChange={ handleConfirmPassChange }
+                oldPasswordErrMsg={ editPasswordState.oldPassword.errorMsg }
                 passwordErrMsg={ editPasswordState.password.errorMsg }
                 passwordConfErrMsg={ editPasswordState.passwordConfirm.errorMsg }
               />
@@ -180,13 +206,14 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
           }
           <div className={ styles.passChangeControls }>
             {
-              editPasswordState.componentOpen 
+              true 
               ?
               <Button.Group className={ styles.passChangeBtns }>
                 <Button 
                   icon="save" 
                   color="green" 
                   content="Change Password" 
+                  onClick={ handleUpdateUserPassword }
                 />
                 <Button 
                   basic 

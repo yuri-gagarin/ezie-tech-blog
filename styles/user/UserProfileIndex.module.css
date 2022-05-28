@@ -24,6 +24,7 @@
 /* */
 .passChangeForm {
   padding: 2em 1em;
+  border: 3px solid red !important;
 }
 
 @media screen and (min-width: 551px) {
