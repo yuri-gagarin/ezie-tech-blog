@@ -1,5 +1,6 @@
-.headerRow {
-  border: 4px solid red !important;
+.controlBtns {
+  width: 100% !important;
+  margin-bottom: 10px !important;
 }
 .contentRow {
   flex-direction: column !important;
@@ -7,6 +8,16 @@
 .userContentSegment {
   display: flex;
   flex-direction: column;
+  margin-bottom: 0 !important;
+}
+.userContentInfoDiv {
+  margin-bottom: 0.25em;
+}
+.userContentInfoDiv > span {
+  padding: 0 0.5em;
+}
+.passChangeControlsSegment {
+  margin-top: 5px !important;
 }
 .userContentLabel {
   width: 100%;
@@ -19,28 +30,39 @@
 
 /* */
 .passChangeControls {
-  border-top: 2px solid lightblue;
   padding: 1em 1em 0 1em;  
 }
 .passChangeBtns {
   width: 100%;
+  border: 4px solid red !important;
 }
-
+.passChangeTrigger {
+  width: 100%;
+}
 /* */
 .passChangeForm {
   padding: 2em 1em;
-  border: 3px solid red !important;
 }
 
 @media screen and (min-width: 551px) {
+  .controlBtns {
+    width: auto !important;
+    margin-left: 10px !important;
+    margin-bottom: 0 !important;
+  }
+  .userContentSegment  {
+    padding: 2em !important;
+  }
   .passChangeErrorMessages {
-    border: 4px solid red !important;
     width: 551px;
   }
   .userContentLabel {
-    width: 100%;
+    width: 100px;
   }
 
+  .passChangeTrigger {
+    width: 300px;
+  }
   .passChangeBtns {
     width: 550px;
   }

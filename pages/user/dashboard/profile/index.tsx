@@ -12,6 +12,7 @@ import { GenErrorModal } from "@/components/modals/GenErrorModal";
 import { UserPassInput} from "@/components/shared/forms/UserPassInput";
 // helpers //
 import { UserDashHelpers } from "@/components/_helpers/displayHelpers";
+import { validateUserPasswordChange } from "@/components/_helpers/validators";
 // styles //
 import styles from "@/styles/user/UserProfileIndex.module.css";
 // type imports //
@@ -39,7 +40,7 @@ type EditPasswordState = {
 };
 type EditPassFormErrorState = {
   visible: boolean;
-  errors: string[] | null;
+  errorMessages: string[] | null;
 }
 
 const setEmptyPasswordState = (): EditPasswordState => {
@@ -53,7 +54,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
   const [ confirmDeleteProfileOpen, setConfirmDeleteProfileOpen ] = React.useState<boolean>(false);
   const [ editPasswordState, setEditPasswordState ] = React.useState<EditPasswordState>(setEmptyPasswordState()); 
-  const [ editPassFormErrorMessages, setEditPassFormErrorMessages ] = React.useState<EditPassFormErrorState>({ visible: true, errors: null });
+  const [ editPassFormErrorMessages, setEditPassFormErrorMessages ] = React.useState<EditPassFormErrorState>({ visible: false, errorMessages: null });
   // redux hooks and state //
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
@@ -117,9 +118,14 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const handleUpdateUserPassword = async (): Promise<void> => {
     console.log("no")
     // first ensure that all fields are fillled out //
+    const { value: oldPassword } = editPasswordState.oldPassword;
+    const { value: newPassword } = editPasswordState.password;
+    const { value: confirmNewPassword } = editPasswordState.passwordConfirm;
+    const { valid, errorMessages } = validateUserPasswordChange({ oldPassword, newPassword, confirmNewPassword }, { oldPassRequired: true });
+    if (!valid) setEditPassFormErrorMessages({ visible: true, errorMessages })
   };
   const dismissFormErrorMessages = (): void => {
-    setEditPassFormErrorMessages({ visible: false, errors: null });
+    setEditPassFormErrorMessages({ visible: false, errorMessages: null });
   };
   //
 
@@ -164,51 +170,62 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
       <Grid.Row className={ styles.headerRow }> 
         <Segment style={{ heigth: "100%", width: "100%" }} textAlign="center">User Profile Section</Segment>
       </Grid.Row>
-      <Grid.Row>
-        <Button.Group>
-          <Button basic content="Edit Profile" color="green" icon="edit" />
-        </Button.Group>
+      <Grid.Row style={{ padding: 0 }}>
+        <Segment style={{ width: "100%" }}>
+          <Button.Group className={ styles.controlBtns }>
+            <Button basic content="Go Back" color="green" icon="arrow left" />
+          </Button.Group>
+          <Button.Group className={ styles.controlBtns }>
+            <Button basic content="Edit Profile" color="green" icon="edit" />
+            <Button content="Delete Profile" color="red" icon="trash" />
+          </Button.Group>
+        </Segment>
       </Grid.Row>
       <Grid.Row className={ styles.contentRow }>
         <Segment className={ styles.userContentSegment }>
-          <div>
-            <Label className={ styles.userContentLabel }>First Name:</Label><span>{ currentUser.firstName || "Did not provide first name yet..." }</span>
+          <div className={ styles.userContentInfoDiv }>
+            <Label className={ styles.userContentLabel } color="grey">First Name:</Label><span>{ currentUser.firstName || "Did not provide first name yet..." }</span>
           </div>
-          <div>
-            <Label className={ styles.userContentLabel }>Last Name:</Label><span>{ currentUser.lastName || "Did not provide last name yet..." }</span>
+          <div className={ styles.userContentInfoDiv }>
+            <Label className={ styles.userContentLabel } color="grey">Last Name:</Label><span>{ currentUser.lastName || "Did not provide last name yet..." }</span>
           </div>
-          <div>
-            <Label className={ styles.userContentLabel }>Email:</Label><span>{ currentUser.email }</span>
+          <div className={ styles.userContentInfoDiv }>
+            <Label className={ styles.userContentLabel } color="grey">Email:</Label><span>{ currentUser.email }</span>
           </div>
-          <div>
-            <Label className={ styles.userContentLabel }>Registered:</Label><span>{ currentUser.createdAt }</span>
+          <div className={ styles.userContentInfoDiv }>
+            <Label className={ styles.userContentLabel } color="teal">Account Level:</Label><span>{ currentUser.userType }</span>
           </div>
-          {
-            true &&
-            <Form className={ styles.passChangeForm }>
-              <Message 
-                className={ styles.passChangeErrorMessages }
-                visible
-                floating
-                error
-                header="Client Error"
-                onDismiss={ dismissFormErrorMessages }
-                list={[]}
-              />
-              <UserPassInput 
-                changePassword={ true }
-                handleOldPassChange={ handleOldPassChange }
-                handlePassChange={ handlePassChange }
-                handleConfirmPassChange={ handleConfirmPassChange }
-                oldPasswordErrMsg={ editPasswordState.oldPassword.errorMsg }
-                passwordErrMsg={ editPasswordState.password.errorMsg }
-                passwordConfErrMsg={ editPasswordState.passwordConfirm.errorMsg }
-              />
-            </Form>
-          }
+          <div className={ styles.userContentInfoDiv }>
+            <Label className={ styles.userContentLabel } color="grey">Registered:</Label><span>{ currentUser.createdAt }</span>
+          </div>
+        </Segment>
+        <Segment className={ styles.passChangeControlsSegment }>
+        {
+          editPasswordState.componentOpen &&
+          <Form className={ styles.passChangeForm }>
+            <Message 
+              className={ styles.passChangeErrorMessages }
+              visible={ editPassFormErrorMessages.visible }
+              floating
+              error
+              header="Client Error"
+              onDismiss={ dismissFormErrorMessages }
+              list={ editPassFormErrorMessages.errorMessages }
+            />
+            <UserPassInput 
+              changePassword={ true }
+              handleOldPassChange={ handleOldPassChange }
+              handlePassChange={ handlePassChange }
+              handleConfirmPassChange={ handleConfirmPassChange }
+              oldPasswordErrMsg={ editPasswordState.oldPassword.errorMsg }
+              passwordErrMsg={ editPasswordState.password.errorMsg }
+              passwordConfErrMsg={ editPasswordState.passwordConfirm.errorMsg }
+            />
+          </Form>
+        }
           <div className={ styles.passChangeControls }>
             {
-              true 
+              editPasswordState.componentOpen
               ?
               <Button.Group className={ styles.passChangeBtns }>
                 <Button 
@@ -221,18 +238,21 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
                   basic 
                   icon="cancel" 
                   color="orange" 
-                  content="Cancel" 
+                  content="Cancel Changes" 
                   onClick={ togglePasswordChangeComponent }
                 />
               </Button.Group>
               :
-              <Button 
-                basic 
-                icon="lock"
-                color="facebook"
-                content="Change Password" 
-                onClick={ togglePasswordChangeComponent }
-              />
+              <div className={ styles.passChangeTrigger }>
+                <Button 
+                  fluid
+                  basic 
+                  icon="lock"
+                  color="facebook"
+                  content="Change Password" 
+                  onClick={ togglePasswordChangeComponent }
+                />
+              </div>
             }
           </div>
         </Segment>
