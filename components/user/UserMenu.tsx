@@ -31,8 +31,9 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
   const router = useRouter();
   // redux hooks //
   const dispatch = useDispatch<Dispatch<IGeneralAppAction>>();
-  const { currentBlogPost, currentSelectedProject } = useSelector((state: IGeneralState) => {
+  const { currentBlogPost, currentSelectedProject, authState } = useSelector((state: IGeneralState) => {
     return {
+      authState: state.authState,
       currentBlogPost: state.blogPostsState.currentBlogPost,
       currentSelectedProject: state.projectsState.currentSelectedProject
     };
@@ -96,6 +97,12 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
     }
   }, [ router.pathname ]);
 
+  /*
+  React.useEffect(() => {
+    console.log(authState)
+  }, [ authState ])
+  */
+ 
   return (
     <Grid.Row className={ userMenuStyles.userMenuRow }>
       <Menu pointing color="violet" fluid fixed="top" className={ userMenuStyles.fixedUserMenu } data-test-id="user-main-menu">

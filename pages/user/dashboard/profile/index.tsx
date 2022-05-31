@@ -46,7 +46,13 @@ type EditPassFormErrorState = {
 const setEmptyPasswordState = (): EditPasswordState => {
   return { componentOpen: false, oldPassword: { value: "", errorMsg: null }, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: "" }};
 };
-interface IUserProfileIndexProps {
+const extractPasswordData = (editPasswordState: EditPasswordState): { oldPassword?: string; newPassword?: string; confirmNewPassword?: string } => {
+  const { value: oldPassword } = editPasswordState.oldPassword;
+  const { value: newPassword } = editPasswordState.password;
+  const { value: confirmNewPassword } = editPasswordState.passwordConfirm;
+  return { oldPassword, newPassword, confirmNewPassword };
+};
+ interface IUserProfileIndexProps {
 }
 
 const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props): JSX.Element => {
@@ -116,13 +122,15 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   }
   // Change User Password //
   const handleUpdateUserPassword = async (): Promise<void> => {
-    console.log("no")
     // first ensure that all fields are fillled out //
-    const { value: oldPassword } = editPasswordState.oldPassword;
-    const { value: newPassword } = editPasswordState.password;
-    const { value: confirmNewPassword } = editPasswordState.passwordConfirm;
-    const { valid, errorMessages } = validateUserPasswordChange({ oldPassword, newPassword, confirmNewPassword }, { oldPassRequired: true });
-    if (!valid) setEditPassFormErrorMessages({ visible: true, errorMessages })
+    const passwordData = extractPasswordData(editPasswordState);
+    const { valid, errorMessages } = validateUserPasswordChange(passwordData, { oldPassRequired: true });
+    if (!valid) setEditPassFormErrorMessages({ visible: true, errorMessages });
+    try {
+      await AuthActions.handleUpdateUserPassword({ dispatch, passwordData, authState })
+    } catch (error) {
+      console.log(error);
+    }
   };
   const dismissFormErrorMessages = (): void => {
     setEditPassFormErrorMessages({ visible: false, errorMessages: null });
@@ -166,11 +174,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
         handleErrorModalClose={ handleDismissErrorModal } 
         errorMessages={ authState.errorMessages }
       />
-
-      <Grid.Row className={ styles.headerRow }> 
-        <Segment style={{ heigth: "100%", width: "100%" }} textAlign="center">User Profile Section</Segment>
-      </Grid.Row>
-      <Grid.Row style={{ padding: 0 }}>
+      <Grid.Row className={ styles.controlsRow }>
         <Segment style={{ width: "100%" }}>
           <Button.Group className={ styles.controlBtns }>
             <Button basic content="Go Back" color="green" icon="arrow left" />

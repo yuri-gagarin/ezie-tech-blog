@@ -5,9 +5,11 @@ import { nextReduxCookieMiddleware, wrapMakeStore } from "next-redux-cookie-wrap
 // combined reducer //
 import combinedReducer from './reducers/combinedReducer';
 // types //
+import type { Context } from "next-redux-wrapper";
 import type { IGeneralAppAction, IGeneralState } from "./_types/generalTypes";
 // helpers //
 import { generateEmptyAdminState, generateEmptyAuthState, generateEmptyPostState, generateEmptyProjectsState, generateEmptyRssState, generateEmptyUserState } from "./_helpers/mockData";
+import { setCookieExpiration } from "./_helpers/generalActionHelpers";
 import { checkEmptyObjVals } from './_helpers/dataHelpers';
 
 const initialState: IGeneralState = {
@@ -31,10 +33,14 @@ const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IG
         ...state,
         ...action.payload
       };
+      /*
       if (checkEmptyObjVals(action.payload.authState) && !checkEmptyObjVals(state.authState)) {
         console.log(action.payload.authState);
         console.log(state.authState);
       }
+      */
+      console.log("Auth State is:", state.authState)
+      console.log("AUTH STATE PAYLOAD IS:", action.payload.authState)
       return nextState;
     default:
       return combinedReducer(state, action);
@@ -42,14 +48,25 @@ const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IG
 };
 
 //if (isClient) console.log("client request");
+
 export const store: Store<IGeneralState> = createStore<IGeneralState, AnyAction, any, any>(
   rootReducer, 
   composeWithDevTools(applyMiddleware(
-    nextReduxCookieMiddleware({ subtrees: ["authState"], expires: new Date(Date.now() + 3600 * 100) })
+    nextReduxCookieMiddleware({ subtrees: ["authState"] })
   ))
 );
-const makeStore = wrapMakeStore<Store<IGeneralState>>(() => store);
+
 /*
+export const store: Store<IGeneralState> = createStore<IGeneralState, AnyAction, unknown, unknown>(
+  rootReducer,
+  composeWithDevTools(
+    applyMiddleware()
+  )
+);
+*/
+const makeStore = (context: Context) => store;
+/*
+const makeStore = wrapMakeStore<Store<IGeneralState>>(() => store);
 const makeStore = wrapMakeStore<Store<IGeneralState>>(() => 
   createStore<IGeneralState, AnyAction, any, any>(
     rootReducer, 

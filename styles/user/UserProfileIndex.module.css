@@ -34,7 +34,6 @@
 }
 .passChangeBtns {
   width: 100%;
-  border: 4px solid red !important;
 }
 .passChangeTrigger {
   width: 100%;
@@ -45,10 +44,17 @@
 }
 
 @media screen and (min-width: 551px) {
+  .controlsRow {
+    margin-top: 2em;
+    padding: 0 !important;
+  }
   .controlBtns {
     width: auto !important;
     margin-left: 10px !important;
     margin-bottom: 0 !important;
+  }
+  .contentRow {
+    padding: 0 !important;
   }
   .userContentSegment  {
     padding: 2em !important;
