@@ -41,6 +41,7 @@ type EditPasswordState = {
 type EditPassFormErrorState = {
   visible: boolean;
   errorMessages: string[] | null;
+  timeout: NodeJS.Timeout | null;
 }
 
 const setEmptyPasswordState = (): EditPasswordState => {
@@ -52,6 +53,7 @@ const extractPasswordData = (editPasswordState: EditPasswordState): { oldPasswor
   const { value: confirmNewPassword } = editPasswordState.passwordConfirm;
   return { oldPassword, newPassword, confirmNewPassword };
 };
+
  interface IUserProfileIndexProps {
 }
 
@@ -60,13 +62,14 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
   const [ confirmDeleteProfileOpen, setConfirmDeleteProfileOpen ] = React.useState<boolean>(false);
   const [ editPasswordState, setEditPasswordState ] = React.useState<EditPasswordState>(setEmptyPasswordState()); 
-  const [ editPassFormErrorMessages, setEditPassFormErrorMessages ] = React.useState<EditPassFormErrorState>({ visible: false, errorMessages: null });
+  const [ editPassFormErrorMessages, setEditPassFormErrorMessages ] = React.useState<EditPassFormErrorState>({ visible: false, errorMessages: null, timeout: null });
+  const [ APIErrorTimeout, setAPIErrorTimeout ] = React.useState<NodeJS.Timeout | null>(null);
   // redux hooks and state //
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
   const { responseMsg, error, errorMessages } = authState;
   const currentUser: UserData = authState.currentUser as UserData || UserDashHelpers.defaultUserInfo;
-  //
+  // aditional modal component triggers //
   const handleTriggerEditModal = (): void => {
     setEditModalOpen(!editModalOpen);
   };
@@ -109,6 +112,25 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   };
   // End Password update change listeners //
 
+  // timeouts to automatically clear errors //
+  const editPassFormErrTimeout = (time: number): NodeJS.Timeout => {
+    return setTimeout(() => {
+      clearTimeout(editPassFormErrorMessages.timeout);
+      setEditPassFormErrorMessages({ visible: false, errorMessages: null, timeout: null });
+    }, time);
+  };
+  const authErrorTimeout = (time: number): NodeJS.Timeout => {
+    return setTimeout(() => {
+      clearTimeout(APIErrorTimeout);
+      AuthActions.dismissAuthError(dispatch);
+    }, time);
+  };
+  const dismissFormErrorMessages = (): void => {
+    clearTimeout(editPassFormErrorMessages.timeout);
+    setEditPassFormErrorMessages({ visible: false, errorMessages: null, timeout: null });
+  };
+  //
+
   // REDUX dispatches //
   // Update User Profile //
   const handleUpdateUserProfile = async (formData: UserFormData) => {
@@ -122,23 +144,27 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   }
   // Change User Password //
   const handleUpdateUserPassword = async (): Promise<void> => {
+    // clear error form if any //
+    if (authState.error) {
+      AuthActions.dismissAuthError(dispatch);
+    }
     // first ensure that all fields are fillled out //
     const passwordData = extractPasswordData(editPasswordState);
     const { valid, errorMessages } = validateUserPasswordChange(passwordData, { oldPassRequired: true });
-    if (!valid) setEditPassFormErrorMessages({ visible: true, errorMessages });
+    if (!valid) {
+      return setEditPassFormErrorMessages({ visible: true, errorMessages, timeout: editPassFormErrTimeout(5000) });
+    }
+    // assuming all inputs have correct info //
     try {
       await AuthActions.handleUpdateUserPassword({ dispatch, passwordData, authState })
     } catch (error) {
-      console.log(error);
+      AuthActions.handleAuthError(dispatch, error);
     }
   };
-  const dismissFormErrorMessages = (): void => {
-    setEditPassFormErrorMessages({ visible: false, errorMessages: null });
-  };
-  //
+  
 
   const handleDismissErrorModal = (): void => {
-
+    AuthActions.dismissAuthError(dispatch);
   };
   // Profile delete functionality //
   const triggerProfileDelete = (): void => {
@@ -151,6 +177,16 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
 
   };
 
+  // for now any api error should come up top in <GenErrorModal> component //
+  // should be dismissible or auto clear in 5 seconds //
+  React.useEffect(() => {
+    if (authState.error) {
+      clearTimeout(APIErrorTimeout);
+      setAPIErrorTimeout(authErrorTimeout(5000));
+    } else {
+      clearTimeout(APIErrorTimeout);
+    }
+  }, [ authState.error ]);
 
   return (
     <React.Fragment>
@@ -171,6 +207,8 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
       <GenErrorModal 
         open={ authState.error ? true : false } 
         position="fixed-top"
+        animation="fly down"
+        duration={ 200 }
         handleErrorModalClose={ handleDismissErrorModal } 
         errorMessages={ authState.errorMessages }
       />

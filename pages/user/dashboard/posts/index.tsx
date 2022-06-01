@@ -106,7 +106,7 @@ const UserPostsIndex: React.FunctionComponent<IUserPostsIndexProps> = (props): J
     const { authToken: JWTToken } = authState;
     const fetchAsyncData = async () => {
       try {
-        await BlogPostActions.handleFetchBlogPosts(dispatch, { limit: 20, createdAt: "desc", publishedStatus: "all" }, { JWTToken } );
+        // await BlogPostActions.handleFetchBlogPosts(dispatch, { limit: 20, createdAt: "desc", publishedStatus: "all" }, { JWTToken } );
       } catch (error) {
         BlogPostActions.handleBlogPostError(dispatch, error);
       }
