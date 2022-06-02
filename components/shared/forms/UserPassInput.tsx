@@ -29,7 +29,7 @@ export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ ch
         <label className={ styles.passInputLabel }>Current Password:</label>
           <Form.Input 
             className={ styles.passInput }
-            error={ oldPasswordErrMsg ? { content: oldPasswordErrMsg, pointing: "below" } : false } 
+            error={ oldPasswordErrMsg ? { content: oldPasswordErrMsg, pointing: "above" } : false } 
             icon="lock"
             onChange={ handleOldPassChange } 
             type="password"
@@ -41,7 +41,7 @@ export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ ch
         <label className={ styles.passInputLabel }>{ changePassword ? "New Password:" : "Password:"}</label>
         <Form.Input
           className={ styles.passInput }
-          error={ passwordErrMsg ? { content: passwordErrMsg, pointing: "below" } : false } 
+          error={ passwordErrMsg ? { content: passwordErrMsg, pointing: "above" } : false } 
           icon="lock"
           onChange={ handlePassChange } 
           type="password"
@@ -52,7 +52,7 @@ export const UserPassInput: React.FunctionComponent<IUserPassInputProps> = ({ ch
       <label className={ styles.passInputLabel }>{ changePassword ? "Confirm New Password:" : "Confirm Password:" }</label>
         <Form.Input
           className={ styles.passInput }
-          error={ passwordConfErrMsg ? { content: passwordConfErrMsg, pointing: "below" } : false }
+          error={ passwordConfErrMsg ? { content: passwordConfErrMsg, pointing: "above" } : false }
           icon="lock"
           onChange={ handleConfirmPassChange } 
           type="password"

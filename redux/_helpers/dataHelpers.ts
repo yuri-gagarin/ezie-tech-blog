@@ -1,6 +1,6 @@
 import { GeneralClientError } from "@/components/_helpers/errorHelpers";
+import { GenAPIErrorRes } from "@/redux/_types/generalTypes"
 import { AxiosError } from "axios";
-import { CreateBlogPostRes } from "../_types/blog_posts/dataTypes";
 type AnyObj = {
   [key: string]: any;
 }
@@ -28,9 +28,8 @@ export const checkEmptyObjVals = (obj: AnyObj | null | undefined): boolean => {
 export const processAxiosError = (error: any): { status: number; responseMsg: string; error: Error; errorMessages: string[] } => {
   if (error.isAxiosError && error.response) {
     const { response } = error as AxiosError;
-    console.log(error)
     const { status } = response;
-    const { responseMsg, error: _error, errorMessages  } = response.data as CreateBlogPostRes;
+    const { responseMsg, error: _error, errorMessages  } = response.data as GenAPIErrorRes;
     return {
       status, responseMsg, errorMessages, error: _error
     };
@@ -41,7 +40,9 @@ export const processAxiosError = (error: any): { status: number; responseMsg: st
       error,
       errorMessages: error.errorMessages
     };
-  } else if (error && error.response) {
+  } 
+  /*
+  else if (error && error.response) {
     if (error.response.responseMsg && error.response.error && error.response.errorMessages) {
       const { response } = error as AxiosError<{ responseMsg: string; error: Error, errorMessages: string[] }>;
       const { status, data } = response;
@@ -55,7 +56,9 @@ export const processAxiosError = (error: any): { status: number; responseMsg: st
         errorMessages: [ "An error occured, we are working on it" ]
       };
     }
-  } else {
+  } 
+  */
+  else {
     return {
       status: 500,
       responseMsg: "Error",

@@ -165,18 +165,20 @@ export class AuthActions {
 
   public static handleUpdateUserPassword = async (data: { dispatch: Dispatch<AuthAction>; passwordData: ChangePasswordReqData; userId?: string; authState: IAuthState; }): Promise<AdminResetUserPassword | UpdateCurrentUserPassword> => {
     const { authState, dispatch } = data;
-    const { isAdmin, currentUser } = authState;
+    const { isAdmin, currentUser, authToken } = authState;
     // if current user is admin, updating or resetting user password then <data.userId> should be defined //
     let userId: string = isAdmin && data.userId || currentUser._id;
     let adminResetingUserPass: boolean = isAdmin && data.userId && data.userId !== currentUser._id;
     //
+    console.log(authToken);
     const axiosOpts: AxiosRequestConfig = {
       method: "PATCH",
       url: "/api/users/change_password",
+      headers: { Authorization: authToken },
       data: { userId, passwordData: data.passwordData }
     };
 
-    dispatch({ type: "AuthAPIRequest", payload: { loading: true } });
+    dispatch({ type: "AuthPassChangeAPIRequest", payload: { loading: true, passwordChangeRequest: true } });
     try {
       const { status, data }: AxiosResponse<EditUserPassRes> = await axios(axiosOpts);
       const { responseMsg, editedUser } = data;
@@ -188,7 +190,7 @@ export class AuthActions {
       } else {
         // user updating own password, update auth state //
         return dispatch({
-          type: "UpdateCurrentUserPassword", payload: { status, responseMsg, currentUser: editedUser, loading: false  }
+          type: "UpdateCurrentUserPassword", payload: { status, responseMsg, currentUser: editedUser, loading: false, passwordChangeRequest: false  }
         });
       }
     } catch (error) {
@@ -213,7 +215,7 @@ export class AuthActions {
       const { responseMsg, editedAdmin } = data;
       // depending on if user updated own pass or admin updated user pass, theres a different end action //
       return dispatch({
-        type: "UpdateCurrentUserPassword", payload: { status, responseMsg, currentUser: editedAdmin, loading: false  }
+        type: "UpdateCurrentUserPassword", payload: { status, responseMsg, currentUser: editedAdmin, loading: false, passwordChangeRequest: false  }
       });
     } catch (error) {
       throw error;

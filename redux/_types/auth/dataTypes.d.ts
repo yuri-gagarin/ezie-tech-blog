@@ -4,6 +4,7 @@ import type { UserData } from "../users/dataTypes";
 export interface IAuthState {
   status: number | null;
   loading: boolean;
+  passwordChangeRequest: boolean;
   responseMsg: string;
   loggedIn: boolean;
   showLoginMsg: boolean;

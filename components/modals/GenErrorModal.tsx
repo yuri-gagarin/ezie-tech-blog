@@ -43,7 +43,7 @@ export const GenErrorModal: React.FunctionComponent<IGenErrorModalProps> = ({ op
               ? 
                 errorMessages.map((msg) => <li key={msg} className={ styles.message } data-test-id="gen-rrror-modal-msg">{ msg }</li>)
               :
-              <li key="msg" className={ styles.message } data-test-id="gen-error-modal-msg">Seems like something went wrong.</li>
+              <li key="msg" className={ styles.message } data-test-id="gen-error-modal-msg">AHHHHHHHHH</li>
             }
           </ul>
         </div>

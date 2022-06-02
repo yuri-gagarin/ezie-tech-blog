@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Grid, Form, Label, Menu, Segment, Message } from "semantic-ui-react";
+import { Button, Grid, Form, Label, Menu, Segment, Message, Loader } from "semantic-ui-react";
 // next imports //
 import { useRouter } from "next/router";
 // redux imports //
@@ -9,6 +9,7 @@ import { AuthActions } from '@/redux/actions/authActions';
 import { EditProfileModal } from "@/components/modals/EditProfileModal";
 import { ConfirmProfileDeleteModal } from "@/components/modals/ConfirmProfileDeleteModal";
 import { GenErrorModal } from "@/components/modals/GenErrorModal";
+import { GeneralLoaderSegment } from "@/components/shared/GeneralLoaderSegment";
 import { UserPassInput} from "@/components/shared/forms/UserPassInput";
 // helpers //
 import { UserDashHelpers } from "@/components/_helpers/displayHelpers";
@@ -25,6 +26,7 @@ import type { AuthAction } from '@/redux/_types/auth/actionTypes';
 // 
 type EditPasswordState = {
   componentOpen: boolean;
+  loaderOpen: boolean;
   oldPassword: {
     value: string;
     errorMsg: string | null;
@@ -45,8 +47,11 @@ type EditPassFormErrorState = {
 }
 
 const setEmptyPasswordState = (): EditPasswordState => {
-  return { componentOpen: false, oldPassword: { value: "", errorMsg: null }, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: "" }};
+  return { componentOpen: false, loaderOpen: false, oldPassword: { value: "", errorMsg: null }, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: "" }};
 };
+const setChangePassButtonDisbaled = (editPasswordState: EditPasswordState): boolean => {
+  return (editPasswordState.oldPassword.errorMsg || editPasswordState.password.errorMsg || editPasswordState.passwordConfirm.errorMsg) ? true : false;
+}
 const extractPasswordData = (editPasswordState: EditPasswordState): { oldPassword?: string; newPassword?: string; confirmNewPassword?: string } => {
   const { value: oldPassword } = editPasswordState.oldPassword;
   const { value: newPassword } = editPasswordState.password;
@@ -73,15 +78,6 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const handleTriggerEditModal = (): void => {
     setEditModalOpen(!editModalOpen);
   };
-  // user update functionaliy //
-  const handleUserUpdate = async (): Promise<void> => {
-
-  };
-  const handleTriggerModelDelete = (): void => {
-
-  };
-  // END User update functionality //
-
   // togglers for password change component //
   const togglePasswordChangeComponent = (): void => {
     setEditPasswordState({ ...setEmptyPasswordState(), componentOpen: !editPasswordState.componentOpen })
@@ -129,6 +125,11 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
     clearTimeout(editPassFormErrorMessages.timeout);
     setEditPassFormErrorMessages({ visible: false, errorMessages: null, timeout: null });
   };
+  const dismissGeneralLoaderSegment = (): void => {
+    console.log("called")
+    if (authState.error) AuthActions.dismissAuthError(dispatch);
+    setEditPasswordState({ ...editPasswordState, loaderOpen: false });
+  };
   //
 
   // REDUX dispatches //
@@ -145,9 +146,8 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // Change User Password //
   const handleUpdateUserPassword = async (): Promise<void> => {
     // clear error form if any //
-    if (authState.error) {
-      AuthActions.dismissAuthError(dispatch);
-    }
+    if (authState.error) AuthActions.dismissAuthError(dispatch);
+
     // first ensure that all fields are fillled out //
     const passwordData = extractPasswordData(editPasswordState);
     const { valid, errorMessages } = validateUserPasswordChange(passwordData, { oldPassRequired: true });
@@ -156,7 +156,8 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
     }
     // assuming all inputs have correct info //
     try {
-      await AuthActions.handleUpdateUserPassword({ dispatch, passwordData, authState })
+      await AuthActions.handleUpdateUserPassword({ dispatch, passwordData, authState });
+      setEditPasswordState({  ...editPasswordState, componentOpen: false, loaderOpen: true }); // keep loader open so user dismisses manualy //
     } catch (error) {
       AuthActions.handleAuthError(dispatch, error);
     }
@@ -180,13 +181,17 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // for now any api error should come up top in <GenErrorModal> component //
   // should be dismissible or auto clear in 5 seconds //
   React.useEffect(() => {
-    if (authState.error) {
+    if (authState.error && !authState.passwordChangeRequest) {
       clearTimeout(APIErrorTimeout);
       setAPIErrorTimeout(authErrorTimeout(5000));
     } else {
       clearTimeout(APIErrorTimeout);
     }
-  }, [ authState.error ]);
+  }, [ authState.error, authState.passwordChangeRequest ]);
+
+  React.useEffect(() => {
+    if (authState.passwordChangeRequest) setEditPasswordState((s) => ({ ...s, loaderOpen: true }));
+  }, [ authState.passwordChangeRequest ]);
 
   return (
     <React.Fragment>
@@ -194,7 +199,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
         modalOpen={ editModalOpen }
         handleCloseModal={ handleTriggerEditModal }
         handleUpdateUserProfile={ handleUpdateUserProfile }
-        handleTriggerModelDelete={ handleTriggerModelDelete }
+        handleTriggerModelDelete={ triggerProfileDelete }
         userData={ currentUser as UserData }
 
       />
@@ -204,14 +209,17 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
         handleCloseModal={ cancelProfileDelete }
         handleProfileDelete={ handleProfileDelete }
       />
+      {
+      (authState.error && !editPasswordState.componentOpen) && 
       <GenErrorModal 
-        open={ authState.error ? true : false } 
+        open={ authState.error && !editPasswordState.componentOpen }  // should not be open on password change error //
         position="fixed-top"
         animation="fly down"
         duration={ 200 }
         handleErrorModalClose={ handleDismissErrorModal } 
         errorMessages={ authState.errorMessages }
       />
+      }
       <Grid.Row className={ styles.controlsRow }>
         <Segment style={{ width: "100%" }}>
           <Button.Group className={ styles.controlBtns }>
@@ -241,10 +249,25 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
             <Label className={ styles.userContentLabel } color="grey">Registered:</Label><span>{ currentUser.createdAt }</span>
           </div>
         </Segment>
-        <Segment className={ styles.passChangeControlsSegment }>
         {
+          (authState.passwordChangeRequest || editPasswordState.loaderOpen ) &&
+          <Segment className={ styles.passChangeAPIMessageDiv }>
+            <div className={ styles.passChangeAPIMessageDivInner }>
+              <GeneralLoaderSegment 
+                  loading={ authState.loading }
+                  completionMessage={ authState.responseMsg }
+                  errorMessages={ authState.errorMessages || null }
+                  dismissComponent={ dismissGeneralLoaderSegment }
+              />
+            </div>
+          </Segment>
+        }
+        <Segment className={ styles.passChangeControlsSegment }>
+         
+          {
           editPasswordState.componentOpen &&
           <Form className={ styles.passChangeForm }>
+            
             <Message 
               className={ styles.passChangeErrorMessages }
               visible={ editPassFormErrorMessages.visible }
@@ -254,6 +277,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
               onDismiss={ dismissFormErrorMessages }
               list={ editPassFormErrorMessages.errorMessages }
             />
+           
             <UserPassInput 
               changePassword={ true }
               handleOldPassChange={ handleOldPassChange }
@@ -264,16 +288,18 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
               passwordConfErrMsg={ editPasswordState.passwordConfirm.errorMsg }
             />
           </Form>
-        }
+          }
           <div className={ styles.passChangeControls }>
             {
               editPasswordState.componentOpen
               ?
+              <>
               <Button.Group className={ styles.passChangeBtns }>
                 <Button 
                   icon="save" 
                   color="green" 
-                  content="Change Password" 
+                  content="Update and Save" 
+                  disabled={ setChangePassButtonDisbaled(editPasswordState) }
                   onClick={ handleUpdateUserPassword }
                 />
                 <Button 
@@ -284,11 +310,11 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
                   onClick={ togglePasswordChangeComponent }
                 />
               </Button.Group>
+              </>
               :
               <div className={ styles.passChangeTrigger }>
                 <Button 
                   fluid
-                  basic 
                   icon="lock"
                   color="facebook"
                   content="Change Password" 

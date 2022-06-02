@@ -39,8 +39,6 @@ const rootReducer = (state: IGeneralState = initialState, action: AnyAction | IG
         console.log(state.authState);
       }
       */
-      console.log("Auth State is:", state.authState)
-      console.log("AUTH STATE PAYLOAD IS:", action.payload.authState)
       return nextState;
     default:
       return combinedReducer(state, action);

@@ -15,6 +15,14 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         errorMessages: null
       };
     }
+    case "AuthPassChangeAPIRequest": {
+      return {
+        ...state,
+        ...action.payload,
+        error: null,
+        errorMessages: null
+      };
+    }
     case "ProfileAPIRequest": {
       return {
         ...state,
@@ -62,6 +70,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
     }
     case "AuthLoginSuccess": {
       return {
+        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
@@ -79,6 +88,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
     }
     case "AuthRegisterSuccess": {
       return {
+        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
@@ -96,6 +106,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
     }
     case "AuthLogoutSuccess": {
       return {
+        ...state,
         status: action.payload.status,
         loading: action.payload.loading,
         responseMsg: action.payload.responseMsg,
@@ -138,6 +149,7 @@ export default function authReducer(state: IAuthState = initialState, action: Au
     case "AuthErrorDismiss": {
       return {
         ...state,
+        passwordChangeRequest: false,
         error: action.payload.error,
         errorMessages: action.payload.errorMessages
       };

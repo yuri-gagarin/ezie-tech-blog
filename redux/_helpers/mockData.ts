@@ -86,6 +86,8 @@ export const generateEmptyAuthState = (): IAuthState => {
     status: null,
     responseMsg: "",
     loading: false,
+    passwordChangeRequest: false,
+    showLoginMsg: false,
     loggedIn: false,
     authToken: "",
     expires: "",

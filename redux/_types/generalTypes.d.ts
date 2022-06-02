@@ -62,3 +62,11 @@ export type AdminData = {
   editedAt: string;
   createdAt: string;
 };
+
+
+// general error responses //
+export type GenAPIErrorRes = {
+  responseMsg?: string;
+  error?: any;
+  errorMessages?: string[];
+};
