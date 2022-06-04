@@ -45,7 +45,7 @@ export default class UserRoutes extends CRUDRoutesController {
   }
   protected edit(route: string): void {
     super.edit(route, [
-      PassportContInstance.authenticate(StrategyNames.AuthStrategy, { session: false }),
+      passportGeneralAuthMiddleware,
       verifyUsersModelAccess,
       validateRequiredDataFields([ "userData" ]),
       validateObjectIdParams([ "user_id" ]) 

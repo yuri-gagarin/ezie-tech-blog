@@ -101,6 +101,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
     }
   };
   const setEmailEdit = (): void => {
+    console.log("called")
     setFormEmailState({ ...formEmailState, editingEmail: true });
   };  
   const reverEmailData = (): void => {

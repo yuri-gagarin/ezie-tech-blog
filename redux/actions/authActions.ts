@@ -81,11 +81,12 @@ export class AuthActions {
     }
   };
 
-  public static handleUpdateUserProfile = async ({ dispatch, userId, formData }: { dispatch: Dispatch<AuthAction>; userId: string; JWTToken: string; formData: UserFormData }): Promise<AuthAction> => {
+  public static handleUpdateUserProfile = async ({ dispatch, userId, JWTToken, formData }: { dispatch: Dispatch<AuthAction>; userId: string; JWTToken: string; formData: UserFormData }): Promise<AuthAction> => {
     const { firstName, lastName, email } = formData;
     const axiosOpts: AxiosRequestConfig = {
       method: "PATCH",
       url: `/api/users/${userId}`,
+      headers: { Authorization: JWTToken },
       data: {
         userData: { firstName, lastName, email }
       }
@@ -99,6 +100,7 @@ export class AuthActions {
         payload: { status, responseMsg, currentUser, loading: false }
       });
     } catch (error) {
+      console.log(error)
       throw error;
     }
   };

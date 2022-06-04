@@ -81,7 +81,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // togglers for password change component //
   const togglePasswordChangeComponent = (): void => {
     setEditPasswordState({ ...setEmptyPasswordState(), componentOpen: !editPasswordState.componentOpen })
-  }
+  };
   //
 
   // Password update change listeners //
@@ -126,7 +126,6 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
     setEditPassFormErrorMessages({ visible: false, errorMessages: null, timeout: null });
   };
   const dismissGeneralLoaderSegment = (): void => {
-    console.log("called")
     if (authState.error) AuthActions.dismissAuthError(dispatch);
     setEditPasswordState({ ...editPasswordState, loaderOpen: false });
   };
@@ -138,6 +137,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
     const { _id: userId } = currentUser;
     const { authToken: JWTToken } = authState;
     try {
+      console.log("called")
       await AuthActions.handleUpdateUserProfile({ dispatch, userId, JWTToken, formData })
     } catch (error) {
       AuthActions.handleAuthError(dispatch, error);
@@ -169,7 +169,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   };
   // Profile delete functionality //
   const triggerProfileDelete = (): void => {
-
+    console.log("called trigger delete")
   };
   const cancelProfileDelete = (): void => {
 
@@ -226,7 +226,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
             <Button basic content="Go Back" color="green" icon="arrow left" />
           </Button.Group>
           <Button.Group className={ styles.controlBtns }>
-            <Button basic content="Edit Profile" color="green" icon="edit" />
+            <Button basic content="Edit Profile" color="green" icon="edit" onClick={ () => setEditModalOpen(true) } />
             <Button content="Delete Profile" color="red" icon="trash" />
           </Button.Group>
         </Segment>
