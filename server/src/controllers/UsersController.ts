@@ -103,6 +103,7 @@ export default class UsersController extends BasicController implements IGeneric
   edit = async (req: Request, res: Response<UsersEditRes>): Promise<Response> => {
     const { user_id } = req.params;
     const userData = req.body.userData as ReqUserData;
+    console.log(userData);
   
     // validate input //
     const { valid, errorMessages } = validateUserData(userData, { existing: true });

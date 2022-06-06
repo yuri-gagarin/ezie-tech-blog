@@ -1,19 +1,23 @@
 import * as React from 'react';
-import { Form, Button, Input, Label, Modal, Reveal, InputOnChangeData } from "semantic-ui-react";
+import { Form, Button,Label, Message, Modal } from "semantic-ui-react";
 // next imports //
+// additional components //
+import { GeneralLoaderSegment } from "@/components/shared/GeneralLoaderSegment";
 // styles //
 import styles from "@/styles/modals/EditProfileModal.module.css";
 // helpers //
 import { validateUniqueEmail } from "@/components/_helpers/validators";
 // type imports //
-import { UserData, UserFormData } from '@/redux/_types/users/dataTypes';
+import type { UserData, UserFormData } from '@/redux/_types/users/dataTypes';
+import type { IAuthState } from '@/redux/_types/auth/dataTypes';
 
 interface EditProfileModalProps {
   modalOpen: boolean;
+  loaderOpen: boolean;
   handleCloseModal(): void;
   handleUpdateUserProfile(formData: UserFormData): Promise<any>;
   handleTriggerModelDelete(): void;
-  userData: UserData;
+  authState: IAuthState;
 };
 
 type FormFirstNameState = {
@@ -34,15 +38,16 @@ type FormEmailState = {
   APItimeout: NodeJS.Timeout | null;
 };
 
-export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, handleCloseModal, handleTriggerModelDelete, handleUpdateUserProfile, userData }): JSX.Element => {
+export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, loaderOpen, handleCloseModal, handleTriggerModelDelete, handleUpdateUserProfile, authState }): JSX.Element => {
   // userdata from redux state //
-  const { _id, firstName, lastName, email, userType } = userData;
+  const { _id, firstName, lastName, email, userType } = authState.currentUser as UserData;
   // local state //
   const [ formFirstNameState, setFormFirstNameState ] = React.useState<FormFirstNameState>({ firstName, editingFirstName: false, firstNameError: null });
   const [ formLastNameState, setFormLastNameState ] = React.useState<FormLastNameState>({ lastName, editingLastName: false, lastNameError: null });
   const [ formEmailState, setFormEmailState ] = React.useState<FormEmailState>({ email, editingEmail: false, emailError: null, active: false, APItimeout: null });
   const [ submitBtnDisabled, setSubmitBtnDisable ] = React.useState<boolean>(false);
-  
+  // update profile button ref //
+  const updateProfileBtnRef = React.useRef(null);
 
   const setAPICallTimeout = (email: string): NodeJS.Timeout => {
     return setTimeout(async () => {
@@ -70,8 +75,12 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   const setFirstNameEdit = (): void => {
     setFormFirstNameState({ ...formFirstNameState, editingFirstName: true });
   }
-  const revertFirstNameData = (): void => {
-    setFormFirstNameState({ ...formFirstNameState, firstName, editingFirstName: false, firstNameError: null });
+  const revertFirstNameData = (e: React.FocusEvent<HTMLInputElement>): void => {
+    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
+      setFormFirstNameState({ ...formFirstNameState, editingFirstName: false, firstNameError: null })
+    } else {
+      setFormFirstNameState({ ...formFirstNameState, firstName, editingFirstName: false, firstNameError: null });
+    }
   }
   // end first name related //
   // last name related //
@@ -86,8 +95,12 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   const setLastNameEdit = (): void => {
     setFormLastNameState({ ...formLastNameState, editingLastName: true });
   };
-  const reverLastNameData = (): void => {
-    setFormLastNameState({ ...formLastNameState, lastName, editingLastName: false, lastNameError: null });
+  const reverLastNameData = (e: React.FocusEvent<HTMLInputElement>): void => {
+    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
+      setFormLastNameState({ ...formLastNameState, editingLastName: false, lastNameError: null });
+    } else {
+      setFormLastNameState({ ...formLastNameState, lastName, editingLastName: false, lastNameError: null });
+    }
   };
   // end last name related //
   // email related //
@@ -101,11 +114,14 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
     }
   };
   const setEmailEdit = (): void => {
-    console.log("called")
     setFormEmailState({ ...formEmailState, editingEmail: true });
   };  
-  const reverEmailData = (): void => {
-    setFormEmailState({ ...formEmailState, email, editingEmail: false, emailError: null });
+  const reverEmailData = (e: React.FocusEvent<HTMLInputElement>): void => {
+    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
+      setFormEmailState({ ...formEmailState, editingEmail: false, emailError: null });
+    } else {
+      setFormEmailState({ ...formEmailState, email, editingEmail: false, emailError: null });
+    }
   };
   // end email related //
   // end form value change listeners //
@@ -126,15 +142,16 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
     }
   }, [ formFirstNameState.firstNameError, formLastNameState.lastNameError, formEmailState.emailError ]);
 
+
   return (
     <Modal className={ styles.editProfileModal } closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "edit-profile-modal" }>
       <Modal.Content className={ styles.modalBtns }>
         <Button.Group className={ styles.editProfileCancel }>
-          <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal } data-test-id={ "edit-profile-modal-cancel-btn" } />
+          <Button basic color="blue" content="Cancel Changes" icon="cancel" onClick={ handleCloseModal } data-test-id={ "edit-profile-modal-cancel-btn" } />
         </Button.Group>
         <Button.Group className={ styles.editProfileControls }>
-          <Button basic color="green" content="Update" icon="save outling" onClick={ _handleUpdateUserProfile } disabled={ submitBtnDisabled } />
-          <Button color="red" content="Delete" icon="trash" onClick={ handleTriggerModelDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
+          <Button basic color="green" content="Update All" icon="save outling" onClick={ _handleUpdateUserProfile } disabled={ submitBtnDisabled } ref={ updateProfileBtnRef } />
+          <Button color="red" content="Delete Profile" icon="trash" onClick={ handleTriggerModelDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
         </Button.Group>
       </Modal.Content>
       <Modal.Content>

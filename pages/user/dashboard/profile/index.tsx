@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Grid, Form, Label, Menu, Segment, Message, Loader } from "semantic-ui-react";
+import { Button, Grid, Form, Label, Segment, Message } from "semantic-ui-react";
 // next imports //
 import { useRouter } from "next/router";
 // redux imports //
@@ -23,6 +23,11 @@ import type { UserData, UserFormData } from "@/redux/_types/users/dataTypes";
 import type { UserAction } from '@/redux/_types/users/actionTypes';
 import type { AuthAction } from '@/redux/_types/auth/actionTypes';
 
+
+type ConfirmDeleteProfileState = {
+  componentOpen: boolean;
+  loaderOpen: boolean;
+};
 // 
 type EditPasswordState = {
   componentOpen: boolean;
@@ -65,7 +70,7 @@ const extractPasswordData = (editPasswordState: EditPasswordState): { oldPasswor
 const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props): JSX.Element => {
   // local component state //
   const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
-  const [ confirmDeleteProfileOpen, setConfirmDeleteProfileOpen ] = React.useState<boolean>(false);
+  const [ confirmDeleteProfileState, setConfirmDeleteProfileState ] = React.useState<ConfirmDeleteProfileState>({ componentOpen: false, loaderOpen: false });
   const [ editPasswordState, setEditPasswordState ] = React.useState<EditPasswordState>(setEmptyPasswordState()); 
   const [ editPassFormErrorMessages, setEditPassFormErrorMessages ] = React.useState<EditPassFormErrorState>({ visible: false, errorMessages: null, timeout: null });
   const [ APIErrorTimeout, setAPIErrorTimeout ] = React.useState<NodeJS.Timeout | null>(null);
@@ -197,14 +202,15 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
     <React.Fragment>
       <EditProfileModal
         modalOpen={ editModalOpen }
+        loaderOpen= {confirmDeleteProfileState.loaderOpen }
         handleCloseModal={ handleTriggerEditModal }
         handleUpdateUserProfile={ handleUpdateUserProfile }
         handleTriggerModelDelete={ triggerProfileDelete }
-        userData={ currentUser as UserData }
+        authState={ authState }
 
       />
       <ConfirmProfileDeleteModal 
-        modalOpen={ confirmDeleteProfileOpen }
+        modalOpen={ confirmDeleteProfileState.componentOpen }
         authState={ authState }
         handleCloseModal={ cancelProfileDelete }
         handleProfileDelete={ handleProfileDelete }
