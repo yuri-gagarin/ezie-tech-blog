@@ -160,11 +160,11 @@ export default class UsersController extends BasicController implements IGeneric
       return await this.generalErrorResponse(res, { error });
     }
   }
-  // only Admis level users OR Users deleting own model should be able to delete //
+  // only Admins level users OR Users deleting own model should be able to delete //
   // middleware to check edit rights run before controller action //
   delete = async (req: Request, res: Response<UsersDeleteRes>): Promise<Response> => {
     const { user_id } = req.params;
-
+    const { _id } = req.user as IAdmin | IUser; // current logged in userId
     try {
       const deletedUser = await User.findOneAndDelete({ _id: user_id });
       if (deletedUser) {

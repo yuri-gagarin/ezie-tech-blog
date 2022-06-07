@@ -14,6 +14,7 @@ import type { DropdownItemProps, MenuItemProps } from "semantic-ui-react";
 import userMenuStyles from "@/styles/user/UserMenu.module.css";
 // helpers //
 import { checkEmptyObjVals } from "../_helpers/displayHelpers";
+import { clearClientSessionCookie } from "../_helpers/generalHelpers";
 
 // internal custom types //
 type MenuItemVal = "dashboard" | "posts" | "profile" | "";
@@ -81,6 +82,7 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
     try {
       await AuthActions.handleLogout(dispatch);
       router.push("/login");
+      clearClientSessionCookie({ cookieName: "authState", path: "/" });
     } catch (err) {
       AuthActions.handleAuthError(dispatch, err);
     }

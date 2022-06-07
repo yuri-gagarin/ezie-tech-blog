@@ -19,6 +19,7 @@ import type { IGeneralState } from "@/redux/_types/generalTypes";
 import type { AuthAction } from '@/redux/_types/auth/actionTypes';
 // helpers //
 import { loginFormValidator } from "@/components/_helpers/validators";
+import { clearClientSessionCookie } from "@/components/_helpers/generalHelpers";
 
 interface ILoginPageProps {
 
@@ -93,6 +94,10 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
   // end action handlers //
  
   // lifecycle hooks //
+  React.useEffect(() => {
+    clearClientSessionCookie({ cookieName: "authState" });
+  }, []);
+
   React.useEffect(() => {
     if (error || errorMessages) setLoginFormState(state => ({ ...state, errorCompOpen: true }));
   }, [ error, errorMessages ]);

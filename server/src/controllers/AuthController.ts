@@ -190,7 +190,7 @@ export default class AuthController {
 
     return (
       res
-      .cookie(LoginCookies.JWTToken, "", cookieOpts)
+      .clearCookie(LoginCookies.JWTToken)
       .status(200)
       .json({ responseMsg: "Logged out" })
     );

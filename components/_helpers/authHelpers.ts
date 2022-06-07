@@ -31,6 +31,7 @@ const token = context.req["signedCookies"].JWTToken;
 
   */
 
+
 export const requireAdminAuthentication = (getServerSideProps: any) => {
   return async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<any>> => {
     let validAdmin: boolean = false;

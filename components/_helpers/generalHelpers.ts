@@ -20,3 +20,17 @@ export const generatePassword = (passLength: number = 8): string => {
   }
   return retVal;
 }
+
+
+export const clearClientSessionCookie = ({ cookieName, path, domain }: { cookieName: string; path?: string; domain?: string; }): void => {
+  function checkCookie(name: string) {
+    return document.cookie.split(";").some((s) => {
+      return s.trim().startsWith(name + "=")
+    })
+  };
+  if (checkCookie(cookieName) && window) {
+    console.log(window.location.hostname)
+    document.cookie = cookieName +`=null; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;}`;
+  }
+  
+}

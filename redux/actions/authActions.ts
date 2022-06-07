@@ -3,7 +3,7 @@ import axios from "../../components/axios/axiosInstance";
 import type { Dispatch } from "redux";
 import type { AxiosResponse, AxiosRequestConfig } from "axios";
 // actions types //
-import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState, UpdateCurrentUserPassword, AdminResetUserPassword } from "../_types/auth/actionTypes";
+import type { AuthAPIRequest, AuthLoginSuccess, AuthLogoutSuccess, ClearLoginMsg, AuthRegisterSuccess, AuthAction, AuthFailure, AuthErrorDismiss, ClearLoginState, UpdateCurrentUserPassword, AdminResetUserPassword, DeleteUserProfile } from "../_types/auth/actionTypes";
 // data types //
 import type { AdminData } from "../_types/generalTypes";
 import type { AdminFormData, EditAdminRes, EditAdminPassRes } from "../_types/admins/dataTypes";
@@ -11,6 +11,7 @@ import type { UserData, UserFormData, EditUserRes, EditUserPassRes } from "../_t
 import type { ChangePasswordReqData, IAuthState, LoginRes, LogoutRes, RegisterRes } from "../_types/auth/dataTypes";
 // helpers //
 import { processAxiosError } from '../_helpers/dataHelpers';
+import { DeleteUserProfileRes } from "@/server/src/_types/auth/authTypes";
 
 // TODO //
 // rewrite as a class //
@@ -217,6 +218,28 @@ export class AuthActions {
       // depending on if user updated own pass or admin updated user pass, theres a different end action //
       return dispatch({
         type: "UpdateCurrentUserPassword", payload: { status, responseMsg, currentUser: editedAdmin, loading: false, passwordChangeRequest: false  }
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // delete profile actions //
+  public static handleDeleteUserProfile = async (data: { dispatch: Dispatch<AuthAction>; currentPassword: string; authState: IAuthState; }): Promise<DeleteUserProfile> => {
+    // <authState.currentUser> and  <currentPassword> should be defined and truthy  //
+    const { dispatch, currentPassword, authState } = data;
+    const { _id: currentUserId } = authState.currentUser;
+    const axiosOpts: AxiosRequestConfig = {
+      method: "DELETE",
+      url: `/api/users/${currentUserId}`
+    };
+
+    dispatch({ type: "AuthAPIRequest", payload: { loading: true } });
+    try {
+      const { status, data }: AxiosResponse<DeleteUserProfileRes> = await axios(axiosOpts);
+      const { responseMsg } = data;
+      return dispatch({
+        type: "DeleteUserProfile", payload: { status, responseMsg, currentUser: null, loading: false }
       });
     } catch (error) {
       throw error;
