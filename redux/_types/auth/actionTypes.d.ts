@@ -29,6 +29,15 @@ export type UpdateUserProfile = {
     currentUser: UserData;
   };
 };
+export type DeleteUserProfile = {
+  readonly type: "DeleteUserProfile";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    currentUser: null;
+  };
+};
 export type UpdateAdminProfile = {
   readonly type: "UpdateAdminProfile";
   readonly payload: {
@@ -36,6 +45,15 @@ export type UpdateAdminProfile = {
     responseMsg: string;
     loading: boolean;
     currentUser: AdminData;
+  };
+};
+export type DeleteAdminProfile = {
+  readonly type: "DeleteAdminProfile";
+  readonly payload: {
+    status: number;
+    responseMsg: string;
+    loading: boolean;
+    currentUser: null;
   };
 };
 export type AuthLoginSuccess = {
@@ -143,7 +161,7 @@ export type AuthErrorDismiss = {
 };
 
 export type AuthAction = (
-  AuthAPIRequest | AuthPassChangeAPIRequest | ProfileAPIRequest | UpdateUserProfile | UpdateAdminProfile | UpdateCurrentUserPassword | AdminResetUserPassword |
+  AuthAPIRequest | AuthPassChangeAPIRequest | ProfileAPIRequest | UpdateUserProfile | UpdateAdminProfile | DeleteUserProfile | DeleteAdminProfile | UpdateCurrentUserPassword | AdminResetUserPassword |
   AuthLoginSuccess | AuthRegisterSuccess | AuthLogoutSuccess | ClearLoginMsg | ClearLoginState | AuthFailure | AuthErrorDismiss
 );
 
