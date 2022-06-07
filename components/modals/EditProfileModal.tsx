@@ -168,7 +168,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
       </Modal.Content>
       <Modal.Content>
         <Form>
-          <Form.Field inline={ !formFirstNameState.editingFirstName }>
+          <Form.Field className={ styles.formField } inline={ !formFirstNameState.editingFirstName }>
             <Label className={ styles.dataLabel } color="teal">First Name:</Label>
             {
               formFirstNameState.editingFirstName
@@ -188,7 +188,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               </div>
             }
           </Form.Field>
-          <Form.Field inline={ !formLastNameState.editingLastName }>
+          <Form.Field className={ styles.formField } inline={ !formLastNameState.editingLastName }>
             <Label className={ styles.dataLabel } color="teal">Last Name:</Label>
             {
               formLastNameState.editingLastName
@@ -208,7 +208,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               </div>
             }
           </Form.Field>
-          <Form.Field inline={ !formEmailState.editingEmail }>
+          <Form.Field className={ styles.formField } inline={ !formEmailState.editingEmail }>
             <Label className={ styles.dataLabel } color="teal">Email:</Label>
             {
               formEmailState.editingEmail

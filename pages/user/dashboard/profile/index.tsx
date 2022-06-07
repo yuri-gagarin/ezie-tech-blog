@@ -82,8 +82,12 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
   const currentUser: UserData = authState.currentUser as UserData || UserDashHelpers.defaultUserInfo;
-  // aditional modal component triggers //
 
+  // aditional modal component triggers //
+  const closeEditProfileModal = (): void => {
+    if (authState.error) AuthActions.dismissAuthError(dispatch);
+    setEditModalState({ componentOpen: false, loaderOpen: false });
+  };
   // togglers for password change component //
   const togglePasswordChangeComponent = (): void => {
     setEditPasswordState({ ...setEmptyPasswordState(), componentOpen: !editPasswordState.componentOpen })
@@ -189,7 +193,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // for now any api error should come up top in <GenErrorModal> component //
   // should be dismissible or auto clear in 5 seconds //
   React.useEffect(() => {
-    if (authState.error && !authState.passwordChangeRequest) {
+    if (authState.error && !authState.passwordChangeRequest && !editModalState.componentOpen) {
       clearTimeout(APIErrorTimeout);
       setAPIErrorTimeout(authErrorTimeout(5000));
     } else {
@@ -206,7 +210,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
       <EditProfileModal
         modalOpen={ editModalState.componentOpen }
         loaderOpen= { editModalState.loaderOpen }
-        handleCloseModal={ () => setEditModalState({ componentOpen: false, loaderOpen: false }) }
+        handleCloseModal={ closeEditProfileModal }
         handleUpdateUserProfile={ handleUpdateUserProfile }
         handleTriggerModelDelete={ triggerProfileDelete }
         authState={ authState }
@@ -219,9 +223,9 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
         handleProfileDelete={ handleProfileDelete }
       />
       {
-      (authState.error && !editPasswordState.componentOpen) && 
+      (authState.error && !editPasswordState.componentOpen && !editModalState.componentOpen) && 
       <GenErrorModal 
-        open={ authState.error && !editPasswordState.componentOpen }  // should not be open on password change error //
+        open={ authState.error }  // should not be open on password change error //
         position="fixed-top"
         animation="fly down"
         duration={ 200 }

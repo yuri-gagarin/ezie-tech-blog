@@ -1,30 +1,54 @@
+.editProfileModal > i {
+  margin-top: -1.75em;
+  margin-right: -1em;
+  color: red !important;
+  font-size: 2em !important;
+}
+.editProfileModal > i:hover {
+  color:  darkred!important;
+  transition: all 300ms linear;
+}
+.modalBtns {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.editProfileCancel {
+  width: 100%;
+}
 .editProfileControls {
-  margin-left: 10px !important;
+  margin-top: 10px !important;
 }
 
 .dataLabel {
-  width: 8em;
+  width: 100%;
+  text-align: center;
 }
-.dataContent {
-  display: flex;
-  align-items: center;
+.formInput {
+  width: 100%;
+  border: 4px solid red !important;
 }
 .dataSpan {
   display: inline-flex;
   align-items: center;
   padding: 3px 0.5em;
   border: 1px solid green;
-  min-width: 200px;
-  height: 33px;
+  width: 75%;
+  height: 36px;
   border-radius: 5px;
   font-weight: bold;
 }
-.userLevelContent {
-  height: 3em;
-  width: 267px;
-  font-size: 1.25em;
-  font-weight: bold;
+.dataEditBtn {
+  width: 25%;
+  height: 100%;
+  margin: 0 !important;
 }
+
+.dataContent {
+  display: flex;
+  align-items: center;
+}
+
 .userLevelDiv {
   display: flex;
   align-items: center;
@@ -32,54 +56,60 @@
   height: 100%;
   background-color: gainsboro;
 }
+.userLevelContent {
+  width: 100%;
+  padding: 2em 0;
+  background-color: gainsboro;
+}
 
 @media screen and (min-width: 551px) {
-  .formInput {
-    width: 268px;
+  .editProfileModal > i {
+    position: absolute !important;
+    right: 10px !important;
+    top: 0 !important;
+    margin: 0 !important;
+  }
+  .modalBtns {
+    flex-direction: row !important;
+    justify-content: flex-start;
+  }
+  .editProfileCancel {
+    width: 33%;
+  }
+  .editProfileControls {
+    width: 67%;
+    margin-top: 0 !important;
+  }
+  .formField {
+    width: 100%;
+  }
+  .dataLabel {
+    width: 8em;
+  }
+  .dataSpan {
+    width: 75%;
+  }
+  
+  .userLevelContent {
+    height: 3em;
+    width: 267px;
+    font-size: 1.25em;
+    font-weight: bold;
   }
 }
 
-@media screen and (max-width: 550px) {
-  
-  .editProfileModal > i {
-    margin-top: -1.75em;
-    margin-right: -1em;
-    font-size: 2em !important;
-    color: orange !important;
-  }
+@media screen and (min-width: 768px) {
   .modalBtns {
-    display: flex !important;
-    flex-direction: column;
-    justify-content: space-between;
+    width: auto;
   }
   .editProfileCancel {
-    width: 100%;
-    border: 3px solid blue !important;
+    width: auto;
   }
   .editProfileControls {
-    margin: 0 !important;
-    width: 100%;
-    margin-top: 10px !important;
+    width: auto;
+    margin-left: 10px !important;
   }
-  
-  .dataContent {
-    min-height: 3em;
-    border: 3px solid green !important;
+  .formField {
+    width: 445px;
   }
-  .dataLabel {
-    width: 100%;
-  }
-  .dataSpan {
-    height: 100%;
-    width: 75%;
-  }
-  .dataEditBtn {
-    width: 25%;
-    height: 100%;
-    margin: 0 !important;
-  }
-  .userLevelContent {
-    width: 100%;
-  }
-  
 }

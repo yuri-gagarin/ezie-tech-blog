@@ -86,7 +86,7 @@ export class AuthActions {
     const axiosOpts: AxiosRequestConfig = {
       method: "PATCH",
       url: `/api/users/${userId}`,
-      headers: { Authorization: JWTToken },
+      headers: { Authorization: "" },
       data: {
         userData: { firstName, lastName, email }
       }
