@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Button, Form, Input, Label, Modal } from "semantic-ui-react";
+import { Button, Form, Label, Message, Modal } from "semantic-ui-react";
 // next imports //
+// additional components //
+import { GeneralLoaderSegment } from '../shared/GeneralLoaderSegment';
 // styles //
 import styles from "@/styles/modals/ConfirmProfileDeleteModal.module.css";
 // type imports //
@@ -15,20 +17,28 @@ interface ConfirmDeleteModalProps {
 
 type LocalState = {
   confirmDelProfilePass: string;
+  errorModalOpen: boolean;
+  errorMessage: string | null;
 };
 
 export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteModalProps> = ({ modalOpen, authState, handleCloseModal, handleProfileDelete }): JSX.Element => {
   // local component state //
-  const [ localState, setLocalState ] = React.useState<LocalState>({ confirmDelProfilePass: "" });
+  const [ localState, setLocalState ] = React.useState<LocalState>({ confirmDelProfilePass: "", errorModalOpen: true, errorMessage: null });
   // reddux state //
-  const { error, errorMessages } = authState;
+  const { loading, error, errorMessages } = authState;
   // event listeners //
   const handleConfirmDelProfilePassChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.target;
-    setLocalState({ ...localState, confirmDelProfilePass: value });
+    if (value.length === 0) {
+      setLocalState({ ...localState, confirmDelProfilePass: value, errorMessage: "Password cannot be empty" })
+    } else {
+      setLocalState({ ...localState, confirmDelProfilePass: value, errorModalOpen: false, errorMessage: null });
+    }
   };
   // actions //
   const confirmProfileDelete = (): void => {
+    // if the password input is empty show an error //
+    if (!localState.confirmDelProfilePass) return setLocalState({ ...localState, errorModalOpen: true });
     handleProfileDelete(localState.confirmDelProfilePass);
   };
 
@@ -43,9 +53,29 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
           This will delete your profile, log you out as well as archive all your articles and comments
         </p>
         <p>
-          This action is pernament and cannot be reversed
+          This action is pernament and cannot be reversed!
         </p>
       </Modal.Content>
+      {
+        localState.errorModalOpen &&
+        <Modal.Content>
+          <Message error onDismiss={ () => setLocalState({ ...localState, errorModalOpen: false }) }>
+            <Message.Content>
+              <Message.Header>Error</Message.Header>
+              <Message.Content>Password cannot be blank!</Message.Content>
+            </Message.Content>
+          </Message>
+        </Modal.Content>
+      }
+      {
+        true || authState.error &&
+        <Modal.Content>
+          <GeneralLoaderSegment
+            loading
+            errorMessages={ authState.errorMessages }
+          />
+        </Modal.Content>
+      }
       <Modal.Content>
         <Form className={ styles.confirmDelPassInput }>
           <Form.Field>
@@ -54,7 +84,7 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
               autoFocus
               type="password"
               onChange={ handleConfirmDelProfilePassChange }
-              error={{ content: "Error", pointing: "above" }}
+              error={ localState.errorMessage ? { content: localState.errorMessage, pointing: "above" } : false }
             />
           </Form.Field>
         </Form>

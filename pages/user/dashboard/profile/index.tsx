@@ -53,7 +53,7 @@ type EditPassFormErrorState = {
   visible: boolean;
   errorMessages: string[] | null;
   timeout: NodeJS.Timeout | null;
-}
+};
 
 const setEmptyPasswordState = (): EditPasswordState => {
   return { componentOpen: false, loaderOpen: false, oldPassword: { value: "", errorMsg: null }, password: { value: "", errorMsg: null }, passwordConfirm: { value: "", errorMsg: "" }};
@@ -181,13 +181,18 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   };
   // Profile delete functionality //
   const triggerProfileDelete = (): void => {
-    console.log("called trigger delete")
+    setConfirmDeleteProfileState({ componentOpen: true, loaderOpen: false });
   };
   const cancelProfileDelete = (): void => {
-
+    setConfirmDeleteProfileState({ componentOpen: false, loaderOpen: false });
   };
-  const handleProfileDelete = async (): Promise<void> => {
+  const handleProfileDelete = async (currentUserPassword: string): Promise<void> => {
+    console.log(currentUserPassword);
+    try {
+      
+    } catch (error) {
 
+    }
   };
 
   // for now any api error should come up top in <GenErrorModal> component //
@@ -217,7 +222,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
 
       />
       <ConfirmProfileDeleteModal 
-        modalOpen={ confirmDeleteProfileState.componentOpen }
+        modalOpen={ true }
         authState={ authState }
         handleCloseModal={ cancelProfileDelete }
         handleProfileDelete={ handleProfileDelete }
@@ -240,7 +245,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
           </Button.Group>
           <Button.Group className={ styles.controlBtns }>
             <Button basic content="Edit Profile" color="green" icon="edit" onClick={ () => setEditModalState({ ...editModalState, componentOpen: true }) } />
-            <Button content="Delete Profile" color="red" icon="trash" />
+            <Button content="Delete Profile" color="red" icon="trash" onClick={ () => setConfirmDeleteProfileState({ componentOpen: true, loaderOpen: false  }) } />
           </Button.Group>
         </Segment>
       </Grid.Row>
