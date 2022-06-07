@@ -51,14 +51,15 @@
     display: flex !important;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 25vh;   
   }
   .editProfileCancel {
     width: 100%;
+    border: 3px solid blue !important;
   }
   .editProfileControls {
     margin: 0 !important;
     width: 100%;
+    margin-top: 10px !important;
   }
   
   .dataContent {

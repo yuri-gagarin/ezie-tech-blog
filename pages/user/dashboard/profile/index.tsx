@@ -28,6 +28,10 @@ type ConfirmDeleteProfileState = {
   componentOpen: boolean;
   loaderOpen: boolean;
 };
+type EditModalState = {
+  componentOpen: boolean;
+  loaderOpen: boolean;
+};
 // 
 type EditPasswordState = {
   componentOpen: boolean;
@@ -69,7 +73,7 @@ const extractPasswordData = (editPasswordState: EditPasswordState): { oldPasswor
 
 const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props): JSX.Element => {
   // local component state //
-  const [ editModalOpen, setEditModalOpen ] = React.useState<boolean>(false);
+  const [ editModalState, setEditModalState ] = React.useState<EditModalState>({ componentOpen: false, loaderOpen: false });
   const [ confirmDeleteProfileState, setConfirmDeleteProfileState ] = React.useState<ConfirmDeleteProfileState>({ componentOpen: false, loaderOpen: false });
   const [ editPasswordState, setEditPasswordState ] = React.useState<EditPasswordState>(setEmptyPasswordState()); 
   const [ editPassFormErrorMessages, setEditPassFormErrorMessages ] = React.useState<EditPassFormErrorState>({ visible: false, errorMessages: null, timeout: null });
@@ -77,12 +81,9 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   // redux hooks and state //
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
-  const { responseMsg, error, errorMessages } = authState;
   const currentUser: UserData = authState.currentUser as UserData || UserDashHelpers.defaultUserInfo;
   // aditional modal component triggers //
-  const handleTriggerEditModal = (): void => {
-    setEditModalOpen(!editModalOpen);
-  };
+
   // togglers for password change component //
   const togglePasswordChangeComponent = (): void => {
     setEditPasswordState({ ...setEmptyPasswordState(), componentOpen: !editPasswordState.componentOpen })
@@ -142,10 +143,12 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
     const { _id: userId } = currentUser;
     const { authToken: JWTToken } = authState;
     try {
-      console.log("called")
-      await AuthActions.handleUpdateUserProfile({ dispatch, userId, JWTToken, formData })
+      setEditModalState({ ...editModalState, loaderOpen: true });
+      await AuthActions.handleUpdateUserProfile({ dispatch, userId, JWTToken, formData });
+      setEditModalState({ ...editModalState, loaderOpen: true });
     } catch (error) {
       AuthActions.handleAuthError(dispatch, error);
+      setEditModalState({ ...editModalState, loaderOpen: true });
     }
   }
   // Change User Password //
@@ -201,9 +204,9 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   return (
     <React.Fragment>
       <EditProfileModal
-        modalOpen={ editModalOpen }
-        loaderOpen= {confirmDeleteProfileState.loaderOpen }
-        handleCloseModal={ handleTriggerEditModal }
+        modalOpen={ editModalState.componentOpen }
+        loaderOpen= { editModalState.loaderOpen }
+        handleCloseModal={ () => setEditModalState({ componentOpen: false, loaderOpen: false }) }
         handleUpdateUserProfile={ handleUpdateUserProfile }
         handleTriggerModelDelete={ triggerProfileDelete }
         authState={ authState }
@@ -232,7 +235,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
             <Button basic content="Go Back" color="green" icon="arrow left" />
           </Button.Group>
           <Button.Group className={ styles.controlBtns }>
-            <Button basic content="Edit Profile" color="green" icon="edit" onClick={ () => setEditModalOpen(true) } />
+            <Button basic content="Edit Profile" color="green" icon="edit" onClick={ () => setEditModalState({ ...editModalState, componentOpen: true }) } />
             <Button content="Delete Profile" color="red" icon="trash" />
           </Button.Group>
         </Segment>

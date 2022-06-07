@@ -76,7 +76,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
     setFormFirstNameState({ ...formFirstNameState, editingFirstName: true });
   }
   const revertFirstNameData = (e: React.FocusEvent<HTMLInputElement>): void => {
-    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
+    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update All" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
       setFormFirstNameState({ ...formFirstNameState, editingFirstName: false, firstNameError: null })
     } else {
       setFormFirstNameState({ ...formFirstNameState, firstName, editingFirstName: false, firstNameError: null });
@@ -95,8 +95,8 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   const setLastNameEdit = (): void => {
     setFormLastNameState({ ...formLastNameState, editingLastName: true });
   };
-  const reverLastNameData = (e: React.FocusEvent<HTMLInputElement>): void => {
-    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
+  const revertLastNameData = (e: React.FocusEvent<HTMLInputElement>): void => {
+    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update All" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
       setFormLastNameState({ ...formLastNameState, editingLastName: false, lastNameError: null });
     } else {
       setFormLastNameState({ ...formLastNameState, lastName, editingLastName: false, lastNameError: null });
@@ -117,7 +117,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
     setFormEmailState({ ...formEmailState, editingEmail: true });
   };  
   const reverEmailData = (e: React.FocusEvent<HTMLInputElement>): void => {
-    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
+    if (e.relatedTarget && ((e.relatedTarget as HTMLButtonElement).innerText === "Update All" || (e.relatedTarget as HTMLButtonElement).innerText === "Edit" )) {
       setFormEmailState({ ...formEmailState, editingEmail: false, emailError: null });
     } else {
       setFormEmailState({ ...formEmailState, email, editingEmail: false, emailError: null });
@@ -130,7 +130,8 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
   const _handleUpdateUserProfile = async () => {
     const { firstName } = formFirstNameState;
     const { lastName } = formLastNameState;
-    const { email } = formEmailState
+    const { email } = formEmailState;
+    console.log(formLastNameState);
     return handleUpdateUserProfile({ firstName, lastName, email })
   };
   // lifecycle hooks //
@@ -145,6 +146,17 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
 
   return (
     <Modal className={ styles.editProfileModal } closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "edit-profile-modal" }>
+      {
+        loaderOpen &&
+        <Modal.Content>
+          <GeneralLoaderSegment 
+            loading={ authState.loading }
+            initialMessage={ "Updating Usser profile" }
+            completionMessage={ authState.responseMsg }
+            errorMessages={ authState.error && authState.errorMessages }
+          />
+        </Modal.Content>
+      }
       <Modal.Content className={ styles.modalBtns }>
         <Button.Group className={ styles.editProfileCancel }>
           <Button basic color="blue" content="Cancel Changes" icon="cancel" onClick={ handleCloseModal } data-test-id={ "edit-profile-modal-cancel-btn" } />
@@ -187,7 +199,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
                 error={ formLastNameState.lastNameError ? { content: formLastNameState.lastNameError, pointing: "below" } : false }
                 value={ formLastNameState.lastName } 
                 onChange={ listenForLastNameChange }
-                onBlur={ reverLastNameData }
+                onBlur={ revertLastNameData }
               />
               :
               <div className={ styles.dataContent}>
