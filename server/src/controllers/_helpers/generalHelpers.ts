@@ -48,7 +48,8 @@ export const respondWithWrongInputError = (res: Response<ErrorResponse>, { respo
     errorMessages: customMessages || [ "Invalid data sent by user" ]
   });
 };
-export const respondWithNoUserError = (res: Response<ErrorResponse>, { responseMsg, error, errorMessages }: { responseMsg?: string; error?: Error; errorMessages?: string[]; }) => {
+export const respondWithNoUserError = (res: Response<ErrorResponse>, data?: { responseMsg?: string; error?: Error; errorMessages?: string[]; }) => {
+  const { responseMsg, error, errorMessages } = data || {};
   const err = error || new AuthNotLoggedInError("Login Error", [ "Logged in user data could not be resolved" ]);
   return res.status(401).json({
     responseMsg: responseMsg || "Auth Login Error",

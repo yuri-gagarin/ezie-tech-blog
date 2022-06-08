@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import Admin from "../../models/Admin";
 import User from "../../models/User";
 //
-import { respondWithNoModelIdError, respondWithNotAllowedError, respondWithWrongInputError } from "./generalHelpers";
+import { respondWithNoModelIdError, respondWithNotAllowedError, respondWithNoUserError, respondWithWrongInputError } from "./generalHelpers";
 // types //
 import type { UpdateUserPassReqData } from "../../_types/users/userTypes";
 import type { Request, Response, NextFunction } from "express";
@@ -45,6 +45,32 @@ export const verifyUsersModelAccess = async (req: Request, res: Response, next: 
     return respondWithNotAllowedError(res, [ "Could not resolve logged in Users data" ]);
   }
 };
+
+export const verifyUserDeleteMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const { currentPassword } = req.body as { currentPassword: string | undefined };
+  const currentLoggedInUser = req.user as IAdmin | IUser;
+
+  // admin does NOT need to enter a current password to delete a user //
+  if (currentLoggedInUser && currentLoggedInUser instanceof Admin) {
+
+  } else if (currentLoggedInUser && currentLoggedInUser instanceof User) {
+    // need to verify presence of <currentPassword> field and a correct password // 
+    const customMessages: string[] = [];
+    if (currentPassword) {
+      if (currentLoggedInUser.validPassword(currentPassword)) {
+        next(); 
+      } else {
+        customMessages.push("Your password is invalid");
+        return respondWithNotAllowedError(res, customMessages, 403);
+      }
+    } else {
+      return respondWithWrongInputError(res, { customMessages });
+    }
+  } else {
+    // something is weirdly wrong, no current user object //
+    return respondWithNoUserError(res);
+  }
+}
 
 export const userPasswordChangeMiddleware = async (req: Request<{}, {}, UpdateUserPassReqData>, res: Response, next: NextFunction) => {
   const { userId, passwordData } = req.body;

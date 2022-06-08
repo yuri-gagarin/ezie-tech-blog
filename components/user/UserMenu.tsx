@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dropdown, Grid, Menu } from "semantic-ui-react";
+import { Dropdown, Grid, Icon, Menu } from "semantic-ui-react";
 // next imports //
 import { useRouter } from 'next/router';
 // redux //
@@ -14,7 +14,6 @@ import type { DropdownItemProps, MenuItemProps } from "semantic-ui-react";
 import userMenuStyles from "@/styles/user/UserMenu.module.css";
 // helpers //
 import { checkEmptyObjVals } from "../_helpers/displayHelpers";
-import { clearClientSessionCookie } from "../_helpers/generalHelpers";
 
 // internal custom types //
 type MenuItemVal = "dashboard" | "posts" | "profile" | "";
@@ -82,7 +81,6 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
     try {
       await AuthActions.handleLogout(dispatch);
       router.push("/login");
-      clearClientSessionCookie({ cookieName: "authState", path: "/" });
     } catch (err) {
       AuthActions.handleAuthError(dispatch, err);
     }
@@ -138,6 +136,9 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
           </Menu.Item>
         </Menu.Menu>
         <Menu.Menu position="right">
+          <Menu.Item link={false}>
+            <Icon name="user circle" />
+          </Menu.Item>
           <Menu.Item as="a" onClick={ handleMenuItemClick } name="profile" active={ LocalState.activeMenuItem === "profile" } data-test-id="Main_User_Users_Link">
             View My Profile
           </Menu.Item>

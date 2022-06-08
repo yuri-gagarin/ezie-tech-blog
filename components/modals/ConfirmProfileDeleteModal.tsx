@@ -23,7 +23,7 @@ type LocalState = {
 
 export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteModalProps> = ({ modalOpen, authState, handleCloseModal, handleProfileDelete }): JSX.Element => {
   // local component state //
-  const [ localState, setLocalState ] = React.useState<LocalState>({ confirmDelProfilePass: "", errorModalOpen: true, errorMessage: null });
+  const [ localState, setLocalState ] = React.useState<LocalState>({ confirmDelProfilePass: "", errorModalOpen: false, errorMessage: null });
   // reddux state //
   const { loading, error, errorMessages } = authState;
   // event listeners //
@@ -93,7 +93,7 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
         <Button.Group className={ styles.controlBtns }>
           <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal } data-test-id={ "confirm-delete-modal-cancel-btn" } />
           <Button.Or />
-          <Button color="red" content="Delete" icon="trash" onClick={ confirmProfileDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
+          <Button color="red" content="Confirm Delete" icon="trash" onClick={ confirmProfileDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
         </Button.Group>
       </Modal.Content>
     </Modal>

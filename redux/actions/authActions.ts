@@ -231,7 +231,8 @@ export class AuthActions {
     const { _id: currentUserId } = authState.currentUser;
     const axiosOpts: AxiosRequestConfig = {
       method: "DELETE",
-      url: `/api/users/${currentUserId}`
+      url: `/api/users/${currentUserId}`,
+      data: { currentPassword }
     };
 
     dispatch({ type: "AuthAPIRequest", payload: { loading: true } });
