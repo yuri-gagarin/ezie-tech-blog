@@ -80,7 +80,8 @@ export const verifyUserProfileAccessAndData = async (req: Request, res: Response
       if (!valid) return respondWithWrongInputError(res, { customMessages: errorMessages });
       // check that <userId> field matches current user and that password is correct //
       if (loggedInUser._id.equals(userId)) {
-        if (loggedInUser.validPassword(currentPassword)) {
+        const validPass: boolean = await loggedInUser.validPassword(currentPassword);
+        if (validPass) {
           // all is good, proceed to delete profile action and logout //
           return next();
         } else {

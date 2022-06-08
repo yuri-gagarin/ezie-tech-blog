@@ -114,13 +114,13 @@ export default class AuthController {
   // data should be validated and email checked by midlleware //
   // current logged in user password and permissions should be checked by middleware as well //
   deleteUserProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response<DeleteUserProfileRes>): Promise<Response<DeleteUserProfileRes>> => {
-    const { email, password } = req.body;
+    const { userId } = req.body as { userId: string; };
     const user = req.user as IAdmin | IUser;
 
     try {     
       const isAdmin: boolean = user instanceof Admin;     
       // archive all users posts later ? //
-      const deletedUser: IUser | null = await User.findOneAndDelete({ email }).exec();
+      const deletedUser: IUser | null = await User.findOneAndDelete({ _id: userId }).exec();
       if (deletedUser) {
         // admin should stay logged in and get back the deleted user data //
         if (isAdmin) {

@@ -206,7 +206,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
-      it(`Should NOT delete User profile with and INVALID <currentPassword> field and return a correct <${unauthorizedResCode}> response`, (done) => {
+      it(`Should NOT delete User profile with and INVALID <currentPassword> field and return a correct <${forbiddenAccessCode}> response`, (done) => {
         chai.request(server)
         .delete("/api/delete_user_profile")
         .set({ Authorization: readerUserToken })
@@ -214,8 +214,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            console.log(response.body)
-            expect(response.status).to.equal(unauthorizedResCode);
+            expect(response.status).to.equal(forbiddenAccessCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -249,7 +248,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: readerUserToken })
-          .send({ email: secondReaderUserEmail, password: "password" })
+          .send({ userId: secondReaderUser._id.toHexString(), currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes;
@@ -282,7 +281,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: readerUserToken })
-          .send({ email: contributorUserEmail, password: "password" })
+          .send({ userId: contributorUser._id.toHexString(), currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes;
@@ -297,7 +296,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins = await Admin.countDocuments();
-          const queriedUser: IUser | null = await User.findOne({ email: secondReaderUserEmail });
+          const queriedUser: IUser | null = await User.findOne({ email: contributorUserEmail });
           ///
           expect(updatedNumOfUsers).to.equal(numOfUserModels);
           expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
@@ -315,7 +314,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: readerUserToken })
-          .send({ email: readerUserEmail , password: "password" })
+          .send({ userId: readerUser._id.toHexString(), currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
@@ -365,7 +364,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: contributorUserToken })
-          .send({ email: secondReaderUserEmail, password: "password" })
+          .send({ userId: secondReaderUser._id.toHexString(), currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes;
@@ -398,7 +397,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: contributorUserToken })
-          .send({ email: secondContributorUserEmail, password: "password" })
+          .send({ userId: secondContributorUser._id.toHexString(), currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes;
@@ -431,7 +430,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: contributorUserToken })
-          .send({ email: contributorUserEmail, password: "password" })
+          .send({ userId: contributorUser._id.toHexString(), currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
