@@ -82,7 +82,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: "" })
-          .send({ email: readerUserEmail, password: "password" })
+          .send({ userId: readerUser._id.toHexString(), curentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -97,7 +97,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" })
-          .send({ email: readerUserEmail, password: "password" })
+          .send({ userId: readerUser._id.toHexString(), curentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -127,14 +127,14 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
 
   // TEST CONTEXT User profile delete WITH LOGIN invalid data //
   context("User Profile - DELETE - User LOGGED IN - INVALID DATA - OWN PROFILE", () => {
-    // TEST invalid email fields //
-    describe("DELETE /api/delete_user_profile - User Delete with an INVALID EMAIL field", () => {
-      // invalid email type //
-      it(`Should NOT delete User profile with an INVALID EMAIL TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+    // TEST invalid userId fields //
+    describe("DELETE /api/delete_user_profile - User Delete with an INVALID <userId> field", () => {
+      // invalid userId type //
+      it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: readerUserToken })
-          .send({ email: {}, password: "password" })
+          .send({ userId: {}, currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -145,32 +145,16 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
-      // empty email //
-      it(`Should NOT delete User profile with an EMPTY EMAIL FIELD and return a correct <${badRequestResCode}> response`, (done) => {
+      // empty userId //
+      it(`Should NOT delete User profile with an EMPTY <userId> FIELD and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: readerUserToken })
-          .send({ email: "", password: "password" })
+          .send({ userId: "", currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
             expect(response.status).to.equal(400);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.an("object");
-            expect(errorMessages).to.be.an("array");
-            done();
-          });
-      });
-      // non existing email //
-      it(`Should NOT delete User profile with an NON EXISTING EMAIL and return a correct <${notFoundAccessCode}> response`, (done) => {
-        chai.request(server)
-          .delete("/api/delete_user_profile")
-          .set({ Authorization: readerUserToken })
-          .send({ email: "notexisting@email.com", password: "password" })
-          .end((err, response) => {
-            if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
-            expect(response.status).to.equal(404);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
             expect(errorMessages).to.be.an("array");
@@ -189,14 +173,14 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         }
       });
     });
-    // END TEST invalid email fields //
-    // TEST invalid password fields //
-    describe("DELETE /api/delete_user_profile - User Delete with an INVALID PASSWORD field", () => {
-      it(`Should NOT delete User profile with invalid PASSWORD TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+    // END TEST invalid userId fields //
+    // TEST invalid currentPassword fields //
+    describe("DELETE /api/delete_user_profile - User Delete with an INVALID <currentPassword> field", () => {
+      it(`Should NOT delete User profile with invalid <currentPassword> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: readerUserToken })
-          .send({ email: secondReaderUserEmail, password: {} })
+          .send({ userId: readerUser._id.toHexString(), currentPassword: {} })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
@@ -207,12 +191,12 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
-      it(`Should NOT delete User profile with EMPTY PASSWORD field and return a correct <${badRequestResCode}> response`, (done) => {
+      it(`Should NOT delete User profile with EMPTY <currentPassword> field and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
         .delete("/api/delete_user_profile")
         .set({ Authorization: readerUserToken })
-        .send({ email: secondReaderUserEmail, password: "" })
-          .end((err, response) => {
+        .send({ userId: readerUser._id.toHexString(), currentPassword: "" })
+        .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
             expect(response.status).to.equal(badRequestResCode);
@@ -222,14 +206,15 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
             done();
           });
       });
-      it(`Should NOT delete User profile with and INVALID PASSWORD field and return a correct <${unauthorizedResCode}> response`, (done) => {
+      it(`Should NOT delete User profile with and INVALID <currentPassword> field and return a correct <${unauthorizedResCode}> response`, (done) => {
         chai.request(server)
         .delete("/api/delete_user_profile")
         .set({ Authorization: readerUserToken })
-        .send({ email: secondReaderUserEmail, password: "notavalidpassword" })
+        .send({ userId: readerUser._id.toHexString(), currentPassword: "defnotvalid" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            console.log(response.body)
             expect(response.status).to.equal(unauthorizedResCode);
             expect(responseMsg).to.be.a("string");
             expect(error).to.be.an("object");
