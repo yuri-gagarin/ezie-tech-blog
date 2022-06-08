@@ -121,23 +121,23 @@ export const validateUserData = (data: { email?: string; password?: string; conf
   return errorMessages.length === 0 ? { valid: true, errorMessages } : { valid: false, errorMessages };
 };
 
-export const validateProfileDeleteData = (data: { email?: string; password?: string}): ValidationRes => {
+export const validateProfileDeleteData = (data: { userId?: string; currentPassword?: string}): ValidationRes => {
   const res: ValidationRes = { valid: false, errorMessages: [] };
 
-  if (data.email) {
-    if (typeof data.email !== "string") {
-      res.errorMessages.push("Wrong input type for email field");
+  if (data.userId) {
+    if (typeof data.userId !== "string") {
+      res.errorMessages.push("Wrong input type for <userId> field");
     }
   } else {
-    res.errorMessages.push("Email field is required");
+    res.errorMessages.push("Missing required <userId> field");
   }
 
-  if (data.password) {
-    if (typeof data.password !== "string") {
-      res.errorMessages.push("Wrong input type for password field");
+  if (data.currentPassword) {
+    if (typeof data.currentPassword !== "string") {
+      res.errorMessages.push("Wrong input type for <currentPassword> field");
     }
   } else {
-    res.errorMessages.push("Passwrod field is required");
+    res.errorMessages.push("Missing required <currentPassword> field");
   }
 
   return res.errorMessages.length === 0 ? { ...res, valid: true } : res;

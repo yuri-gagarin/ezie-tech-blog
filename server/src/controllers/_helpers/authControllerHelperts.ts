@@ -18,25 +18,6 @@ export const trimRegistrationData = ({ email, password, confirmPassword }: { ema
   };
 };
 
-export const userProfileDeleteDataMiddleware = async (req: Request, res: Response<ErrorResponse>, next: NextFunction) => {
-  const { email, password } = req.body;
-  try {
-    const { valid, errorMessages } = validateProfileDeleteData({ email, password });
-    if (!valid) {
-      const error = new InvalidDataError("Invalid User Input", errorMessages);
-      return respondWithWrongInputError(res, { responseMsg: error.message, error, customMessages: error.getErrorMessages });
-    } else {
-      next();
-    }
-  } catch (error) {
-    return res.status(500).json({
-      responseMsg: "Server Error",
-      error,
-      errorMessages: [ "A server error on our end" ]
-    });
-  }
-};
-
 export const verifyAdminProfileAccess = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body as { email: string; password: string; };
   const loggedInAdmin = req.user as IAdmin;
@@ -83,32 +64,34 @@ export const verifyAdminProfileAccess = async (req: Request, res: Response, next
     });
   }
 }
-export const verifyUserProfileAccess = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
+
+//
+export const verifyUserProfileAccessAndData = async (req: Request, res: Response, next: NextFunction) => {
+  const { currentPassword, userId } = req.body as { currentPassword?: string; userId?: string; };
   const loggedInUser = req.user as IAdmin | IUser;
   try {
-    if (!loggedInUser) {
-      return respondWithNoUserError(res, { responseMsg: "Logged in user could not be resolved" });
-    }
-    const foundUser: IUser | null = await User.findOne({ email }).exec();
-    if (!foundUser) {
-      return respondWithNotFoundError(res, [ "User with the queried email was not found" ]);
-    }
-    // admin should be able to delete any user model //
-    const validLoggedInUserPass = await loggedInUser.validPassword(password);
-    if (!validLoggedInUserPass) {
-      return respondWithNotAllowedError(res, [ "Your account password is invalid" ]);
-    };
-    if (loggedInUser instanceof Admin) {
-      // admin can delete any regular user account //
-      next();
-    } else {
-      // regular users can only delete their own accounts //
-      if (loggedInUser.email !== email) {
-        return respondWithNotAllowedError(res, [ "Not allowed to change this profile" ], 403);
-      } else {
-        next();
+    if (loggedInUser && loggedInUser instanceof Admin) {
+      // for now Admin can't acccess this route //
+      // later as we have inactive users then admin will have access to the route //
+      return respondWithNotAllowedError(res, ["Admin has no access to /api/delete_user_profile route"], 403);
+    } else if (loggedInUser && loggedInUser instanceof User) {
+      // <currentPassword> and <userId> fields must be defined //
+      const { valid, errorMessages } = validateProfileDeleteData({ userId, currentPassword });
+      if (!valid) return respondWithWrongInputError(res, { customMessages: errorMessages });
+      // check that <userId> field matches current user and that password is correct //
+      if (loggedInUser._id.equals(userId)) {
+        if (loggedInUser.validPassword(currentPassword)) {
+          // all is good, proceed to delete profile action and logout //
+          return next();
+        } else {
+          return respondWithNotAllowedError(res, [ "Invalid password entered" ], 403);
+        }
+      } else {  
+        return respondWithNotAllowedError(res, [ "Action only allowed on own profile" ], 403);
       }
+    } else {
+      // somethings wrong with login //
+      return respondWithNoUserError(res, { errorMessages: [ "Please logout and login again" ] });
     }
   } catch (error) {
     return res.status(500).json({

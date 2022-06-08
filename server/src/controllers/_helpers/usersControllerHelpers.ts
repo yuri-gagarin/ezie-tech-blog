@@ -46,6 +46,7 @@ export const verifyUsersModelAccess = async (req: Request, res: Response, next: 
   }
 };
 
+/*
 export const verifyUserDeleteMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const { currentPassword } = req.body as { currentPassword: string | undefined };
   const currentLoggedInUser = req.user as IAdmin | IUser;
@@ -64,6 +65,7 @@ export const verifyUserDeleteMiddleware = async (req: Request, res: Response, ne
         return respondWithNotAllowedError(res, customMessages, 403);
       }
     } else {
+      customMessages.push("Enter your password to confirm");
       return respondWithWrongInputError(res, { customMessages });
     }
   } else {
@@ -71,6 +73,7 @@ export const verifyUserDeleteMiddleware = async (req: Request, res: Response, ne
     return respondWithNoUserError(res);
   }
 }
+*/
 
 export const userPasswordChangeMiddleware = async (req: Request<{}, {}, UpdateUserPassReqData>, res: Response, next: NextFunction) => {
   const { userId, passwordData } = req.body;

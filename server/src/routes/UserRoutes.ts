@@ -67,9 +67,9 @@ export default class UserRoutes extends CRUDRoutesController {
   protected delete(route: string): void {
     super.delete(route, 
       [
-        passportGeneralAuthMiddleware,
-        verifyUsersModelAccess,
-        validateObjectIdParams([ "user_id" ])
+        passportGeneralAuthMiddleware,                                // login //
+        validateObjectIdParams([ "user_id" ]),                        // validate required user_id param //
+        verifyUsersModelAccess,                                       // verify that a User or Admin can access the model //
     ]);
   }
 };
