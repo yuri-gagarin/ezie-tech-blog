@@ -8,6 +8,7 @@ import { verifyAdminProfileAccess, verifyUserProfileAccessAndData } from "../con
 // types //
 import type { Router } from "express";
 import type AuthController from "../controllers/AuthController";
+import { validateAllowedReqBodyData } from "../controllers/_helpers/generalHelpers";
 
 
 export default class AuthRoutes {
@@ -63,8 +64,9 @@ export default class AuthRoutes {
       .route("/api/delete_user_profile")
       .delete(
         [
-          passportGeneralAuthMiddleware,      // login auth with custom error //
-          verifyUserProfileAccessAndData      // verifies correct user and  //
+          passportGeneralAuthMiddleware,                                                  // login auth with custom error //
+          validateAllowedReqBodyData({ userId: "objectid", currentPassword: "string" }),  // allowed data fields in request //
+          verifyUserProfileAccessAndData                                                  // verifies correct user and  //
         ],
         this.controller.deleteUserProfile
       );

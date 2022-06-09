@@ -128,7 +128,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   // TEST CONTEXT User profile delete WITH LOGIN invalid data //
   context("User Profile - DELETE - User LOGGED IN - INVALID DATA - OWN PROFILE", () => {
     // TEST invalid userId fields //
-    describe("DELETE /api/delete_user_profile - User Delete with an INVALID <userId> field", () => {
+    describe("DELETE /api/delete_user_profile - User Profile Delete with an INVALID <userId> field", () => {
       // invalid userId type //
       it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
@@ -175,7 +175,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
     });
     // END TEST invalid userId fields //
     // TEST invalid currentPassword fields //
-    describe("DELETE /api/delete_user_profile - User Delete with an INVALID <currentPassword> field", () => {
+    describe("DELETE /api/delete_user_profile - User Profile Delete with an INVALID <currentPassword> field", () => {
       it(`Should NOT delete User profile with invalid <currentPassword> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
@@ -236,6 +236,37 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
       });
     });
     // END TEST invalid password fields //
+    // TEST not allowed data fields //
+    describe("DELETE /api/delete_user_profile - User Profile Delete with an NOT ALLOWED DATA FIELD IN <req.body> object", () => {
+      // not allowed field in <req.body> OBJECT //
+      it(`Should NOT delete User profile with an INVALID <userId> TYPE and return a correct <${badRequestResCode}> response`, (done) => {
+        chai.request(server)
+          .delete("/api/delete_user_profile")
+          .set({ Authorization: readerUserToken })
+          .send({ userId: readerUser._id.toHexString(), currentPassword: "password", notAllowedField: "definitely_not_allowed" })
+          .end((err, response) => {
+            if(err) done(err);
+            const { responseMsg, error, errorMessages } = response.body as RegisterRes;
+            expect(response.status).to.equal(badRequestResCode);
+            expect(responseMsg).to.be.a("string");
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.be.an("array");
+            done();
+          });
+      });
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
+        try {
+          const updatedNumOfUsers: number = await User.countDocuments();
+          const updatedNumOfAdmins: number = await Admin.countDocuments();
+          //
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+        } catch (error) {
+          throw error;
+        }
+      });
+    });
+    // END TEST not allowed data fields //
   });
   // END TEST CONTEXT User profile delete WITH LOGIN invalid data //
 
@@ -481,7 +512,7 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: adminUserToken })
-          .send({ userId: secondReaderUserEmail, password: "password" })
+          .send({ userId: secondReaderUser._id.toHexString(), currentPassword: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
