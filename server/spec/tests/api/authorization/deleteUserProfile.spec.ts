@@ -473,90 +473,41 @@ describe("AuthController:deleteUserProfile - Userregistration DELETE API tests",
   
 
   // TEST CONTEXT User profile delete LOGGED IN ADMIN //
+  // AT the moment this API request is not allowed for admin //
   context("User Profile - DELETE - VALID DATA - Admin LOGGED IN - Deleting another User", () => {
     // TEST DELETE Admin User <ADMIN> Level deleting a User Profile //
     describe("DELETE /api/delete_user_profile - VALID FORM DATA - <ADMIN> LEVEL Admin deleting another User profile", () => {
-      it(`Should CORRECTLY delete User profile and return a correct <${successResCode}> response`, (done) => {
+      it(`Should NOT delete User profile and return a correct <${forbiddenAccessCode}> response`, (done) => {
         chai.request(server)
           .delete("/api/delete_user_profile")
           .set({ Authorization: adminUserToken })
-          .send({ email: secondReaderUserEmail, password: "password" })
+          .send({ userId: secondReaderUserEmail, password: "password" })
           .end((err, response) => {
             if(err) done(err);
             const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
-            expect(response.status).to.equal(successResCode);
+            expect(response.status).to.equal(forbiddenAccessCode);
             expect(responseMsg).to.be.a("string");
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // logout cookie should not be sent //
-            expect(response.header["set-cookie"]).to.be.an("array");
-            expect(response.header["set-cookie"]).to.have.lengthOf(1);
-            //
-            const userIdCookie = cookie.parse(response.header["set-cookie"][0]);
-            expect(userIdCookie.uniqueUserId).to.be.a("string");
-            expect(userIdCookie.JWTToken).to.be.undefined;
+            expect(error).to.be.an("object");
+            expect(errorMessages).to.an("array");
             done();
           });
       });
-      it("Should DECREMENT the number of User models by 1 and correctly delete the queried User model", async () => {
+      it("Should NOT alter the number of <User> or <Admin> models in the database", async () => {
         try {
           const updatedNumOfUsers: number = await User.countDocuments();
           const updatedNumOfAdmins = await Admin.countDocuments();
           const deletedUser: IUser | null = await User.findOne({ email: secondReaderUserEmail }).exec();
-          ///
-          expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
-          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
-          expect(deletedUser).to.be.null;
           //
-          numOfUserModels = updatedNumOfUsers;
+          expect(updatedNumOfUsers).to.equal(numOfUserModels);
+          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
+          expect(deletedUser).to.be.an("object");
+          //
         } catch (error) {
           console.log(error);
         }
       });
     });
     // END TEST DELETE Admin User <ADMIN> Level deleting a User Profile //
-
-    // TEST DELETE Admin User <OWNER> Level deleting a User Profile //
-    describe("DELETE /api/delete_user_profile - VALID FORM DATA - <OWNER> LEVEL Admin deleting another User profile", () => {
-      it(`Should CORRECTLY delete User profile and return a correct <${successResCode}> response`, (done) => {
-        chai.request(server)
-          .delete("/api/delete_user_profile")
-          .set({ Authorization: ownerUserToken })
-          .send({ email: secondContributorUserEmail, password: "password" })
-          .end((err, response) => {
-            if(err) done(err);
-            const { responseMsg, error, errorMessages } = response.body as DeleteUserRegRes
-            expect(response.status).to.equal(successResCode);
-            expect(responseMsg).to.be.a("string");
-            expect(error).to.be.undefined;
-            expect(errorMessages).to.be.undefined;
-            // logout cookie should not be sent //
-            expect(response.header["set-cookie"]).to.be.an("array");
-            expect(response.header["set-cookie"]).to.have.lengthOf(1);
-            //
-            const userIdCookie = cookie.parse(response.header["set-cookie"][0]);
-            expect(userIdCookie.uniqueUserId).to.be.a("string");
-            expect(userIdCookie.JWTToken).to.be.undefined;
-            done();
-          });
-      });
-      it("Should DECREMENT the number of User models by 1 and correctly delete the queried User model", async () => {
-        try {
-          const updatedNumOfUsers: number = await User.countDocuments();
-          const updatedNumOfAdmins = await Admin.countDocuments();
-          const deletedUser: IUser | null = await User.findOne({ email: secondContributorUserEmail }).exec();
-          ///
-          expect(updatedNumOfUsers).to.equal(numOfUserModels - 1);
-          expect(updatedNumOfAdmins).to.equal(numOfAdminModels);
-          expect(deletedUser).to.be.null;
-          //
-          numOfUserModels = updatedNumOfUsers;
-        } catch (error) {
-          console.log(error);
-        }
-      });
-    });
-    // END TEST DELETE Admin User <OWNER> Level deleting a User Profile //
 
   });
   // END TEST CONTEXT User profile delete LOGGED IN ADMIN //
