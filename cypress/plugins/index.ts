@@ -71,6 +71,13 @@ module.exports = (on, config) => {
       } catch (error) {
         throw error;
       }
+    },
+    async deleteUserModels(userModelIds: string[]) {
+      try {
+        return await User.deleteMany({ _id: { $in: userModelIds } });
+      } catch (error) {
+        throw error;
+      }
     }
     /*
     async handleLoginUser({ email, password, cy }: { email: string; password: string; cy: any }) {
