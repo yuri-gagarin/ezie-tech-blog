@@ -7,6 +7,8 @@ import type { UserData } from "@/redux/_types/users/dataTypes";
 import { deepCopyObject } from "@/components/_helpers/generalHelpers";
 
 describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration Tests", () => {
+  // constants //
+  const USER_PASSWORD: string = "password";
   let appState: IGeneralState;
   let usersArr: UserData[];  let readerUser: UserData;
 
@@ -28,7 +30,7 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
     cy.visit("/login")
       .then(() => {
         cy.getByDataAttr("login-page-email-input").type(readerUser.email);
-        cy.getByDataAttr("login-page-password-input").type("password");
+        cy.getByDataAttr("login-page-password-input").type(USER_PASSWORD);
         cy.getByDataAttr("login-page-login-btn").click();
         //
         cy.getByDataAttr("user-main-page").should("exist");
@@ -37,11 +39,30 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
       })
       .then((state) => {
         appState = deepCopyObject<IGeneralState>(state);
+        console.log(appState)
         return cy.visit("/user/dashboard/profile");
       })     
       .then(() => {
         cy.getByDataAttr("user-profile-main").should("be.visible");
       });        
+  });
+
+  describe("User attempting to delete their profile WITHOUT entering a password", () => {
+        
+    it("Should NOT delete the User Profile AND keep the <ConfirmDeleteModal> component open", () => {
+      cy.getByDataAttr("user-profile-delete-btn").click().then(() => {
+        return cy.getByDataAttr("confirm-profile-delete-modal").should("exist").and("be.visible");
+      })
+      .then(() => {
+        return cy.getByDataAttr("confirm-profile-delete-modal-delete-btn").click();
+      })
+      .then(() =>  {
+        return cy.getByDataAttr("confirm-profile-delete-modal").should("exist").and("be.visible");
+      })
+      .then(() => {
+        cy.getByDataAttr("confirm-profile-delete-modal-pass-error").should("exist").and("be.visible");
+      });
+    });
   });
 
   after(() => {

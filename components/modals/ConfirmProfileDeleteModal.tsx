@@ -43,7 +43,7 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
   };
 
   return (
-    <Modal className={ styles.modal } closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "confirm-delete-modal" }>
+    <Modal closeIcon className={ styles.modal } open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id="confirm-profile-delete-modal">
       <Modal.Header className={ styles.modalHeader }>Confirm Delete Profile?</Modal.Header>
       <Modal.Content>
         <p className={ styles.modalContent }>
@@ -55,28 +55,22 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
         <p>
           This action is pernament and cannot be reversed!
         </p>
-      </Modal.Content>
-      {
+        {
         localState.errorModalOpen &&
-        <Modal.Content>
-          <Message error onDismiss={ () => setLocalState({ ...localState, errorModalOpen: false }) }>
+          <Message error onDismiss={ () => setLocalState({ ...localState, errorModalOpen: false }) } data-test-id={ "confirm-profile-delete-modal-pass-error" }>
             <Message.Content>
               <Message.Header>Error</Message.Header>
               <Message.Content>Password cannot be blank!</Message.Content>
             </Message.Content>
           </Message>
-        </Modal.Content>
-      }
-      {
+        }
+        {
         true || authState.error &&
-        <Modal.Content>
           <GeneralLoaderSegment
             loading
             errorMessages={ authState.errorMessages }
           />
-        </Modal.Content>
-      }
-      <Modal.Content>
+        }
         <Form className={ styles.confirmDelPassInput }>
           <Form.Field>
             <Label className={ styles.confirmDelPassLabel } color="orange" content="Enter your password to confirm" />
@@ -89,13 +83,13 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
           </Form.Field>
         </Form>
       </Modal.Content>
-      <Modal.Content className={ styles.modalBtns }>
+      <Modal.Actions className={ styles.modalBtns }>
         <Button.Group className={ styles.controlBtns }>
-          <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal } data-test-id={ "confirm-delete-modal-cancel-btn" } />
+          <Button basic color="blue" content="Cancel" icon="cancel" onClick={ handleCloseModal } data-test-id={ "confirm-profile-delete-modal-cancel-btn" } />
           <Button.Or />
-          <Button color="red" content="Confirm Delete" icon="trash" onClick={ confirmProfileDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
+          <Button color="red" content="Confirm Delete" icon="trash" onClick={ confirmProfileDelete } data-test-id={ "confirm-profile-delete-modal-delete-btn" }  />
         </Button.Group>
-      </Modal.Content>
+      </Modal.Actions>
     </Modal>
   );
 };

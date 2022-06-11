@@ -38,9 +38,8 @@ module.exports = (on, config) => {
       return true;
     },
     async seedUsers({ number, confirmed, type }: { number?: number; confirmed?: boolean; type?: "READER" | "CONTRIBUTOR" }): Promise<{ users: IUser[] }> {
-      await generateMockUsers({ number, confirmed, type });
-      const users: IUser[] = await User.find({});
-      return { users };
+      const generatedUsers: IUser[] = await generateMockUsers({ number, confirmed, type });
+      return { users: generatedUsers };
     },
     async seedAdmins({ number, role }: { number?: number; role?: "admin" | "owner"; }): Promise<{ admins: IAdmin[] }> {
       try {

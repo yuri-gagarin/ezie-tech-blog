@@ -12,7 +12,7 @@ import layoutStyles from "@/styles/layout/LayoutStyle.module.css";
 import { useWindowSize } from "@/components/_helpers/monitorWindowSize";
 
 interface IAdminLayoutProps {
-  pageProps: any;
+  pageProps?: any;
 }
 
 export const AdminLayout: React.FunctionComponent<IAdminLayoutProps> = ({ children, pageProps }): JSX.Element => {

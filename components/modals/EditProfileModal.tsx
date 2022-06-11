@@ -40,7 +40,7 @@ type FormEmailState = {
 
 export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = ({ modalOpen, loaderOpen, handleCloseModal, handleTriggerModelDelete, handleUpdateUserProfile, authState }): JSX.Element => {
   // userdata from redux state //
-  const { _id, firstName, lastName, email, userType } = authState.currentUser as UserData;
+  const { _id, firstName, lastName, email, userType } = authState.currentUser as UserData || {};
   // local state //
   const [ formFirstNameState, setFormFirstNameState ] = React.useState<FormFirstNameState>({ firstName, editingFirstName: false, firstNameError: null });
   const [ formLastNameState, setFormLastNameState ] = React.useState<FormLastNameState>({ lastName, editingLastName: false, lastNameError: null });

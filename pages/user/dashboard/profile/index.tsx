@@ -212,15 +212,6 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
 
   return (
     <React.Fragment>
-      <EditProfileModal
-        modalOpen={ editModalState.componentOpen }
-        loaderOpen= { editModalState.loaderOpen }
-        handleCloseModal={ closeEditProfileModal }
-        handleUpdateUserProfile={ handleUpdateUserProfile }
-        handleTriggerModelDelete={ triggerProfileDelete }
-        authState={ authState }
-
-      />
       <ConfirmProfileDeleteModal 
         modalOpen={ confirmDeleteProfileState.componentOpen }
         authState={ authState }
@@ -238,14 +229,14 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
         errorMessages={ authState.errorMessages }
       />
       }
-      <Grid.Row className={ styles.controlsRow }>
+      <Grid.Row className={ styles.controlsRow } data-test-id={ "user-profile-main" }>
         <Segment style={{ width: "100%" }}>
           <Button.Group className={ styles.controlBtns }>
             <Button basic content="Go Back" color="green" icon="arrow left" />
           </Button.Group>
           <Button.Group className={ styles.controlBtns }>
             <Button basic content="Edit Profile" color="green" icon="edit" onClick={ () => setEditModalState({ ...editModalState, componentOpen: true }) } />
-            <Button content="Delete Profile" color="red" icon="trash" onClick={ () => setConfirmDeleteProfileState({ componentOpen: true, loaderOpen: false  }) } />
+            <Button content="Delete Profile" color="red" icon="trash" onClick={ () => setConfirmDeleteProfileState({ componentOpen: true, loaderOpen: false  }) } data-test-id={ "user-profile-delete-btn" } />
           </Button.Group>
         </Segment>
       </Grid.Row>
