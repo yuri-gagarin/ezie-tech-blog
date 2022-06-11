@@ -139,7 +139,7 @@ export const UserMenu: React.FunctionComponent<IUserMenuProps> = (props): JSX.El
           <Menu.Item link={false}>
             <Icon name="user circle" />
           </Menu.Item>
-          <Menu.Item as="a" onClick={ handleMenuItemClick } name="profile" active={ LocalState.activeMenuItem === "profile" } data-test-id="Main_User_Users_Link">
+          <Menu.Item as="a" onClick={ handleMenuItemClick } name="profile" active={ LocalState.activeMenuItem === "profile" } data-test-id="user-menu-profile-link">
             View My Profile
           </Menu.Item>
           <Menu.Item onClick={ handleLogout } data-test-id="user-main-logout-link">
