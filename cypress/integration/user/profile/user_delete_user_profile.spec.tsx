@@ -39,6 +39,7 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
     }
   });
 
+  /*
   describe("User attempting to delete their profile WITHOUT entering a password", () => {
     before(() => {
       openUserProfilePage(cy, { email: readerUser.email, password: USER_PASSWORD });
@@ -54,9 +55,10 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
     });
         
     it("Should NOT delete the User Profile AND keep the <ConfirmDeleteModal> component open, should NOT Change REDUX AuthState", () => {
-      cy.getByDataAttr("user-profile-delete-btn").click();
-      cy.getByDataAttr("confirm-profile-delete-modal")
-        .should("exist").and("be.visible");
+      cy.getByDataAttr("user-profile-delete-btn").click().then(() => {
+        cy.getByDataAttr("confirm-profile-delete-modal").should("exist").and("be.visible");
+      });
+     
       // click the delete confirm btn, without entered password //
       cy.getByDataAttr("confirm-profile-delete-modal-delete-btn").click().then(() =>  {
         return cy.getByDataAttr("confirm-profile-delete-modal").should("exist").and("be.visible");
@@ -71,10 +73,55 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
         .then(() => {
           cy.getByDataAttr("confirm-profile-delete-modal-pass-error").should("not.exist");
           cy.getByDataAttr("confirm-profile-delete-modal").should("exist").and("be.visible");
+          // assert that redux state did not change //
+          cy.window().its("store").invoke("getState").its("authState").should("deep.equal", appState.authState);
         });
     });
   });
+  */
 
+  describe("User attempting to delete their profile WITHOUT entering a password OR a WRONG password ", () => {
+    before(() => {
+      openUserProfilePage(cy, { email: readerUser.email, password: USER_PASSWORD });
+    });
+    before(() => {
+      cy.window().its("store").invoke("getState").then((state) =>  {
+        appState = deepCopyObject<IGeneralState>(state);
+        cy.getByDataAttr("user-menu-profile-link").click().then(($linkBtn) => {
+          expect($linkBtn.hasClass("active")).to.equal(true);
+          cy.getByDataAttr("user-profile-main").should("be.visible");
+        });
+      })
+    });
+    it("Should NOT delete the User Profile AND keep the <ConfirmDeleteModal> component open", () => {
+      const wrongPass = "wrongpass";
+      cy.getByDataAttr("user-profile-delete-btn").click();
+      cy.getByDataAttr("del-user-profile-pass-field").find("input").focus().type(wrongPass).then(($input) => {
+        expect($input.val()).to.equal(wrongPass);
+        cy.wrap($input).clear();
+      })
+      // error should pop up //
+      cy.getByDataAttr("del-user-profile-pass-field").find(".error").should("exist").and("be.visible");
+      // if <ConfirmDelete> clicked //
+      cy.window().its("store").invoke("getState").its("authState").should("deep.equal", appState.authState);
+    });
+    it("Should NOT delete the User Profile with an INCORRECT Password and show relevant error", () => {
+      const wrongPass = "wrongpass";
+      cy.getByDataAttr("del-user-profile-pass-field").find("input").focus().type(wrongPass).then(($input) => {
+        expect($input.val()).to.equal(wrongPass);
+      });
+      // should be no error in form field //
+      cy.getByDataAttr("del-user-profile-pass-field").find(".error").should("not.exist");
+      cy.getByDataAttr("confirm-profile-delete-modal-delete-btn").click();
+      // <AuthState> should reflect the API error //
+      cy.window().its("store").invoke("getState").then((state) => {
+        const { status, error, errorMessages } = state.authState;
+        expect(status).to.equal(403);
+        expect(error).to.be.an("object");
+        expect(errorMessages).to.be.an("array");
+      });
+    });
+  });
   after(() => {
     const userIds: string[] = usersArr.map((user) => user._id);
     cy.task("deleteUserModels", userIds);

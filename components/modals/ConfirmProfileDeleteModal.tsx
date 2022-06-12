@@ -72,7 +72,7 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
           />
         }
         <Form className={ styles.confirmDelPassInput }>
-          <Form.Field>
+          <Form.Field  data-test-id="del-user-profile-pass-field">
             <Label className={ styles.confirmDelPassLabel } color="orange" content="Enter your password to confirm" />
             <Form.Input 
               autoFocus
