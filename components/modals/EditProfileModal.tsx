@@ -146,27 +146,24 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
 
   return (
     <Modal className={ styles.editProfileModal } closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "edit-profile-modal" }>
-      {
-        loaderOpen &&
-        <Modal.Content>
+      <Modal.Content>
+        {
+          loaderOpen ?
           <GeneralLoaderSegment 
             loading={ authState.loading }
             initialMessage={ "Updating Usser profile" }
             completionMessage={ authState.responseMsg }
             errorMessages={ authState.error && authState.errorMessages }
           />
-        </Modal.Content>
-      }
-      <Modal.Content className={ styles.modalBtns }>
+          : null
+        }
         <Button.Group className={ styles.editProfileCancel }>
           <Button basic color="blue" content="Cancel Changes" icon="cancel" onClick={ handleCloseModal } data-test-id={ "edit-profile-modal-cancel-btn" } />
         </Button.Group>
         <Button.Group className={ styles.editProfileControls }>
-          <Button basic color="green" content="Update All" icon="save outling" onClick={ _handleUpdateUserProfile } disabled={ submitBtnDisabled } ref={ updateProfileBtnRef } />
+          <Button basic color="green" content="Update All" icon="save outline" onClick={ _handleUpdateUserProfile } disabled={ submitBtnDisabled } ref={ updateProfileBtnRef } />
           <Button color="red" content="Delete Profile" icon="trash" onClick={ handleTriggerModelDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
         </Button.Group>
-      </Modal.Content>
-      <Modal.Content>
         <Form>
           <Form.Field className={ styles.formField } inline={ !formFirstNameState.editingFirstName }>
             <Label className={ styles.dataLabel } color="teal">First Name:</Label>
@@ -236,7 +233,6 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
           </Form.Field>
         </Form>
       </Modal.Content>
-      
     </Modal>
   );
 };

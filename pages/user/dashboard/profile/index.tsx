@@ -12,6 +12,7 @@ import { GenErrorModal } from "@/components/modals/GenErrorModal";
 import { GeneralLoaderSegment } from "@/components/shared/GeneralLoaderSegment";
 import { UserPassInput} from "@/components/shared/forms/UserPassInput";
 // helpers //
+import { ClientAuthError } from '@/components/_helpers/errorHelpers';
 import { UserDashHelpers } from "@/components/_helpers/displayHelpers";
 import { validateUserPasswordChange } from "@/components/_helpers/validators";
 // styles //
@@ -186,12 +187,14 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const cancelProfileDelete = (): void => {
     setConfirmDeleteProfileState({ componentOpen: false, loaderOpen: false });
   };
-  const handleProfileDelete = async (currentUserPassword: string): Promise<void> => {
-    console.log(currentUserPassword);
+  const handleProfileDelete = async (currentPassword: string): Promise<AuthAction> => {
+    const { currentUser, authToken } = authState;
+    const error = new ClientAuthError();
+    if (!currentUser || !authToken) return AuthActions.handleAuthError(dispatch, error);
     try {
-      
+      return await AuthActions.handleDeleteUserProfile({ dispatch, currentPassword, authState});
     } catch (error) {
-
+      return AuthActions.handleAuthError(dispatch, error);
     }
   };
 
@@ -218,8 +221,16 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
         handleCloseModal={ cancelProfileDelete }
         handleProfileDelete={ handleProfileDelete }
       />
+      <EditProfileModal
+        modalOpen={ editModalState.componentOpen }
+        loaderOpen={ editModalState.loaderOpen}
+        authState={ authState}
+        handleCloseModal={ closeEditProfileModal }
+        handleTriggerModelDelete={ triggerProfileDelete }
+        handleUpdateUserProfile={ handleUpdateUserProfile }
+      />
       {
-      (authState.error && !editPasswordState.componentOpen && !editModalState.componentOpen) && 
+      (authState.error && !editPasswordState.componentOpen && !editModalState.componentOpen && !confirmDeleteProfileState.componentOpen) && 
       <GenErrorModal 
         open={ authState.error }  // should not be open on password change error //
         position="fixed-top"

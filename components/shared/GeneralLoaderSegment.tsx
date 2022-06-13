@@ -15,7 +15,7 @@ export const GeneralLoaderSegment: React.FunctionComponent<IGeneralLoaderSegment
   
   if (loading) {
     return (
-      <Message icon positive onDismiss={ dismissComponent }>
+      <Message icon positive onDismiss={ dismissComponent } data-test-id="gen-loader-loading-msg">
         <Icon name='circle notched' loading />
         <Message.Content>
           { initialMessage || "Processing Request" }
@@ -24,7 +24,7 @@ export const GeneralLoaderSegment: React.FunctionComponent<IGeneralLoaderSegment
     );
   } else if (errorMessages) {
     return (
-      <Message icon error onDismiss={ dismissComponent }> 
+      <Message icon error onDismiss={ dismissComponent } data-test-id="gen-loader-error-msg"> 
         <Icon name="warning circle" />
         <Message.Content>
           <Message.Header>{ completionMessage || "Error" }</Message.Header>
@@ -38,7 +38,7 @@ export const GeneralLoaderSegment: React.FunctionComponent<IGeneralLoaderSegment
     );
   } else {
     return (
-      <Message icon positive onDismiss={ dismissComponent }>
+      <Message icon positive onDismiss={ dismissComponent } data-test-id="gen-loader-completion-msg">
         <Icon name="exclamation circle" color="blue" size="big"  />
         <Message.Content>
           <Message.Header>Done!</Message.Header>

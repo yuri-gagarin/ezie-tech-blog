@@ -119,7 +119,6 @@ export const passportGeneralAuthMiddleware = (req: Request, res: Response, next:
         errorMessages: [ "User not found" ]
       });
     } 
-
     req.user = user;
     return next();
   })(req, res, next);

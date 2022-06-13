@@ -228,11 +228,13 @@ export class AuthActions {
   public static handleDeleteUserProfile = async (data: { dispatch: Dispatch<AuthAction>; currentPassword: string; authState: IAuthState; }): Promise<DeleteUserProfile> => {
     // <authState.currentUser> and  <currentPassword> should be defined and truthy  //
     const { dispatch, currentPassword, authState } = data;
-    const { _id: currentUserId } = authState.currentUser;
+    const { authToken } = authState;
+    const { _id: userId } = authState.currentUser;
     const axiosOpts: AxiosRequestConfig = {
       method: "DELETE",
-      url: `/api/users/${currentUserId}`,
-      data: { currentPassword }
+      url: `/api/delete_user_profile`,
+      headers: { Authorization: authToken },
+      data: { currentPassword, userId }
     };
 
     dispatch({ type: "AuthAPIRequest", payload: { loading: true } });

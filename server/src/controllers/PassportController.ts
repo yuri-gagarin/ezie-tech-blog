@@ -57,7 +57,6 @@ export default class PassportController {
           if (user) {
             return done(null, user);
           } else {
-            console.log("Should be here")
             return done(new AuthNotFoundError("Invalid Login", [ "No account with provided login exists" ]), false, { message: "Not found" });
           }
         }
@@ -110,7 +109,6 @@ export default class PassportController {
           } else {
             // no <User> or <Admin> model found //
             // 
-            console.log("we here")
             return done(new AuthNotFoundError("Invalid Login", [ "No account with provided login exists" ]), false, { message: "Not found" });
           }
         }

@@ -56,20 +56,24 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
           This action is pernament and cannot be reversed!
         </p>
         {
-        localState.errorModalOpen &&
+          localState.errorModalOpen ?
           <Message error onDismiss={ () => setLocalState({ ...localState, errorModalOpen: false }) } data-test-id={ "confirm-profile-delete-modal-pass-error" }>
             <Message.Content>
               <Message.Header>Error</Message.Header>
               <Message.Content>Password cannot be blank!</Message.Content>
             </Message.Content>
           </Message>
+          :
+          null
         }
         {
-        true || authState.error &&
+          authState.error || authState.loading ?
           <GeneralLoaderSegment
-            loading
+            loading={ authState.loading }
             errorMessages={ authState.errorMessages }
           />
+          :
+          null
         }
         <Form className={ styles.confirmDelPassInput }>
           <Form.Field  data-test-id="del-user-profile-pass-field">
