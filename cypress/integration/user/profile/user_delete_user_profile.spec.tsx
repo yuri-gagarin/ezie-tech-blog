@@ -84,6 +84,7 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
   });
   */
 
+  /*
   describe("User attempting to delete their profile WITHOUT entering a password OR a WRONG password ", () => {
     before(() => {
       openUserProfilePage(cy, { email: readerUser.email, password: USER_PASSWORD });
@@ -138,8 +139,37 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
       });
       cy.getByDataAttr("confirm-profile-delete-modal").should("exist").and("be.visible");
     });
-  
   });
+  */
+  describe("User attempting to delete their profile WITH a CORRECT password", () => {
+    before(() => {
+      openUserProfilePage(cy, { email: readerUser.email, password: USER_PASSWORD });
+    });
+    before(() => {
+      cy.window().its("store").invoke("getState").then((state) =>  {
+        appState = deepCopyObject<IGeneralState>(state);
+        cy.getByDataAttr("user-menu-profile-link").click().then(($linkBtn) => {
+          expect($linkBtn.hasClass("active")).to.equal(true);
+          cy.getByDataAttr("user-profile-main").should("be.visible");
+        });
+      })
+    });
+  
+    it("Should correctly delete the User Profile ", () => {
+      const correctPassword = "password";
+      const deleteProfileInterception = interceptIndefinitely("/api/delete_user_profile");
+      cy.getByDataAttr("user-profile-delete-btn").click();
+      cy.getByDataAttr("del-user-profile-pass-field").find("input").focus().type(correctPassword);
+      cy.getByDataAttr("confirm-profile-delete-modal-delete-btn")
+        .click()
+        .window().its("store").invoke("getState").its("authState").its("loading").should("be.true")
+        .getByDataAttr("gen-loader-loading-msg").should("exist").and("be.visible")
+        .then(() => {
+          deleteProfileInterception.sendResponse();
+      });
+    });
+  });
+  
   after(() => {
     const userIds: string[] = usersArr.map((user) => user._id);
     cy.task("deleteUserModels", userIds);

@@ -213,6 +213,12 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
     if (authState.passwordChangeRequest) setEditPasswordState((s) => ({ ...s, loaderOpen: true }));
   }, [ authState.passwordChangeRequest ]);
 
+  React.useEffect(() => {
+    if (authState.currentUser === null) {
+      console.log("should redirect to login")
+    }
+  }, [ authState.currentUser ])
+
   return (
     <React.Fragment>
       <ConfirmProfileDeleteModal 
