@@ -28,7 +28,7 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
     try {
       cy.task("connectToDB")
         .then(() => {
-          return cy.task<{ users: UserData[] }>("seedUsers", { number: 5, role: "reader" });
+          return cy.task<{ users: UserData[] }>("seedUsers", { number: 1, role: "reader" });
         })
         .then(({ users }) => {
           usersArr = [ ...users ];
@@ -43,7 +43,6 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
     cy.intercept({ method: "DELETE", url: "/api/delete_user_profile" }).as("deleteProfileRequest");
   });
 
-  /*
   describe("User attempting to delete their profile WITHOUT entering a password", () => {
     before(() => {
       openUserProfilePage(cy, { email: readerUser.email, password: USER_PASSWORD });
@@ -82,9 +81,7 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
         });
     });
   });
-  */
 
-  /*
   describe("User attempting to delete their profile WITHOUT entering a password OR a WRONG password ", () => {
     before(() => {
       openUserProfilePage(cy, { email: readerUser.email, password: USER_PASSWORD });
@@ -140,7 +137,7 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
       cy.getByDataAttr("confirm-profile-delete-modal").should("exist").and("be.visible");
     });
   });
-  */
+  
   describe("User attempting to delete their profile WITH a CORRECT password", () => {
     before(() => {
       openUserProfilePage(cy, { email: readerUser.email, password: USER_PASSWORD });
@@ -167,10 +164,27 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
         .then(() => {
           deleteProfileInterception.sendResponse();
       });
+      cy.getByDataAttr("user-profile-main").should("not.exist");
+      cy.getByDataAttr("login-page").should("exist").and("be.visible");
+      // check cookies and REDUX state changes //
+      cy.getCookie("jwtToken").should("be.null");
+      cy.window().its("store").invoke("getState").its("authState").then((authState) => {
+        const { loading, loggedIn, loggedInAt, currentUser, isAdmin, firebaseData, authToken, error, errorMessages } = authState;
+        expect(loading).to.equal(false);
+        expect(loggedIn).to.equal(false);
+        expect(loggedInAt).to.be.null;
+        expect(currentUser).to.be.null;
+        expect(isAdmin).to.equal(false);
+        expect(firebaseData).to.be.null;
+        expect(authToken).to.equal("");
+        expect(error).to.be.null;
+        expect(errorMessages).to.be.null;
+      });
     });
   });
   
   after(() => {
+    console.log("running cleanup")
     const userIds: string[] = usersArr.map((user) => user._id);
     cy.task("deleteUserModels", userIds);
   });

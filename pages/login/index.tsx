@@ -113,7 +113,7 @@ const LoginPage: React.FunctionComponent<ILoginPageProps> = (): JSX.Element => {
   }, [ loggedIn, isAdmin, router ]);
 
   return (
-    <div className={ styles.loginWrapper }>
+    <div className={ styles.loginWrapper } data-test-id="login-page">
       <GenErrorModal 
         animation="slide down" 
         duration={ 300 } 

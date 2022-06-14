@@ -68,6 +68,14 @@ export default function authReducer(state: IAuthState = initialState, action: Au
         }
       };
     }
+    case "DeleteUserProfile": {
+      return {
+        ...state,
+        ...action.payload,
+        error: null, 
+        errorMessages: null
+      };
+    };
     case "AuthLoginSuccess": {
       return {
         ...state,

@@ -79,6 +79,8 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   const [ editPasswordState, setEditPasswordState ] = React.useState<EditPasswordState>(setEmptyPasswordState()); 
   const [ editPassFormErrorMessages, setEditPassFormErrorMessages ] = React.useState<EditPassFormErrorState>({ visible: false, errorMessages: null, timeout: null });
   const [ APIErrorTimeout, setAPIErrorTimeout ] = React.useState<NodeJS.Timeout | null>(null);
+  //
+  const router = useRouter();
   // redux hooks and state //
   const dispatch: Dispatch<AuthAction | UserAction> = useDispatch();
   const { authState } = useSelector((state: IGeneralState) => state);
@@ -185,6 +187,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
     setConfirmDeleteProfileState({ componentOpen: true, loaderOpen: false });
   };
   const cancelProfileDelete = (): void => {
+    if (authState.error) AuthActions.dismissAuthError(dispatch);
     setConfirmDeleteProfileState({ componentOpen: false, loaderOpen: false });
   };
   const handleProfileDelete = async (currentPassword: string): Promise<AuthAction> => {
@@ -214,10 +217,8 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
   }, [ authState.passwordChangeRequest ]);
 
   React.useEffect(() => {
-    if (authState.currentUser === null) {
-      console.log("should redirect to login")
-    }
-  }, [ authState.currentUser ])
+    if (authState.currentUser === null) router.push("/login");
+  }, [ authState.currentUser, router ])
 
   return (
     <React.Fragment>
@@ -246,7 +247,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
         errorMessages={ authState.errorMessages }
       />
       }
-      <Grid.Row className={ styles.controlsRow } data-test-id={ "user-profile-main" }>
+      <Grid.Row className={ styles.controlsRow } data-test-id="user-profile-main">
         <Segment style={{ width: "100%" }}>
           <Button.Group className={ styles.controlBtns }>
             <Button basic content="Go Back" color="green" icon="arrow left" />

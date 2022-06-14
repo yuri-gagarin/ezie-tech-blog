@@ -116,7 +116,8 @@ export default class AuthController {
   deleteUserProfile = async (req: Request<any, any, DeleteProfileReqBody>, res: Response<DeleteUserProfileRes>): Promise<Response<DeleteUserProfileRes>> => {
     const { userId } = req.body as { userId: string; };
     const user = req.user as IAdmin | IUser;
-
+    console.log(user);
+    console.log(await User.findById(user._id));
     try {     
       const isAdmin: boolean = user instanceof Admin;     
       // archive all users posts later ? //

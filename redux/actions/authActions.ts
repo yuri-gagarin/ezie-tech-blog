@@ -242,7 +242,9 @@ export class AuthActions {
       const { status, data }: AxiosResponse<DeleteUserProfileRes> = await axios(axiosOpts);
       const { responseMsg } = data;
       return dispatch({
-        type: "DeleteUserProfile", payload: { status, responseMsg, currentUser: null, loading: false }
+        type: "DeleteUserProfile", payload: { 
+          status, responseMsg, loading: false, loggedIn: false, authToken: "", expires: "", currentUser: null, loggedInAt: null, firebaseData: null 
+        }
       });
     } catch (error) {
       throw error;

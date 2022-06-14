@@ -43,7 +43,7 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
   };
 
   return (
-    <Modal closeIcon className={ styles.modal } open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id="confirm-profile-delete-modal">
+    <Modal className={ styles.modal } open={ modalOpen } style={{ position: "relative" }}  size="large" data-test-id="confirm-profile-delete-modal">
       <Modal.Header className={ styles.modalHeader }>Confirm Delete Profile?</Modal.Header>
       <Modal.Content>
         <p className={ styles.modalContent }>
@@ -79,9 +79,9 @@ export const ConfirmProfileDeleteModal: React.FunctionComponent<ConfirmDeleteMod
           <Form.Field  data-test-id="del-user-profile-pass-field">
             <Label className={ styles.confirmDelPassLabel } color="orange" content="Enter your password to confirm" />
             <Form.Input 
-              autoFocus
               type="password"
               onChange={ handleConfirmDelProfilePassChange }
+              placeholder={ "...current password" }
               error={ localState.errorMessage ? { content: localState.errorMessage, pointing: "above" } : false }
             />
           </Form.Field>

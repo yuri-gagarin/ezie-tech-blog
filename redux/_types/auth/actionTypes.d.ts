@@ -35,7 +35,12 @@ export type DeleteUserProfile = {
     status: number;
     responseMsg: string;
     loading: boolean;
+    loggedIn: boolean;
+    authToken: string;
+    expires: string;
     currentUser: null;
+    loggedInAt: null;
+    firebaseData: null;
   };
 };
 export type UpdateAdminProfile = {
