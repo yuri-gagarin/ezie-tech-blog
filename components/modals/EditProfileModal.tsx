@@ -158,11 +158,11 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
           : null
         }
         <Button.Group className={ styles.editProfileCancel }>
-          <Button basic color="blue" content="Cancel Changes" icon="cancel" onClick={ handleCloseModal } data-test-id={ "edit-profile-modal-cancel-btn" } />
+          <Button basic color="blue" content="Cancel Changes" icon="cancel" onClick={ handleCloseModal } data-test-id="edit-profile-modal-cancel-btn" />
         </Button.Group>
         <Button.Group className={ styles.editProfileControls }>
-          <Button basic color="green" content="Update All" icon="save outline" onClick={ _handleUpdateUserProfile } disabled={ submitBtnDisabled } ref={ updateProfileBtnRef } />
-          <Button color="red" content="Delete Profile" icon="trash" onClick={ handleTriggerModelDelete } data-test-id={ "confirm-delete-modal-delete-btn" }  />
+          <Button basic color="green" content="Update All" icon="save outline" onClick={ _handleUpdateUserProfile } disabled={ submitBtnDisabled } ref={ updateProfileBtnRef } data-test-id="edit-profile-modal-update-btn" />
+          <Button color="red" content="Delete Profile" icon="trash" onClick={ handleTriggerModelDelete } data-test-id="edit-profile-modal-delete-btn" />
         </Button.Group>
         <Form>
           <Form.Field className={ styles.formField } inline={ !formFirstNameState.editingFirstName }>
@@ -180,7 +180,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               />
               :
               <div className={ styles.dataContent}>
-                <div className={ styles.dataSpan }>{ formFirstNameState.firstName }</div>
+                <div className={ styles.dataSpan } data-test-id="user-name-display">{ formFirstNameState.firstName }</div>
                 <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setFirstNameEdit } />                
               </div>
             }
@@ -200,7 +200,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               />
               :
               <div className={ styles.dataContent}>
-                <div className={ styles.dataSpan }>{ formLastNameState.lastName }</div>
+                <div className={ styles.dataSpan } data-test-id="user-lastname-display">{ formLastNameState.lastName }</div>
                 <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setLastNameEdit } />
               </div>
             }
@@ -220,7 +220,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               />
               :
               <div className={ styles.dataContent}>
-                <div className={ styles.dataSpan }>{ formEmailState.email }</div>
+                <div className={ styles.dataSpan } data-test-id="user-lemail-display">{ formEmailState.email }</div>
                 <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setEmailEdit } />
               </div>
             }

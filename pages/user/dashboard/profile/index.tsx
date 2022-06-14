@@ -253,7 +253,7 @@ const UserProfileIndex: React.FunctionComponent<IUserProfileIndexProps> = (props
             <Button basic content="Go Back" color="green" icon="arrow left" />
           </Button.Group>
           <Button.Group className={ styles.controlBtns }>
-            <Button basic content="Edit Profile" color="green" icon="edit" onClick={ () => setEditModalState({ ...editModalState, componentOpen: true }) } />
+            <Button basic content="Edit Profile" color="green" icon="edit" onClick={ () => setEditModalState({ ...editModalState, componentOpen: true }) } data-test-id={ "user-profile-edit-btn" } />
             <Button content="Delete Profile" color="red" icon="trash" onClick={ () => setConfirmDeleteProfileState({ componentOpen: true, loaderOpen: false  }) } data-test-id={ "user-profile-delete-btn" } />
           </Button.Group>
         </Segment>

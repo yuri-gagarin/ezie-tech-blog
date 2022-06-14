@@ -39,9 +39,11 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
     }
   });
 
+  /*
   beforeEach(() => {
     cy.intercept({ method: "DELETE", url: "/api/delete_user_profile" }).as("deleteProfileRequest");
   });
+  */
 
   describe("User attempting to delete their profile WITHOUT entering a password", () => {
     before(() => {

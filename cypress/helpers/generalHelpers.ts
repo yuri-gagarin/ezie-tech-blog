@@ -20,3 +20,14 @@ export const interceptIndefinitely = (requestMatcher: RouteMatcher, response?: S
   });
   return { sendResponse }
 };
+
+
+// user pages helperss //
+export const loginAndOpenUserProfile = ({ email, password }: { email: string; password: string; }) => {
+  cy.visit("/login")
+  cy.getByDataAttr("login-page-email-input").type(email);
+  cy.getByDataAttr("login-page-password-input").type(password);
+  cy.getByDataAttr("login-page-login-btn").click();
+  //
+  cy.getByDataAttr("user-main-page").should("exist");
+};
