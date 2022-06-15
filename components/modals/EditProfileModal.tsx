@@ -145,7 +145,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
 
 
   return (
-    <Modal className={ styles.editProfileModal } closeIcon open={ modalOpen } onClose={ handleCloseModal } style={{ position: "relative" }}  size="large" data-test-id={ "edit-profile-modal" }>
+    <Modal className={ styles.editProfileModal } open={ modalOpen } style={{ position: "relative" }}  size="large" data-test-id={ "edit-profile-modal" }>
       <Modal.Content>
         {
           loaderOpen ?
@@ -180,7 +180,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               />
               :
               <div className={ styles.dataContent}>
-                <div className={ styles.dataSpan } data-test-id="user-name-display">{ formFirstNameState.firstName }</div>
+                <div className={ styles.dataSpan } data-test-id="user-firstname-display">{ formFirstNameState.firstName }</div>
                 <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setFirstNameEdit } />                
               </div>
             }
@@ -220,7 +220,7 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
               />
               :
               <div className={ styles.dataContent}>
-                <div className={ styles.dataSpan } data-test-id="user-lemail-display">{ formEmailState.email }</div>
+                <div className={ styles.dataSpan } data-test-id="user-email-display">{ formEmailState.email }</div>
                 <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setEmailEdit } />
               </div>
             }

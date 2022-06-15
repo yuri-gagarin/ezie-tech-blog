@@ -43,11 +43,25 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
 
   describe("Modal functionality, OPEN, CLOSE and errors", () => {
     it("Should properly trigger and display the <EditUserProfile> modal", () => {
+      const { firstName, lastName, email } = appState.authState.currentUser;
       cy.getByDataAttr("user-profile-edit-btn").click()
         .getByDataAttr("edit-profile-modal").should("exist").and("be.visible").then(($editProfileModal) => {
+          // modal control buttons should be visible //
+          expect($editProfileModal.find(".buttons").length).to.equal(2);
+          // cancel button //
+          expect($editProfileModal.find(".buttons").first().find(".button").text()).to.equal("Cancel Changes");
+          // update and delete buttons //
+          expect($editProfileModal.find(".buttons").last().find(".button").first().text()).to.equal("Update All");
+          expect($editProfileModal.find(".buttons").last().find(".button").last().text()).to.equal("Delete Profile");
           // input should not be activated //
           expect($editProfileModal.find("input").length).to.equal(0);
-        })
+        });
+      cy.getByDataAttr("user-firstname-display").should("be.visible").contains(firstName);
+      cy.getByDataAttr("user-lastname-display").should("be.visible").contains(lastName);
+      cy.getByDataAttr("user-email-display").should("be.visible").contains(email);
+    });
+    it("Should properly trigger the User profile <First Name>, <Last Name> and <Email> inputs", () => {
+      
     })
   });
 
