@@ -60,9 +60,35 @@ describe("Users - /user/dashboard/profile - 'Delete User Profile' - Integration 
       cy.getByDataAttr("user-lastname-display").should("be.visible").contains(lastName);
       cy.getByDataAttr("user-email-display").should("be.visible").contains(email);
     });
-    it("Should properly trigger the User profile <First Name>, <Last Name> and <Email> inputs", () => {
-      
-    })
+    it("Should properly trigger the User profile <First Name> input, properly display data and errors", () => {
+      const { firstName } = appState.authState.currentUser;
+      cy.getByDataAttr("edit-firstname-btn").click().should("not.exist");
+      cy.getByDataAttr("edit-firstname-input").should("exist").then(($inputElem) => {
+        expect($inputElem.find("input").val()).to.equal(firstName);
+        // error message should not exists //
+        expect($inputElem.find(".error").length).to.equal(0)
+      });
+    });
+    it("Should properly trigger the User profile <Last Name> input, properly display data and errors", () => {
+      const { lastName } = appState.authState.currentUser;
+      cy.getByDataAttr("edit-lastname-btn").click().should("not.exist");
+      cy.getByDataAttr("edit-lastname-input").should("exist").then(($inputElem) => {
+        expect($inputElem.find("input").val()).to.equal(lastName);
+        // error message should not exists //
+        expect($inputElem.find(".error").length).to.equal(0)
+      });
+    });
+    it("Should properly trigger the User profile <Email> input, properly display data and errors", () => {
+      const { email } = appState.authState.currentUser;
+      cy.getByDataAttr("edit-email-btn").click().should("not.exist");
+      cy.getByDataAttr("edit-email-input").should("exist").then(($inputElem) => {
+        expect($inputElem.find("input").val()).to.equal(email);
+        // error message should not exists //
+        expect($inputElem.find(".error").length).to.equal(0)
+      });
+    });
+    
+    
   });
 
   after(() => {

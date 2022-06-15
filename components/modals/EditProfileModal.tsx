@@ -177,11 +177,12 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
                 value={ formFirstNameState.firstName } 
                 onChange={ listenForFirstNameChange }
                 onBlur={ revertFirstNameData }
+                data-test-id="edit-firstname-input"
               />
               :
               <div className={ styles.dataContent}>
                 <div className={ styles.dataSpan } data-test-id="user-firstname-display">{ formFirstNameState.firstName }</div>
-                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setFirstNameEdit } />                
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setFirstNameEdit } data-test-id="edit-firstname-btn" />                
               </div>
             }
           </Form.Field>
@@ -197,11 +198,12 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
                 value={ formLastNameState.lastName } 
                 onChange={ listenForLastNameChange }
                 onBlur={ revertLastNameData }
+                data-test-id="edit-lastname-input"
               />
               :
               <div className={ styles.dataContent}>
                 <div className={ styles.dataSpan } data-test-id="user-lastname-display">{ formLastNameState.lastName }</div>
-                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setLastNameEdit } />
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setLastNameEdit } data-test-id="edit-lastname-btn" />
               </div>
             }
           </Form.Field>
@@ -217,11 +219,12 @@ export const EditProfileModal: React.FunctionComponent<EditProfileModalProps> = 
                 value={ formEmailState.email } 
                 onChange={ listenForEmailChange }
                 onBlur={ reverEmailData }
+                data-test-id="edit-email-input"
               />
               :
               <div className={ styles.dataContent}>
                 <div className={ styles.dataSpan } data-test-id="user-email-display">{ formEmailState.email }</div>
-                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setEmailEdit } />
+                <Button className={ styles.dataEditBtn } basic color="purple" content="Edit" onClick={ setEmailEdit } data-test-id="edit-email-btn" />
               </div>
             }
           </Form.Field>
